@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -6,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import KPASetupModal from '@/components/kpa/KPASetupModal';
 import { 
   Target, 
   TrendingUp, 
@@ -19,6 +20,7 @@ import {
 
 const KPAManagement = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('Q1 2024');
+  const { toast } = useToast();
 
   const kpaOverview = [
     { 
@@ -77,6 +79,47 @@ const KPAManagement = () => {
     { month: 'Jun', achievement: 91.2, krasCompleted: 44 },
   ];
 
+  const handlePeriodChange = () => {
+    const periods = ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'H1 2024', 'H2 2024', 'Annual 2024'];
+    const currentIndex = periods.indexOf(selectedPeriod);
+    const nextPeriod = periods[(currentIndex + 1) % periods.length];
+    setSelectedPeriod(nextPeriod);
+    
+    toast({
+      title: "Period Updated",
+      description: `Switched to ${nextPeriod}`,
+    });
+  };
+
+  const handleKPASave = (kpaData: any) => {
+    console.log('KPA Data saved:', kpaData);
+    toast({
+      title: "KPA Created Successfully",
+      description: `${kpaData.title} has been created with ${kpaData.kras.length} KRAs`,
+    });
+  };
+
+  const handleViewCategory = (categoryName: string) => {
+    toast({
+      title: "Category Details",
+      description: `Viewing detailed analytics for ${categoryName}`,
+    });
+  };
+
+  const handleViewEmployee = (employeeName: string) => {
+    toast({
+      title: "Employee Profile",
+      description: `Opening detailed profile for ${employeeName}`,
+    });
+  };
+
+  const handleEditEmployee = (employeeName: string) => {
+    toast({
+      title: "Edit KPAs",
+      description: `Opening KPA editor for ${employeeName}`,
+    });
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Exceeding': return 'bg-green-100 text-green-800';
@@ -95,14 +138,19 @@ const KPAManagement = () => {
           <p className="text-gray-600">Set, track, and manage Key Performance Areas and Key Result Areas</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handlePeriodChange}>
             <Calendar className="mr-2 h-4 w-4" />
             {selectedPeriod}
           </Button>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New KPA
-          </Button>
+          <KPASetupModal
+            trigger={
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New KPA
+              </Button>
+            }
+            onSave={handleKPASave}
+          />
         </div>
       </div>
 
@@ -197,7 +245,11 @@ const KPAManagement = () => {
                         <p className="font-semibold">{category.avgAchievement}%</p>
                         <p className="text-sm text-gray-500">Avg. Achievement</p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewCategory(category.category)}
+                      >
                         <Eye className="h-4 w-4 mr-1" />
                         View
                       </Button>
@@ -245,12 +297,22 @@ const KPAManagement = () => {
                         </td>
                         <td className="p-3 text-center">
                           <div className="flex justify-center space-x-2">
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleViewEmployee(employee.name)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                            <KPASetupModal
+                              trigger={
+                                <Button variant="outline" size="sm">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              }
+                              employeeName={employee.name}
+                              onSave={handleKPASave}
+                            />
                           </div>
                         </td>
                       </tr>
