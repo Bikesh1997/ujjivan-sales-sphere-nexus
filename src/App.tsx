@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,8 +17,14 @@ import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import CustomerAnalytics from "./pages/CustomerAnalytics";
 import RiskManagement from "./pages/RiskManagement";
 import PortfolioManagement from "./pages/PortfolioManagement";
-import NotFound from "./pages/NotFound";
 import KPAManagement from "./pages/KPAManagement";
+import TeamManagement from "./pages/TeamManagement";
+import LeadAllocation from "./pages/LeadAllocation";
+import TeamTasks from "./pages/TeamTasks";
+import TeamPerformance from "./pages/TeamPerformance";
+import TerritoryManagement from "./pages/TerritoryManagement";
+import Reports from "./pages/Reports";
+import NotFound from "./pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
@@ -122,53 +127,35 @@ const App = () => (
                       </RoleBasedRoute>
                     } />
                     
-                    {/* Placeholder routes for supervisor features */}
+                    {/* Supervisor feature pages - now with proper components */}
                     <Route path="/team-management" element={
                       <RoleBasedRoute featureId="team_management">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Team Management</h2>
-                          <p className="text-gray-600">Manage your team members and their assignments</p>
-                        </div>
+                        <TeamManagement />
                       </RoleBasedRoute>
                     } />
                     <Route path="/lead-allocation" element={
                       <RoleBasedRoute featureId="lead_allocation">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Lead Allocation</h2>
-                          <p className="text-gray-600">Assign and distribute leads to team members</p>
-                        </div>
+                        <LeadAllocation />
                       </RoleBasedRoute>
                     } />
                     <Route path="/team-tasks" element={
                       <RoleBasedRoute featureId="team_tasks">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Team Tasks</h2>
-                          <p className="text-gray-600">Monitor and manage team task progress</p>
-                        </div>
+                        <TeamTasks />
                       </RoleBasedRoute>
                     } />
                     <Route path="/team-performance" element={
                       <RoleBasedRoute featureId="team_performance">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Performance Analytics</h2>
-                          <p className="text-gray-600">Analyze team performance metrics</p>
-                        </div>
+                        <TeamPerformance />
                       </RoleBasedRoute>
                     } />
                     <Route path="/territory-management" element={
                       <RoleBasedRoute featureId="territory_management">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Territory Management</h2>
-                          <p className="text-gray-600">Manage sales territories and assignments</p>
-                        </div>
+                        <TerritoryManagement />
                       </RoleBasedRoute>
                     } />
                     <Route path="/reports" element={
                       <RoleBasedRoute featureId="reports">
-                        <div className="text-center py-20">
-                          <h2 className="text-2xl font-bold mb-4">Reports & Analytics</h2>
-                          <p className="text-gray-600">Generate comprehensive team reports</p>
-                        </div>
+                        <Reports />
                       </RoleBasedRoute>
                     } />
                     
