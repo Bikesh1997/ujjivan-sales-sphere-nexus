@@ -1,56 +1,120 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Eye,
+  Edit,
+  Phone,
+  MoreVertical,
+  Trash2
+} from 'lucide-react';
 import AddLeadModal from '@/components/leads/AddLeadModal';
-import LeadStatsCards from '@/components/leads/LeadStatsCards';
-import LeadFilters from '@/components/leads/LeadFilters';
-import LeadsTable from '@/components/leads/LeadsTable';
-import LeadsPagination from '@/components/leads/LeadsPagination';
-import { useLeadFilters } from '@/hooks/useLeadFilters';
+import LeadViewModal from '@/components/leads/LeadViewModal';
+import LeadEditModal from '@/components/leads/LeadEditModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import PermissionGate from '@/components/rbac/PermissionGate';
 
-const LEADS_PER_PAGE = 10;
-
 const LeadManagement = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useAuth();
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [viewingLead, setViewingLead] = useState<any>(null);
+  const [editingLead, setEditingLead] = useState<any>(null);
+  const [callingLead, setCallingLead] = useState<any>(null);
+  const [leadViewOpen, setLeadViewOpen] = useState(false);
+  const [leadEditOpen, setLeadEditOpen] = useState(false);
+  const [leadCallOpen, setLeadCallOpen] = useState(false);
 
-  // Filter leads based on user role - sales executives only see their assigned leads
-  const leads = user?.role === 'supervisor' 
-    ? allLeads 
-    : allLeads.filter(lead => lead.assignedToId === user?.id);
+  // Filter leads based on user role
+  const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
 
-  const {
-    searchTerm,
-    setSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    priorityFilter,
-    setPriorityFilter,
-    sourceFilter,
-    setSourceFilter,
-    showAdvancedFilters,
-    setShowAdvancedFilters,
-    filteredLeads,
-    hasActiveFilters,
-    clearAllFilters,
-    uniqueSources,
-  } = useLeadFilters(leads);
+  const filteredLeads = selectedStatus === 'all' ? userLeads : userLeads.filter(lead => lead.status === selectedStatus);
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredLeads.length / LEADS_PER_PAGE);
-  const startIndex = (currentPage - 1) * LEADS_PER_PAGE;
-  const paginatedLeads = filteredLeads.slice(startIndex, startIndex + LEADS_PER_PAGE);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleClearFilters = () => {
-    clearAllFilters();
-    setCurrentPage(1);
+  const LeadActionsMenu = ({ lead, onEdit, onView, onCall, canEdit }: { lead: any, onEdit: () => void, onView: () => void, onCall: () => void, canEdit: boolean }) => {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={onView}>
+            <Eye className="mr-2 h-4 w-4" />
+            View
+          </DropdownMenuItem>
+          {canEdit && (
+            <DropdownMenuItem onClick={onEdit}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={onCall}>
+            <Phone className="mr-2 h-4 w-4" />
+            Call
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <PermissionGate permission="lead_delete">
+            <DropdownMenuItem className="text-red-600 focus:text-red-600">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-full p-0 justify-start text-red-600 focus:text-red-600">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the lead from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuItem>
+          </PermissionGate>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   };
 
   return (
@@ -58,66 +122,110 @@ const LeadManagement = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {user?.role === 'supervisor' ? 'All Leads' : 'My Leads'}
-          </h1>
-          <p className="text-gray-600">
-            {user?.role === 'supervisor' 
-              ? `Manage and track all sales leads (${filteredLeads.length} of ${allLeads.length} total)` 
-              : `Manage and track your assigned leads (${filteredLeads.length} of ${leads.length} assigned)`
-            }
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
+          <p className="text-gray-600">Manage leads, track progress, and assign tasks</p>
         </div>
         <PermissionGate permission="lead_create">
           <AddLeadModal />
         </PermissionGate>
       </div>
 
-      {/* Stats Cards */}
-      <LeadStatsCards leads={leads} userRole={user?.role || ''} />
-
-      {/* Filters and Table */}
+      {/* Lead Table */}
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>
-              {user?.role === 'supervisor' ? 'All Leads' : 'My Assigned Leads'}
-            </CardTitle>
+            <CardTitle>Lead List</CardTitle>
+            <div className="flex space-x-2">
+              <div className="relative">
+                <Input
+                  placeholder="Search leads..."
+                  className="pl-10 w-64"
+                />
+              </div>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="qualified">Qualified</SelectItem>
+                  <SelectItem value="proposal">Proposal</SelectItem>
+                  <SelectItem value="negotiation">Negotiation</SelectItem>
+                  <SelectItem value="converted">Converted</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          
-          <LeadFilters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            priorityFilter={priorityFilter}
-            setPriorityFilter={setPriorityFilter}
-            sourceFilter={sourceFilter}
-            setSourceFilter={setSourceFilter}
-            showAdvancedFilters={showAdvancedFilters}
-            setShowAdvancedFilters={setShowAdvancedFilters}
-            hasActiveFilters={hasActiveFilters}
-            clearAllFilters={handleClearFilters}
-            uniqueSources={uniqueSources}
-            setCurrentPage={setCurrentPage}
-          />
         </CardHeader>
-        
         <CardContent>
-          <div className="space-y-4">
-            <LeadsTable leads={paginatedLeads} userRole={user?.role || ''} />
-
-            <LeadsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              startIndex={startIndex}
-              leadsPerPage={LEADS_PER_PAGE}
-              totalLeads={filteredLeads.length}
-              onPageChange={handlePageChange}
-            />
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Lead</TableHead>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Assigned To</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredLeads.map((lead) => (
+                  <TableRow key={lead.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Avatar>
+                          <AvatarImage src={`https://avatar.vercel.sh/${lead.contact}.png`} alt={lead.contact} />
+                          <AvatarFallback>{lead.contact.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span>{lead.contact}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{lead.name}</TableCell>
+                    <TableCell>{lead.status}</TableCell>
+                    <TableCell>{lead.value}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Avatar>
+                          <AvatarImage src={`https://avatar.vercel.sh/${lead.assignedTo}.png`} alt={lead.assignedTo} />
+                          <AvatarFallback>{lead.assignedTo?.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span>{lead.assignedTo}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <LeadActionsMenu 
+                        key={lead.id}
+                        lead={lead}
+                        onEdit={() => setEditingLead(lead)}
+                        onView={() => setViewingLead(lead)}
+                        onCall={() => setCallingLead(lead)}
+                        canEdit={user?.role === 'supervisor' || lead.assignedToId === user?.id}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <LeadViewModal
+        lead={viewingLead}
+        isOpen={leadViewOpen}
+        onOpenChange={setLeadViewOpen}
+      />
+
+      <LeadEditModal
+        lead={editingLead}
+        isOpen={leadEditOpen}
+        onOpenChange={setLeadEditOpen}
+      />
     </div>
   );
 };
