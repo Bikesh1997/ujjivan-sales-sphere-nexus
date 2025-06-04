@@ -1,9 +1,14 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { 
   MapPin, 
   Users, 
@@ -16,6 +21,10 @@ import {
 
 const TerritoryManagement = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTerritory, setSelectedTerritory] = useState(null);
+  const { toast } = useToast();
 
   const territories = [
     {
@@ -79,6 +88,53 @@ const TerritoryManagement = () => {
     avgPerformance: Math.round(territories.reduce((sum, t) => sum + t.performance, 0) / territories.length)
   };
 
+  const handleCreateTerritory = (formData: FormData) => {
+    const name = formData.get('name') as string;
+    const assignedTo = formData.get('assignedTo') as string;
+    const area = formData.get('area') as string;
+    const population = formData.get('population') as string;
+    const businesses = formData.get('businesses') as string;
+    const target = formData.get('target') as string;
+    const potential = formData.get('potential') as string;
+
+    console.log('Creating territory:', { name, assignedTo, area, population, businesses, target, potential });
+    
+    toast({
+      title: "Territory Created",
+      description: `${name} territory has been successfully created and assigned to ${assignedTo}.`,
+    });
+    
+    setIsCreateModalOpen(false);
+  };
+
+  const handleEditTerritory = (territory: any) => {
+    setSelectedTerritory(territory);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateTerritory = (formData: FormData) => {
+    const name = formData.get('name') as string;
+    
+    console.log('Updating territory:', selectedTerritory?.id);
+    
+    toast({
+      title: "Territory Updated",
+      description: `${name} territory has been successfully updated.`,
+    });
+    
+    setIsEditModalOpen(false);
+    setSelectedTerritory(null);
+  };
+
+  const handleAnalyzeTerritory = (territory: any) => {
+    console.log('Analyzing territory:', territory.name);
+    
+    toast({
+      title: "Territory Analysis",
+      description: `Generating detailed analysis for ${territory.name}. This may take a few moments.`,
+    });
+  };
+
   const getPotentialColor = (potential: string) => {
     switch (potential) {
       case 'Very High': return 'bg-green-100 text-green-800';
@@ -103,10 +159,72 @@ const TerritoryManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Territory Management</h1>
           <p className="text-gray-600">Manage sales territories and assignments</p>
         </div>
-        <Button className="bg-teal-600 hover:bg-teal-700">
-          <Plus size={16} className="mr-2" />
-          Create Territory
-        </Button>
+        
+        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-teal-600 hover:bg-teal-700">
+              <Plus size={16} className="mr-2" />
+              Create Territory
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Create New Territory</DialogTitle>
+            </DialogHeader>
+            <form action={handleCreateTerritory} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Territory Name</Label>
+                  <Input id="name" name="name" placeholder="Enter territory name" required />
+                </div>
+                <div>
+                  <Label htmlFor="assignedTo">Assigned To</Label>
+                  <Input id="assignedTo" name="assignedTo" placeholder="Sales representative name" required />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="area">Coverage Areas</Label>
+                <Textarea id="area" name="area" placeholder="List the areas covered by this territory" required />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="population">Population</Label>
+                  <Input id="population" name="population" type="number" placeholder="Total population" required />
+                </div>
+                <div>
+                  <Label htmlFor="businesses">Businesses</Label>
+                  <Input id="businesses" name="businesses" type="number" placeholder="Number of businesses" required />
+                </div>
+                <div>
+                  <Label htmlFor="target">Monthly Target (₹L)</Label>
+                  <Input id="target" name="target" type="number" placeholder="Monthly target" required />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="potential">Potential</Label>
+                <Select name="potential" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select potential level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Very High">Very High</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-700">
+                  Create Territory
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Territory Statistics */}
@@ -188,11 +306,11 @@ const TerritoryManagement = () => {
                         <p className="text-sm text-gray-600">Areas: {territory.area}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => handleEditTerritory(territory)}>
                           <Edit size={14} className="mr-1" />
                           Edit
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => handleAnalyzeTerritory(territory)}>
                           <BarChart3 size={14} className="mr-1" />
                           Analyze
                         </Button>
@@ -369,6 +487,102 @@ const TerritoryManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Territory Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Territory</DialogTitle>
+          </DialogHeader>
+          {selectedTerritory && (
+            <form action={handleUpdateTerritory} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-name">Territory Name</Label>
+                  <Input 
+                    id="edit-name" 
+                    name="name" 
+                    defaultValue={selectedTerritory.name} 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-assignedTo">Assigned To</Label>
+                  <Input 
+                    id="edit-assignedTo" 
+                    name="assignedTo" 
+                    defaultValue={selectedTerritory.assignedTo} 
+                    required 
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-area">Coverage Areas</Label>
+                <Textarea 
+                  id="edit-area" 
+                  name="area" 
+                  defaultValue={selectedTerritory.area} 
+                  required 
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="edit-population">Population</Label>
+                  <Input 
+                    id="edit-population" 
+                    name="population" 
+                    type="number" 
+                    defaultValue={selectedTerritory.population} 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-businesses">Businesses</Label>
+                  <Input 
+                    id="edit-businesses" 
+                    name="businesses" 
+                    type="number" 
+                    defaultValue={selectedTerritory.businesses} 
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-target">Monthly Target (₹L)</Label>
+                  <Input 
+                    id="edit-target" 
+                    name="target" 
+                    type="number" 
+                    defaultValue={selectedTerritory.monthlyTarget} 
+                    required 
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-potential">Potential</Label>
+                <Select name="potential" defaultValue={selectedTerritory.potential} required>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Very High">Very High</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-700">
+                  Update Territory
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
