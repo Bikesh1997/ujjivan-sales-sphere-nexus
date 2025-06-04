@@ -5,11 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Filter, Eye, Edit, Phone, Mail } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
+import AddLeadModal from '@/components/leads/AddLeadModal';
+import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
+import { useToast } from '@/hooks/use-toast';
 
 const LeadManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const { toast } = useToast();
 
   const leads = [
     {
@@ -93,6 +97,14 @@ const LeadManagement = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const handleMoreFilters = () => {
+    console.log('Opening more filters');
+    toast({
+      title: "More Filters",
+      description: "Advanced filtering options would be available here.",
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -101,10 +113,7 @@ const LeadManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
           <p className="text-gray-600">Manage and track your sales leads</p>
         </div>
-        <Button className="bg-teal-600 hover:bg-teal-700">
-          <Plus size={16} className="mr-2" />
-          Add New Lead
-        </Button>
+        <AddLeadModal />
       </div>
 
       {/* Stats Cards */}
@@ -171,7 +180,7 @@ const LeadManagement = () => {
                   <SelectItem value="lost">Lost</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleMoreFilters}>
                 <Filter size={16} className="mr-2" />
                 More Filters
               </Button>
@@ -223,20 +232,7 @@ const LeadManagement = () => {
                     <td className="py-3 px-4 text-sm text-gray-900">{lead.assignedTo}</td>
                     <td className="py-3 px-4 text-sm text-gray-600">{lead.lastContact}</td>
                     <td className="py-3 px-4">
-                      <div className="flex space-x-1">
-                        <Button size="sm" variant="ghost">
-                          <Eye size={14} />
-                        </Button>
-                        <Button size="sm" variant="ghost">
-                          <Edit size={14} />
-                        </Button>
-                        <Button size="sm" variant="ghost">
-                          <Phone size={14} />
-                        </Button>
-                        <Button size="sm" variant="ghost">
-                          <Mail size={14} />
-                        </Button>
-                      </div>
+                      <LeadActionsMenu lead={lead} />
                     </td>
                   </tr>
                 ))}

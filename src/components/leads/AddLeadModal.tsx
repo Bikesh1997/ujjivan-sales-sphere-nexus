@@ -1,0 +1,146 @@
+
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+const AddLeadModal = () => {
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactName: '',
+    phone: '',
+    email: '',
+    source: '',
+    value: '',
+    priority: 'Medium'
+  });
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Adding new lead:', formData);
+    toast({
+      title: "Lead Added",
+      description: `New lead "${formData.companyName}" has been created successfully.`,
+    });
+    setOpen(false);
+    setFormData({
+      companyName: '',
+      contactName: '',
+      phone: '',
+      email: '',
+      source: '',
+      value: '',
+      priority: 'Medium'
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="bg-teal-600 hover:bg-teal-700">
+          <Plus size={16} className="mr-2" />
+          Add New Lead
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add New Lead</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input
+              id="companyName"
+              value={formData.companyName}
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+              placeholder="Enter company name"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contactName">Contact Person</Label>
+            <Input
+              id="contactName"
+              value={formData.contactName}
+              onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+              placeholder="Enter contact person name"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="Enter phone number"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="Enter email address"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="source">Source</Label>
+            <Select onValueChange={(value) => setFormData({ ...formData, source: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select source" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Website">Website</SelectItem>
+                <SelectItem value="Referral">Referral</SelectItem>
+                <SelectItem value="Cold Call">Cold Call</SelectItem>
+                <SelectItem value="Trade Show">Trade Show</SelectItem>
+                <SelectItem value="Social Media">Social Media</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="value">Estimated Value</Label>
+            <Input
+              id="value"
+              value={formData.value}
+              onChange={(e) => setFormData({ ...formData, value: e.target.value })}
+              placeholder="e.g., ₹10L"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="priority">Priority</Label>
+            <Select onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit">Add Lead</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default AddLeadModal;

@@ -23,23 +23,28 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ProtectedRoute>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/funnel" element={<SalesFunnel />} />
-                <Route path="/leads" element={<LeadManagement />} />
-                <Route path="/tasks" element={<TaskManagement />} />
-                <Route path="/customers" element={<Customer360 />} />
-                <Route path="/portfolio" element={<Dashboard />} />
-                <Route path="/beat-plan" element={<Dashboard />} />
-                <Route path="/calendar" element={<Dashboard />} />
-                <Route path="/communications" element={<Dashboard />} />
-                <Route path="/reports" element={<Dashboard />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-          </ProtectedRoute>
+          <Routes>
+            <Route path="/login" element={<div>Login Page</div>} />
+            <Route path="/*" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/funnel" element={<SalesFunnel />} />
+                    <Route path="/leads" element={<LeadManagement />} />
+                    <Route path="/tasks" element={<TaskManagement />} />
+                    <Route path="/customers" element={<Customer360 />} />
+                    <Route path="/portfolio" element={<Dashboard />} />
+                    <Route path="/beat-plan" element={<Dashboard />} />
+                    <Route path="/calendar" element={<Dashboard />} />
+                    <Route path="/communications" element={<Dashboard />} />
+                    <Route path="/reports" element={<Dashboard />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Layout>
+              </ProtectedRoute>
+            } />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
