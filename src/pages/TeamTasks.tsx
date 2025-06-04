@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,18 +5,38 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
 import { 
   CheckCircle, 
   Clock, 
   AlertTriangle, 
   Plus,
-  Calendar,
+  Calendar as CalendarIcon,
   Target,
   Users
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const TeamTasks = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAssignTaskModalOpen, setIsAssignTaskModalOpen] = useState(false);
+  const [isCalendarViewOpen, setIsCalendarViewOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const { toast } = useToast();
+
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    assignedTo: '',
+    priority: 'Medium',
+    dueDate: '',
+    category: 'Campaign'
+  });
 
   const teamTasks = [
     {
@@ -124,6 +143,47 @@ const TeamTasks = () => {
     overdue: teamTasks.filter(t => t.status === 'Overdue').length
   };
 
+  const handleAssignTask = () => {
+    setIsAssignTaskModalOpen(true);
+  };
+
+  const handleOpenCalendarView = () => {
+    setIsCalendarViewOpen(true);
+  };
+
+  const handleSubmitTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTask.title || !newTask.assignedTo || !newTask.dueDate) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Task Assigned!",
+      description: `"${newTask.title}" has been assigned to ${newTask.assignedTo}.`,
+    });
+
+    // Reset form
+    setNewTask({
+      title: '',
+      description: '',
+      assignedTo: '',
+      priority: 'Medium',
+      dueDate: '',
+      category: 'Campaign'
+    });
+    setIsAssignTaskModalOpen(false);
+  };
+
+  const getTasksForDate = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    return teamTasks.filter(task => task.dueDate === dateString);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -131,7 +191,7 @@ const TeamTasks = () => {
           <h1 className="text-2xl font-bold text-gray-900">Team Tasks</h1>
           <p className="text-gray-600">Monitor and manage team task progress</p>
         </div>
-        <Button className="bg-teal-600 hover:bg-teal-700">
+        <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAssignTask}>
           <Plus size={16} className="mr-2" />
           Assign New Task
         </Button>
@@ -295,21 +355,177 @@ const TeamTasks = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+                <CalendarIcon className="h-5 w-5" />
                 Task Calendar View
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">
-                <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+                <CalendarIcon size={48} className="mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Calendar Integration</h3>
                 <p className="text-gray-600 mb-4">View tasks in calendar format with due dates and milestones</p>
-                <Button>Open Calendar View</Button>
+                <Button onClick={handleOpenCalendarView}>Open Calendar View</Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Assign New Task Modal */}
+      <Dialog open={isAssignTaskModalOpen} onOpenChange={setIsAssignTaskModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Assign New Task</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmitTask} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Task Title *</Label>
+              <Input
+                id="title"
+                value={newTask.title}
+                onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="Enter task title"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={newTask.description}
+                onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Enter task description"
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="assignedTo">Assign To *</Label>
+                <Select value={newTask.assignedTo} onValueChange={(value) => 
+                  setNewTask(prev => ({ ...prev, assignedTo: value }))
+                }>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select team member" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teamMembers.map(member => (
+                      <SelectItem key={member.id} value={member.name}>{member.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="priority">Priority</Label>
+                <Select value={newTask.priority} onValueChange={(value) => 
+                  setNewTask(prev => ({ ...prev, priority: value }))
+                }>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Low">Low</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dueDate">Due Date *</Label>
+                <Input
+                  id="dueDate"
+                  type="date"
+                  value={newTask.dueDate}
+                  onChange={(e) => setNewTask(prev => ({ ...prev, dueDate: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select value={newTask.category} onValueChange={(value) => 
+                  setNewTask(prev => ({ ...prev, category: value }))
+                }>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Campaign">Campaign</SelectItem>
+                    <SelectItem value="Research">Research</SelectItem>
+                    <SelectItem value="Analysis">Analysis</SelectItem>
+                    <SelectItem value="Training">Training</SelectItem>
+                    <SelectItem value="Review">Review</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex space-x-2 pt-4">
+              <Button type="submit" className="bg-teal-600 hover:bg-teal-700">
+                Assign Task
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setIsAssignTaskModalOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Calendar View Modal */}
+      <Dialog open={isCalendarViewOpen} onOpenChange={setIsCalendarViewOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              Task Calendar View
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border pointer-events-auto"
+              />
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="font-medium">
+                Tasks for {selectedDate?.toLocaleDateString() || 'Selected Date'}
+              </h3>
+              
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {selectedDate ? getTasksForDate(selectedDate).map((task) => (
+                  <div key={task.id} className="border rounded-lg p-3">
+                    <div className="flex items-center space-x-2 mb-2">
+                      {getStatusIcon(task.status)}
+                      <h4 className="font-medium text-sm">{task.title}</h4>
+                      <Badge className={getPriorityColor(task.priority)} size="sm">
+                        {task.priority}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-1">{task.description}</p>
+                    <p className="text-xs text-gray-500">Assigned to: {task.assignedTo}</p>
+                  </div>
+                )) : null}
+                
+                {selectedDate && getTasksForDate(selectedDate).length === 0 && (
+                  <p className="text-gray-500 text-sm">No tasks scheduled for this date.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
