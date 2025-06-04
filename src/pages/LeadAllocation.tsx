@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,9 @@ import {
   Target,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  RotateCcw,
+  Filter
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { allLeads } from '@/data/leadsData';
@@ -19,6 +20,7 @@ import { allLeads } from '@/data/leadsData';
 const LeadAllocation = () => {
   const { toast } = useToast();
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [assignmentHistory, setAssignmentHistory] = useState<Array<{id: string, leadName: string, memberName: string, timestamp: string}>>([]);
 
   const teamMembers = [
     { 
@@ -65,6 +67,22 @@ const LeadAllocation = () => {
     );
   };
 
+  const handleSelectAll = () => {
+    if (selectedLeads.length === unassignedLeads.length) {
+      setSelectedLeads([]);
+      toast({
+        title: "Selection Cleared",
+        description: "All leads have been deselected",
+      });
+    } else {
+      setSelectedLeads(unassignedLeads.map(lead => lead.id));
+      toast({
+        title: "All Leads Selected",
+        description: `${unassignedLeads.length} leads selected for assignment`,
+      });
+    }
+  };
+
   const handleBulkAssign = (memberId: string) => {
     if (selectedLeads.length === 0) {
       toast({
@@ -76,17 +94,101 @@ const LeadAllocation = () => {
     }
 
     const member = teamMembers.find(m => m.id === memberId);
+    if (!member) return;
+
+    if (member.currentLeads >= member.capacity) {
+      toast({
+        title: "Capacity Exceeded",
+        description: `${member.name} has reached maximum capacity`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create assignment history entries
+    const newAssignments = selectedLeads.map(leadId => {
+      const lead = unassignedLeads.find(l => l.id === leadId);
+      return {
+        id: Date.now() + Math.random().toString(),
+        leadName: lead?.name || 'Unknown Lead',
+        memberName: member.name,
+        timestamp: new Date().toLocaleString()
+      };
+    });
+
+    setAssignmentHistory(prev => [...newAssignments, ...prev].slice(0, 10));
+    
     toast({
-      title: "Leads Assigned",
-      description: `${selectedLeads.length} leads assigned to ${member?.name}`,
+      title: "Leads Assigned Successfully",
+      description: `${selectedLeads.length} leads assigned to ${member.name}`,
     });
     setSelectedLeads([]);
   };
 
   const handleAutoAssign = () => {
+    if (unassignedLeads.length === 0) {
+      toast({
+        title: "No Unassigned Leads",
+        description: "All leads have been assigned",
+      });
+      return;
+    }
+
+    // Simulate auto-assignment logic
+    const availableMembers = teamMembers.filter(m => m.currentLeads < m.capacity);
+    
+    if (availableMembers.length === 0) {
+      toast({
+        title: "No Available Capacity",
+        description: "All team members are at capacity",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Auto-assignment Started",
       description: `${unassignedLeads.length} leads are being auto-assigned based on capacity and performance`,
+    });
+
+    // Simulate assignment process
+    setTimeout(() => {
+      const assignments = unassignedLeads.map(lead => ({
+        id: Date.now() + Math.random().toString(),
+        leadName: lead.name,
+        memberName: availableMembers[Math.floor(Math.random() * availableMembers.length)].name,
+        timestamp: new Date().toLocaleString()
+      }));
+
+      setAssignmentHistory(prev => [...assignments, ...prev].slice(0, 10));
+      
+      toast({
+        title: "Auto-assignment Complete",
+        description: `${unassignedLeads.length} leads have been successfully auto-assigned`,
+      });
+    }, 2000);
+  };
+
+  const handleManualAssignment = () => {
+    toast({
+      title: "Manual Assignment Mode",
+      description: "Select leads and assign them to specific team members using the assignment panel",
+    });
+  };
+
+  const handleResetAssignments = () => {
+    setSelectedLeads([]);
+    setAssignmentHistory([]);
+    toast({
+      title: "Assignments Reset",
+      description: "All selections and assignment history have been cleared",
+    });
+  };
+
+  const handleFilterLeads = () => {
+    toast({
+      title: "Filter Options",
+      description: "Opening lead filtering options by priority, source, and value",
     });
   };
 
@@ -116,13 +218,24 @@ const LeadAllocation = () => {
         <div className="flex space-x-3">
           <Button 
             variant="outline" 
+            onClick={handleFilterLeads}
+            className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+          >
+            <Filter size={16} className="mr-2" />
+            Filter Leads
+          </Button>
+          <Button 
+            variant="outline" 
             onClick={handleAutoAssign}
             className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
           >
             <Target size={16} className="mr-2" />
             Auto-Assign All
           </Button>
-          <Button className="bg-teal-600 hover:bg-teal-700">
+          <Button 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={handleManualAssignment}
+          >
             <UserPlus size={16} className="mr-2" />
             Manual Assignment
           </Button>
@@ -178,9 +291,26 @@ const LeadAllocation = () => {
                 <AlertCircle className="h-5 w-5 text-orange-600" />
                 Unassigned Leads ({unassignedLeads.length})
               </CardTitle>
-              {selectedLeads.length > 0 && (
-                <Badge variant="secondary">{selectedLeads.length} selected</Badge>
-              )}
+              <div className="flex items-center space-x-2">
+                {selectedLeads.length > 0 && (
+                  <Badge variant="secondary">{selectedLeads.length} selected</Badge>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleSelectAll}
+                >
+                  {selectedLeads.length === unassignedLeads.length ? 'Deselect All' : 'Select All'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleResetAssignments}
+                >
+                  <RotateCcw size={14} className="mr-1" />
+                  Reset
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -240,7 +370,7 @@ const LeadAllocation = () => {
                         <div>
                           <p className="font-medium text-sm">{member.name}</p>
                           <p className="text-xs text-gray-500">
-                            {member.currentLeads}/{member.capacity} capacity
+                            {member.currentLeads}/{member.capacity} capacity • {member.performance}% performance
                           </p>
                         </div>
                       </div>
@@ -248,6 +378,7 @@ const LeadAllocation = () => {
                         size="sm" 
                         onClick={() => handleBulkAssign(member.id)}
                         disabled={member.currentLeads >= member.capacity}
+                        className={member.currentLeads >= member.capacity ? 'opacity-50' : ''}
                       >
                         Assign
                       </Button>
@@ -260,6 +391,24 @@ const LeadAllocation = () => {
                 <Users size={48} className="mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Select Leads to Assign</h3>
                 <p className="text-gray-600">Choose leads from the list to assign them to team members</p>
+              </div>
+            )}
+
+            {/* Recent Assignment History */}
+            {assignmentHistory.length > 0 && (
+              <div className="border-t pt-4">
+                <h4 className="font-medium mb-3">Recent Assignments</h4>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {assignmentHistory.slice(0, 5).map((assignment) => (
+                    <div key={assignment.id} className="text-xs bg-gray-50 p-2 rounded">
+                      <div className="flex justify-between">
+                        <span className="font-medium">{assignment.leadName}</span>
+                        <span className="text-gray-500">{assignment.timestamp}</span>
+                      </div>
+                      <div className="text-gray-600">→ {assignment.memberName}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
