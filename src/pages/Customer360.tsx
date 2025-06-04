@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,9 +21,16 @@ import {
   Bell,
   Target
 } from 'lucide-react';
+import SetAlertModal from '@/components/alerts/SetAlertModal';
+import CallCustomerModal from '@/components/customers/CallCustomerModal';
+import CreateOfferModal from '@/components/customers/CreateOfferModal';
 
 const Customer360 = () => {
   const [selectedCustomer, setSelectedCustomer] = useState('priya-sharma');
+  const [setAlertModalOpen, setSetAlertModalOpen] = useState(false);
+  const [callCustomerModalOpen, setCallCustomerModalOpen] = useState(false);
+  const [createOfferModalOpen, setCreateOfferModalOpen] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState<string>('');
 
   const customerData = {
     'priya-sharma': {
@@ -83,6 +89,11 @@ const Customer360 = () => {
     }
   };
 
+  const handleCreateOffer = (productSuggestion?: string) => {
+    setSelectedOpportunity(productSuggestion || '');
+    setCreateOfferModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -92,11 +103,19 @@ const Customer360 = () => {
           <p className="text-gray-600">Comprehensive customer relationship overview</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setSetAlertModalOpen(true)}
+          >
             <Bell size={16} className="mr-2" />
             Set Alert
           </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+          <Button 
+            size="sm" 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setCallCustomerModalOpen(true)}
+          >
             <Phone size={16} className="mr-2" />
             Call Customer
           </Button>
@@ -303,7 +322,11 @@ const Customer360 = () => {
                           <Badge className={getPriorityColor(opportunity.priority)}>
                             {opportunity.priority}
                           </Badge>
-                          <Button size="sm" className="mt-2 ml-2 bg-teal-600 hover:bg-teal-700">
+                          <Button 
+                            size="sm" 
+                            className="mt-2 ml-2 bg-teal-600 hover:bg-teal-700"
+                            onClick={() => handleCreateOffer(opportunity.product)}
+                          >
                             Create Offer
                           </Button>
                         </div>
@@ -319,7 +342,10 @@ const Customer360 = () => {
               <div className="text-center py-8">
                 <FileText size={48} className="mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-500">No active offers for this customer</p>
-                <Button className="mt-4 bg-teal-600 hover:bg-teal-700">
+                <Button 
+                  className="mt-4 bg-teal-600 hover:bg-teal-700"
+                  onClick={() => handleCreateOffer()}
+                >
                   Create New Offer
                 </Button>
               </div>
@@ -327,6 +353,31 @@ const Customer360 = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <SetAlertModal
+        customerName={customer.name}
+        isOpen={setAlertModalOpen}
+        onOpenChange={setSetAlertModalOpen}
+      />
+      
+      <CallCustomerModal
+        customer={{
+          name: customer.name,
+          phone: customer.phone,
+          lastInteraction: customer.lastInteraction,
+          relationshipValue: customer.relationshipValue
+        }}
+        isOpen={callCustomerModalOpen}
+        onOpenChange={setCallCustomerModalOpen}
+      />
+      
+      <CreateOfferModal
+        customerName={customer.name}
+        productSuggestion={selectedOpportunity}
+        isOpen={createOfferModalOpen}
+        onOpenChange={setCreateOfferModalOpen}
+      />
     </div>
   );
 };

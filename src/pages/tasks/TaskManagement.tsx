@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,44 +71,46 @@ const TaskManagement = () => {
     }
   ]);
 
-  const [campaigns, setCampaigns] = useState([
+  const campaignsData = [
     {
-      id: '1',
-      name: 'FD Renewal Campaign - Q2',
-      type: 'SMS + Call',
-      target: 'Senior Citizens',
-      status: 'active',
-      startDate: '2024-06-01',
-      endDate: '2024-06-30',
+      id: 'camp-001',
+      name: 'Summer Home Loan Drive',
+      type: 'Product Campaign',
+      target: '50 Applications',
+      status: 'active' as const,
+      startDate: '01 Jun 2024',
+      endDate: '31 Aug 2024',
       progress: 65,
-      leads: 234,
-      conversions: 12
+      leads: 127,
+      conversions: 23
     },
     {
-      id: '2',
-      name: 'Home Loan Promotion',
-      type: 'Visit + Email',
-      target: 'Young Professionals',
-      status: 'planned',
-      startDate: '2024-06-15',
-      endDate: '2024-07-15',
+      id: 'camp-002', 
+      name: 'Credit Card Acquisition',
+      type: 'Customer Acquisition',
+      target: '100 Cards',
+      status: 'planned' as const,
+      startDate: '15 Jul 2024',
+      endDate: '15 Oct 2024',
       progress: 0,
       leads: 0,
       conversions: 0
     },
     {
-      id: '3',
-      name: 'Credit Card Upsell',
-      type: 'WhatsApp + Call',
-      target: 'Existing Customers',
-      status: 'completed',
-      startDate: '2024-05-01',
-      endDate: '2024-05-31',
+      id: 'camp-003',
+      name: 'Insurance Cross-sell',
+      type: 'Cross-sell Campaign',
+      target: '₹2Cr Premium',
+      status: 'completed' as const,
+      startDate: '01 Mar 2024',
+      endDate: '31 May 2024',
       progress: 100,
-      leads: 189,
-      conversions: 23
+      leads: 89,
+      conversions: 34
     }
-  ]);
+  ];
+
+  const [campaigns, setCampaigns] = useState(campaignsData);
 
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
