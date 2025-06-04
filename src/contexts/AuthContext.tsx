@@ -26,6 +26,14 @@ const MOCK_USERS: User[] = [
     name: 'Priya Manager',
     role: 'supervisor',
     branch: 'Mumbai Central'
+  },
+  {
+    id: '3',
+    email: 'sales2@bank.com',
+    name: 'Anjali Patel',
+    role: 'sales_executive',
+    department: 'outbound',
+    branch: 'Mumbai Central'
   }
 ];
 

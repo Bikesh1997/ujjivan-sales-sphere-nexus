@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
+import PermissionGate from '@/components/rbac/PermissionGate';
 
 const LeadManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +19,7 @@ const LeadManagement = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Filter leads based on user role
+  // Filter leads based on user role - sales executives only see their assigned leads
   const leads = user?.role === 'supervisor' 
     ? allLeads 
     : allLeads.filter(lead => lead.assignedToId === user?.id);
@@ -80,7 +82,9 @@ const LeadManagement = () => {
             }
           </p>
         </div>
-        {user?.role === 'supervisor' && <AddLeadModal />}
+        <PermissionGate permission="lead_create">
+          <AddLeadModal />
+        </PermissionGate>
       </div>
 
       {/* Stats Cards */}
@@ -119,7 +123,9 @@ const LeadManagement = () => {
           <CardContent className="p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-teal-600">₹{convertedValue}L</div>
-              <div className="text-sm text-gray-600">Total Sales</div>
+              <div className="text-sm text-gray-600">
+                {user?.role === 'supervisor' ? 'Total Sales' : 'My Sales'}
+              </div>
             </div>
           </CardContent>
         </Card>

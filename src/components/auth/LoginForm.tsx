@@ -33,6 +33,11 @@ const LoginForm = () => {
     setPassword('password123');
   };
 
+  const fillSales2Credentials = () => {
+    setEmail('sales2@bank.com');
+    setPassword('password123');
+  };
+
   const fillSupervisorCredentials = () => {
     setEmail('supervisor@bank.com');
     setPassword('password123');
@@ -104,7 +109,14 @@ const LoginForm = () => {
                 onClick={fillSalesCredentials}
                 className="w-full"
               >
-                Sales Executive Demo
+                Sales Executive Demo (Rahul)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={fillSales2Credentials}
+                className="w-full"
+              >
+                Sales Executive Demo (Anjali)
               </Button>
               <Button 
                 variant="outline" 

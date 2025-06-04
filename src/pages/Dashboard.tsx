@@ -14,27 +14,12 @@ import TodaysPlan from '@/components/dashboard/TodaysPlan';
 import SmartNudges from '@/components/dashboard/SmartNudges';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
+import PermissionGate from '@/components/rbac/PermissionGate';
 
 const Dashboard = () => {
   const { user } = useAuth();
   
-  const salesData = [
-    { month: 'Jan', target: 250, achieved: 285 },
-    { month: 'Feb', target: 280, achieved: 310 },
-    { month: 'Mar', target: 300, achieved: 295 },
-    { month: 'Apr', target: 320, achieved: 340 },
-    { month: 'May', target: 350, achieved: 368 },
-    { month: 'Jun', target: 380, achieved: 425 },
-  ];
-
-  const pipelineData = [
-    { name: 'Leads', value: 185, color: '#06b6d4' },
-    { name: 'Prospects', value: 128, color: '#14b8a6' },
-    { name: 'Qualified', value: 85, color: '#f59e0b' },
-    { name: 'Converted', value: 62, color: '#10b981' },
-  ];
-
-  // Calculate user-specific metrics
+  // Calculate user-specific or team data based on role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
   const convertedLeads = userLeads.filter(lead => lead.status === 'converted');
   const convertedValue = convertedLeads.reduce((sum, lead) => {
@@ -42,16 +27,41 @@ const Dashboard = () => {
     return sum + value;
   }, 0);
 
-  const totalValue = userLeads.reduce((sum, lead) => {
-    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
-    return sum + value;
-  }, 0);
+  // Sales data - filtered by role
+  const salesData = user?.role === 'supervisor' ? [
+    { month: 'Jan', target: 250, achieved: 285 },
+    { month: 'Feb', target: 280, achieved: 310 },
+    { month: 'Mar', target: 300, achieved: 295 },
+    { month: 'Apr', target: 320, achieved: 340 },
+    { month: 'May', target: 350, achieved: 368 },
+    { month: 'Jun', target: 380, achieved: 425 },
+  ] : [
+    { month: 'Jan', target: 50, achieved: 45 },
+    { month: 'Feb', target: 55, achieved: 62 },
+    { month: 'Mar', target: 60, achieved: 58 },
+    { month: 'Apr', target: 65, achieved: 71 },
+    { month: 'May', target: 70, achieved: 75 },
+    { month: 'Jun', target: 75, achieved: 82 },
+  ];
 
-  const kpis = [
+  // Pipeline data - filtered by role
+  const pipelineData = user?.role === 'supervisor' ? [
+    { name: 'Leads', value: 185, color: '#06b6d4' },
+    { name: 'Prospects', value: 128, color: '#14b8a6' },
+    { name: 'Qualified', value: 85, color: '#f59e0b' },
+    { name: 'Converted', value: 62, color: '#10b981' },
+  ] : [
+    { name: 'Leads', value: userLeads.filter(l => l.status === 'new').length, color: '#06b6d4' },
+    { name: 'Prospects', value: userLeads.filter(l => l.status === 'qualified').length, color: '#14b8a6' },
+    { name: 'Qualified', value: userLeads.filter(l => l.status === 'proposal').length, color: '#f59e0b' },
+    { name: 'Converted', value: convertedLeads.length, color: '#10b981' },
+  ];
+
+  const kpis = user?.role === 'supervisor' ? [
     { 
-      title: 'Monthly Target', 
+      title: 'Team Target', 
       value: '₹380L', 
-      subtitle: 'Target vs Achievement', 
+      subtitle: 'Monthly team target', 
       trend: { value: '12% above', isPositive: true }, 
       icon: <Target size={20} /> 
     },
@@ -63,17 +73,46 @@ const Dashboard = () => {
       icon: <Users size={20} /> 
     },
     { 
-      title: 'Conversion Rate', 
+      title: 'Team Conversion Rate', 
       value: '24.5%', 
-      subtitle: 'Lead to customer', 
+      subtitle: 'Team average', 
       trend: { value: '5% up', isPositive: true }, 
       icon: <TrendingUp size={20} /> 
     },
     { 
-      title: 'Revenue Generated', 
-      value: `₹${convertedValue}L`, 
+      title: 'Team Revenue', 
+      value: '₹425L', 
       subtitle: 'This month', 
       trend: { value: '22% above target', isPositive: true }, 
+      icon: <IndianRupee size={20} /> 
+    },
+  ] : [
+    { 
+      title: 'My Target', 
+      value: '₹75L', 
+      subtitle: 'Personal monthly target', 
+      trend: { value: '9% above', isPositive: true }, 
+      icon: <Target size={20} /> 
+    },
+    { 
+      title: 'My Leads', 
+      value: userLeads.length.toString(), 
+      subtitle: 'Assigned leads', 
+      trend: { value: '3 new this week', isPositive: true }, 
+      icon: <Users size={20} /> 
+    },
+    { 
+      title: 'My Conversion Rate', 
+      value: userLeads.length > 0 ? `${Math.round((convertedLeads.length / userLeads.length) * 100)}%` : '0%', 
+      subtitle: 'Personal conversion', 
+      trend: { value: '2% up', isPositive: true }, 
+      icon: <TrendingUp size={20} /> 
+    },
+    { 
+      title: 'My Revenue', 
+      value: `₹${convertedValue}L`, 
+      subtitle: 'Personal achievement', 
+      trend: { value: '15% above target', isPositive: true }, 
       icon: <IndianRupee size={20} /> 
     },
   ];
@@ -83,8 +122,15 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {user?.name}! Here's your performance overview.</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.role === 'supervisor' ? 'Team Dashboard' : 'My Sales Dashboard'}
+          </h1>
+          <p className="text-gray-600">
+            {user?.role === 'supervisor' 
+              ? `Welcome back, ${user?.name}! Here's your team's performance overview.`
+              : `Welcome back, ${user?.name}! Here's your personal performance overview.`
+            }
+          </p>
         </div>
         <div className="flex space-x-3">
           <TodaysPlan />
@@ -111,7 +157,9 @@ const Dashboard = () => {
         {/* Sales Performance */}
         <Card>
           <CardHeader>
-            <CardTitle>Sales Performance (₹L)</CardTitle>
+            <CardTitle>
+              {user?.role === 'supervisor' ? 'Team Sales Performance (₹L)' : 'My Sales Performance (₹L)'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -130,7 +178,9 @@ const Dashboard = () => {
         {/* Sales Pipeline */}
         <Card>
           <CardHeader>
-            <CardTitle>Sales Pipeline</CardTitle>
+            <CardTitle>
+              {user?.role === 'supervisor' ? 'Team Sales Pipeline' : 'My Sales Pipeline'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
