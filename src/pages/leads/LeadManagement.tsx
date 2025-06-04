@@ -1,16 +1,9 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { DateRange } from "react-day-picker";
-import { format } from 'date-fns';
-import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Users, 
   TrendingUp, 
@@ -21,7 +14,6 @@ import {
   Eye,
   Edit,
   Download,
-  CalendarIcon,
   ChevronsUpDown
 } from 'lucide-react';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
@@ -38,11 +30,8 @@ const LeadManagement = () => {
   const [filters, setFilters] = useState({
     status: 'all',
     assignee: 'all',
-    priority: 'all',
-    dateRange: 'all',
-    showAdvancedFilters: false
+    priority: 'all'
   });
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
@@ -137,7 +126,7 @@ const LeadManagement = () => {
         <CardHeader>
           <CardTitle>Filters</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <CardContent className="grid gap-4 md:grid-cols-3">
           <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
             <SelectTrigger>
               <SelectValue placeholder="Select Status" />
@@ -176,39 +165,6 @@ const LeadManagement = () => {
               <SelectItem value="low">Low</SelectItem>
             </SelectContent>
           </Select>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[280px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    `${format(date.from, "LLL dd, y")} - ${format(date.to, "LLL dd, y")}`
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="center" side="bottom">
-              <Calendar
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
-                pagedNavigation
-              />
-            </PopoverContent>
-          </Popover>
         </CardContent>
       </Card>
 
