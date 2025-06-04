@@ -26,6 +26,7 @@ interface LeadActionsMenuProps {
 const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [callModalOpen, setCallModalOpen] = useState(false);
   const { toast } = useToast();
 
   const handleView = () => {
@@ -44,11 +45,7 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
 
   const handleCall = () => {
     console.log('Calling lead:', lead.phone);
-    toast({
-      title: "Initiating Call",
-      description: `Calling ${lead.contact} at ${lead.phone}`,
-    });
-    // In a real app, this would integrate with a calling system
+    setCallModalOpen(true);
   };
 
   const handleEmail = () => {
@@ -58,6 +55,17 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
       description: `Opening email composer for ${lead.email}`,
     });
     // In a real app, this would open email client or internal email system
+    window.open(`mailto:${lead.email}?subject=Follow-up for ${lead.name}`);
+  };
+
+  const makeCall = () => {
+    toast({
+      title: "Call Initiated",
+      description: `Calling ${lead.contact} at ${lead.phone}`,
+    });
+    // In a real app, this would integrate with a calling system
+    window.open(`tel:${lead.phone}`);
+    setCallModalOpen(false);
   };
 
   return (
@@ -69,8 +77,15 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
         <Button size="sm" variant="ghost" onClick={handleEdit}>
           <Edit size={14} />
         </Button>
-        <Button size="sm" variant="ghost" onClick={handleCall}>
-          <Phone size={14} />
+        {/* Enhanced Call Button with highlighting */}
+        <Button 
+          size="sm" 
+          variant="default" 
+          onClick={handleCall}
+          className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+        >
+          <Phone size={14} className="mr-1" />
+          Call
         </Button>
         <Button size="sm" variant="ghost" onClick={handleEmail}>
           <Mail size={14} />
@@ -133,6 +148,52 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
             <Button className="mt-4" onClick={() => setEditModalOpen(false)}>
               Close
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Call Modal */}
+      <Dialog open={callModalOpen} onOpenChange={setCallModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-green-700">📞 Make a Call</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Phone size={32} className="text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{lead.contact}</h3>
+              <p className="text-gray-600">{lead.name}</p>
+              <p className="text-xl font-mono text-green-700 mt-2">{lead.phone}</p>
+            </div>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h4 className="font-medium text-yellow-800 mb-2">Call Notes:</h4>
+              <ul className="text-sm text-yellow-700 space-y-1">
+                <li>• Lead Status: {lead.status}</li>
+                <li>• Priority: {lead.priority}</li>
+                <li>• Last Contact: {lead.lastContact}</li>
+                <li>• Estimated Value: {lead.value}</li>
+              </ul>
+            </div>
+
+            <div className="flex space-x-3">
+              <Button 
+                onClick={makeCall}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
+              >
+                <Phone size={16} className="mr-2" />
+                Start Call
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setCallModalOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

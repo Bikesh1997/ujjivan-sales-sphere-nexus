@@ -9,13 +9,16 @@ import { Search, Filter } from 'lucide-react';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LeadManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const leads = [
+  // All leads with assigned person info
+  const allLeads = [
     {
       id: '1',
       name: 'Rajesh Enterprises',
@@ -26,6 +29,7 @@ const LeadManagement = () => {
       source: 'Website',
       value: '₹12L',
       assignedTo: 'Rahul Sharma',
+      assignedToId: '1',
       lastContact: '2 hours ago',
       priority: 'High'
     },
@@ -38,7 +42,8 @@ const LeadManagement = () => {
       status: 'qualified',
       source: 'Referral',
       value: '₹8.5L',
-      assignedTo: 'Amit Kumar',
+      assignedTo: 'Rahul Sharma',
+      assignedToId: '1',
       lastContact: '1 day ago',
       priority: 'Medium'
     },
@@ -51,7 +56,8 @@ const LeadManagement = () => {
       status: 'converted',
       source: 'Cold Call',
       value: '₹15L',
-      assignedTo: 'Rahul Sharma',
+      assignedTo: 'Other Sales Rep',
+      assignedToId: '3',
       lastContact: '3 days ago',
       priority: 'High'
     },
@@ -64,11 +70,17 @@ const LeadManagement = () => {
       status: 'proposal',
       source: 'Trade Show',
       value: '₹20L',
-      assignedTo: 'Amit Kumar',
+      assignedTo: 'Rahul Sharma',
+      assignedToId: '1',
       lastContact: '5 hours ago',
       priority: 'High'
     }
   ];
+
+  // Filter leads based on user role
+  const leads = user?.role === 'supervisor' 
+    ? allLeads 
+    : allLeads.filter(lead => lead.assignedToId === user?.id);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -105,15 +117,35 @@ const LeadManagement = () => {
     });
   };
 
+  // Calculate sales stats for current user
+  const userLeads = user?.role === 'supervisor' ? allLeads : leads;
+  const totalValue = userLeads.reduce((sum, lead) => {
+    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
+    return sum + value;
+  }, 0);
+
+  const convertedLeads = userLeads.filter(lead => lead.status === 'converted');
+  const convertedValue = convertedLeads.reduce((sum, lead) => {
+    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
+    return sum + value;
+  }, 0);
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
-          <p className="text-gray-600">Manage and track your sales leads</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.role === 'supervisor' ? 'All Leads' : 'My Leads'}
+          </h1>
+          <p className="text-gray-600">
+            {user?.role === 'supervisor' 
+              ? 'Manage and track all sales leads' 
+              : 'Manage and track your assigned leads'
+            }
+          </p>
         </div>
-        <AddLeadModal />
+        {user?.role === 'supervisor' && <AddLeadModal />}
       </div>
 
       {/* Stats Cards */}
@@ -121,7 +153,9 @@ const LeadManagement = () => {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">24</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {userLeads.filter(lead => lead.status === 'new').length}
+              </div>
               <div className="text-sm text-gray-600">New Leads</div>
             </div>
           </CardContent>
@@ -129,7 +163,9 @@ const LeadManagement = () => {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">18</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {userLeads.filter(lead => lead.status === 'qualified').length}
+              </div>
               <div className="text-sm text-gray-600">Qualified</div>
             </div>
           </CardContent>
@@ -137,16 +173,18 @@ const LeadManagement = () => {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">12</div>
-              <div className="text-sm text-gray-600">In Proposal</div>
+              <div className="text-2xl font-bold text-green-600">
+                {convertedLeads.length}
+              </div>
+              <div className="text-sm text-gray-600">Converted</div>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">8</div>
-              <div className="text-sm text-gray-600">Converted</div>
+              <div className="text-2xl font-bold text-teal-600">₹{convertedValue}L</div>
+              <div className="text-sm text-gray-600">Total Sales</div>
             </div>
           </CardContent>
         </Card>
@@ -156,7 +194,9 @@ const LeadManagement = () => {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>All Leads</CardTitle>
+            <CardTitle>
+              {user?.role === 'supervisor' ? 'All Leads' : 'My Assigned Leads'}
+            </CardTitle>
             <div className="flex space-x-2">
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -197,7 +237,9 @@ const LeadManagement = () => {
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Priority</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Assigned To</th>
+                  {user?.role === 'supervisor' && (
+                    <th className="text-left py-3 px-4 font-medium text-gray-700">Assigned To</th>
+                  )}
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Last Contact</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
                 </tr>
@@ -229,7 +271,9 @@ const LeadManagement = () => {
                         {lead.priority}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-900">{lead.assignedTo}</td>
+                    {user?.role === 'supervisor' && (
+                      <td className="py-3 px-4 text-sm text-gray-900">{lead.assignedTo}</td>
+                    )}
                     <td className="py-3 px-4 text-sm text-gray-600">{lead.lastContact}</td>
                     <td className="py-3 px-4">
                       <LeadActionsMenu lead={lead} />
