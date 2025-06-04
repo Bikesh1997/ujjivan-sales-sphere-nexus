@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
@@ -6,11 +5,12 @@ interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
   switchRole: (role: 'sales_executive' | 'supervisor') => void;
+  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Only 2 users for demo
+// Enhanced user data with more details
 const MOCK_USERS: User[] = [
   {
     id: '1',
@@ -76,6 +76,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor') => {
+    if (user?.role === 'supervisor') {
+      // Only supervisors can change roles
+      const targetUser = MOCK_USERS.find(u => u.id === userId);
+      if (targetUser) {
+        targetUser.role = newRole;
+        if (user.id === userId) {
+          const updatedUser = { ...user, role: newRole };
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        }
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -83,7 +98,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isLoading,
       login,
       logout,
-      switchRole
+      switchRole,
+      updateUserRole
     }}>
       {children}
     </AuthContext.Provider>
