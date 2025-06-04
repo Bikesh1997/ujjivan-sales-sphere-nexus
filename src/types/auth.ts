@@ -4,7 +4,7 @@ export interface User {
   email: string;
   name: string;
   role: 'sales_executive' | 'supervisor';
-  department?: 'outbound' | 'inbound' | 'field';
+  department?: 'inbound' | 'inbound' | 'field';
   branch: string;
   avatar?: string;
 }

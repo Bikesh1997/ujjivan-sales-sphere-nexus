@@ -63,7 +63,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'outbound': return 'Outbound';
+      case 'outbound': return 'Inbound';
       case 'inbound': return 'Inbound';
       case 'field': return 'Field';
       default: return '';
