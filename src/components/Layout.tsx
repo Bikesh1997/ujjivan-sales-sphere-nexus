@@ -1,24 +1,24 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRoleFeatures } from '@/hooks/useRoleFeatures';
 import { 
-  BarChart3, 
-  Users, 
-  MapPin, 
-  Target, 
-  MessageSquare, 
-  FileText,
   Menu,
   X,
-  Home,
   ChevronDown,
+  LogOut,
+  Home,
   UserPlus,
   ClipboardList,
-  LogOut,
-  Shield,
-  PieChart,
+  Users,
+  MapPin,
+  BarChart3,
   TrendingUp,
-  Activity
+  Activity,
+  Target,
+  PieChart,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -39,20 +39,27 @@ const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const { user, logout, switchRole } = useAuth();
+  const { getNavigationItems } = useRoleFeatures();
 
-  const navigationItems = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Executive Dashboard', href: '/executive-dashboard', icon: TrendingUp },
-    { name: 'Leads', href: '/leads', icon: UserPlus },
-    { name: 'Sales Funnel', href: '/funnel', icon: BarChart3 },
-    { name: 'Tasks & Campaigns', href: '/tasks', icon: ClipboardList },
-    { name: 'Customer 360', href: '/customers', icon: Users },
-    { name: 'Customer Analytics', href: '/customer-analytics', icon: Activity },
-    { name: 'KPA Management', href: '/kpa-management', icon: Target },
-    { name: 'Portfolio Management', href: '/portfolio', icon: PieChart },
-    { name: 'Risk Management', href: '/risk-management', icon: Shield },
-    { name: 'Geo Location', href: '/geo-location', icon: MapPin },
-  ];
+  // Icon mapping
+  const iconMap = {
+    Home: Home,
+    UserPlus: UserPlus,
+    ClipboardList: ClipboardList,
+    Users: Users,
+    MapPin: MapPin,
+    BarChart3: BarChart3,
+    TrendingUp: TrendingUp,
+    Activity: Activity,
+    Target: Target,
+    PieChart: PieChart,
+    Shield: Shield
+  };
+
+  const navigationItems = getNavigationItems().map(item => ({
+    ...item,
+    icon: iconMap[item.icon as keyof typeof iconMap] || Home
+  }));
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -66,7 +73,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'outbound': return 'Inbound';
+      case 'outbound': return 'Outbound';
       case 'inbound': return 'Inbound';
       case 'field': return 'Field';
       default: return '';
@@ -152,6 +159,11 @@ const Layout = ({ children }: LayoutProps) => {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg border-r border-gray-200 transition-transform duration-300 ease-in-out`}>
           <div className="h-full overflow-y-auto pt-6">
+            <div className="px-3 mb-4">
+              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
+              </div>
+            </div>
             <nav className="px-3 space-y-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;

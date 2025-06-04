@@ -21,6 +21,7 @@ import PortfolioManagement from "./pages/PortfolioManagement";
 import NotFound from "./pages/NotFound";
 import KPAManagement from "./pages/KPAManagement";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,24 @@ const DashboardRouter = () => {
   }
   
   return <Dashboard />;
+};
+
+// Role-based route wrapper
+const RoleBasedRoute = ({ children, featureId }: { children: React.ReactNode; featureId: string }) => {
+  const { canAccessFeature } = useRoleFeatures();
+  
+  if (!canAccessFeature(featureId)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+          <p className="text-gray-600">You don't have permission to access this feature.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  return <>{children}</>;
 };
 
 const App = () => (
@@ -48,20 +67,111 @@ const App = () => (
                 <Layout>
                   <Routes>
                     <Route path="/" element={<DashboardRouter />} />
-                    <Route path="/funnel" element={<SalesFunnel />} />
-                    <Route path="/leads" element={<LeadManagement />} />
-                    <Route path="/tasks" element={<TaskManagement />} />
-                    <Route path="/customers" element={<Customer360 />} />
-                    <Route path="/geo-location" element={<GeoLocation />} />
-                    <Route path="/executive-dashboard" element={<ExecutiveDashboard />} />
-                    <Route path="/customer-analytics" element={<CustomerAnalytics />} />
-                    <Route path="/kpa-management" element={<KPAManagement />} />
-                    <Route path="/risk-management" element={<RiskManagement />} />
-                    <Route path="/portfolio" element={<PortfolioManagement />} />
-                    <Route path="/beat-plan" element={<Dashboard />} />
-                    <Route path="/calendar" element={<Dashboard />} />
-                    <Route path="/communications" element={<Dashboard />} />
-                    <Route path="/reports" element={<Dashboard />} />
+                    
+                    {/* Sales Executive Only Features */}
+                    <Route path="/funnel" element={
+                      <RoleBasedRoute featureId="sales_funnel">
+                        <SalesFunnel />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/leads" element={
+                      <RoleBasedRoute featureId="my_leads">
+                        <LeadManagement />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/tasks" element={
+                      <RoleBasedRoute featureId="my_tasks">
+                        <TaskManagement />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/customers" element={
+                      <RoleBasedRoute featureId="customer_360">
+                        <Customer360 />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/geo-location" element={
+                      <RoleBasedRoute featureId="geo_location">
+                        <GeoLocation />
+                      </RoleBasedRoute>
+                    } />
+                    
+                    {/* Supervisor Only Features */}
+                    <Route path="/executive-dashboard" element={
+                      <RoleBasedRoute featureId="executive_dashboard">
+                        <ExecutiveDashboard />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/customer-analytics" element={
+                      <RoleBasedRoute featureId="customer_analytics">
+                        <CustomerAnalytics />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/kpa-management" element={
+                      <RoleBasedRoute featureId="kpa_management">
+                        <KPAManagement />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/risk-management" element={
+                      <RoleBasedRoute featureId="risk_management">
+                        <RiskManagement />
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/portfolio" element={
+                      <RoleBasedRoute featureId="portfolio_management">
+                        <PortfolioManagement />
+                      </RoleBasedRoute>
+                    } />
+                    
+                    {/* Placeholder routes for supervisor features */}
+                    <Route path="/team-management" element={
+                      <RoleBasedRoute featureId="team_management">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Team Management</h2>
+                          <p className="text-gray-600">Manage your team members and their assignments</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/lead-allocation" element={
+                      <RoleBasedRoute featureId="lead_allocation">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Lead Allocation</h2>
+                          <p className="text-gray-600">Assign and distribute leads to team members</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/team-tasks" element={
+                      <RoleBasedRoute featureId="team_tasks">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Team Tasks</h2>
+                          <p className="text-gray-600">Monitor and manage team task progress</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/team-performance" element={
+                      <RoleBasedRoute featureId="team_performance">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Performance Analytics</h2>
+                          <p className="text-gray-600">Analyze team performance metrics</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/territory-management" element={
+                      <RoleBasedRoute featureId="territory_management">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Territory Management</h2>
+                          <p className="text-gray-600">Manage sales territories and assignments</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    <Route path="/reports" element={
+                      <RoleBasedRoute featureId="reports">
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold mb-4">Reports & Analytics</h2>
+                          <p className="text-gray-600">Generate comprehensive team reports</p>
+                        </div>
+                      </RoleBasedRoute>
+                    } />
+                    
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Layout>
