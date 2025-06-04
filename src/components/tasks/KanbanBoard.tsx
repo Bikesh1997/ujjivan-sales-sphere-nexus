@@ -1,9 +1,12 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Plus, Clock, User, Calendar } from 'lucide-react';
+import { Plus, Clock, User, Calendar, Edit } from 'lucide-react';
+import AddTaskModal from './AddTaskModal';
+import EditTaskModal from './EditTaskModal';
 
 interface Task {
   id: string;
@@ -60,6 +63,9 @@ const KanbanBoard = () => {
     }
   ]);
 
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
   const columns = [
     { id: 'todo', title: 'To Do', color: 'bg-gray-50' },
     { id: 'in_progress', title: 'In Progress', color: 'bg-blue-50' },
@@ -82,14 +88,47 @@ const KanbanBoard = () => {
     ));
   };
 
+  const handleAddTask = (newTaskData: Omit<Task, 'id'>) => {
+    const newTask: Task = {
+      ...newTaskData,
+      id: (tasks.length + 1).toString()
+    };
+    setTasks(prev => [...prev, newTask]);
+  };
+
+  const handleEditTask = (taskId: string, updatedData: Partial<Task>) => {
+    setTasks(prev => 
+      prev.map(task => 
+        task.id === taskId 
+          ? { ...task, ...updatedData }
+          : task
+      )
+    );
+  };
+
+  const handleTaskEdit = (task: Task) => {
+    setEditingTask(task);
+    setEditModalOpen(true);
+  };
+
   const TaskCard = ({ task }: { task: Task }) => (
     <Card className="mb-3 cursor-pointer hover:shadow-md transition-shadow">
       <CardContent className="p-3">
         <div className="flex justify-between items-start mb-2">
           <h4 className="font-medium text-sm">{task.title}</h4>
-          <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
-            {task.priority}
-          </Badge>
+          <div className="flex items-center gap-1">
+            <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
+              {task.priority}
+            </Badge>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="h-6 w-6 p-0"
+              onClick={() => handleTaskEdit(task)}
+            >
+              <Edit size={12} />
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-gray-600 mb-3">{task.description}</p>
         
@@ -111,10 +150,7 @@ const KanbanBoard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">Task Management</h2>
-        <Button className="bg-teal-600 hover:bg-teal-700">
-          <Plus className="h-4 w-4 mr-2" />
-          New Task
-        </Button>
+        <AddTaskModal onAddTask={handleAddTask} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -146,6 +182,15 @@ const KanbanBoard = () => {
           </div>
         ))}
       </div>
+
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          isOpen={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          onEditTask={handleEditTask}
+        />
+      )}
     </div>
   );
 };
