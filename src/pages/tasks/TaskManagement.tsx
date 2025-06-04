@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const TaskManagement = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('today');
+  const [activeTab, setActiveTab] = useState('tasks');
   const [filters, setFilters] = useState({
     search: '',
     type: 'all',
@@ -194,13 +194,9 @@ const TaskManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Task & Campaign Management</h1>
           <p className="text-gray-600">Manage daily tasks and marketing campaigns</p>
         </div>
-        <div className="flex space-x-2">
-          <NewCampaignModal onAddCampaign={handleAddCampaign} />
-          <TaskManagementAddModal onAddTask={handleAddTask} />
-        </div>
       </div>
 
-      <Tabs defaultValue="tasks" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
@@ -248,7 +244,10 @@ const TaskManagement = () => {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Tasks</CardTitle>
-                <TaskFilter filters={filters} onFilterChange={setFilters} />
+                <div className="flex space-x-2">
+                  <TaskFilter filters={filters} onFilterChange={setFilters} />
+                  <TaskManagementAddModal onAddTask={handleAddTask} />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -343,7 +342,10 @@ const TaskManagement = () => {
           {/* Campaigns List */}
           <Card>
             <CardHeader>
-              <CardTitle>Marketing Campaigns</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Marketing Campaigns</CardTitle>
+                <NewCampaignModal onAddCampaign={handleAddCampaign} />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
