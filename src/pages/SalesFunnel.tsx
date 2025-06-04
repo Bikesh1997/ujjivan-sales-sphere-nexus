@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
+import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import PermissionGate from '@/components/rbac/PermissionGate';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -28,9 +29,10 @@ import { allLeads } from '@/data/leadsData';
 const SalesFunnel = () => {
   const { user } = useAuth();
   const [selectedStage, setSelectedStage] = useState('all');
+  const [leadsData, setLeadsData] = useState(allLeads);
 
   // Filter leads based on user role
-  const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
+  const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
 
   const funnelData = [
     { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
@@ -49,8 +51,20 @@ const SalesFunnel = () => {
     probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
     lastContact: lead.lastContact,
     nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
-                lead.status === 'proposal' ? 'Follow-up call' : 'Contract review'
+                lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
+    // Include full lead data for LeadActionsMenu
+    leadData: lead
   }));
+
+  const handleEditLead = (leadId: string, updatedData: Partial<typeof allLeads[0]>) => {
+    setLeadsData(prevLeads => 
+      prevLeads.map(lead => 
+        lead.id === leadId 
+          ? { ...lead, ...updatedData, lastContact: 'Just updated' }
+          : lead
+      )
+    );
+  };
 
   const getStageColor = (stage: string) => {
     switch (stage) {
@@ -199,16 +213,7 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="ghost">
-                              <Eye size={14} />
-                            </Button>
-                            <PermissionGate permission="lead_update">
-                              <Button size="sm" variant="ghost">
-                                <Edit size={14} />
-                              </Button>
-                            </PermissionGate>
-                          </div>
+                          <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
                         </td>
                       </tr>
                     ))}
