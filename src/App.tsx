@@ -17,6 +17,7 @@ import CustomerAnalytics from "./pages/CustomerAnalytics";
 import RiskManagement from "./pages/RiskManagement";
 import PortfolioManagement from "./pages/PortfolioManagement";
 import NotFound from "./pages/NotFound";
+import KPAManagement from "./pages/KPAManagement";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
                     <Route path="/geo-location" element={<GeoLocation />} />
                     <Route path="/executive-dashboard" element={<ExecutiveDashboard />} />
                     <Route path="/customer-analytics" element={<CustomerAnalytics />} />
+                    <Route path="/kpa-management" element={<KPAManagement />} />
                     <Route path="/risk-management" element={<RiskManagement />} />
                     <Route path="/portfolio" element={<PortfolioManagement />} />
                     <Route path="/beat-plan" element={<Dashboard />} />

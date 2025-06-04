@@ -48,6 +48,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Tasks & Campaigns', href: '/tasks', icon: ClipboardList },
     { name: 'Customer 360', href: '/customers', icon: Users },
     { name: 'Customer Analytics', href: '/customer-analytics', icon: Activity },
+    { name: 'KPA Management', href: '/kpa-management', icon: Target },
     { name: 'Portfolio Management', href: '/portfolio', icon: PieChart },
     { name: 'Risk Management', href: '/risk-management', icon: Shield },
     { name: 'Geo Location', href: '/geo-location', icon: MapPin },
