@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar, Clock, Phone, MapPin, UserCheck, CheckCircle, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AddTaskForm from './AddTaskForm';
 
 interface Task {
   id: string;
@@ -83,6 +83,7 @@ const TodaysPlan = () => {
   ]);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const { toast } = useToast();
 
   const toggleTask = (taskId: string) => {
@@ -97,6 +98,22 @@ const TodaysPlan = () => {
         description: task.completed ? "Task moved back to pending" : "Great job completing this task!",
       });
     }
+  };
+
+  const addTask = (newTask: Omit<Task, 'id' | 'completed'>) => {
+    const task: Task = {
+      ...newTask,
+      id: Date.now().toString(),
+      completed: false
+    };
+    
+    setTasks(prev => [...prev, task]);
+    setShowAddForm(false);
+    
+    toast({
+      title: "Task Added!",
+      description: `"${task.title}" has been added to your plan.`,
+    });
   };
 
   const getTaskIcon = (type: string) => {
@@ -122,6 +139,13 @@ const TodaysPlan = () => {
   const totalTasks = tasks.length;
   const completionRate = Math.round((completedTasks / totalTasks) * 100);
 
+  // Sort tasks by time for better organization
+  const sortedTasks = [...tasks].sort((a, b) => {
+    const timeA = new Date(`1970-01-01 ${a.time}`).getTime();
+    const timeB = new Date(`1970-01-01 ${b.time}`).getTime();
+    return timeA - timeB;
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -130,7 +154,7 @@ const TodaysPlan = () => {
           Today's Plan
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center">
@@ -166,9 +190,17 @@ const TodaysPlan = () => {
             </CardContent>
           </Card>
 
+          {/* Add Task Form */}
+          {showAddForm && (
+            <AddTaskForm 
+              onAddTask={addTask}
+              onCancel={() => setShowAddForm(false)}
+            />
+          )}
+
           {/* Tasks List */}
           <div className="space-y-3">
-            {tasks.map((task) => (
+            {sortedTasks.map((task) => (
               <Card 
                 key={task.id} 
                 className={`${task.completed ? 'bg-gray-50 opacity-75' : 'bg-white'} hover:shadow-md transition-shadow`}
@@ -222,20 +254,17 @@ const TodaysPlan = () => {
             ))}
           </div>
 
-          {/* Add New Task */}
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={() => {
-              toast({
-                title: "Add New Task",
-                description: "Task creation form would open here.",
-              });
-            }}
-          >
-            <Plus size={16} className="mr-2" />
-            Add New Task
-          </Button>
+          {/* Add New Task Button */}
+          {!showAddForm && (
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => setShowAddForm(true)}
+            >
+              <Plus size={16} className="mr-2" />
+              Add New Task
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
