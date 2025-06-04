@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +14,11 @@ import {
   ChevronDown,
   UserPlus,
   ClipboardList,
-  LogOut
+  LogOut,
+  Shield,
+  PieChart,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -39,10 +42,14 @@ const Layout = ({ children }: LayoutProps) => {
 
   const navigationItems = [
     { name: 'Dashboard', href: '/', icon: Home },
+    { name: 'Executive Dashboard', href: '/executive-dashboard', icon: TrendingUp },
     { name: 'Leads', href: '/leads', icon: UserPlus },
     { name: 'Sales Funnel', href: '/funnel', icon: BarChart3 },
     { name: 'Tasks & Campaigns', href: '/tasks', icon: ClipboardList },
     { name: 'Customer 360', href: '/customers', icon: Users },
+    { name: 'Customer Analytics', href: '/customer-analytics', icon: Activity },
+    { name: 'Portfolio Management', href: '/portfolio', icon: PieChart },
+    { name: 'Risk Management', href: '/risk-management', icon: Shield },
     { name: 'Geo Location', href: '/geo-location', icon: MapPin },
   ];
 

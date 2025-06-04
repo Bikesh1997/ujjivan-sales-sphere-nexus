@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,10 @@ import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
 import TaskManagement from "./pages/tasks/TaskManagement";
 import GeoLocation from "./pages/GeoLocation";
+import ExecutiveDashboard from "./pages/ExecutiveDashboard";
+import CustomerAnalytics from "./pages/CustomerAnalytics";
+import RiskManagement from "./pages/RiskManagement";
+import PortfolioManagement from "./pages/PortfolioManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,7 +39,10 @@ const App = () => (
                     <Route path="/tasks" element={<TaskManagement />} />
                     <Route path="/customers" element={<Customer360 />} />
                     <Route path="/geo-location" element={<GeoLocation />} />
-                    <Route path="/portfolio" element={<Dashboard />} />
+                    <Route path="/executive-dashboard" element={<ExecutiveDashboard />} />
+                    <Route path="/customer-analytics" element={<CustomerAnalytics />} />
+                    <Route path="/risk-management" element={<RiskManagement />} />
+                    <Route path="/portfolio" element={<PortfolioManagement />} />
                     <Route path="/beat-plan" element={<Dashboard />} />
                     <Route path="/calendar" element={<Dashboard />} />
                     <Route path="/communications" element={<Dashboard />} />
