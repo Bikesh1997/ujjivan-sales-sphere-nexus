@@ -1,22 +1,20 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
   UserPlus, 
   Users, 
   Target,
-  Clock,
   CheckCircle,
   AlertCircle,
-  RotateCcw,
-  Filter,
-  UserCheck
+  Filter
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -25,7 +23,6 @@ interface TeamMember {
   name: string;
   currentLeads: number;
   capacity: number;
-  performance: number;
   specialization: string;
 }
 
@@ -53,21 +50,17 @@ const LeadAllocation = () => {
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [assignmentHistory, setAssignmentHistory] = useState<Assignment[]>([]);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isManualMode, setIsManualMode] = useState(false);
   const [filters, setFilters] = useState({
     priority: 'all',
-    source: 'all',
-    value: 'all'
+    source: 'all'
   });
 
-  // Team members with proper state management
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     { 
       id: '1', 
       name: 'Rahul Sharma', 
       currentLeads: 25,
       capacity: 30,
-      performance: 92,
       specialization: 'MSME Loans'
     },
     { 
@@ -75,7 +68,6 @@ const LeadAllocation = () => {
       name: 'Anjali Patel', 
       currentLeads: 18,
       capacity: 25,
-      performance: 88,
       specialization: 'Personal Loans'
     },
     { 
@@ -83,7 +75,6 @@ const LeadAllocation = () => {
       name: 'Vikash Kumar', 
       currentLeads: 22,
       capacity: 28,
-      performance: 76,
       specialization: 'Home Loans'
     },
     { 
@@ -91,12 +82,10 @@ const LeadAllocation = () => {
       name: 'Priya Singh', 
       currentLeads: 30,
       capacity: 35,
-      performance: 95,
       specialization: 'Business Loans'
     }
   ]);
 
-  // Unassigned leads with proper state management
   const [unassignedLeads, setUnassignedLeads] = useState<Lead[]>([
     {
       id: '1',
@@ -163,28 +152,6 @@ const LeadAllocation = () => {
       source: 'Referral',
       value: '₹35L',
       type: 'Education Loan'
-    },
-    {
-      id: '7',
-      name: 'Medical Care Center',
-      contact: 'Dr. Rajesh',
-      phone: '+91 98765 43216',
-      email: 'rajesh@medicalcare.com',
-      priority: 'Medium',
-      source: 'Website',
-      value: '₹40L',
-      type: 'Healthcare Loan'
-    },
-    {
-      id: '8',
-      name: 'Fashion Hub',
-      contact: 'Neha Agarwal',
-      phone: '+91 98765 43217',
-      email: 'neha@fashionhub.com',
-      priority: 'Low',
-      source: 'Cold Call',
-      value: '₹12L',
-      type: 'Retail Loan'
     }
   ]);
 
@@ -195,32 +162,18 @@ const LeadAllocation = () => {
   });
 
   const handleLeadSelection = (leadId: string) => {
-    if (isManualMode) {
-      // In manual mode, only allow single selection
-      setSelectedLeads([leadId]);
-    } else {
-      // In bulk mode, allow multiple selections
-      setSelectedLeads(prev => 
-        prev.includes(leadId) 
-          ? prev.filter(id => id !== leadId)
-          : [...prev, leadId]
-      );
-    }
+    setSelectedLeads(prev => 
+      prev.includes(leadId) 
+        ? prev.filter(id => id !== leadId)
+        : [...prev, leadId]
+    );
   };
 
   const handleSelectAll = () => {
     if (selectedLeads.length === filteredLeads.length) {
       setSelectedLeads([]);
-      toast({
-        title: "Selection Cleared",
-        description: "All leads have been deselected",
-      });
     } else {
       setSelectedLeads(filteredLeads.map(lead => lead.id));
-      toast({
-        title: "All Leads Selected",
-        description: `${filteredLeads.length} leads selected for assignment`,
-      });
     }
   };
 
@@ -246,7 +199,6 @@ const LeadAllocation = () => {
       return;
     }
 
-    // Create assignment history entries
     const newAssignments = selectedLeads.map(leadId => {
       const lead = filteredLeads.find(l => l.id === leadId);
       return {
@@ -259,61 +211,17 @@ const LeadAllocation = () => {
 
     setAssignmentHistory(prev => [...newAssignments, ...prev].slice(0, 10));
     
-    // Update member capacity
     setTeamMembers(prev => prev.map(m => 
       m.id === memberId 
         ? { ...m, currentLeads: m.currentLeads + selectedLeads.length }
         : m
     ));
 
-    // Remove assigned leads from unassigned list
     setUnassignedLeads(prev => prev.filter(lead => !selectedLeads.includes(lead.id)));
     
     toast({
-      title: "Leads Assigned Successfully",
+      title: "Leads Assigned",
       description: `${selectedLeads.length} leads assigned to ${member.name}`,
-    });
-    setSelectedLeads([]);
-  };
-
-  const handleManualAssign = (leadId: string, memberId: string) => {
-    const lead = filteredLeads.find(l => l.id === leadId);
-    const member = teamMembers.find(m => m.id === memberId);
-    
-    if (!lead || !member) return;
-
-    if (member.currentLeads >= member.capacity) {
-      toast({
-        title: "Capacity Exceeded",
-        description: `${member.name} is already at full capacity`,
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Create assignment history entry
-    const newAssignment = {
-      id: Date.now().toString(),
-      leadName: lead.name,
-      memberName: member.name,
-      timestamp: new Date().toLocaleString()
-    };
-
-    setAssignmentHistory(prev => [newAssignment, ...prev].slice(0, 10));
-    
-    // Update member capacity
-    setTeamMembers(prev => prev.map(m => 
-      m.id === memberId 
-        ? { ...m, currentLeads: m.currentLeads + 1 }
-        : m
-    ));
-
-    // Remove assigned lead from unassigned list
-    setUnassignedLeads(prev => prev.filter(l => l.id !== leadId));
-    
-    toast({
-      title: "Lead Assigned",
-      description: `${lead.name} assigned to ${member.name}`,
     });
     setSelectedLeads([]);
   };
@@ -332,8 +240,7 @@ const LeadAllocation = () => {
       .sort((a, b) => {
         const aCapacity = a.capacity - a.currentLeads;
         const bCapacity = b.capacity - b.currentLeads;
-        if (aCapacity !== bCapacity) return bCapacity - aCapacity;
-        return b.performance - a.performance;
+        return bCapacity - aCapacity;
       });
     
     if (availableMembers.length === 0) {
@@ -355,11 +262,7 @@ const LeadAllocation = () => {
     const leadsToRemove: string[] = [];
 
     for (const lead of prioritySortedLeads) {
-      const bestMember = availableMembers.find(member => {
-        const hasCapacity = member.currentLeads < member.capacity;
-        const matchesSpecialization = lead.type.toLowerCase().includes(member.specialization.toLowerCase().split(' ')[0]);
-        return hasCapacity && matchesSpecialization;
-      }) || availableMembers.find(member => member.currentLeads < member.capacity);
+      const bestMember = availableMembers.find(member => member.currentLeads < member.capacity);
 
       if (bestMember) {
         assignments.push({
@@ -394,31 +297,7 @@ const LeadAllocation = () => {
 
     toast({
       title: "Auto-assignment Complete",
-      description: `${assignments.length} leads have been successfully auto-assigned`,
-    });
-  };
-
-  const handleManualAssignment = () => {
-    setIsManualMode(!isManualMode);
-    setSelectedLeads([]);
-    toast({
-      title: isManualMode ? "Bulk Assignment Mode" : "Manual Assignment Mode",
-      description: isManualMode 
-        ? "Now you can select multiple leads for bulk assignment" 
-        : "Now you can assign leads individually to specific team members",
-    });
-  };
-
-  const handleResetAssignments = () => {
-    setSelectedLeads([]);
-    setAssignmentHistory([]);
-    setTeamMembers(prev => prev.map(member => ({
-      ...member,
-      currentLeads: Math.floor(member.capacity * 0.7)
-    })));
-    toast({
-      title: "Assignments Reset",
-      description: "All selections and assignment history have been cleared",
+      description: `${assignments.length} leads assigned successfully`,
     });
   };
 
@@ -428,27 +307,16 @@ const LeadAllocation = () => {
 
   const handleApplyFilters = () => {
     setIsFilterModalOpen(false);
-    const activeFilters = [];
-    if (filters.priority !== 'all') activeFilters.push(`${filters.priority} priority`);
-    if (filters.source !== 'all') activeFilters.push(`${filters.source} source`);
-    
     toast({
       title: "Filters Applied",
-      description: activeFilters.length > 0 
-        ? `Showing leads filtered by: ${activeFilters.join(', ')}`
-        : "Showing all leads",
+      description: "Lead list has been filtered",
     });
   };
 
   const handleClearFilters = () => {
     setFilters({
       priority: 'all',
-      source: 'all',
-      value: 'all'
-    });
-    toast({
-      title: "Filters Cleared",
-      description: "All filters have been reset",
+      source: 'all'
     });
   };
 
@@ -482,7 +350,7 @@ const LeadAllocation = () => {
             className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
           >
             <Filter size={16} className="mr-2" />
-            Filter Leads
+            Filter
           </Button>
           <Button 
             variant="outline" 
@@ -491,29 +359,10 @@ const LeadAllocation = () => {
             disabled={filteredLeads.length === 0}
           >
             <Target size={16} className="mr-2" />
-            Auto-Assign All
-          </Button>
-          <Button 
-            className={isManualMode ? "bg-green-600 hover:bg-green-700" : "bg-teal-600 hover:bg-teal-700"}
-            onClick={handleManualAssignment}
-          >
-            {isManualMode ? <UserCheck size={16} className="mr-2" /> : <UserPlus size={16} className="mr-2" />}
-            {isManualMode ? "Exit Manual Mode" : "Manual Assignment"}
+            Auto-Assign
           </Button>
         </div>
       </div>
-
-      {isManualMode && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center space-x-2 text-green-800">
-            <UserCheck size={16} />
-            <span className="font-medium">Manual Assignment Mode Active</span>
-          </div>
-          <p className="text-sm text-green-700 mt-1">
-            Click on any lead to select it, then choose a team member to assign it to.
-          </p>
-        </div>
-      )}
 
       {/* Team Capacity Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -538,10 +387,6 @@ const LeadAllocation = () => {
                   <span className={`font-medium ${getCapacityColor(member.currentLeads, member.capacity)}`}>
                     {member.currentLeads}/{member.capacity}
                   </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Performance:</span>
-                  <span className="font-medium">{member.performance}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
@@ -568,23 +413,13 @@ const LeadAllocation = () => {
                 {selectedLeads.length > 0 && (
                   <Badge variant="secondary">{selectedLeads.length} selected</Badge>
                 )}
-                {!isManualMode && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleSelectAll}
-                    disabled={filteredLeads.length === 0}
-                  >
-                    {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
-                  </Button>
-                )}
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handleResetAssignments}
+                  onClick={handleSelectAll}
+                  disabled={filteredLeads.length === 0}
                 >
-                  <RotateCcw size={14} className="mr-1" />
-                  Reset
+                  {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
                 </Button>
               </div>
             </div>
@@ -610,7 +445,6 @@ const LeadAllocation = () => {
                       <div>
                         <h4 className="font-medium text-sm">{lead.name}</h4>
                         <p className="text-xs text-gray-500">{lead.contact} • {lead.phone}</p>
-                        <p className="text-xs text-gray-500">{lead.email}</p>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge className={getPriorityColor(lead.priority)}>
@@ -625,34 +459,6 @@ const LeadAllocation = () => {
                       <span>{lead.source} • {lead.type}</span>
                       <span className="font-medium">{lead.value}</span>
                     </div>
-                    
-                    {/* Manual Assignment Options */}
-                    {isManualMode && selectedLeads.includes(lead.id) && (
-                      <div className="mt-3 pt-3 border-t">
-                        <p className="text-xs font-medium text-gray-700 mb-2">Assign to:</p>
-                        <div className="grid grid-cols-2 gap-1">
-                          {teamMembers.map((member) => {
-                            const isAtCapacity = member.currentLeads >= member.capacity;
-                            return (
-                              <Button
-                                key={member.id}
-                                size="sm"
-                                variant="outline"
-                                disabled={isAtCapacity}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleManualAssign(lead.id, member.id);
-                                }}
-                                className={`text-xs ${isAtCapacity ? 'opacity-50' : 'hover:bg-teal-50'}`}
-                              >
-                                {member.name.split(' ')[0]}
-                                {isAtCapacity && ' (Full)'}
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -663,12 +469,10 @@ const LeadAllocation = () => {
         {/* Assignment Panel */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              {isManualMode ? "Manual Assignment" : "Quick Assignment"}
-            </CardTitle>
+            <CardTitle>Quick Assignment</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!isManualMode && selectedLeads.length > 0 ? (
+            {selectedLeads.length > 0 ? (
               <div>
                 <p className="text-sm text-gray-600 mb-4">
                   Assign {selectedLeads.length} selected lead(s) to:
@@ -689,7 +493,7 @@ const LeadAllocation = () => {
                           <div>
                             <p className="font-medium text-sm">{member.name}</p>
                             <p className="text-xs text-gray-500">
-                              {member.currentLeads}/{member.capacity} capacity • {member.performance}% performance
+                              {member.currentLeads}/{member.capacity} capacity
                             </p>
                             {wouldExceedCapacity && (
                               <p className="text-xs text-red-500">
@@ -714,15 +518,8 @@ const LeadAllocation = () => {
             ) : (
               <div className="text-center py-8">
                 <Users size={48} className="mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {isManualMode ? "Select a Lead to Assign" : "Select Leads to Assign"}
-                </h3>
-                <p className="text-gray-600">
-                  {isManualMode 
-                    ? "Click on any lead to select it and see assignment options" 
-                    : "Choose leads from the list to assign them to team members"
-                  }
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Select Leads to Assign</h3>
+                <p className="text-gray-600">Choose leads from the list to assign them to team members</p>
               </div>
             )}
 
@@ -743,30 +540,6 @@ const LeadAllocation = () => {
                 </div>
               </div>
             )}
-
-            <div className="border-t pt-4">
-              <h4 className="font-medium mb-3">Assignment Rules</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Auto-assignment considers member capacity and performance</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>High priority leads get assigned first</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>Specialization matching is preferred</span>
-                </div>
-                {isManualMode && (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    <span>Manual mode allows individual lead assignment</span>
-                  </div>
-                )}
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -776,6 +549,7 @@ const LeadAllocation = () => {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Filter Leads</DialogTitle>
+            <DialogDescription>Filter leads by priority and source</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
