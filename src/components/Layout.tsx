@@ -42,6 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Sales Funnel', href: '/funnel', icon: BarChart3 },
     { name: 'Tasks & Campaigns', href: '/tasks', icon: ClipboardList },
     { name: 'Customer 360', href: '/customers', icon: Users },
+    { name: 'Geo Location', href: '/geo-location', icon: MapPin },
   ];
 
   const isActive = (path: string) => location.pathname === path;
