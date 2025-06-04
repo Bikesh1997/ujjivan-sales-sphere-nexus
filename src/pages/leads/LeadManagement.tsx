@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,15 +21,19 @@ import {
   Eye,
   Edit,
   Download,
+  CalendarIcon,
   ChevronsUpDown
 } from 'lucide-react';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
+import AddLeadModal from '@/components/leads/AddLeadModal';
 import PermissionGate from '@/components/rbac/PermissionGate';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
+import { useToast } from '@/hooks/use-toast';
 
 const LeadManagement = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [leadsData, setLeadsData] = useState(allLeads);
   const [filters, setFilters] = useState({
     status: 'all',
@@ -52,7 +57,6 @@ const LeadManagement = () => {
     if (filters.priority !== 'all' && lead.priority !== filters.priority) {
       return false;
     }
-    // Remove date filtering since createdAt doesn't exist
     return true;
   });
 
@@ -64,6 +68,34 @@ const LeadManagement = () => {
           : lead
       )
     );
+  };
+
+  const handleAddLead = (leadData: {
+    companyName: string;
+    contactName: string;
+    phone: string;
+    email: string;
+    source: string;
+    value: string;
+    priority: string;
+  }) => {
+    const newLead = {
+      id: (leadsData.length + 1).toString(),
+      name: leadData.companyName,
+      contact: leadData.contactName,
+      phone: leadData.phone,
+      email: leadData.email,
+      status: 'new',
+      source: leadData.source,
+      value: leadData.value,
+      assignedTo: user?.name || 'Unassigned',
+      assignedToId: user?.id || '1',
+      lastContact: 'Just added',
+      priority: leadData.priority.toLowerCase()
+    };
+
+    setLeadsData(prevLeads => [newLead, ...prevLeads]);
+    console.log('New lead added:', newLead);
   };
 
   const getStatusColor = (status: string) => {
@@ -96,10 +128,7 @@ const LeadManagement = () => {
           <p className="text-gray-600">Manage and track your leads effectively</p>
         </div>
         <PermissionGate permission="lead_create">
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus size={16} className="mr-2" />
-            Add Lead
-          </Button>
+          <AddLeadModal onAddLead={handleAddLead} />
         </PermissionGate>
       </div>
 
@@ -130,9 +159,8 @@ const LeadManagement = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Assignees</SelectItem>
-              {/* Assuming you have a way to get all assignees */}
-              {allLeads.map(lead => (
-                <SelectItem key={lead.assignedToId} value={lead.assignedToId}>{lead.assignedTo}</SelectItem>
+              {Array.from(new Set(allLeads.map(lead => lead.assignedTo))).map(assignee => (
+                <SelectItem key={assignee} value={allLeads.find(lead => lead.assignedTo === assignee)?.assignedToId || ''}>{assignee}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -149,7 +177,6 @@ const LeadManagement = () => {
             </SelectContent>
           </Select>
 
-          {/* Date Range Picker - keeping for future use */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -159,7 +186,7 @@ const LeadManagement = () => {
                   !date && "text-muted-foreground"
                 )}
               >
-                <Calendar className="mr-2 h-4 w-4" />
+                <CalendarIcon className="mr-2 h-4 w-4" />
                 {date?.from ? (
                   date.to ? (
                     `${format(date.from, "LLL dd, y")} - ${format(date.to, "LLL dd, y")}`
@@ -238,7 +265,7 @@ const LeadManagement = () => {
                         {lead.priority}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 font-medium text-gray-900">₹{lead.value}</td>
+                    <td className="py-3 px-4 font-medium text-gray-900">{lead.value}</td>
                     <td className="py-3 px-4 text-gray-600">{lead.assignedTo}</td>
                     <td className="py-3 px-4 text-gray-600">{lead.lastContact}</td>
                     <td className="py-3 px-4">
