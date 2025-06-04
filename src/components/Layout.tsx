@@ -1,11 +1,9 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   BarChart3, 
   Users, 
-  Calendar, 
   MapPin, 
   Target, 
   MessageSquare, 
@@ -44,11 +42,6 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Sales Funnel', href: '/funnel', icon: BarChart3 },
     { name: 'Tasks & Campaigns', href: '/tasks', icon: ClipboardList },
     { name: 'Customer 360', href: '/customers', icon: Users },
-    { name: 'Portfolio', href: '/portfolio', icon: Target },
-    { name: 'Beat Planning', href: '/beat-plan', icon: MapPin },
-    { name: 'Calendar', href: '/calendar', icon: Calendar },
-    { name: 'Communications', href: '/communications', icon: MessageSquare },
-    { name: 'Reports', href: '/reports', icon: FileText },
   ];
 
   const isActive = (path: string) => location.pathname === path;
