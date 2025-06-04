@@ -1,15 +1,25 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, MapPin, Phone, Mail, Plus, Filter } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Mail } from 'lucide-react';
+import NewCampaignModal from '@/components/campaigns/NewCampaignModal';
+import TaskManagementAddModal from '@/components/tasks/TaskManagementAddModal';
+import TaskFilter from '@/components/tasks/TaskFilter';
+import { useToast } from '@/hooks/use-toast';
 
 const TaskManagement = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('today');
+  const [filters, setFilters] = useState({
+    search: '',
+    type: 'all',
+    priority: 'all',
+    status: 'all'
+  });
 
-  const tasks = [
+  const [tasks, setTasks] = useState([
     {
       id: '1',
       title: 'Follow up with Rajesh Enterprises',
@@ -58,9 +68,9 @@ const TaskManagement = () => {
       location: 'Email',
       description: 'Send detailed insurance product brochure'
     }
-  ];
+  ]);
 
-  const campaigns = [
+  const [campaigns, setCampaigns] = useState([
     {
       id: '1',
       name: 'FD Renewal Campaign - Q2',
@@ -97,7 +107,55 @@ const TaskManagement = () => {
       leads: 189,
       conversions: 23
     }
-  ];
+  ]);
+
+  const filteredTasks = tasks.filter(task => {
+    const matchesSearch = task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+                         task.customer.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesType = filters.type === 'all' || task.type === filters.type;
+    const matchesPriority = filters.priority === 'all' || task.priority === filters.priority;
+    const matchesStatus = filters.status === 'all' || task.status === filters.status;
+    
+    return matchesSearch && matchesType && matchesPriority && matchesStatus;
+  });
+
+  const handleAddTask = (newTaskData: any) => {
+    const newTask = {
+      ...newTaskData,
+      id: (tasks.length + 1).toString(),
+      status: 'pending'
+    };
+    setTasks(prev => [...prev, newTask]);
+  };
+
+  const handleAddCampaign = (newCampaignData: any) => {
+    const newCampaign = {
+      ...newCampaignData,
+      id: (campaigns.length + 1).toString(),
+      progress: 0,
+      leads: 0,
+      conversions: 0
+    };
+    setCampaigns(prev => [...prev, newCampaign]);
+  };
+
+  const handleMarkComplete = (taskId: string) => {
+    setTasks(prev => 
+      prev.map(task => 
+        task.id === taskId 
+          ? { ...task, status: 'completed' }
+          : task
+      )
+    );
+    
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      toast({
+        title: "Task Completed!",
+        description: `"${task.title}" has been marked as complete.`,
+      });
+    }
+  };
 
   const getTaskIcon = (type: string) => {
     switch (type) {
@@ -137,14 +195,8 @@ const TaskManagement = () => {
           <p className="text-gray-600">Manage daily tasks and marketing campaigns</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">
-            <Plus size={16} className="mr-2" />
-            New Campaign
-          </Button>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus size={16} className="mr-2" />
-            Add Task
-          </Button>
+          <NewCampaignModal onAddCampaign={handleAddCampaign} />
+          <TaskManagementAddModal onAddTask={handleAddTask} />
         </div>
       </div>
 
@@ -160,15 +212,15 @@ const TaskManagement = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">8</div>
-                  <div className="text-sm text-gray-600">Today's Tasks</div>
+                  <div className="text-2xl font-bold text-blue-600">{tasks.length}</div>
+                  <div className="text-sm text-gray-600">Total Tasks</div>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">3</div>
+                  <div className="text-2xl font-bold text-yellow-600">{tasks.filter(t => t.status === 'pending').length}</div>
                   <div className="text-sm text-gray-600">Pending</div>
                 </div>
               </CardContent>
@@ -176,16 +228,16 @@ const TaskManagement = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">5</div>
-                  <div className="text-sm text-gray-600">Completed</div>
+                  <div className="text-2xl font-bold text-blue-600">{tasks.filter(t => t.status === 'in_progress').length}</div>
+                  <div className="text-sm text-gray-600">In Progress</div>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">2</div>
-                  <div className="text-sm text-gray-600">Overdue</div>
+                  <div className="text-2xl font-bold text-green-600">{tasks.filter(t => t.status === 'completed').length}</div>
+                  <div className="text-sm text-gray-600">Completed</div>
                 </div>
               </CardContent>
             </Card>
@@ -195,16 +247,13 @@ const TaskManagement = () => {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Today's Tasks</CardTitle>
-                <Button variant="outline" size="sm">
-                  <Filter size={16} className="mr-2" />
-                  Filter
-                </Button>
+                <CardTitle>Tasks</CardTitle>
+                <TaskFilter filters={filters} onFilterChange={setFilters} />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {tasks.map((task) => (
+                {filteredTasks.map((task) => (
                   <div key={task.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3">
@@ -236,9 +285,15 @@ const TaskManagement = () => {
                         <Badge className={getStatusColor(task.status)}>
                           {task.status.replace('_', ' ')}
                         </Badge>
-                        <Button size="sm" variant="outline">
-                          Mark Complete
-                        </Button>
+                        {task.status !== 'completed' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleMarkComplete(task.id)}
+                          >
+                            Mark Complete
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -254,7 +309,7 @@ const TaskManagement = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">2</div>
+                  <div className="text-2xl font-bold text-green-600">{campaigns.filter(c => c.status === 'active').length}</div>
                   <div className="text-sm text-gray-600">Active Campaigns</div>
                 </div>
               </CardContent>
@@ -262,7 +317,7 @@ const TaskManagement = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">1</div>
+                  <div className="text-2xl font-bold text-blue-600">{campaigns.filter(c => c.status === 'planned').length}</div>
                   <div className="text-sm text-gray-600">Planned</div>
                 </div>
               </CardContent>
