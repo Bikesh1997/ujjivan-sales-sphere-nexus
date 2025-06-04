@@ -2,48 +2,20 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Eye,
-  Edit,
-  Phone,
-  MoreVertical,
-  Trash2
-} from 'lucide-react';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import LeadViewModal from '@/components/leads/LeadViewModal';
+import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import PermissionGate from '@/components/rbac/PermissionGate';
@@ -52,8 +24,6 @@ const LeadManagement = () => {
   const { user } = useAuth();
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [viewingLead, setViewingLead] = useState<any>(null);
-  const [editingLead, setEditingLead] = useState<any>(null);
-  const [callingLead, setCallingLead] = useState<any>(null);
   const [leadViewOpen, setLeadViewOpen] = useState(false);
 
   // Filter leads based on user role
@@ -61,70 +31,10 @@ const LeadManagement = () => {
 
   const filteredLeads = selectedStatus === 'all' ? userLeads : userLeads.filter(lead => lead.status === selectedStatus);
 
-  const handleEditLead = (lead: any) => {
-    console.log('Edit lead functionality will be implemented:', lead);
-    setEditingLead(lead);
-  };
-
   const handleViewLead = (lead: any) => {
     console.log('Viewing lead:', lead);
     setViewingLead(lead);
     setLeadViewOpen(true);
-  };
-
-  const LeadActionsMenu = ({ lead, onEdit, onView, onCall, canEdit }: { lead: any, onEdit: () => void, onView: () => void, onCall: () => void, canEdit: boolean }) => {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={onView}>
-            <Eye className="mr-2 h-4 w-4" />
-            View
-          </DropdownMenuItem>
-          {canEdit && (
-            <DropdownMenuItem onClick={onEdit}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuItem onClick={onCall}>
-            <Phone className="mr-2 h-4 w-4" />
-            Call
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <PermissionGate permission="lead_delete">
-            <DropdownMenuItem className="text-red-600 focus:text-red-600">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-full p-0 justify-start text-red-600 focus:text-red-600">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the lead from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Delete</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuItem>
-          </PermissionGate>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
   };
 
   return (
@@ -207,13 +117,7 @@ const LeadManagement = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <LeadActionsMenu 
-                        lead={lead}
-                        onEdit={() => handleEditLead(lead)}
-                        onView={() => handleViewLead(lead)}
-                        onCall={() => setCallingLead(lead)}
-                        canEdit={user?.role === 'supervisor' || lead.assignedToId === user?.id}
-                      />
+                      <LeadActionsMenu lead={lead} />
                     </TableCell>
                   </TableRow>
                 ))}
