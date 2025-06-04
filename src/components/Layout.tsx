@@ -91,15 +91,15 @@ const Layout = ({ children }: LayoutProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden"
+                className="lg:hidden mr-2"
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-center space-x-3 ml-2">
+              <div className="flex items-center">
                 <img 
                   src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
                   alt="Ujjivan Small Finance Bank" 
-                  className="h-8"
+                  className="h-10 w-auto object-contain"
                 />
               </div>
             </div>
