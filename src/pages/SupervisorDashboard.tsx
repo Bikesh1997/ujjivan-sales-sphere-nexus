@@ -320,6 +320,29 @@ const SupervisorDashboard = () => {
     return 'text-red-600';
   };
 
+  const handleAddMember = (memberData: any) => {
+    const newMember = {
+      id: (teamMembers.length + 1).toString(),
+      name: memberData.name,
+      email: memberData.email,
+      role: memberData.role,
+      department: memberData.department,
+      status: 'active',
+      joinDate: memberData.joiningDate || new Date().toISOString().split('T')[0],
+      performance: 0,
+      targets: { monthly: 0, achieved: 0 },
+      lastActive: 'Just joined',
+      leads: 0,
+      converted: 0,
+      revenue: 0,
+      target: 0,
+      lastActivity: 'Just joined',
+      capacity: 25
+    };
+    
+    setTeamMembers(prevMembers => [...prevMembers, newMember]);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -546,6 +569,7 @@ const SupervisorDashboard = () => {
       <AddTeamMemberModal 
         isOpen={isAddMemberModalOpen}
         onClose={() => setIsAddMemberModalOpen(false)}
+        onAddMember={handleAddMember}
       />
       
       <TeamSettingsModal 
