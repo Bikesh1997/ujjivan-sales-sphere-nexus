@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -341,6 +342,11 @@ const SupervisorDashboard = () => {
     };
     
     setTeamMembers(prevMembers => [...prevMembers, newMember]);
+    
+    toast({
+      title: "Team Member Added",
+      description: `${memberData.name} has been successfully added to the team`,
+    });
   };
 
   return (
