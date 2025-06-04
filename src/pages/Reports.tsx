@@ -124,14 +124,18 @@ const Reports = () => {
   };
 
   const generateCSVReport = (reportData: any) => {
-    const headers = ['Lead ID', 'Name', 'Status', 'Value', 'Assigned To', 'Created Date', 'Last Contact'];
+    const headers = ['Lead ID', 'Name', 'Contact', 'Phone', 'Email', 'Status', 'Value', 'Assigned To', 'Source', 'Priority', 'Last Contact'];
     const rows = filteredLeads.map(lead => [
       lead.id,
       lead.name,
+      lead.contact,
+      lead.phone,
+      lead.email,
       lead.status,
       lead.value,
       lead.assignedTo || 'Unassigned',
-      lead.createdAt || new Date().toISOString().split('T')[0],
+      lead.source,
+      lead.priority,
       lead.lastContact || 'Never'
     ]);
     
@@ -222,7 +226,6 @@ const Reports = () => {
     });
   };
 
-  // ... keep existing code (reportTemplates array)
   const reportTemplates = [
     {
       id: '1',
@@ -382,7 +385,6 @@ const Reports = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* ... keep existing code (report templates section) */}
           <Card>
             <CardHeader>
               <CardTitle>Available Report Templates</CardTitle>
