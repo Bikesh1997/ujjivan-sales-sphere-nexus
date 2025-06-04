@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -91,12 +90,6 @@ const SalesFunnel = () => {
           <h1 className="text-2xl font-bold text-gray-900">Sales Funnel & Pipeline</h1>
           <p className="text-gray-600">Track your sales pipeline and manage tasks efficiently</p>
         </div>
-        <PermissionGate permission="lead_create">
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus size={16} className="mr-2" />
-            Add Prospect
-          </Button>
-        </PermissionGate>
       </div>
 
       {/* Tabs for different views */}
