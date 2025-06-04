@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,8 @@ import {
   CheckCircle,
   AlertCircle,
   RotateCcw,
-  Filter
+  Filter,
+  UserCheck
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -53,6 +53,7 @@ const LeadAllocation = () => {
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [assignmentHistory, setAssignmentHistory] = useState<Assignment[]>([]);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isManualMode, setIsManualMode] = useState(false);
   const [filters, setFilters] = useState({
     priority: 'all',
     source: 'all',
@@ -194,11 +195,17 @@ const LeadAllocation = () => {
   });
 
   const handleLeadSelection = (leadId: string) => {
-    setSelectedLeads(prev => 
-      prev.includes(leadId) 
-        ? prev.filter(id => id !== leadId)
-        : [...prev, leadId]
-    );
+    if (isManualMode) {
+      // In manual mode, only allow single selection
+      setSelectedLeads([leadId]);
+    } else {
+      // In bulk mode, allow multiple selections
+      setSelectedLeads(prev => 
+        prev.includes(leadId) 
+          ? prev.filter(id => id !== leadId)
+          : [...prev, leadId]
+      );
+    }
   };
 
   const handleSelectAll = () => {
@@ -269,6 +276,48 @@ const LeadAllocation = () => {
     setSelectedLeads([]);
   };
 
+  const handleManualAssign = (leadId: string, memberId: string) => {
+    const lead = filteredLeads.find(l => l.id === leadId);
+    const member = teamMembers.find(m => m.id === memberId);
+    
+    if (!lead || !member) return;
+
+    if (member.currentLeads >= member.capacity) {
+      toast({
+        title: "Capacity Exceeded",
+        description: `${member.name} is already at full capacity`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create assignment history entry
+    const newAssignment = {
+      id: Date.now().toString(),
+      leadName: lead.name,
+      memberName: member.name,
+      timestamp: new Date().toLocaleString()
+    };
+
+    setAssignmentHistory(prev => [newAssignment, ...prev].slice(0, 10));
+    
+    // Update member capacity
+    setTeamMembers(prev => prev.map(m => 
+      m.id === memberId 
+        ? { ...m, currentLeads: m.currentLeads + 1 }
+        : m
+    ));
+
+    // Remove assigned lead from unassigned list
+    setUnassignedLeads(prev => prev.filter(l => l.id !== leadId));
+    
+    toast({
+      title: "Lead Assigned",
+      description: `${lead.name} assigned to ${member.name}`,
+    });
+    setSelectedLeads([]);
+  };
+
   const handleAutoAssign = () => {
     if (filteredLeads.length === 0) {
       toast({
@@ -281,7 +330,6 @@ const LeadAllocation = () => {
     const availableMembers = teamMembers
       .filter(m => m.currentLeads < m.capacity)
       .sort((a, b) => {
-        // Sort by available capacity (desc) then by performance (desc)
         const aCapacity = a.capacity - a.currentLeads;
         const bCapacity = b.capacity - b.currentLeads;
         if (aCapacity !== bCapacity) return bCapacity - aCapacity;
@@ -297,7 +345,6 @@ const LeadAllocation = () => {
       return;
     }
 
-    // Sort leads by priority (High > Medium > Low)
     const prioritySortedLeads = [...filteredLeads].sort((a, b) => {
       const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
       return priorityOrder[b.priority as keyof typeof priorityOrder] - priorityOrder[a.priority as keyof typeof priorityOrder];
@@ -307,9 +354,7 @@ const LeadAllocation = () => {
     const updatedMembers = [...teamMembers];
     const leadsToRemove: string[] = [];
 
-    // Assign leads to members
     for (const lead of prioritySortedLeads) {
-      // Find best member based on specialization match and capacity
       const bestMember = availableMembers.find(member => {
         const hasCapacity = member.currentLeads < member.capacity;
         const matchesSpecialization = lead.type.toLowerCase().includes(member.specialization.toLowerCase().split(' ')[0]);
@@ -324,13 +369,11 @@ const LeadAllocation = () => {
           timestamp: new Date().toLocaleString()
         });
 
-        // Update member's current leads
         const memberIndex = updatedMembers.findIndex(m => m.id === bestMember.id);
         if (memberIndex !== -1) {
           updatedMembers[memberIndex].currentLeads++;
         }
 
-        // Update available members array
         const availableMemberIndex = availableMembers.findIndex(m => m.id === bestMember.id);
         if (availableMemberIndex !== -1) {
           availableMembers[availableMemberIndex].currentLeads++;
@@ -345,7 +388,6 @@ const LeadAllocation = () => {
       }
     }
 
-    // Update state
     setTeamMembers(updatedMembers);
     setUnassignedLeads(prev => prev.filter(lead => !leadsToRemove.includes(lead.id)));
     setAssignmentHistory(prev => [...assignments, ...prev].slice(0, 10));
@@ -357,19 +399,22 @@ const LeadAllocation = () => {
   };
 
   const handleManualAssignment = () => {
+    setIsManualMode(!isManualMode);
+    setSelectedLeads([]);
     toast({
-      title: "Manual Assignment Mode",
-      description: "Select leads and assign them to specific team members using the assignment panel",
+      title: isManualMode ? "Bulk Assignment Mode" : "Manual Assignment Mode",
+      description: isManualMode 
+        ? "Now you can select multiple leads for bulk assignment" 
+        : "Now you can assign leads individually to specific team members",
     });
   };
 
   const handleResetAssignments = () => {
     setSelectedLeads([]);
     setAssignmentHistory([]);
-    // Reset team members to original capacity
     setTeamMembers(prev => prev.map(member => ({
       ...member,
-      currentLeads: Math.floor(member.capacity * 0.7) // Reset to 70% capacity
+      currentLeads: Math.floor(member.capacity * 0.7)
     })));
     toast({
       title: "Assignments Reset",
@@ -449,14 +494,26 @@ const LeadAllocation = () => {
             Auto-Assign All
           </Button>
           <Button 
-            className="bg-teal-600 hover:bg-teal-700"
+            className={isManualMode ? "bg-green-600 hover:bg-green-700" : "bg-teal-600 hover:bg-teal-700"}
             onClick={handleManualAssignment}
           >
-            <UserPlus size={16} className="mr-2" />
-            Manual Assignment
+            {isManualMode ? <UserCheck size={16} className="mr-2" /> : <UserPlus size={16} className="mr-2" />}
+            {isManualMode ? "Exit Manual Mode" : "Manual Assignment"}
           </Button>
         </div>
       </div>
+
+      {isManualMode && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center space-x-2 text-green-800">
+            <UserCheck size={16} />
+            <span className="font-medium">Manual Assignment Mode Active</span>
+          </div>
+          <p className="text-sm text-green-700 mt-1">
+            Click on any lead to select it, then choose a team member to assign it to.
+          </p>
+        </div>
+      )}
 
       {/* Team Capacity Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -511,14 +568,16 @@ const LeadAllocation = () => {
                 {selectedLeads.length > 0 && (
                   <Badge variant="secondary">{selectedLeads.length} selected</Badge>
                 )}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleSelectAll}
-                  disabled={filteredLeads.length === 0}
-                >
-                  {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
-                </Button>
+                {!isManualMode && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSelectAll}
+                    disabled={filteredLeads.length === 0}
+                  >
+                    {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
@@ -566,6 +625,34 @@ const LeadAllocation = () => {
                       <span>{lead.source} • {lead.type}</span>
                       <span className="font-medium">{lead.value}</span>
                     </div>
+                    
+                    {/* Manual Assignment Options */}
+                    {isManualMode && selectedLeads.includes(lead.id) && (
+                      <div className="mt-3 pt-3 border-t">
+                        <p className="text-xs font-medium text-gray-700 mb-2">Assign to:</p>
+                        <div className="grid grid-cols-2 gap-1">
+                          {teamMembers.map((member) => {
+                            const isAtCapacity = member.currentLeads >= member.capacity;
+                            return (
+                              <Button
+                                key={member.id}
+                                size="sm"
+                                variant="outline"
+                                disabled={isAtCapacity}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleManualAssign(lead.id, member.id);
+                                }}
+                                className={`text-xs ${isAtCapacity ? 'opacity-50' : 'hover:bg-teal-50'}`}
+                              >
+                                {member.name.split(' ')[0]}
+                                {isAtCapacity && ' (Full)'}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -576,10 +663,12 @@ const LeadAllocation = () => {
         {/* Assignment Panel */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Assignment</CardTitle>
+            <CardTitle>
+              {isManualMode ? "Manual Assignment" : "Quick Assignment"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {selectedLeads.length > 0 ? (
+            {!isManualMode && selectedLeads.length > 0 ? (
               <div>
                 <p className="text-sm text-gray-600 mb-4">
                   Assign {selectedLeads.length} selected lead(s) to:
@@ -625,8 +714,15 @@ const LeadAllocation = () => {
             ) : (
               <div className="text-center py-8">
                 <Users size={48} className="mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Select Leads to Assign</h3>
-                <p className="text-gray-600">Choose leads from the list to assign them to team members</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {isManualMode ? "Select a Lead to Assign" : "Select Leads to Assign"}
+                </h3>
+                <p className="text-gray-600">
+                  {isManualMode 
+                    ? "Click on any lead to select it and see assignment options" 
+                    : "Choose leads from the list to assign them to team members"
+                  }
+                </p>
               </div>
             )}
 
@@ -663,6 +759,12 @@ const LeadAllocation = () => {
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <span>Specialization matching is preferred</span>
                 </div>
+                {isManualMode && (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span>Manual mode allows individual lead assignment</span>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
