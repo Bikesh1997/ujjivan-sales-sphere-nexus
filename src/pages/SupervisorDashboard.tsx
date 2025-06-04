@@ -199,7 +199,7 @@ const SupervisorDashboard = () => {
                 <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <p className="font-medium text-sm">{lead.name}</p>
-                    <p className="text-xs text-gray-500">{lead.company} • {lead.value}</p>
+                    <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
                   </div>
                   <div className="flex space-x-2">
                     <select className="text-xs border rounded px-2 py-1">
