@@ -12,6 +12,7 @@ import SalesFunnel from "./pages/SalesFunnel";
 import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
 import TaskManagement from "./pages/tasks/TaskManagement";
+import GeoLocation from "./pages/GeoLocation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
                     <Route path="/leads" element={<LeadManagement />} />
                     <Route path="/tasks" element={<TaskManagement />} />
                     <Route path="/customers" element={<Customer360 />} />
+                    <Route path="/geo-location" element={<GeoLocation />} />
                     <Route path="/portfolio" element={<Dashboard />} />
                     <Route path="/beat-plan" element={<Dashboard />} />
                     <Route path="/calendar" element={<Dashboard />} />
