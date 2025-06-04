@@ -18,9 +18,13 @@ import {
   Plus,
   Calendar as CalendarIcon,
   Target,
-  Users
+  Users,
+  Activity,
+  BarChart3
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import RealTimeTeamMonitor from '@/components/supervisor/RealTimeTeamMonitor';
+import ComprehensiveAnalytics from '@/components/analytics/ComprehensiveAnalytics';
 
 const TeamTasks = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -167,7 +171,6 @@ const TeamTasks = () => {
       description: `"${newTask.title}" has been assigned to ${newTask.assignedTo}.`,
     });
 
-    // Reset form
     setNewTask({
       title: '',
       description: '',
@@ -188,8 +191,8 @@ const TeamTasks = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Tasks</h1>
-          <p className="text-gray-600">Monitor and manage team task progress</p>
+          <h1 className="text-2xl font-bold text-gray-900">Advanced Team Management</h1>
+          <p className="text-gray-600">Complete team oversight with real-time monitoring and analytics</p>
         </div>
         <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAssignTask}>
           <Plus size={16} className="mr-2" />
@@ -197,7 +200,7 @@ const TeamTasks = () => {
         </Button>
       </div>
 
-      {/* Task Statistics */}
+      {/* Enhanced Task Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardContent className="p-6">
@@ -205,6 +208,7 @@ const TeamTasks = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Tasks</p>
                 <p className="text-2xl font-bold">{taskStats.total}</p>
+                <p className="text-xs text-gray-500">+5 this week</p>
               </div>
               <Target className="h-8 w-8 text-blue-600" />
             </div>
@@ -217,6 +221,7 @@ const TeamTasks = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">In Progress</p>
                 <p className="text-2xl font-bold">{taskStats.inProgress}</p>
+                <p className="text-xs text-yellow-600">2 due today</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-600" />
             </div>
@@ -229,6 +234,7 @@ const TeamTasks = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Completed</p>
                 <p className="text-2xl font-bold">{taskStats.completed}</p>
+                <p className="text-xs text-green-600">+3 today</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -241,6 +247,7 @@ const TeamTasks = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Overdue</p>
                 <p className="text-2xl font-bold">{taskStats.overdue}</p>
+                <p className="text-xs text-red-600">Needs attention</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-600" />
             </div>
@@ -249,10 +256,12 @@ const TeamTasks = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Task Overview</TabsTrigger>
           <TabsTrigger value="members">Team Members</TabsTrigger>
-          <TabsTrigger value="calendar">Task Calendar</TabsTrigger>
+          <TabsTrigger value="monitor">Real-Time Monitor</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="calendar">Calendar</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -349,6 +358,14 @@ const TeamTasks = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="monitor" className="space-y-6">
+          <RealTimeTeamMonitor />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <ComprehensiveAnalytics />
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-6">
