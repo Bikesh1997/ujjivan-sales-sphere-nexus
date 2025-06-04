@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
 import LeadViewModal from './LeadViewModal';
 import LeadCallModal from './LeadCallModal';
+import EditLeadModal from './EditLeadModal';
 import { useLeadActions } from '@/hooks/useLeadActions';
 
 interface Lead {
@@ -23,11 +24,13 @@ interface Lead {
 
 interface LeadActionsMenuProps {
   lead: Lead;
+  onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
 }
 
-const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
+const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   
   const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(lead);
 
@@ -39,8 +42,7 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
   const handleEdit = () => {
     console.log('Editing lead:', lead);
     if (handleEditAttempt()) {
-      // For now, just show a message until edit modal is implemented
-      console.log('Edit functionality will be implemented');
+      setEditModalOpen(true);
     }
   };
 
@@ -89,6 +91,15 @@ const LeadActionsMenu = ({ lead }: LeadActionsMenuProps) => {
         isOpen={callModalOpen}
         onOpenChange={setCallModalOpen}
       />
+
+      {onEditLead && (
+        <EditLeadModal 
+          lead={lead}
+          isOpen={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          onEditLead={onEditLead}
+        />
+      )}
     </>
   );
 };

@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -104,6 +105,16 @@ const LeadManagement = () => {
     setCurrentPage(1); // Reset to first page to show the new lead
   };
 
+  const handleEditLead = (leadId: string, updatedData: Partial<Lead>) => {
+    setLeadsData(prevLeads => 
+      prevLeads.map(lead => 
+        lead.id === leadId 
+          ? { ...lead, ...updatedData, lastContact: 'Just updated' }
+          : lead
+      )
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -169,7 +180,11 @@ const LeadManagement = () => {
         
         <CardContent>
           <div className="space-y-4">
-            <LeadsTable leads={paginatedLeads} userRole={user?.role || ''} />
+            <LeadsTable 
+              leads={paginatedLeads} 
+              userRole={user?.role || ''} 
+              onEditLead={handleEditLead}
+            />
 
             <LeadsPagination
               currentPage={currentPage}

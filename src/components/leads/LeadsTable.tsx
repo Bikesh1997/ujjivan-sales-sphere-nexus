@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { 
   Table, 
@@ -28,9 +27,10 @@ interface Lead {
 interface LeadsTableProps {
   leads: Lead[];
   userRole: string;
+  onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
 }
 
-const LeadsTable = ({ leads, userRole }: LeadsTableProps) => {
+const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
@@ -99,7 +99,7 @@ const LeadsTable = ({ leads, userRole }: LeadsTableProps) => {
             )}
             <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
             <TableCell>
-              <LeadActionsMenu lead={lead} />
+              <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
             </TableCell>
           </TableRow>
         ))}
