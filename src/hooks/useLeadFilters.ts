@@ -21,7 +21,7 @@ export const useLeadFilters = (leads: Lead[]) => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
 
   const filteredLeads = useMemo(() => {
     return leads.filter(lead => {
