@@ -10,9 +10,17 @@ import { useToast } from '@/hooks/use-toast';
 interface AddTeamMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onAddMember: (memberData: {
+    name: string;
+    email: string;
+    role: string;
+    department: string;
+    phone: string;
+    joiningDate: string;
+  }) => void;
 }
 
-const AddTeamMemberModal = ({ isOpen, onClose }: AddTeamMemberModalProps) => {
+const AddTeamMemberModal = ({ isOpen, onClose, onAddMember }: AddTeamMemberModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -35,6 +43,8 @@ const AddTeamMemberModal = ({ isOpen, onClose }: AddTeamMemberModalProps) => {
       return;
     }
 
+    onAddMember(formData);
+    
     toast({
       title: "Team Member Added",
       description: `${formData.name} has been successfully added to the team`,

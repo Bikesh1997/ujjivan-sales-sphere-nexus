@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,7 +43,7 @@ const TeamManagement = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [targetMember, setTargetMember] = useState(null);
 
-  const teamMembers = [
+  const [teamMembers, setTeamMembers] = useState([
     { 
       id: '1', 
       name: 'Rahul Sharma', 
@@ -91,7 +92,7 @@ const TeamManagement = () => {
       targets: { monthly: 18, achieved: 17 },
       lastActive: '1 hour ago'
     }
-  ];
+  ]);
 
   const handleAutoAssign = () => {
     toast({
@@ -133,12 +134,29 @@ const TeamManagement = () => {
   };
 
   const handleRemoveMember = (member: any) => {
+    setTeamMembers(prevMembers => prevMembers.filter(m => m.id !== member.id));
     toast({
-      title: "Remove Member",
+      title: "Member Removed",
       description: `${member.name} has been removed from the team`,
       variant: "destructive"
     });
-    // You can add remove member logic here
+  };
+
+  const handleAddMember = (memberData: any) => {
+    const newMember = {
+      id: (teamMembers.length + 1).toString(),
+      name: memberData.name,
+      email: memberData.email,
+      role: memberData.role,
+      department: memberData.department,
+      status: 'active',
+      joinDate: memberData.joiningDate || new Date().toISOString().split('T')[0],
+      performance: 0,
+      targets: { monthly: 0, achieved: 0 },
+      lastActive: 'Just joined'
+    };
+    
+    setTeamMembers(prevMembers => [...prevMembers, newMember]);
   };
 
   const getStatusColor = (status: string) => {
@@ -262,7 +280,7 @@ const TeamManagement = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Avg Performance</p>
                     <p className="text-2xl font-bold">
-                      {Math.round(teamMembers.reduce((acc, m) => acc + m.performance, 0) / teamMembers.length)}%
+                      {teamMembers.length > 0 ? Math.round(teamMembers.reduce((acc, m) => acc + m.performance, 0) / teamMembers.length) : 0}%
                     </p>
                   </div>
                   <Target className="h-8 w-8 text-purple-600" />
@@ -389,7 +407,7 @@ const TeamManagement = () => {
                       </div>
                       <div>
                         <p className="text-gray-600">Achievement Rate</p>
-                        <p className="font-medium">{Math.round((member.targets.achieved / member.targets.monthly) * 100)}%</p>
+                        <p className="font-medium">{member.targets.monthly > 0 ? Math.round((member.targets.achieved / member.targets.monthly) * 100) : 0}%</p>
                       </div>
                     </div>
                   </div>
@@ -419,7 +437,8 @@ const TeamManagement = () => {
       {/* Modals */}
       <AddTeamMemberModal 
         isOpen={isAddMemberOpen} 
-        onClose={() => setIsAddMemberOpen(false)} 
+        onClose={() => setIsAddMemberOpen(false)}
+        onAddMember={handleAddMember}
       />
       
       <TeamSettingsModal 
@@ -435,7 +454,8 @@ const TeamManagement = () => {
       
       <SetTargetsModal 
         isOpen={isSetTargetsOpen} 
-        onClose={() => setIsSetTargetsOpen(false)} 
+        onClose={() => setIsSetTargetsOpen(false)}
+        preSelectedMember={targetMember}
       />
       
       <ScheduleReviewModal 
