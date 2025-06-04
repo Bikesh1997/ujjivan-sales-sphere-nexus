@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
+import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
 import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
@@ -18,8 +20,19 @@ import RiskManagement from "./pages/RiskManagement";
 import PortfolioManagement from "./pages/PortfolioManagement";
 import NotFound from "./pages/NotFound";
 import KPAManagement from "./pages/KPAManagement";
+import { useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
+
+const DashboardRouter = () => {
+  const { user } = useAuth();
+  
+  if (user?.role === 'supervisor') {
+    return <SupervisorDashboard />;
+  }
+  
+  return <Dashboard />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -34,7 +47,7 @@ const App = () => (
               <ProtectedRoute>
                 <Layout>
                   <Routes>
-                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/" element={<DashboardRouter />} />
                     <Route path="/funnel" element={<SalesFunnel />} />
                     <Route path="/leads" element={<LeadManagement />} />
                     <Route path="/tasks" element={<TaskManagement />} />
