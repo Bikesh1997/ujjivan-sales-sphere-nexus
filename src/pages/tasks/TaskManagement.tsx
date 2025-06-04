@@ -1,20 +1,13 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, MapPin, Phone, Mail, Plus, Filter, Eye } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import TaskDetailsModal from '@/components/tasks/TaskDetailsModal';
-import CampaignDetailsModal from '@/components/campaigns/CampaignDetailsModal';
+import { Calendar, Clock, MapPin, Phone, Mail, Plus, Filter } from 'lucide-react';
 
 const TaskManagement = () => {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('today');
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [taskModalOpen, setTaskModalOpen] = useState(false);
-  const [campaignModalOpen, setCampaignModalOpen] = useState(false);
 
   const tasks = [
     {
@@ -106,106 +99,6 @@ const TaskManagement = () => {
     }
   ];
 
-  const handleAddTask = () => {
-    toast({
-      title: "Add Task",
-      description: "Opening task creation form",
-    });
-  };
-
-  const handleAddCampaign = () => {
-    toast({
-      title: "Add Campaign",  
-      description: "Opening campaign creation form",
-    });
-  };
-
-  const handleMarkComplete = (taskId: string) => {
-    toast({
-      title: "Task Completed",
-      description: "Task marked as completed successfully",
-    });
-  };
-
-  const handleViewTask = (task: any) => {
-    setSelectedTask(task);
-    setTaskModalOpen(true);
-  };
-
-  const handleViewCampaign = (campaign: any) => {
-    setSelectedCampaign(campaign);
-    setCampaignModalOpen(true);
-  };
-
-  const handleFilterTasks = () => {
-    toast({
-      title: "Filter Applied",
-      description: "Task filters have been applied",
-    });
-  };
-
-  const handleTaskAction = (taskId: string, action: string) => {
-    switch (action) {
-      case 'edit':
-        toast({
-          title: "Edit Task",
-          description: `Opening edit form for task ${taskId}`,
-        });
-        break;
-      case 'delete':
-        toast({
-          title: "Delete Task",
-          description: `Task ${taskId} has been deleted`,
-        });
-        break;
-      case 'assign':
-        toast({
-          title: "Assign Task",
-          description: `Assigning task ${taskId} to team member`,
-        });
-        break;
-      default:
-        toast({
-          title: "Task Action",
-          description: `${action} performed on task ${taskId}`,
-        });
-    }
-  };
-
-  const handleCampaignAction = (campaignId: string, action: string) => {
-    switch (action) {
-      case 'start':
-        toast({
-          title: "Campaign Started",
-          description: `Campaign ${campaignId} has been activated`,
-        });
-        break;
-      case 'pause':
-        toast({
-          title: "Campaign Paused",
-          description: `Campaign ${campaignId} has been paused`,
-        });
-        break;
-      case 'edit':
-        toast({
-          title: "Edit Campaign",
-          description: `Opening edit form for campaign ${campaignId}`,
-        });
-        break;
-      case 'duplicate':
-        toast({
-          title: "Campaign Duplicated",
-          description: `Campaign ${campaignId} has been duplicated`,
-        });
-        break;
-      default:
-        toast({
-          title: "Campaign Action",
-          description: `${action} performed on campaign ${campaignId}`,
-        });
-    }
-  };
-
   const getTaskIcon = (type: string) => {
     switch (type) {
       case 'Call': return <Phone size={16} className="text-blue-600" />;
@@ -244,11 +137,11 @@ const TaskManagement = () => {
           <p className="text-gray-600">Manage daily tasks and marketing campaigns</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleAddCampaign}>
+          <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">
             <Plus size={16} className="mr-2" />
             New Campaign
           </Button>
-          <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAddTask}>
+          <Button className="bg-teal-600 hover:bg-teal-700">
             <Plus size={16} className="mr-2" />
             Add Task
           </Button>
@@ -264,7 +157,7 @@ const TaskManagement = () => {
         <TabsContent value="tasks" className="space-y-6">
           {/* Task Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">8</div>
@@ -272,7 +165,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-600">3</div>
@@ -280,7 +173,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">5</div>
@@ -288,7 +181,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">2</div>
@@ -303,7 +196,7 @@ const TaskManagement = () => {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Today's Tasks</CardTitle>
-                <Button variant="outline" size="sm" onClick={handleFilterTasks}>
+                <Button variant="outline" size="sm">
                   <Filter size={16} className="mr-2" />
                   Filter
                 </Button>
@@ -343,12 +236,8 @@ const TaskManagement = () => {
                         <Badge className={getStatusColor(task.status)}>
                           {task.status.replace('_', ' ')}
                         </Badge>
-                        <Button size="sm" variant="outline" onClick={() => handleViewTask(task)}>
-                          <Eye size={14} className="mr-1" />
-                          View
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleMarkComplete(task.id)}>
-                          Complete
+                        <Button size="sm" variant="outline">
+                          Mark Complete
                         </Button>
                       </div>
                     </div>
@@ -362,7 +251,7 @@ const TaskManagement = () => {
         <TabsContent value="campaigns" className="space-y-6">
           {/* Campaign Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleCampaignAction('all', 'view-active')}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">2</div>
@@ -370,7 +259,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleCampaignAction('all', 'view-planned')}>
+            <Card>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">1</div>
@@ -434,11 +323,8 @@ const TaskManagement = () => {
                         <Badge className={getStatusColor(campaign.status)}>
                           {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
                         </Badge>
-                        <Button size="sm" variant="outline" onClick={() => handleViewCampaign(campaign)}>
+                        <Button size="sm" variant="outline">
                           View Details
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleCampaignAction(campaign.id, campaign.status === 'active' ? 'pause' : 'start')}>
-                          {campaign.status === 'active' ? 'Pause' : 'Start'}
                         </Button>
                       </div>
                     </div>
@@ -449,19 +335,6 @@ const TaskManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Modals */}
-      <TaskDetailsModal
-        task={selectedTask}
-        isOpen={taskModalOpen}
-        onOpenChange={setTaskModalOpen}
-      />
-
-      <CampaignDetailsModal
-        campaign={selectedCampaign}
-        isOpen={campaignModalOpen}
-        onOpenChange={setCampaignModalOpen}
-      />
     </div>
   );
 };
