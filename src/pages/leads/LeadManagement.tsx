@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,7 +43,6 @@ import {
 } from 'lucide-react';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import LeadViewModal from '@/components/leads/LeadViewModal';
-import LeadEditModal from '@/components/leads/LeadEditModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import PermissionGate from '@/components/rbac/PermissionGate';
@@ -54,13 +54,16 @@ const LeadManagement = () => {
   const [editingLead, setEditingLead] = useState<any>(null);
   const [callingLead, setCallingLead] = useState<any>(null);
   const [leadViewOpen, setLeadViewOpen] = useState(false);
-  const [leadEditOpen, setLeadEditOpen] = useState(false);
-  const [leadCallOpen, setLeadCallOpen] = useState(false);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
 
   const filteredLeads = selectedStatus === 'all' ? userLeads : userLeads.filter(lead => lead.status === selectedStatus);
+
+  const handleEditLead = (lead: any) => {
+    console.log('Edit lead functionality will be implemented:', lead);
+    setEditingLead(lead);
+  };
 
   const LeadActionsMenu = ({ lead, onEdit, onView, onCall, canEdit }: { lead: any, onEdit: () => void, onView: () => void, onCall: () => void, canEdit: boolean }) => {
     return (
@@ -198,9 +201,8 @@ const LeadManagement = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <LeadActionsMenu 
-                        key={lead.id}
                         lead={lead}
-                        onEdit={() => setEditingLead(lead)}
+                        onEdit={() => handleEditLead(lead)}
                         onView={() => setViewingLead(lead)}
                         onCall={() => setCallingLead(lead)}
                         canEdit={user?.role === 'supervisor' || lead.assignedToId === user?.id}
@@ -219,12 +221,6 @@ const LeadManagement = () => {
         lead={viewingLead}
         isOpen={leadViewOpen}
         onOpenChange={setLeadViewOpen}
-      />
-
-      <LeadEditModal
-        lead={editingLead}
-        isOpen={leadEditOpen}
-        onOpenChange={setLeadEditOpen}
       />
     </div>
   );
