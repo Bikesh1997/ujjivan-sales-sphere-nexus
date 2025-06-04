@@ -52,12 +52,7 @@ const LeadManagement = () => {
     if (filters.priority !== 'all' && lead.priority !== filters.priority) {
       return false;
     }
-    if (date?.from && date?.to) {
-      const leadDate = new Date(lead.createdAt);
-      if (leadDate < date.from || leadDate > date.to) {
-        return false;
-      }
-    }
+    // Remove date filtering since createdAt doesn't exist
     return true;
   });
 
@@ -154,7 +149,7 @@ const LeadManagement = () => {
             </SelectContent>
           </Select>
 
-          {/* Date Range Picker */}
+          {/* Date Range Picker - keeping for future use */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -220,7 +215,7 @@ const LeadManagement = () => {
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Priority</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Assignee</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Created At</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Last Contact</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
                 </tr>
               </thead>
@@ -245,7 +240,7 @@ const LeadManagement = () => {
                     </td>
                     <td className="py-3 px-4 font-medium text-gray-900">₹{lead.value}</td>
                     <td className="py-3 px-4 text-gray-600">{lead.assignedTo}</td>
-                    <td className="py-3 px-4 text-gray-600">{lead.createdAt}</td>
+                    <td className="py-3 px-4 text-gray-600">{lead.lastContact}</td>
                     <td className="py-3 px-4">
                       <LeadActionsMenu lead={lead} onEditLead={handleEditLead} />
                     </td>
