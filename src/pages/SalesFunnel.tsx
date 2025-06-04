@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, Users, Target, DollarSign, Plus, Filter, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
 
 const SalesFunnel = () => {
   const { toast } = useToast();
@@ -165,11 +164,38 @@ const SalesFunnel = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <InteractiveFunnelChart 
-            data={funnelData} 
-            onStageClick={handleStageClick}
-            selectedStage={selectedStage}
-          />
+          <div className="space-y-4">
+            {funnelData.map((stage, index) => (
+              <div 
+                key={stage.stage} 
+                className="cursor-pointer hover:bg-gray-50 p-4 rounded-lg transition-colors"
+                onClick={() => handleStageClick(stage.stage)}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-medium">{stage.stage}</h3>
+                  <div className="text-right">
+                    <p className="font-semibold">{stage.count} prospects</p>
+                    <p className="text-sm text-gray-600">{stage.value}</p>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className="h-3 rounded-full transition-all duration-500"
+                    style={{ 
+                      width: `${(stage.count / funnelData[0].count) * 100}%`,
+                      backgroundColor: stage.color
+                    }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-sm text-gray-500 mt-1">
+                  <span>Conversion: {index === 0 ? '100%' : `${((stage.count / funnelData[index-1].count) * 100).toFixed(1)}%`}</span>
+                  <span className={selectedStage === stage.stage ? 'font-medium text-blue-600' : ''}>
+                    {selectedStage === stage.stage ? 'Selected' : 'Click to view'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 

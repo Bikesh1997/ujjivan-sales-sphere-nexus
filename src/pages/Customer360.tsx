@@ -1,322 +1,309 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Phone, Mail, MapPin, Calendar, Plus, Edit, TrendingUp } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  User, 
+  Phone, 
+  Mail, 
+  Calendar, 
+  MapPin, 
+  Building, 
+  DollarSign,
+  TrendingUp,
+  Clock,
+  FileText,
+  MessageSquare,
+  Star
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Customer360 = () => {
   const { toast } = useToast();
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState('customer-1');
 
-  const customers = [
-    {
-      id: '1',
-      name: 'Rajesh Enterprises',
-      contact: 'Rajesh Kumar',
-      email: 'rajesh@enterprises.com',
-      phone: '+91 98765 43210',
-      location: 'Mumbai, Maharashtra',
+  const customerData = {
+    'customer-1': {
+      id: 'customer-1',
+      name: 'John Smith',
+      email: 'john.smith@techcorp.com',
+      phone: '+1 (555) 123-4567',
+      company: 'TechCorp Solutions',
+      position: 'CEO',
+      location: 'San Francisco, CA',
+      joinDate: '2023-01-15',
+      totalValue: '₹45L',
       status: 'Active',
-      value: '₹12.5L',
-      lastContact: '2024-06-03',
-      products: ['Business Loan', 'Current Account'],
-      interactions: 15
-    },
-    {
-      id: '2',
-      name: 'Tech Solutions Ltd',
-      contact: 'Priya Patel',
-      email: 'priya@techsolutions.com',
-      phone: '+91 87654 32109',
-      location: 'Pune, Maharashtra',
-      status: 'Prospect',
-      value: '₹8.2L',
-      lastContact: '2024-06-02',
-      products: ['Equipment Finance'],
-      interactions: 8
-    }
-  ];
-
-  const handleCustomerAction = (action: string, customerId?: string) => {
-    switch (action) {
-      case 'add-customer':
-        toast({
-          title: "Add Customer",
-          description: "Customer creation form will be implemented",
-        });
-        break;
-      case 'edit-customer':
-        toast({
-          title: "Edit Customer",
-          description: `Editing customer ${customerId}`,
-        });
-        break;
-      case 'call-customer':
-        toast({
-          title: "Initiating Call",
-          description: `Calling customer ${customerId}`,
-        });
-        break;
-      case 'email-customer':
-        toast({
-          title: "Opening Email",
-          description: `Composing email to customer ${customerId}`,
-        });
-        break;
-      case 'schedule-meeting':
-        toast({
-          title: "Schedule Meeting",
-          description: `Scheduling meeting with customer ${customerId}`,
-        });
-        break;
-      case 'add-product':
-        toast({
-          title: "Add Product",
-          description: `Adding new product for customer ${customerId}`,
-        });
-        break;
-      default:
-        toast({
-          title: "Action Triggered",
-          description: `${action} functionality will be implemented`,
-        });
+      satisfaction: 4.8,
+      lastContact: '2024-01-15'
     }
   };
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.contact.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const interactionHistory = [
+    {
+      id: 1,
+      type: 'call',
+      date: '2024-01-15',
+      description: 'Follow-up call regarding project timeline',
+      outcome: 'Positive'
+    },
+    {
+      id: 2,
+      type: 'email',
+      date: '2024-01-10',
+      description: 'Sent proposal for Q2 expansion',
+      outcome: 'Pending'
+    },
+    {
+      id: 3,
+      type: 'meeting',
+      date: '2024-01-08',
+      description: 'Strategic planning session',
+      outcome: 'Successful'
+    }
+  ];
+
+  const opportunities = [
+    {
+      id: 1,
+      title: 'Q2 Expansion Project',
+      value: '₹25L',
+      stage: 'Proposal',
+      probability: 75,
+      closeDate: '2024-03-30'
+    },
+    {
+      id: 2,
+      title: 'System Integration',
+      value: '₹15L',
+      stage: 'Negotiation',
+      probability: 60,
+      closeDate: '2024-04-15'
+    }
+  ];
+
+  const handleCall = () => {
+    toast({
+      title: "Initiating Call",
+      description: "Starting call with the customer",
+    });
+  };
+
+  const handleEmail = () => {
+    toast({
+      title: "Compose Email",
+      description: "Opening email composer",
+    });
+  };
+
+  const handleScheduleMeeting = () => {
+    toast({
+      title: "Schedule Meeting",
+      description: "Opening calendar to schedule meeting",
+    });
+  };
+
+  const handleAddNote = () => {
+    toast({
+      title: "Add Note",
+      description: "Opening note composer",
+    });
+  };
+
+  const handleViewOpportunity = (opportunityId: number) => {
+    toast({
+      title: "View Opportunity",
+      description: `Opening details for opportunity ${opportunityId}`,
+    });
+  };
+
+  const currentCustomer = customerData[selectedCustomer as keyof typeof customerData];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer 360</h1>
-          <p className="text-gray-600">Comprehensive view of customer relationships and interactions</p>
+          <h1 className="text-2xl font-bold text-gray-900">Customer 360°</h1>
+          <p className="text-gray-600">Complete view of customer relationship and history</p>
         </div>
-        <Button onClick={() => handleCustomerAction('add-customer')} className="bg-blue-600 hover:bg-blue-700">
-          <Plus size={16} className="mr-2" />
-          Add Customer
-        </Button>
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={handleCall}>
+            <Phone size={16} className="mr-2" />
+            Call
+          </Button>
+          <Button variant="outline" onClick={handleEmail}>
+            <Mail size={16} className="mr-2" />
+            Email
+          </Button>
+          <Button onClick={handleScheduleMeeting}>
+            <Calendar size={16} className="mr-2" />
+            Schedule Meeting
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Customer List */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Customers</CardTitle>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-              <Input
-                placeholder="Search customers..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {filteredCustomers.map((customer) => (
-                <div
-                  key={customer.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedCustomer?.id === customer.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setSelectedCustomer(customer)}
-                >
-                  <div className="flex items-start space-x-3">
-                    <Avatar>
-                      <AvatarImage src={`https://avatar.vercel.sh/${customer.contact}.png`} alt={customer.contact} />
-                      <AvatarFallback>{customer.contact.charAt(0).toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">{customer.name}</h4>
-                      <p className="text-xs text-gray-600 truncate">{customer.contact}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <Badge variant={customer.status === 'Active' ? 'default' : 'secondary'}>
-                          {customer.status}
-                        </Badge>
-                        <span className="text-xs font-medium text-green-600">{customer.value}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Customer Details */}
-        <Card className="lg:col-span-2">
-          <CardContent className="p-6">
-            {selectedCustomer ? (
-              <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="products">Products</TabsTrigger>
-                  <TabsTrigger value="interactions">Interactions</TabsTrigger>
-                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="overview" className="space-y-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={`https://avatar.vercel.sh/${selectedCustomer.contact}.png`} alt={selectedCustomer.contact} />
-                        <AvatarFallback className="text-lg">{selectedCustomer.contact.charAt(0).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h2 className="text-xl font-bold">{selectedCustomer.name}</h2>
-                        <p className="text-gray-600">{selectedCustomer.contact}</p>
-                        <Badge variant={selectedCustomer.status === 'Active' ? 'default' : 'secondary'}>
-                          {selectedCustomer.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => handleCustomerAction('edit-customer', selectedCustomer.id)}>
-                        <Edit size={14} className="mr-1" />
-                        Edit
-                      </Button>
-                      <Button size="sm" onClick={() => handleCustomerAction('call-customer', selectedCustomer.id)}>
-                        <Phone size={14} className="mr-1" />
-                        Call
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Contact Information</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Mail size={16} className="text-gray-500" />
-                          <span className="text-sm">{selectedCustomer.email}</span>
-                          <Button size="sm" variant="ghost" onClick={() => handleCustomerAction('email-customer', selectedCustomer.id)}>
-                            Email
-                          </Button>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Phone size={16} className="text-gray-500" />
-                          <span className="text-sm">{selectedCustomer.phone}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <MapPin size={16} className="text-gray-500" />
-                          <span className="text-sm">{selectedCustomer.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Key Metrics</h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Total Value</span>
-                          <span className="text-sm font-medium">{selectedCustomer.value}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Interactions</span>
-                          <span className="text-sm font-medium">{selectedCustomer.interactions}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Last Contact</span>
-                          <span className="text-sm font-medium">{selectedCustomer.lastContact}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2 pt-4">
-                    <Button variant="outline" onClick={() => handleCustomerAction('schedule-meeting', selectedCustomer.id)}>
-                      <Calendar size={16} className="mr-2" />
-                      Schedule Meeting
-                    </Button>
-                    <Button variant="outline" onClick={() => handleCustomerAction('add-product', selectedCustomer.id)}>
-                      <Plus size={16} className="mr-2" />
-                      Add Product
-                    </Button>
-                    <Button variant="outline" onClick={() => handleCustomerAction('view-analytics', selectedCustomer.id)}>
-                      <TrendingUp size={16} className="mr-2" />
-                      View Analytics
-                    </Button>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="products">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-medium">Products & Services</h3>
-                      <Button size="sm" onClick={() => handleCustomerAction('add-product', selectedCustomer.id)}>
-                        <Plus size={16} className="mr-2" />
-                        Add Product
-                      </Button>
-                    </div>
-                    <div className="space-y-3">
-                      {selectedCustomer.products.map((product, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                          <span className="font-medium">{product}</span>
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => handleCustomerAction('view-product-details', selectedCustomer.id)}>
-                              View Details
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={() => handleCustomerAction('manage-product', selectedCustomer.id)}>
-                              Manage
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="interactions">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-medium">Recent Interactions</h3>
-                      <Button size="sm" onClick={() => handleCustomerAction('add-interaction', selectedCustomer.id)}>
-                        <Plus size={16} className="mr-2" />
-                        Add Interaction
-                      </Button>
-                    </div>
-                    <div className="text-center py-8 text-gray-500">
-                      <p>Interaction history will be displayed here</p>
-                      <Button className="mt-4" variant="outline" onClick={() => handleCustomerAction('view-full-history', selectedCustomer.id)}>
-                        View Full History
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="analytics">
-                  <div className="space-y-4">
-                    <h3 className="font-medium">Customer Analytics</h3>
-                    <div className="text-center py-8 text-gray-500">
-                      <p>Analytics and insights will be displayed here</p>
-                      <Button className="mt-4" variant="outline" onClick={() => handleCustomerAction('generate-report', selectedCustomer.id)}>
-                        Generate Report
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                <Users size={48} className="mx-auto mb-4 text-gray-300" />
-                <p>Select a customer to view details</p>
+      {/* Customer Overview */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-start space-x-6">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={`https://avatar.vercel.sh/${currentCustomer.name}.png`} alt={currentCustomer.name} />
+              <AvatarFallback className="text-xl">
+                {currentCustomer.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold">{currentCustomer.name}</h3>
+                <p className="text-gray-600">{currentCustomer.position}</p>
+                <p className="text-gray-600">{currentCustomer.company}</p>
+                <Badge className="mt-2">{currentCustomer.status}</Badge>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Mail size={16} className="text-gray-400" />
+                  <span className="text-sm">{currentCustomer.email}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Phone size={16} className="text-gray-400" />
+                  <span className="text-sm">{currentCustomer.phone}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin size={16} className="text-gray-400" />
+                  <span className="text-sm">{currentCustomer.location}</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <DollarSign size={16} className="text-gray-400" />
+                  <span className="text-sm">Total Value: {currentCustomer.totalValue}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Star size={16} className="text-gray-400" />
+                  <span className="text-sm">Satisfaction: {currentCustomer.satisfaction}/5</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Clock size={16} className="text-gray-400" />
+                  <span className="text-sm">Last Contact: {currentCustomer.lastContact}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Detailed Information */}
+      <Tabs defaultValue="interactions" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="interactions">Interaction History</TabsTrigger>
+          <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="interactions">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Recent Interactions</CardTitle>
+              <Button onClick={handleAddNote}>
+                <FileText size={16} className="mr-2" />
+                Add Note
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {interactionHistory.map((interaction) => (
+                  <div key={interaction.id} className="flex items-start space-x-4 p-4 border rounded-lg">
+                    <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      {interaction.type === 'call' && <Phone size={16} className="text-blue-600" />}
+                      {interaction.type === 'email' && <Mail size={16} className="text-blue-600" />}
+                      {interaction.type === 'meeting' && <Calendar size={16} className="text-blue-600" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <h4 className="font-medium">{interaction.description}</h4>
+                        <span className="text-sm text-gray-500">{interaction.date}</span>
+                      </div>
+                      <Badge variant="outline" className="mt-1">
+                        {interaction.outcome}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="opportunities">
+          <Card>
+            <CardHeader>
+              <CardTitle>Active Opportunities</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {opportunities.map((opportunity) => (
+                  <div key={opportunity.id} className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50" onClick={() => handleViewOpportunity(opportunity.id)}>
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-medium">{opportunity.title}</h4>
+                      <span className="text-lg font-semibold text-green-600">{opportunity.value}</span>
+                    </div>
+                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <Badge variant="outline">{opportunity.stage}</Badge>
+                      <span>Probability: {opportunity.probability}%</span>
+                      <span>Close Date: {opportunity.closeDate}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="documents">
+          <Card>
+            <CardHeader>
+              <CardTitle>Documents & Files</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-gray-500">
+                <FileText size={48} className="mx-auto mb-4 text-gray-300" />
+                <p>No documents uploaded yet</p>
+                <Button variant="outline" className="mt-4">
+                  Upload Document
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notes">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Customer Notes</CardTitle>
+              <Button onClick={handleAddNote}>
+                <MessageSquare size={16} className="mr-2" />
+                Add Note
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-gray-500">
+                <MessageSquare size={48} className="mx-auto mb-4 text-gray-300" />
+                <p>No notes added yet</p>
+                <Button variant="outline" className="mt-4" onClick={handleAddNote}>
+                  Add First Note
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
