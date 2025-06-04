@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,12 @@ const LeadManagement = () => {
   const handleEditLead = (lead: any) => {
     console.log('Edit lead functionality will be implemented:', lead);
     setEditingLead(lead);
+  };
+
+  const handleViewLead = (lead: any) => {
+    console.log('Viewing lead:', lead);
+    setViewingLead(lead);
+    setLeadViewOpen(true);
   };
 
   const LeadActionsMenu = ({ lead, onEdit, onView, onCall, canEdit }: { lead: any, onEdit: () => void, onView: () => void, onCall: () => void, canEdit: boolean }) => {
@@ -203,7 +210,7 @@ const LeadManagement = () => {
                       <LeadActionsMenu 
                         lead={lead}
                         onEdit={() => handleEditLead(lead)}
-                        onView={() => setViewingLead(lead)}
+                        onView={() => handleViewLead(lead)}
                         onCall={() => setCallingLead(lead)}
                         canEdit={user?.role === 'supervisor' || lead.assignedToId === user?.id}
                       />

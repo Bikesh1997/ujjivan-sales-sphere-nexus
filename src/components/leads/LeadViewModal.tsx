@@ -17,12 +17,16 @@ interface Lead {
 }
 
 interface LeadViewModalProps {
-  lead: Lead;
+  lead: Lead | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
+  if (!lead) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
