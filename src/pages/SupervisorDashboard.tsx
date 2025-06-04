@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -22,10 +21,19 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
+import { useToast } from '@/hooks/use-toast';
+import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
+import TeamSettingsModal from '@/components/team/TeamSettingsModal';
+import ViewDetailsModal from '@/components/team/ViewDetailsModal';
 
 const SupervisorDashboard = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [isTeamSettingsModalOpen, setIsTeamSettingsModalOpen] = useState(false);
+  const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
 
   // Team data
   const teamMembers = [
@@ -117,6 +125,70 @@ const SupervisorDashboard = () => {
     },
   ];
 
+  const handleAutoAssign = () => {
+    toast({
+      title: "Auto-Assignment Started",
+      description: "Leads are being automatically assigned based on team member availability and workload.",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Auto-Assignment Complete",
+        description: `${unassignedLeads.length} leads have been successfully assigned to team members.`,
+      });
+    }, 2000);
+  };
+
+  const handleAssignLead = (leadId: string, memberId: string) => {
+    const member = teamMembers.find(m => m.id === memberId);
+    if (member) {
+      toast({
+        title: "Lead Assigned",
+        description: `Lead has been assigned to ${member.name}`,
+      });
+    }
+  };
+
+  const handleViewDetails = (member: any) => {
+    setSelectedMember(member);
+    setIsViewDetailsModalOpen(true);
+  };
+
+  const handleAssignLeads = (member: any) => {
+    toast({
+      title: "Lead Assignment",
+      description: `Opening lead assignment interface for ${member.name}`,
+    });
+  };
+
+  const handleGenerateReports = () => {
+    toast({
+      title: "Generating Reports",
+      description: "Team performance analytics are being compiled...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Reports Ready",
+        description: "Team performance reports have been generated and are ready for download.",
+      });
+    }, 3000);
+  };
+
+  const handleScheduleReview = () => {
+    toast({
+      title: "Schedule Review",
+      description: "Opening review scheduling interface for team members...",
+    });
+  };
+
+  const handleSetTargets = () => {
+    toast({
+      title: "Set Targets",
+      description: "Opening target setting interface for team KPIs...",
+    });
+  };
+
   const getStatusColor = (status: string) => {
     return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
@@ -137,11 +209,19 @@ const SupervisorDashboard = () => {
           <p className="text-gray-600">Team management and performance oversight</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIsAddMemberModalOpen(true)}
+          >
             <UserPlus size={16} className="mr-2" />
             Add Team Member
           </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+          <Button 
+            size="sm" 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setIsTeamSettingsModalOpen(true)}
+          >
             <Settings size={16} className="mr-2" />
             Team Settings
           </Button>
@@ -188,7 +268,11 @@ const SupervisorDashboard = () => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Lead Allocation Required</CardTitle>
-              <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+              <Button 
+                size="sm" 
+                className="bg-orange-600 hover:bg-orange-700"
+                onClick={handleAutoAssign}
+              >
                 Auto-Assign
               </Button>
             </div>
@@ -202,7 +286,10 @@ const SupervisorDashboard = () => {
                     <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
                   </div>
                   <div className="flex space-x-2">
-                    <select className="text-xs border rounded px-2 py-1">
+                    <select 
+                      className="text-xs border rounded px-2 py-1"
+                      onChange={(e) => e.target.value && handleAssignLead(lead.id, e.target.value)}
+                    >
                       <option value="">Assign to...</option>
                       {teamMembers.filter(m => m.status === 'active').map(member => (
                         <option key={member.id} value={member.id}>{member.name}</option>
@@ -265,10 +352,20 @@ const SupervisorDashboard = () => {
                   </div>
                   
                   <div className="flex space-x-2 mt-3">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleViewDetails(member)}
+                    >
                       View Details
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleAssignLeads(member)}
+                    >
                       Assign Leads
                     </Button>
                   </div>
@@ -281,7 +378,7 @@ const SupervisorDashboard = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleGenerateReports}>
           <CardContent className="p-6 text-center">
             <BarChart3 size={32} className="mx-auto text-blue-600 mb-3" />
             <h3 className="font-medium mb-2">Performance Reports</h3>
@@ -289,7 +386,7 @@ const SupervisorDashboard = () => {
           </CardContent>
         </Card>
         
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleScheduleReview}>
           <CardContent className="p-6 text-center">
             <Calendar size={32} className="mx-auto text-green-600 mb-3" />
             <h3 className="font-medium mb-2">Schedule Review</h3>
@@ -297,7 +394,7 @@ const SupervisorDashboard = () => {
           </CardContent>
         </Card>
         
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleSetTargets}>
           <CardContent className="p-6 text-center">
             <Award size={32} className="mx-auto text-purple-600 mb-3" />
             <h3 className="font-medium mb-2">Set Targets</h3>
@@ -305,6 +402,28 @@ const SupervisorDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modals */}
+      <AddTeamMemberModal 
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+      />
+      
+      <TeamSettingsModal 
+        isOpen={isTeamSettingsModalOpen}
+        onClose={() => setIsTeamSettingsModalOpen(false)}
+      />
+      
+      {selectedMember && (
+        <ViewDetailsModal 
+          isOpen={isViewDetailsModalOpen}
+          onClose={() => {
+            setIsViewDetailsModalOpen(false);
+            setSelectedMember(null);
+          }}
+          member={selectedMember}
+        />
+      )}
     </div>
   );
 };
