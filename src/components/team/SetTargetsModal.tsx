@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,10 @@ import { useToast } from '@/hooks/use-toast';
 interface SetTargetsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  preSelectedMember?: any;
 }
 
-const SetTargetsModal = ({ isOpen, onClose }: SetTargetsModalProps) => {
+const SetTargetsModal = ({ isOpen, onClose, preSelectedMember }: SetTargetsModalProps) => {
   const { toast } = useToast();
   const [selectedMember, setSelectedMember] = useState('');
   const [targets, setTargets] = useState({
@@ -31,6 +32,12 @@ const SetTargetsModal = ({ isOpen, onClose }: SetTargetsModalProps) => {
     { id: '3', name: 'Vikash Kumar', role: 'Sales Executive' },
     { id: '4', name: 'Priya Singh', role: 'Senior Sales Executive' }
   ];
+
+  useEffect(() => {
+    if (preSelectedMember) {
+      setSelectedMember(preSelectedMember.id);
+    }
+  }, [preSelectedMember]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

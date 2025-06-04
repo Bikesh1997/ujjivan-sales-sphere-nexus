@@ -40,6 +40,7 @@ const TeamManagement = () => {
   const [isSetTargetsOpen, setIsSetTargetsOpen] = useState(false);
   const [isScheduleReviewOpen, setIsScheduleReviewOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [targetMember, setTargetMember] = useState(null);
 
   const teamMembers = [
     { 
@@ -116,6 +117,28 @@ const TeamManagement = () => {
       title: "Performance Report Generated",
       description: "Team performance analytics report has been generated",
     });
+  };
+
+  const handleSetTargets = (member: any) => {
+    setTargetMember(member);
+    setIsSetTargetsOpen(true);
+  };
+
+  const handleEditMember = (member: any) => {
+    toast({
+      title: "Edit Member",
+      description: `Opening edit form for ${member.name}`,
+    });
+    // You can add edit member modal logic here
+  };
+
+  const handleRemoveMember = (member: any) => {
+    toast({
+      title: "Remove Member",
+      description: `${member.name} has been removed from the team`,
+      variant: "destructive"
+    });
+    // You can add remove member logic here
   };
 
   const getStatusColor = (status: string) => {
@@ -304,15 +327,18 @@ const TeamManagement = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditMember(member)}>
                             <Edit size={14} className="mr-2" />
                             Edit Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSetTargets(member)}>
                             <Target size={14} className="mr-2" />
                             Set Targets
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleRemoveMember(member)}
+                          >
                             <Trash2 size={14} className="mr-2" />
                             Remove Member
                           </DropdownMenuItem>
