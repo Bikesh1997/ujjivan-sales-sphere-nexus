@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, Clock, MapPin, Phone, Mail } from 'lucide-react';
 import NewCampaignModal from '@/components/campaigns/NewCampaignModal';
+import CampaignDetailsModal from '@/components/campaigns/CampaignDetailsModal';
 import TaskManagementAddModal from '@/components/tasks/TaskManagementAddModal';
 import TaskFilter from '@/components/tasks/TaskFilter';
 import { useToast } from '@/hooks/use-toast';
@@ -380,9 +382,7 @@ const TaskManagement = () => {
                         <Badge className={getStatusColor(campaign.status)}>
                           {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
                         </Badge>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                        <CampaignDetailsModal campaign={campaign} />
                       </div>
                     </div>
                   </div>
