@@ -3,95 +3,65 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Users, 
-  TrendingUp, 
-  IndianRupee, 
-  Filter,
-  Search,
-  Plus,
-  Eye,
-  Edit,
-  ArrowRight,
-  BarChart3,
-  Kanban
-} from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { TrendingUp, Users, Target, DollarSign, Plus, Filter, Download } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
-import KanbanBoard from '@/components/tasks/KanbanBoard';
-import AddLeadModal from '@/components/leads/AddLeadModal';
-import ProspectViewModal from '@/components/funnel/ProspectViewModal';
-import ProspectEditModal from '@/components/funnel/ProspectEditModal';
-import PermissionGate from '@/components/rbac/PermissionGate';
-import { useAuth } from '@/contexts/AuthContext';
-import { allLeads } from '@/data/leadsData';
 
 const SalesFunnel = () => {
-  const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedStage, setSelectedStage] = useState('all');
-  const [viewingProspect, setViewingProspect] = useState<any>(null);
-  const [editingProspect, setEditingProspect] = useState<any>(null);
-  const [prospectViewOpen, setProspectViewOpen] = useState(false);
-  const [prospectEditOpen, setProspectEditOpen] = useState(false);
-
-  // Filter leads based on user role
-  const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
 
   const funnelData = [
-    { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
-    { stage: 'Qualified', count: userLeads.filter(l => l.status === 'qualified').length, value: '₹38L', conversion: 71 },
-    { stage: 'Proposal', count: userLeads.filter(l => l.status === 'proposal').length, value: '₹28L', conversion: 38 },
-    { stage: 'Negotiation', count: userLeads.filter(l => l.status === 'negotiation').length, value: '₹22L', conversion: 27 },
-    { stage: 'Closed Won', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
+    { stage: 'Leads', count: 1250, value: '₹125L', color: '#3B82F6' },
+    { stage: 'Qualified', count: 890, value: '₹98L', color: '#10B981' },
+    { stage: 'Proposal', count: 420, value: '₹67L', color: '#F59E0B' },
+    { stage: 'Negotiation', count: 180, value: '₹45L', color: '#EF4444' },
+    { stage: 'Closed Won', count: 85, value: '₹23L', color: '#8B5CF6' }
   ];
 
-  const [prospects, setProspects] = useState(
-    userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map(lead => ({
-      id: lead.id,
-      name: lead.contact,
-      company: lead.name,
-      stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
-      value: lead.value,
-      probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
-      lastContact: lead.lastContact,
-      nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
-                  lead.status === 'proposal' ? 'Follow-up call' : 'Contract review'
-    }))
-  );
-
-  const getStageColor = (stage: string) => {
-    switch (stage) {
-      case 'Leads': return 'bg-gray-100 text-gray-800';
-      case 'Qualified': return 'bg-blue-100 text-blue-800';
-      case 'Proposal': return 'bg-yellow-100 text-yellow-800';
-      case 'Negotiation': return 'bg-orange-100 text-orange-800';
-      case 'Closed Won': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const handleAddProspect = () => {
+    toast({
+      title: "Add Prospect",
+      description: "Prospect creation form will be implemented",
+    });
   };
 
-  const getProbabilityColor = (probability: number) => {
-    if (probability >= 80) return 'text-green-600 bg-green-50';
-    if (probability >= 60) return 'text-yellow-600 bg-yellow-50';
-    return 'text-red-600 bg-red-50';
+  const handleFilterStage = (stage: string) => {
+    setSelectedStage(stage);
+    toast({
+      title: "Filter Applied",
+      description: `Showing prospects in ${stage} stage`,
+    });
   };
 
-  const handleViewProspect = (prospect: any) => {
-    setViewingProspect(prospect);
-    setProspectViewOpen(true);
+  const handleExportData = () => {
+    toast({
+      title: "Export Started",
+      description: "Funnel data is being exported to CSV",
+    });
   };
 
-  const handleEditProspect = (prospect: any) => {
-    setEditingProspect(prospect);
-    setProspectEditOpen(true);
+  const handleStageClick = (stage: string) => {
+    setSelectedStage(stage);
+    toast({
+      title: "Stage Selected",
+      description: `Viewing details for ${stage} stage`,
+    });
   };
 
-  const handleProspectUpdate = (updatedProspect: any) => {
-    setProspects(prospects.map(p => 
-      p.id === updatedProspect.id ? updatedProspect : p
-    ));
+  const handleOptimizeStage = (stage: string) => {
+    toast({
+      title: "Optimization Suggestions",
+      description: `Showing recommendations for ${stage} stage`,
+    });
+  };
+
+  const handleBulkAction = (action: string) => {
+    toast({
+      title: "Bulk Action",
+      description: `${action} will be applied to selected prospects`,
+    });
   };
 
   return (
@@ -99,162 +69,169 @@ const SalesFunnel = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales Funnel & Pipeline</h1>
-          <p className="text-gray-600">Track your sales pipeline and manage tasks efficiently</p>
+          <h1 className="text-2xl font-bold text-gray-900">Sales Funnel</h1>
+          <p className="text-gray-600">Track your sales pipeline and conversion rates</p>
         </div>
-        <PermissionGate permission="lead_create">
-          <AddLeadModal />
-        </PermissionGate>
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={handleExportData}>
+            <Download size={16} className="mr-2" />
+            Export Data
+          </Button>
+          <Button variant="outline" onClick={() => handleFilterStage('all')}>
+            <Filter size={16} className="mr-2" />
+            Filter
+          </Button>
+          <Button onClick={handleAddProspect} className="bg-blue-600 hover:bg-blue-700">
+            <Plus size={16} className="mr-2" />
+            Add Prospect
+          </Button>
+        </div>
       </div>
 
-      {/* Tabs for different views */}
-      <Tabs defaultValue="funnel" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="funnel" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Sales Funnel
-          </TabsTrigger>
-          <TabsTrigger value="tasks" className="flex items-center gap-2">
-            <Kanban className="h-4 w-4" />
-            Task Board
-          </TabsTrigger>
-          <TabsTrigger value="prospects" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Prospects
-          </TabsTrigger>
-        </TabsList>
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleStageClick('Leads')}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Prospects</p>
+                <p className="text-2xl font-bold text-gray-900">1,250</p>
+                <p className="text-xs text-green-600 mt-1">+12% from last month</p>
+              </div>
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="funnel" className="space-y-6">
-          {/* Funnel Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {funnelData.map((stage, index) => (
-              <Card key={stage.stage} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-gray-700">{stage.stage}</h3>
-                    <Badge variant="secondary" className="text-xs">
-                      {stage.conversion}%
-                    </Badge>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{stage.count}</div>
-                  <div className="text-sm text-teal-600 font-medium">{stage.value}</div>
-                  {index < funnelData.length - 1 && (
-                    <div className="flex justify-center mt-3">
-                      <ArrowRight size={16} className="text-gray-400" />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleStageClick('Closed Won')}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+                <p className="text-2xl font-bold text-gray-900">6.8%</p>
+                <p className="text-xs text-green-600 mt-1">+0.5% from last month</p>
+              </div>
+              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <Target className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Pipeline Value</p>
+                <p className="text-2xl font-bold text-gray-900">₹358L</p>
+                <p className="text-xs text-green-600 mt-1">+8% from last month</p>
+              </div>
+              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Avg. Deal Size</p>
+                <p className="text-2xl font-bold text-gray-900">₹2.7L</p>
+                <p className="text-xs text-red-600 mt-1">-2% from last month</p>
+              </div>
+              <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-orange-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Funnel Visualization */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Sales Funnel Visualization</CardTitle>
+          <div className="flex space-x-2">
+            <Button size="sm" variant="outline" onClick={() => handleOptimizeStage('all')}>
+              Optimize Funnel
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => handleBulkAction('move-stage')}>
+              Bulk Actions
+            </Button>
           </div>
+        </CardHeader>
+        <CardContent>
+          <InteractiveFunnelChart 
+            data={funnelData} 
+            onStageClick={handleStageClick}
+            selectedStage={selectedStage}
+          />
+        </CardContent>
+      </Card>
 
-          {/* Interactive Chart */}
-          <InteractiveFunnelChart />
-        </TabsContent>
-
-        <TabsContent value="tasks">
-          <KanbanBoard />
-        </TabsContent>
-
-        <TabsContent value="prospects" className="space-y-6">
-          {/* Prospects Table */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Active Prospects</CardTitle>
-                <div className="flex space-x-2">
-                  <div className="relative">
-                    <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                      placeholder="Search prospects..."
-                      className="pl-10 w-64"
-                    />
+      {/* Stage Performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Stage Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {funnelData.map((stage, index) => (
+                <div key={stage.stage} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">{stage.stage}</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-600">{stage.count} prospects</span>
+                      <Button size="sm" variant="ghost" onClick={() => handleOptimizeStage(stage.stage)}>
+                        Optimize
+                      </Button>
+                    </div>
                   </div>
-                  <Select value={selectedStage} onValueChange={setSelectedStage}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Stages</SelectItem>
-                      <SelectItem value="qualified">Qualified</SelectItem>
-                      <SelectItem value="proposal">Proposal</SelectItem>
-                      <SelectItem value="negotiation">Negotiation</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Progress 
+                    value={index === 0 ? 100 : (stage.count / funnelData[0].count) * 100} 
+                    className="h-2"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Conversion: {index === 0 ? '100%' : `${((stage.count / funnelData[index-1].count) * 100).toFixed(1)}%`}</span>
+                    <span>Value: {stage.value}</span>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Prospect</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Stage</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Probability</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Last Contact</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Next Action</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {prospects.map((prospect) => (
-                      <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4">
-                          <div>
-                            <div className="font-medium text-gray-900">{prospect.name}</div>
-                            <div className="text-sm text-gray-500">{prospect.company}</div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge className={getStageColor(prospect.stage)}>
-                            {prospect.stage}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4 font-medium text-gray-900">{prospect.value}</td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getProbabilityColor(prospect.probability)}`}>
-                            {prospect.probability}%
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
-                        <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="ghost" onClick={() => handleViewProspect(prospect)}>
-                              <Eye size={14} />
-                            </Button>
-                            <PermissionGate permission="lead_update">
-                              <Button size="sm" variant="ghost" onClick={() => handleEditProspect(prospect)}>
-                                <Edit size={14} />
-                              </Button>
-                            </PermissionGate>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Modals */}
-      <ProspectViewModal
-        prospect={viewingProspect}
-        isOpen={prospectViewOpen}
-        onOpenChange={setProspectViewOpen}
-      />
-
-      <ProspectEditModal
-        prospect={editingProspect}
-        isOpen={prospectEditOpen}
-        onOpenChange={setProspectEditOpen}
-        onProspectUpdate={handleProspectUpdate}
-      />
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <Button className="w-full justify-start" variant="outline" onClick={() => handleBulkAction('follow-up')}>
+                <Users size={16} className="mr-2" />
+                Schedule Follow-ups
+              </Button>
+              <Button className="w-full justify-start" variant="outline" onClick={() => handleBulkAction('send-proposal')}>
+                <Target size={16} className="mr-2" />
+                Send Proposals
+              </Button>
+              <Button className="w-full justify-start" variant="outline" onClick={() => handleBulkAction('update-status')}>
+                <TrendingUp size={16} className="mr-2" />
+                Update Status
+              </Button>
+              <Button className="w-full justify-start" variant="outline" onClick={() => handleBulkAction('assign-leads')}>
+                <Users size={16} className="mr-2" />
+                Assign Leads
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

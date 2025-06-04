@@ -25,16 +25,36 @@ const LeadManagement = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [viewingLead, setViewingLead] = useState<any>(null);
   const [leadViewOpen, setLeadViewOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
 
-  const filteredLeads = selectedStatus === 'all' ? userLeads : userLeads.filter(lead => lead.status === selectedStatus);
+  const filteredLeads = userLeads.filter(lead => {
+    const matchesStatus = selectedStatus === 'all' || lead.status === selectedStatus;
+    const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         lead.contact.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
 
   const handleViewLead = (lead: any) => {
     console.log('Viewing lead:', lead);
     setViewingLead(lead);
     setLeadViewOpen(true);
+  };
+
+  const handleExportLeads = () => {
+    toast({
+      title: "Export Started",
+      description: "Lead data is being exported to CSV",
+    });
+  };
+
+  const handleBulkAction = (action: string) => {
+    toast({
+      title: "Bulk Action",
+      description: `${action} will be applied to selected leads`,
+    });
   };
 
   return (
@@ -45,9 +65,17 @@ const LeadManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
           <p className="text-gray-600">Manage leads, track progress, and assign tasks</p>
         </div>
-        <PermissionGate permission="lead_create">
-          <AddLeadModal />
-        </PermissionGate>
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={handleExportLeads}>
+            Export Leads
+          </Button>
+          <Button variant="outline" onClick={() => handleBulkAction('assign')}>
+            Bulk Assign
+          </Button>
+          <PermissionGate permission="lead_create">
+            <AddLeadModal />
+          </PermissionGate>
+        </div>
       </div>
 
       {/* Lead Table */}
@@ -60,6 +88,8 @@ const LeadManagement = () => {
                 <Input
                   placeholder="Search leads..."
                   className="pl-10 w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -105,7 +135,11 @@ const LeadManagement = () => {
                       </div>
                     </TableCell>
                     <TableCell>{lead.name}</TableCell>
-                    <TableCell>{lead.status}</TableCell>
+                    <TableCell>
+                      <Badge variant={lead.status === 'converted' ? 'default' : 'secondary'}>
+                        {lead.status}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{lead.value}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">

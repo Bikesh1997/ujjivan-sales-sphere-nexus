@@ -3,330 +3,320 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  User, 
-  CreditCard, 
-  TrendingUp, 
-  Phone, 
-  Mail, 
-  MapPin,
-  Calendar,
-  IndianRupee,
-  Heart,
-  Home,
-  Car,
-  Users,
-  FileText,
-  Bell,
-  Target
-} from 'lucide-react';
+import { Search, Phone, Mail, MapPin, Calendar, Plus, Edit, TrendingUp } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Customer360 = () => {
-  const [selectedCustomer, setSelectedCustomer] = useState('priya-sharma');
+  const { toast } = useToast();
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const customerData = {
-    'priya-sharma': {
-      name: 'Priya Sharma',
-      id: 'CUST001234',
-      segment: 'Premium',
-      relationshipValue: 'High',
-      totalRelationship: '₹15.2L',
+  const customers = [
+    {
+      id: '1',
+      name: 'Rajesh Enterprises',
+      contact: 'Rajesh Kumar',
+      email: 'rajesh@enterprises.com',
       phone: '+91 98765 43210',
-      email: 'priya.sharma@email.com',
-      address: 'Bandra West, Mumbai 400050',
-      joinDate: '15 Mar 2019',
-      lastInteraction: '2 days ago',
-      riskScore: 'Low',
-      products: [
-        { type: 'Savings Account', balance: '₹2.5L', status: 'Active' },
-        { type: 'Fixed Deposit', amount: '₹8L', maturity: '15 Dec 2024' },
-        { type: 'Home Loan', outstanding: '₹45L', emi: '₹42,000' },
-        { type: 'Credit Card', limit: '₹3L', utilization: '35%' },
-      ],
-      interactions: [
-        { date: '25 May 2024', type: 'Call', purpose: 'FD Renewal Discussion', outcome: 'Interested' },
-        { date: '20 May 2024', type: 'Branch Visit', purpose: 'Loan Documentation', outcome: 'Completed' },
-        { date: '15 May 2024', type: 'Email', purpose: 'Insurance Product Offer', outcome: 'No Response' },
-        { date: '10 May 2024', type: 'SMS', purpose: 'Payment Reminder', outcome: 'Paid' },
-      ],
-      family: [
-        { name: 'Rajesh Sharma', relation: 'Spouse', products: ['Savings Account', 'SIP'] },
-        { name: 'Arjun Sharma', relation: 'Son', products: ['Student Account'] },
-      ],
-      opportunities: [
-        { product: 'Personal Loan', priority: 'High', reason: 'Good credit history & salary increment', potential: '₹8L' },
-        { product: 'Life Insurance', priority: 'Medium', reason: 'Family protection needs', potential: '₹50L cover' },
-        { product: 'Mutual Funds', priority: 'Low', reason: 'Investment diversification', potential: '₹2L SIP' },
-      ]
+      location: 'Mumbai, Maharashtra',
+      status: 'Active',
+      value: '₹12.5L',
+      lastContact: '2024-06-03',
+      products: ['Business Loan', 'Current Account'],
+      interactions: 15
+    },
+    {
+      id: '2',
+      name: 'Tech Solutions Ltd',
+      contact: 'Priya Patel',
+      email: 'priya@techsolutions.com',
+      phone: '+91 87654 32109',
+      location: 'Pune, Maharashtra',
+      status: 'Prospect',
+      value: '₹8.2L',
+      lastContact: '2024-06-02',
+      products: ['Equipment Finance'],
+      interactions: 8
+    }
+  ];
+
+  const handleCustomerAction = (action: string, customerId?: string) => {
+    switch (action) {
+      case 'add-customer':
+        toast({
+          title: "Add Customer",
+          description: "Customer creation form will be implemented",
+        });
+        break;
+      case 'edit-customer':
+        toast({
+          title: "Edit Customer",
+          description: `Editing customer ${customerId}`,
+        });
+        break;
+      case 'call-customer':
+        toast({
+          title: "Initiating Call",
+          description: `Calling customer ${customerId}`,
+        });
+        break;
+      case 'email-customer':
+        toast({
+          title: "Opening Email",
+          description: `Composing email to customer ${customerId}`,
+        });
+        break;
+      case 'schedule-meeting':
+        toast({
+          title: "Schedule Meeting",
+          description: `Scheduling meeting with customer ${customerId}`,
+        });
+        break;
+      case 'add-product':
+        toast({
+          title: "Add Product",
+          description: `Adding new product for customer ${customerId}`,
+        });
+        break;
+      default:
+        toast({
+          title: "Action Triggered",
+          description: `${action} functionality will be implemented`,
+        });
     }
   };
 
-  const customer = customerData[selectedCustomer];
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-blue-100 text-blue-800';
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const filteredCustomers = customers.filter(customer =>
+    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.contact.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer 360° View</h1>
-          <p className="text-gray-600">Comprehensive customer relationship overview</p>
+          <h1 className="text-2xl font-bold text-gray-900">Customer 360</h1>
+          <p className="text-gray-600">Comprehensive view of customer relationships and interactions</p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
-            <Bell size={16} className="mr-2" />
-            Set Alert
-          </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-            <Phone size={16} className="mr-2" />
-            Call Customer
-          </Button>
-        </div>
+        <Button onClick={() => handleCustomerAction('add-customer')} className="bg-blue-600 hover:bg-blue-700">
+          <Plus size={16} className="mr-2" />
+          Add Customer
+        </Button>
       </div>
 
-      {/* Customer Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Customer List */}
         <Card className="lg:col-span-1">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <Avatar className="h-20 w-20 mx-auto mb-4">
-                <AvatarFallback className="text-xl bg-teal-100 text-teal-700">
-                  {customer.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <h3 className="font-semibold text-lg text-gray-900">{customer.name}</h3>
-              <p className="text-sm text-gray-500 mb-3">{customer.id}</p>
-              <Badge className="bg-purple-100 text-purple-800 mb-4">{customer.segment}</Badge>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Phone size={14} className="mr-2" />
-                  {customer.phone}
+          <CardHeader>
+            <CardTitle>Customers</CardTitle>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <Input
+                placeholder="Search customers..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {filteredCustomers.map((customer) => (
+                <div
+                  key={customer.id}
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                    selectedCustomer?.id === customer.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                  onClick={() => setSelectedCustomer(customer)}
+                >
+                  <div className="flex items-start space-x-3">
+                    <Avatar>
+                      <AvatarImage src={`https://avatar.vercel.sh/${customer.contact}.png`} alt={customer.contact} />
+                      <AvatarFallback>{customer.contact.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm truncate">{customer.name}</h4>
+                      <p className="text-xs text-gray-600 truncate">{customer.contact}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <Badge variant={customer.status === 'Active' ? 'default' : 'secondary'}>
+                          {customer.status}
+                        </Badge>
+                        <span className="text-xs font-medium text-green-600">{customer.value}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <Mail size={14} className="mr-2" />
-                  {customer.email}
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <MapPin size={14} className="mr-2" />
-                  {customer.address}
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <Calendar size={14} className="mr-2" />
-                  Customer since {customer.joinDate}
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Relationship Value</p>
-                    <p className="text-xl font-bold text-gray-900">{customer.totalRelationship}</p>
-                    <Badge className="bg-green-100 text-green-800 mt-1">{customer.relationshipValue}</Badge>
-                  </div>
-                  <TrendingUp size={24} className="text-teal-600" />
-                </div>
-              </CardContent>
-            </Card>
+        {/* Customer Details */}
+        <Card className="lg:col-span-2">
+          <CardContent className="p-6">
+            {selectedCustomer ? (
+              <Tabs defaultValue="overview" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="products">Products</TabsTrigger>
+                  <TabsTrigger value="interactions">Interactions</TabsTrigger>
+                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                </TabsList>
 
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Risk Score</p>
-                    <p className="text-xl font-bold text-gray-900">{customer.riskScore}</p>
-                    <p className="text-xs text-gray-500 mt-1">Last updated: 3 days ago</p>
-                  </div>
-                  <Heart size={24} className="text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Last Interaction</p>
-                    <p className="text-xl font-bold text-gray-900">{customer.lastInteraction}</p>
-                    <p className="text-xs text-gray-500 mt-1">FD Renewal Call</p>
-                  </div>
-                  <Calendar size={24} className="text-orange-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      {/* Detailed Information Tabs */}
-      <Card>
-        <CardContent className="p-6">
-          <Tabs defaultValue="products" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="interactions">Interactions</TabsTrigger>
-              <TabsTrigger value="family">Family Tree</TabsTrigger>
-              <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
-              <TabsTrigger value="offers">Offers</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="products" className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Holdings</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {customer.products.map((product, index) => (
-                  <Card key={index} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <CreditCard size={16} className="mr-2 text-teal-600" />
-                          <h4 className="font-medium text-gray-900">{product.type}</h4>
-                        </div>
-                        <Badge className={getStatusColor(product.status || 'Active')}>
-                          {product.status || 'Active'}
+                <TabsContent value="overview" className="space-y-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-4">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage src={`https://avatar.vercel.sh/${selectedCustomer.contact}.png`} alt={selectedCustomer.contact} />
+                        <AvatarFallback className="text-lg">{selectedCustomer.contact.charAt(0).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h2 className="text-xl font-bold">{selectedCustomer.name}</h2>
+                        <p className="text-gray-600">{selectedCustomer.contact}</p>
+                        <Badge variant={selectedCustomer.status === 'Active' ? 'default' : 'secondary'}>
+                          {selectedCustomer.status}
                         </Badge>
                       </div>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        {product.balance && <p>Balance: <span className="font-medium">{product.balance}</span></p>}
-                        {product.amount && <p>Amount: <span className="font-medium">{product.amount}</span></p>}
-                        {product.outstanding && <p>Outstanding: <span className="font-medium">{product.outstanding}</span></p>}
-                        {product.limit && <p>Limit: <span className="font-medium">{product.limit}</span></p>}
-                        {product.maturity && <p>Maturity: <span className="font-medium">{product.maturity}</span></p>}
-                        {product.emi && <p>EMI: <span className="font-medium">{product.emi}</span></p>}
-                        {product.utilization && <p>Utilization: <span className="font-medium">{product.utilization}</span></p>}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline" onClick={() => handleCustomerAction('edit-customer', selectedCustomer.id)}>
+                        <Edit size={14} className="mr-1" />
+                        Edit
+                      </Button>
+                      <Button size="sm" onClick={() => handleCustomerAction('call-customer', selectedCustomer.id)}>
+                        <Phone size={14} className="mr-1" />
+                        Call
+                      </Button>
+                    </div>
+                  </div>
 
-            <TabsContent value="interactions" className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Interaction History</h3>
-              <div className="space-y-3">
-                {customer.interactions.map((interaction, index) => (
-                  <Card key={index} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                            {interaction.type === 'Call' && <Phone size={14} className="text-teal-600" />}
-                            {interaction.type === 'Email' && <Mail size={14} className="text-teal-600" />}
-                            {interaction.type === 'Branch Visit' && <MapPin size={14} className="text-teal-600" />}
-                            {interaction.type === 'SMS' && <FileText size={14} className="text-teal-600" />}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{interaction.purpose}</p>
-                            <p className="text-sm text-gray-500">{interaction.date} • {interaction.type}</p>
-                          </div>
-                        </div>
-                        <Badge className={getStatusColor(interaction.outcome)}>
-                          {interaction.outcome}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="family" className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Relationships</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {customer.family.map((member, index) => (
-                  <Card key={index} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-12 w-12">
-                          <AvatarFallback className="bg-blue-100 text-blue-700">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h4 className="font-medium text-gray-900">{member.name}</h4>
-                          <p className="text-sm text-gray-500">{member.relation}</p>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {member.products.map((product, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {product}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="opportunities" className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Cross-sell & Up-sell Opportunities</h3>
-              <div className="space-y-3">
-                {customer.opportunities.map((opportunity, index) => (
-                  <Card key={index} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <Target size={20} className="text-teal-600" />
-                          <div>
-                            <h4 className="font-medium text-gray-900">{opportunity.product}</h4>
-                            <p className="text-sm text-gray-600">{opportunity.reason}</p>
-                            <p className="text-sm font-medium text-teal-600 mt-1">Potential: {opportunity.potential}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge className={getPriorityColor(opportunity.priority)}>
-                            {opportunity.priority}
-                          </Badge>
-                          <Button size="sm" className="mt-2 ml-2 bg-teal-600 hover:bg-teal-700">
-                            Create Offer
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h3 className="font-medium">Contact Information</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <Mail size={16} className="text-gray-500" />
+                          <span className="text-sm">{selectedCustomer.email}</span>
+                          <Button size="sm" variant="ghost" onClick={() => handleCustomerAction('email-customer', selectedCustomer.id)}>
+                            Email
                           </Button>
                         </div>
+                        <div className="flex items-center space-x-2">
+                          <Phone size={16} className="text-gray-500" />
+                          <span className="text-sm">{selectedCustomer.phone}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <MapPin size={16} className="text-gray-500" />
+                          <span className="text-sm">{selectedCustomer.location}</span>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
+                    </div>
 
-            <TabsContent value="offers" className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Offers & Campaigns</h3>
-              <div className="text-center py-8">
-                <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">No active offers for this customer</p>
-                <Button className="mt-4 bg-teal-600 hover:bg-teal-700">
-                  Create New Offer
-                </Button>
+                    <div className="space-y-4">
+                      <h3 className="font-medium">Key Metrics</h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Total Value</span>
+                          <span className="text-sm font-medium">{selectedCustomer.value}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Interactions</span>
+                          <span className="text-sm font-medium">{selectedCustomer.interactions}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Last Contact</span>
+                          <span className="text-sm font-medium">{selectedCustomer.lastContact}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2 pt-4">
+                    <Button variant="outline" onClick={() => handleCustomerAction('schedule-meeting', selectedCustomer.id)}>
+                      <Calendar size={16} className="mr-2" />
+                      Schedule Meeting
+                    </Button>
+                    <Button variant="outline" onClick={() => handleCustomerAction('add-product', selectedCustomer.id)}>
+                      <Plus size={16} className="mr-2" />
+                      Add Product
+                    </Button>
+                    <Button variant="outline" onClick={() => handleCustomerAction('view-analytics', selectedCustomer.id)}>
+                      <TrendingUp size={16} className="mr-2" />
+                      View Analytics
+                    </Button>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="products">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium">Products & Services</h3>
+                      <Button size="sm" onClick={() => handleCustomerAction('add-product', selectedCustomer.id)}>
+                        <Plus size={16} className="mr-2" />
+                        Add Product
+                      </Button>
+                    </div>
+                    <div className="space-y-3">
+                      {selectedCustomer.products.map((product, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                          <span className="font-medium">{product}</span>
+                          <div className="flex space-x-2">
+                            <Button size="sm" variant="outline" onClick={() => handleCustomerAction('view-product-details', selectedCustomer.id)}>
+                              View Details
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleCustomerAction('manage-product', selectedCustomer.id)}>
+                              Manage
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="interactions">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium">Recent Interactions</h3>
+                      <Button size="sm" onClick={() => handleCustomerAction('add-interaction', selectedCustomer.id)}>
+                        <Plus size={16} className="mr-2" />
+                        Add Interaction
+                      </Button>
+                    </div>
+                    <div className="text-center py-8 text-gray-500">
+                      <p>Interaction history will be displayed here</p>
+                      <Button className="mt-4" variant="outline" onClick={() => handleCustomerAction('view-full-history', selectedCustomer.id)}>
+                        View Full History
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="analytics">
+                  <div className="space-y-4">
+                    <h3 className="font-medium">Customer Analytics</h3>
+                    <div className="text-center py-8 text-gray-500">
+                      <p>Analytics and insights will be displayed here</p>
+                      <Button className="mt-4" variant="outline" onClick={() => handleCustomerAction('generate-report', selectedCustomer.id)}>
+                        Generate Report
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <Users size={48} className="mx-auto mb-4 text-gray-300" />
+                <p>Select a customer to view details</p>
               </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

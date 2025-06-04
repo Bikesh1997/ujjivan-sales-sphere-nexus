@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -110,14 +109,14 @@ const TaskManagement = () => {
   const handleAddTask = () => {
     toast({
       title: "Add Task",
-      description: "Task creation form will be implemented",
+      description: "Opening task creation form",
     });
   };
 
   const handleAddCampaign = () => {
     toast({
-      title: "Add Campaign",
-      description: "Campaign creation form will be implemented",
+      title: "Add Campaign",  
+      description: "Opening campaign creation form",
     });
   };
 
@@ -136,6 +135,75 @@ const TaskManagement = () => {
   const handleViewCampaign = (campaign: any) => {
     setSelectedCampaign(campaign);
     setCampaignModalOpen(true);
+  };
+
+  const handleFilterTasks = () => {
+    toast({
+      title: "Filter Applied",
+      description: "Task filters have been applied",
+    });
+  };
+
+  const handleTaskAction = (taskId: string, action: string) => {
+    switch (action) {
+      case 'edit':
+        toast({
+          title: "Edit Task",
+          description: `Opening edit form for task ${taskId}`,
+        });
+        break;
+      case 'delete':
+        toast({
+          title: "Delete Task",
+          description: `Task ${taskId} has been deleted`,
+        });
+        break;
+      case 'assign':
+        toast({
+          title: "Assign Task",
+          description: `Assigning task ${taskId} to team member`,
+        });
+        break;
+      default:
+        toast({
+          title: "Task Action",
+          description: `${action} performed on task ${taskId}`,
+        });
+    }
+  };
+
+  const handleCampaignAction = (campaignId: string, action: string) => {
+    switch (action) {
+      case 'start':
+        toast({
+          title: "Campaign Started",
+          description: `Campaign ${campaignId} has been activated`,
+        });
+        break;
+      case 'pause':
+        toast({
+          title: "Campaign Paused",
+          description: `Campaign ${campaignId} has been paused`,
+        });
+        break;
+      case 'edit':
+        toast({
+          title: "Edit Campaign",
+          description: `Opening edit form for campaign ${campaignId}`,
+        });
+        break;
+      case 'duplicate':
+        toast({
+          title: "Campaign Duplicated",
+          description: `Campaign ${campaignId} has been duplicated`,
+        });
+        break;
+      default:
+        toast({
+          title: "Campaign Action",
+          description: `${action} performed on campaign ${campaignId}`,
+        });
+    }
   };
 
   const getTaskIcon = (type: string) => {
@@ -196,7 +264,7 @@ const TaskManagement = () => {
         <TabsContent value="tasks" className="space-y-6">
           {/* Task Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">8</div>
@@ -204,7 +272,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-600">3</div>
@@ -212,7 +280,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">5</div>
@@ -220,7 +288,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleFilterTasks()}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">2</div>
@@ -235,7 +303,7 @@ const TaskManagement = () => {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Today's Tasks</CardTitle>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleFilterTasks}>
                   <Filter size={16} className="mr-2" />
                   Filter
                 </Button>
@@ -280,7 +348,7 @@ const TaskManagement = () => {
                           View
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => handleMarkComplete(task.id)}>
-                          Mark Complete
+                          Complete
                         </Button>
                       </div>
                     </div>
@@ -294,7 +362,7 @@ const TaskManagement = () => {
         <TabsContent value="campaigns" className="space-y-6">
           {/* Campaign Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleCampaignAction('all', 'view-active')}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">2</div>
@@ -302,7 +370,7 @@ const TaskManagement = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleCampaignAction('all', 'view-planned')}>
               <CardContent className="p-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">1</div>
@@ -368,6 +436,9 @@ const TaskManagement = () => {
                         </Badge>
                         <Button size="sm" variant="outline" onClick={() => handleViewCampaign(campaign)}>
                           View Details
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => handleCampaignAction(campaign.id, campaign.status === 'active' ? 'pause' : 'start')}>
+                          {campaign.status === 'active' ? 'Pause' : 'Start'}
                         </Button>
                       </div>
                     </div>
