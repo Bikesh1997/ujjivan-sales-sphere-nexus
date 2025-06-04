@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -80,10 +81,11 @@ const Layout = ({ children }: LayoutProps) => {
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
               <div className="flex items-center space-x-3 ml-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">SF</span>
-                </div>
-                <span className="font-semibold text-gray-900">SalesForce Pro</span>
+                <img 
+                  src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
+                  alt="Ujjivan Small Finance Bank" 
+                  className="h-8"
+                />
               </div>
             </div>
 
