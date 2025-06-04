@@ -220,7 +220,7 @@ const CustomerAnalytics = () => {
                   <XAxis dataKey="tenure" />
                   <YAxis />
                   <Tooltip formatter={(value, name) => [
-                    name === 'count' ? `${value} customers` : `₹${(value/1000).toFixed(0)}K`,
+                    name === 'count' ? `${value} customers` : `₹${Math.round(Number(value)/1000)}K`,
                     name === 'count' ? 'Customer Count' : 'Average Lifetime Value'
                   ]} />
                   <Bar dataKey="avgValue" fill="#3b82f6" name="avgValue" />
