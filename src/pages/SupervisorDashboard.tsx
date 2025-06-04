@@ -34,9 +34,10 @@ const SupervisorDashboard = () => {
   const [isTeamSettingsModalOpen, setIsTeamSettingsModalOpen] = useState(false);
   const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [assignedLeads, setAssignedLeads] = useState<string[]>([]);
 
   // Team data with proper structure for ViewDetailsModal
-  const teamMembers = [
+  const [teamMembers, setTeamMembers] = useState([
     { 
       id: '1', 
       name: 'Rahul Sharma', 
@@ -52,7 +53,8 @@ const SupervisorDashboard = () => {
       converted: 8, 
       revenue: 12.5, 
       target: 15,
-      lastActivity: '2 hours ago'
+      lastActivity: '2 hours ago',
+      capacity: 30
     },
     { 
       id: '3', 
@@ -69,7 +71,8 @@ const SupervisorDashboard = () => {
       converted: 5, 
       revenue: 8.2, 
       target: 12,
-      lastActivity: '30 min ago'
+      lastActivity: '30 min ago',
+      capacity: 25
     },
     { 
       id: '4', 
@@ -86,7 +89,8 @@ const SupervisorDashboard = () => {
       converted: 6, 
       revenue: 9.8, 
       target: 14,
-      lastActivity: '1 day ago'
+      lastActivity: '1 day ago',
+      capacity: 28
     },
     { 
       id: '5', 
@@ -103,12 +107,13 @@ const SupervisorDashboard = () => {
       converted: 12, 
       revenue: 18.5, 
       target: 20,
-      lastActivity: '1 hour ago'
+      lastActivity: '1 hour ago',
+      capacity: 35
     }
-  ];
+  ]);
 
-  // Unassigned leads requiring allocation
-  const unassignedLeads = allLeads.filter(lead => !lead.assignedToId).slice(0, 8);
+  // Unassigned leads requiring allocation (filter out already assigned leads)
+  const unassignedLeads = allLeads.filter(lead => !lead.assignedToId && !assignedLeads.includes(lead.id)).slice(0, 8);
 
   // Team performance data
   const teamPerformanceData = teamMembers.map(member => ({
@@ -150,25 +155,116 @@ const SupervisorDashboard = () => {
   ];
 
   const handleAutoAssign = () => {
-    toast({
-      title: "Auto-Assignment Started",
-      description: "Leads are being automatically assigned based on team member availability and workload.",
-    });
-    
-    setTimeout(() => {
+    if (unassignedLeads.length === 0) {
       toast({
-        title: "Auto-Assignment Complete",
-        description: `${unassignedLeads.length} leads have been successfully assigned to team members.`,
+        title: "No Unassigned Leads",
+        description: "All leads have been assigned",
       });
-    }, 2000);
+      return;
+    }
+
+    // Get available team members (active and under capacity)
+    const availableMembers = teamMembers
+      .filter(m => m.status === 'active' && m.leads < m.capacity)
+      .sort((a, b) => {
+        // Sort by available capacity (most available first)
+        const aCapacity = a.capacity - a.leads;
+        const bCapacity = b.capacity - b.leads;
+        return bCapacity - aCapacity;
+      });
+    
+    if (availableMembers.length === 0) {
+      toast({
+        title: "No Available Capacity",
+        description: "All active team members are at capacity",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Sort leads by priority (High > Medium > Low)
+    const prioritySortedLeads = [...unassignedLeads].sort((a, b) => {
+      const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+      return priorityOrder[b.priority as keyof typeof priorityOrder] - priorityOrder[a.priority as keyof typeof priorityOrder];
+    });
+
+    const assignments: { leadId: string; memberId: string; leadName: string; memberName: string }[] = [];
+    const updatedMembers = [...teamMembers];
+    const newlyAssignedLeads: string[] = [];
+
+    // Assign leads to available members
+    for (const lead of prioritySortedLeads) {
+      const bestMember = availableMembers.find(member => member.leads < member.capacity);
+
+      if (bestMember) {
+        assignments.push({
+          leadId: lead.id,
+          memberId: bestMember.id,
+          leadName: lead.name,
+          memberName: bestMember.name
+        });
+
+        // Update member's lead count
+        const memberIndex = updatedMembers.findIndex(m => m.id === bestMember.id);
+        if (memberIndex !== -1) {
+          updatedMembers[memberIndex].leads++;
+        }
+
+        // Update available member's count
+        const availableMemberIndex = availableMembers.findIndex(m => m.id === bestMember.id);
+        if (availableMemberIndex !== -1) {
+          availableMembers[availableMemberIndex].leads++;
+          // Remove from available list if at capacity
+          if (availableMembers[availableMemberIndex].leads >= availableMembers[availableMemberIndex].capacity) {
+            availableMembers.splice(availableMemberIndex, 1);
+          }
+        }
+
+        newlyAssignedLeads.push(lead.id);
+
+        // Break if no more available members
+        if (availableMembers.length === 0) break;
+      }
+    }
+
+    // Update state
+    setTeamMembers(updatedMembers);
+    setAssignedLeads(prev => [...prev, ...newlyAssignedLeads]);
+
+    toast({
+      title: "Auto-Assignment Complete",
+      description: `${assignments.length} leads assigned successfully. ${assignments.map(a => `${a.leadName} → ${a.memberName}`).join(', ')}`,
+    });
   };
 
   const handleAssignLead = (leadId: string, memberId: string) => {
     const member = teamMembers.find(m => m.id === memberId);
-    if (member) {
+    const lead = unassignedLeads.find(l => l.id === leadId);
+    
+    if (member && lead) {
+      // Check capacity
+      if (member.leads >= member.capacity) {
+        toast({
+          title: "Capacity Exceeded",
+          description: `${member.name} is already at capacity (${member.capacity} leads)`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update member's lead count
+      setTeamMembers(prev => prev.map(m => 
+        m.id === memberId 
+          ? { ...m, leads: m.leads + 1 }
+          : m
+      ));
+
+      // Mark lead as assigned
+      setAssignedLeads(prev => [...prev, leadId]);
+
       toast({
         title: "Lead Assigned",
-        description: `Lead has been assigned to ${member.name}`,
+        description: `${lead.name} has been assigned to ${member.name}`,
       });
     }
   };
@@ -296,33 +392,52 @@ const SupervisorDashboard = () => {
                 size="sm" 
                 className="bg-orange-600 hover:bg-orange-700"
                 onClick={handleAutoAssign}
+                disabled={unassignedLeads.length === 0}
               >
                 Auto-Assign
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {unassignedLeads.map((lead, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium text-sm">{lead.name}</p>
-                    <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
+            {unassignedLeads.length === 0 ? (
+              <div className="text-center py-8">
+                <UserCheck size={48} className="mx-auto text-green-500 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">All Leads Assigned!</h3>
+                <p className="text-gray-600">Great job! All leads have been assigned to team members.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {unassignedLeads.map((lead, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium text-sm">{lead.name}</p>
+                      <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
+                      <Badge className={`text-xs mt-1 ${
+                        lead.priority === 'High' ? 'bg-red-100 text-red-800' :
+                        lead.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {lead.priority}
+                      </Badge>
+                    </div>
+                    <div className="flex space-x-2">
+                      <select 
+                        className="text-xs border rounded px-2 py-1"
+                        onChange={(e) => e.target.value && handleAssignLead(lead.id, e.target.value)}
+                        defaultValue=""
+                      >
+                        <option value="">Assign to...</option>
+                        {teamMembers.filter(m => m.status === 'active' && m.leads < m.capacity).map(member => (
+                          <option key={member.id} value={member.id}>
+                            {member.name} ({member.capacity - member.leads} slots)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <select 
-                      className="text-xs border rounded px-2 py-1"
-                      onChange={(e) => e.target.value && handleAssignLead(lead.id, e.target.value)}
-                    >
-                      <option value="">Assign to...</option>
-                      {teamMembers.filter(m => m.status === 'active').map(member => (
-                        <option key={member.id} value={member.id}>{member.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -357,7 +472,7 @@ const SupervisorDashboard = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-gray-600">Leads</p>
-                      <p className="font-medium">{member.leads}</p>
+                      <p className="font-medium">{member.leads}/{member.capacity}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Converted</p>
