@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -302,19 +303,13 @@ const Reports = () => {
           <p className="text-gray-600">Generate and manage team performance reports</p>
         </div>
         <div className="flex space-x-3">
-          <Select onValueChange={(value) => handleExportData(value)}>
-            <SelectTrigger asChild>
-              <Button variant="outline">
-                <Download size={16} className="mr-2" />
-                Export Data
-              </Button>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="CSV">Export as CSV</SelectItem>
-              <SelectItem value="Excel">Export as Excel</SelectItem>
-              <SelectItem value="PDF">Export as PDF</SelectItem>
-            </SelectContent>
-          </Select>
+          <Button 
+            variant="outline" 
+            onClick={() => handleExportData('CSV')}
+          >
+            <Download size={16} className="mr-2" />
+            Export Data
+          </Button>
           <Button 
             className="bg-teal-600 hover:bg-teal-700"
             onClick={() => handleScheduleReport('Custom Report')}
