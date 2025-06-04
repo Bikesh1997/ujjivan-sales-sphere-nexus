@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,10 +20,38 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface TeamMember {
+  id: string;
+  name: string;
+  currentLeads: number;
+  capacity: number;
+  performance: number;
+  specialization: string;
+}
+
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  priority: string;
+  source: string;
+  value: string;
+  type: string;
+}
+
+interface Assignment {
+  id: string;
+  leadName: string;
+  memberName: string;
+  timestamp: string;
+}
+
 const LeadAllocation = () => {
   const { toast } = useToast();
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [assignmentHistory, setAssignmentHistory] = useState<Array<{id: string, leadName: string, memberName: string, timestamp: string}>>([]);
+  const [assignmentHistory, setAssignmentHistory] = useState<Assignment[]>([]);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     priority: 'all',
@@ -31,7 +59,8 @@ const LeadAllocation = () => {
     value: 'all'
   });
 
-  const teamMembers = [
+  // Team members with proper state management
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     { 
       id: '1', 
       name: 'Rahul Sharma', 
@@ -64,10 +93,10 @@ const LeadAllocation = () => {
       performance: 95,
       specialization: 'Business Loans'
     }
-  ];
+  ]);
 
-  // Enhanced dummy data for unassigned leads
-  const unassignedLeads = [
+  // Unassigned leads with proper state management
+  const [unassignedLeads, setUnassignedLeads] = useState<Lead[]>([
     {
       id: '1',
       name: 'TechCorp Solutions',
@@ -155,30 +184,8 @@ const LeadAllocation = () => {
       source: 'Cold Call',
       value: '₹12L',
       type: 'Retail Loan'
-    },
-    {
-      id: '9',
-      name: 'Steel Works',
-      contact: 'Vikram Singh',
-      phone: '+91 98765 43218',
-      email: 'vikram@steelworks.com',
-      priority: 'High',
-      source: 'Referral',
-      value: '₹60L',
-      type: 'Industrial Loan'
-    },
-    {
-      id: '10',
-      name: 'Fresh Foods',
-      contact: 'Kavita Devi',
-      phone: '+91 98765 43219',
-      email: 'kavita@freshfoods.com',
-      priority: 'Medium',
-      source: 'Social Media',
-      value: '₹18L',
-      type: 'Food Business Loan'
     }
-  ];
+  ]);
 
   const filteredLeads = unassignedLeads.filter(lead => {
     if (filters.priority !== 'all' && lead.priority !== filters.priority) return false;
@@ -246,10 +253,14 @@ const LeadAllocation = () => {
     setAssignmentHistory(prev => [...newAssignments, ...prev].slice(0, 10));
     
     // Update member capacity
-    const memberIndex = teamMembers.findIndex(m => m.id === memberId);
-    if (memberIndex !== -1) {
-      teamMembers[memberIndex].currentLeads += selectedLeads.length;
-    }
+    setTeamMembers(prev => prev.map(m => 
+      m.id === memberId 
+        ? { ...m, currentLeads: m.currentLeads + selectedLeads.length }
+        : m
+    ));
+
+    // Remove assigned leads from unassigned list
+    setUnassignedLeads(prev => prev.filter(lead => !selectedLeads.includes(lead.id)));
     
     toast({
       title: "Leads Assigned Successfully",
@@ -267,7 +278,15 @@ const LeadAllocation = () => {
       return;
     }
 
-    const availableMembers = teamMembers.filter(m => m.currentLeads < m.capacity);
+    const availableMembers = teamMembers
+      .filter(m => m.currentLeads < m.capacity)
+      .sort((a, b) => {
+        // Sort by available capacity (desc) then by performance (desc)
+        const aCapacity = a.capacity - a.currentLeads;
+        const bCapacity = b.capacity - b.currentLeads;
+        if (aCapacity !== bCapacity) return bCapacity - aCapacity;
+        return b.performance - a.performance;
+      });
     
     if (availableMembers.length === 0) {
       toast({
@@ -278,26 +297,63 @@ const LeadAllocation = () => {
       return;
     }
 
-    toast({
-      title: "Auto-assignment Started",
-      description: `${filteredLeads.length} leads are being auto-assigned based on capacity and performance`,
+    // Sort leads by priority (High > Medium > Low)
+    const prioritySortedLeads = [...filteredLeads].sort((a, b) => {
+      const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+      return priorityOrder[b.priority as keyof typeof priorityOrder] - priorityOrder[a.priority as keyof typeof priorityOrder];
     });
 
-    setTimeout(() => {
-      const assignments = filteredLeads.slice(0, 5).map(lead => ({
-        id: Date.now() + Math.random().toString(),
-        leadName: lead.name,
-        memberName: availableMembers[Math.floor(Math.random() * availableMembers.length)].name,
-        timestamp: new Date().toLocaleString()
-      }));
+    const assignments: Assignment[] = [];
+    const updatedMembers = [...teamMembers];
+    const leadsToRemove: string[] = [];
 
-      setAssignmentHistory(prev => [...assignments, ...prev].slice(0, 10));
-      
-      toast({
-        title: "Auto-assignment Complete",
-        description: `${assignments.length} leads have been successfully auto-assigned`,
-      });
-    }, 2000);
+    // Assign leads to members
+    for (const lead of prioritySortedLeads) {
+      // Find best member based on specialization match and capacity
+      const bestMember = availableMembers.find(member => {
+        const hasCapacity = member.currentLeads < member.capacity;
+        const matchesSpecialization = lead.type.toLowerCase().includes(member.specialization.toLowerCase().split(' ')[0]);
+        return hasCapacity && matchesSpecialization;
+      }) || availableMembers.find(member => member.currentLeads < member.capacity);
+
+      if (bestMember) {
+        assignments.push({
+          id: Date.now() + Math.random().toString(),
+          leadName: lead.name,
+          memberName: bestMember.name,
+          timestamp: new Date().toLocaleString()
+        });
+
+        // Update member's current leads
+        const memberIndex = updatedMembers.findIndex(m => m.id === bestMember.id);
+        if (memberIndex !== -1) {
+          updatedMembers[memberIndex].currentLeads++;
+        }
+
+        // Update available members array
+        const availableMemberIndex = availableMembers.findIndex(m => m.id === bestMember.id);
+        if (availableMemberIndex !== -1) {
+          availableMembers[availableMemberIndex].currentLeads++;
+          if (availableMembers[availableMemberIndex].currentLeads >= availableMembers[availableMemberIndex].capacity) {
+            availableMembers.splice(availableMemberIndex, 1);
+          }
+        }
+
+        leadsToRemove.push(lead.id);
+
+        if (availableMembers.length === 0) break;
+      }
+    }
+
+    // Update state
+    setTeamMembers(updatedMembers);
+    setUnassignedLeads(prev => prev.filter(lead => !leadsToRemove.includes(lead.id)));
+    setAssignmentHistory(prev => [...assignments, ...prev].slice(0, 10));
+
+    toast({
+      title: "Auto-assignment Complete",
+      description: `${assignments.length} leads have been successfully auto-assigned`,
+    });
   };
 
   const handleManualAssignment = () => {
@@ -310,6 +366,11 @@ const LeadAllocation = () => {
   const handleResetAssignments = () => {
     setSelectedLeads([]);
     setAssignmentHistory([]);
+    // Reset team members to original capacity
+    setTeamMembers(prev => prev.map(member => ({
+      ...member,
+      currentLeads: Math.floor(member.capacity * 0.7) // Reset to 70% capacity
+    })));
     toast({
       title: "Assignments Reset",
       description: "All selections and assignment history have been cleared",
@@ -322,9 +383,15 @@ const LeadAllocation = () => {
 
   const handleApplyFilters = () => {
     setIsFilterModalOpen(false);
+    const activeFilters = [];
+    if (filters.priority !== 'all') activeFilters.push(`${filters.priority} priority`);
+    if (filters.source !== 'all') activeFilters.push(`${filters.source} source`);
+    
     toast({
       title: "Filters Applied",
-      description: `Showing leads filtered by: ${filters.priority !== 'all' ? filters.priority + ' priority' : ''} ${filters.source !== 'all' ? filters.source + ' source' : ''}`,
+      description: activeFilters.length > 0 
+        ? `Showing leads filtered by: ${activeFilters.join(', ')}`
+        : "Showing all leads",
     });
   };
 
@@ -376,6 +443,7 @@ const LeadAllocation = () => {
             variant="outline" 
             onClick={handleAutoAssign}
             className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+            disabled={filteredLeads.length === 0}
           >
             <Target size={16} className="mr-2" />
             Auto-Assign All
@@ -420,8 +488,8 @@ const LeadAllocation = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-teal-600 h-2 rounded-full" 
-                    style={{ width: `${(member.currentLeads / member.capacity) * 100}%` }}
+                    className="bg-teal-600 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${Math.min((member.currentLeads / member.capacity) * 100, 100)}%` }}
                   ></div>
                 </div>
               </div>
@@ -447,6 +515,7 @@ const LeadAllocation = () => {
                   size="sm"
                   variant="outline"
                   onClick={handleSelectAll}
+                  disabled={filteredLeads.length === 0}
                 >
                   {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
                 </Button>
@@ -462,37 +531,45 @@ const LeadAllocation = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {filteredLeads.map((lead) => (
-                <div 
-                  key={lead.id} 
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    selectedLeads.includes(lead.id) ? 'bg-teal-50 border-teal-200' : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => handleLeadSelection(lead.id)}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h4 className="font-medium text-sm">{lead.name}</h4>
-                      <p className="text-xs text-gray-500">{lead.contact} • {lead.phone}</p>
-                      <p className="text-xs text-gray-500">{lead.email}</p>
+            {filteredLeads.length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle size={48} className="mx-auto text-green-500 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">All Leads Assigned!</h3>
+                <p className="text-gray-600">Great job! All leads have been assigned to team members.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {filteredLeads.map((lead) => (
+                  <div 
+                    key={lead.id} 
+                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                      selectedLeads.includes(lead.id) ? 'bg-teal-50 border-teal-200' : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleLeadSelection(lead.id)}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-medium text-sm">{lead.name}</h4>
+                        <p className="text-xs text-gray-500">{lead.contact} • {lead.phone}</p>
+                        <p className="text-xs text-gray-500">{lead.email}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge className={getPriorityColor(lead.priority)}>
+                          {lead.priority}
+                        </Badge>
+                        {selectedLeads.includes(lead.id) && (
+                          <CheckCircle size={16} className="text-teal-600" />
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge className={getPriorityColor(lead.priority)}>
-                        {lead.priority}
-                      </Badge>
-                      {selectedLeads.includes(lead.id) && (
-                        <CheckCircle size={16} className="text-teal-600" />
-                      )}
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>{lead.source} • {lead.type}</span>
+                      <span className="font-medium">{lead.value}</span>
                     </div>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600">
-                    <span>{lead.source} • {lead.type}</span>
-                    <span className="font-medium">{lead.value}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -508,31 +585,41 @@ const LeadAllocation = () => {
                   Assign {selectedLeads.length} selected lead(s) to:
                 </p>
                 <div className="space-y-3">
-                  {teamMembers.map((member) => (
-                    <div key={member.id} className="flex justify-between items-center p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="bg-teal-100 text-teal-700 text-xs">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-sm">{member.name}</p>
-                          <p className="text-xs text-gray-500">
-                            {member.currentLeads}/{member.capacity} capacity • {member.performance}% performance
-                          </p>
+                  {teamMembers.map((member) => {
+                    const wouldExceedCapacity = member.currentLeads + selectedLeads.length > member.capacity;
+                    const availableSlots = member.capacity - member.currentLeads;
+                    
+                    return (
+                      <div key={member.id} className="flex justify-between items-center p-3 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-teal-100 text-teal-700 text-xs">
+                              {member.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-sm">{member.name}</p>
+                            <p className="text-xs text-gray-500">
+                              {member.currentLeads}/{member.capacity} capacity • {member.performance}% performance
+                            </p>
+                            {wouldExceedCapacity && (
+                              <p className="text-xs text-red-500">
+                                Would exceed capacity by {selectedLeads.length - availableSlots}
+                              </p>
+                            )}
+                          </div>
                         </div>
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleBulkAssign(member.id)}
+                          disabled={wouldExceedCapacity}
+                          className={wouldExceedCapacity ? 'opacity-50' : ''}
+                        >
+                          Assign
+                        </Button>
                       </div>
-                      <Button 
-                        size="sm" 
-                        onClick={() => handleBulkAssign(member.id)}
-                        disabled={member.currentLeads + selectedLeads.length > member.capacity}
-                        className={member.currentLeads + selectedLeads.length > member.capacity ? 'opacity-50' : ''}
-                      >
-                        Assign
-                      </Button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (
