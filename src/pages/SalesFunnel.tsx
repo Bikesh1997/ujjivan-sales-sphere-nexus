@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
+import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import PermissionGate from '@/components/rbac/PermissionGate';
 import { useAuth } from '@/contexts/AuthContext';
@@ -138,7 +140,16 @@ const SalesFunnel = () => {
         </TabsContent>
 
         <TabsContent value="tasks">
-          <KanbanBoard />
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">Task Management</h2>
+              <AddTaskModal onAddTask={(task) => {
+                // Handle adding task to Kanban board
+                console.log('New task added:', task);
+              }} />
+            </div>
+            <KanbanBoard />
+          </div>
         </TabsContent>
 
         <TabsContent value="prospects" className="space-y-6">
