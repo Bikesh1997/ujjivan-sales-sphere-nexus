@@ -21,6 +21,9 @@ import {
 } from 'lucide-react';
 import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
+import AddLeadModal from '@/components/leads/AddLeadModal';
+import ProspectViewModal from '@/components/funnel/ProspectViewModal';
+import ProspectEditModal from '@/components/funnel/ProspectEditModal';
 import PermissionGate from '@/components/rbac/PermissionGate';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -28,6 +31,10 @@ import { allLeads } from '@/data/leadsData';
 const SalesFunnel = () => {
   const { user } = useAuth();
   const [selectedStage, setSelectedStage] = useState('all');
+  const [viewingProspect, setViewingProspect] = useState<any>(null);
+  const [editingProspect, setEditingProspect] = useState<any>(null);
+  const [prospectViewOpen, setProspectViewOpen] = useState(false);
+  const [prospectEditOpen, setProspectEditOpen] = useState(false);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
@@ -40,17 +47,19 @@ const SalesFunnel = () => {
     { stage: 'Closed Won', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
   ];
 
-  const prospects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map(lead => ({
-    id: lead.id,
-    name: lead.contact,
-    company: lead.name,
-    stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
-    value: lead.value,
-    probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
-    lastContact: lead.lastContact,
-    nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
-                lead.status === 'proposal' ? 'Follow-up call' : 'Contract review'
-  }));
+  const [prospects, setProspects] = useState(
+    userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map(lead => ({
+      id: lead.id,
+      name: lead.contact,
+      company: lead.name,
+      stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
+      value: lead.value,
+      probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
+      lastContact: lead.lastContact,
+      nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
+                  lead.status === 'proposal' ? 'Follow-up call' : 'Contract review'
+    }))
+  );
 
   const getStageColor = (stage: string) => {
     switch (stage) {
@@ -69,6 +78,22 @@ const SalesFunnel = () => {
     return 'text-red-600 bg-red-50';
   };
 
+  const handleViewProspect = (prospect: any) => {
+    setViewingProspect(prospect);
+    setProspectViewOpen(true);
+  };
+
+  const handleEditProspect = (prospect: any) => {
+    setEditingProspect(prospect);
+    setProspectEditOpen(true);
+  };
+
+  const handleProspectUpdate = (updatedProspect: any) => {
+    setProspects(prospects.map(p => 
+      p.id === updatedProspect.id ? updatedProspect : p
+    ));
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -78,10 +103,7 @@ const SalesFunnel = () => {
           <p className="text-gray-600">Track your sales pipeline and manage tasks efficiently</p>
         </div>
         <PermissionGate permission="lead_create">
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus size={16} className="mr-2" />
-            Add Prospect
-          </Button>
+          <AddLeadModal />
         </PermissionGate>
       </div>
 
@@ -200,11 +222,11 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
                           <div className="flex space-x-2">
-                            <Button size="sm" variant="ghost">
+                            <Button size="sm" variant="ghost" onClick={() => handleViewProspect(prospect)}>
                               <Eye size={14} />
                             </Button>
                             <PermissionGate permission="lead_update">
-                              <Button size="sm" variant="ghost">
+                              <Button size="sm" variant="ghost" onClick={() => handleEditProspect(prospect)}>
                                 <Edit size={14} />
                               </Button>
                             </PermissionGate>
@@ -219,6 +241,20 @@ const SalesFunnel = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Modals */}
+      <ProspectViewModal
+        prospect={viewingProspect}
+        isOpen={prospectViewOpen}
+        onOpenChange={setProspectViewOpen}
+      />
+
+      <ProspectEditModal
+        prospect={editingProspect}
+        isOpen={prospectEditOpen}
+        onOpenChange={setProspectEditOpen}
+        onProspectUpdate={handleProspectUpdate}
+      />
     </div>
   );
 };
