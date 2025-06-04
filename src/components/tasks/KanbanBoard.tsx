@@ -168,15 +168,6 @@ const KanbanBoard = () => {
                   <TaskCard key={task.id} task={task} />
                 ))}
             </div>
-            
-            <Button 
-              variant="ghost" 
-              className="w-full mt-3 text-gray-500 hover:text-gray-700"
-              size="sm"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Task
-            </Button>
           </div>
         ))}
       </div>
