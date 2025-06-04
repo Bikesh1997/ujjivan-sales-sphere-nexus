@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,11 @@ import {
   MoreHorizontal,
   Target,
   Award,
-  Clock
+  Clock,
+  Settings,
+  Eye,
+  FileText,
+  Calendar
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -21,9 +24,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
+import TeamSettingsModal from '@/components/team/TeamSettingsModal';
+import ViewDetailsModal from '@/components/team/ViewDetailsModal';
+import SetTargetsModal from '@/components/team/SetTargetsModal';
+import ScheduleReviewModal from '@/components/team/ScheduleReviewModal';
 
 const TeamManagement = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
+  const [isSetTargetsOpen, setIsSetTargetsOpen] = useState(false);
+  const [isScheduleReviewOpen, setIsScheduleReviewOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   const teamMembers = [
     { 
@@ -76,6 +92,32 @@ const TeamManagement = () => {
     }
   ];
 
+  const handleAutoAssign = () => {
+    toast({
+      title: "Auto-Assignment Started",
+      description: "Leads are being automatically assigned based on capacity and performance",
+    });
+  };
+
+  const handleViewDetails = (member: any) => {
+    setSelectedMember(member);
+    setIsViewDetailsOpen(true);
+  };
+
+  const handleAssignLeads = (memberName: string) => {
+    toast({
+      title: "Lead Assignment",
+      description: `Opening lead assignment for ${memberName}`,
+    });
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Performance Report Generated",
+      description: "Team performance analytics report has been generated",
+    });
+  };
+
   const getStatusColor = (status: string) => {
     return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
@@ -94,9 +136,67 @@ const TeamManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
           <p className="text-gray-600">Manage team members and assignments</p>
         </div>
-        <Button className="bg-teal-600 hover:bg-teal-700">
-          <UserPlus size={16} className="mr-2" />
-          Add Team Member
+        <div className="flex space-x-3">
+          <Button 
+            variant="outline"
+            onClick={() => setIsSettingsOpen(true)}
+          >
+            <Settings size={16} className="mr-2" />
+            Team Settings
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={handleAutoAssign}
+          >
+            <Target size={16} className="mr-2" />
+            Auto-Assign
+          </Button>
+          <Button 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setIsAddMemberOpen(true)}
+          >
+            <UserPlus size={16} className="mr-2" />
+            Add Team Member
+          </Button>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={handleGenerateReport}
+        >
+          <FileText size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Performance Reports</p>
+            <p className="text-sm text-gray-500">Generate team analytics</p>
+          </div>
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={() => setIsScheduleReviewOpen(true)}
+        >
+          <Calendar size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Schedule Review</p>
+            <p className="text-sm text-gray-500">One-on-one team reviews</p>
+          </div>
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={() => setIsSetTargetsOpen(true)}
+        >
+          <Target size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Set Targets</p>
+            <p className="text-sm text-gray-500">Define goals and KPIs</p>
+          </div>
         </Button>
       </div>
 
@@ -179,6 +279,24 @@ const TeamManagement = () => {
                         </p>
                         <p className="text-xs text-gray-500">{member.lastActive}</p>
                       </div>
+                      
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewDetails(member)}
+                        >
+                          <Eye size={14} className="mr-1" />
+                          View Details
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => handleAssignLeads(member.name)}
+                        >
+                          Assign Leads
+                        </Button>
+                      </div>
+                      
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -271,6 +389,33 @@ const TeamManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Modals */}
+      <AddTeamMemberModal 
+        isOpen={isAddMemberOpen} 
+        onClose={() => setIsAddMemberOpen(false)} 
+      />
+      
+      <TeamSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
+      
+      <ViewDetailsModal 
+        isOpen={isViewDetailsOpen} 
+        onClose={() => setIsViewDetailsOpen(false)} 
+        member={selectedMember}
+      />
+      
+      <SetTargetsModal 
+        isOpen={isSetTargetsOpen} 
+        onClose={() => setIsSetTargetsOpen(false)} 
+      />
+      
+      <ScheduleReviewModal 
+        isOpen={isScheduleReviewOpen} 
+        onClose={() => setIsScheduleReviewOpen(false)} 
+      />
     </div>
   );
 };
