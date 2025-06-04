@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
 import LeadsTable from '@/components/leads/LeadsTable';
 import LeadsPagination from '@/components/leads/LeadsPagination';
+import GeoLocationTracker from '@/components/geo/GeoLocationTracker';
 import { useLeadFilters } from '@/hooks/useLeadFilters';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -15,6 +17,7 @@ const LEADS_PER_PAGE = 10;
 
 const LeadManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showGeoTracker, setShowGeoTracker] = useState(false);
   const { user } = useAuth();
 
   // Filter leads based on user role - sales executives only see their assigned leads
@@ -53,6 +56,10 @@ const LeadManagement = () => {
     setCurrentPage(1);
   };
 
+  const toggleGeoTracker = () => {
+    setShowGeoTracker(!showGeoTracker);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -68,10 +75,23 @@ const LeadManagement = () => {
             }
           </p>
         </div>
-        <PermissionGate permission="lead_create">
-          <AddLeadModal />
-        </PermissionGate>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={toggleGeoTracker}
+          >
+            {showGeoTracker ? 'Hide' : 'Show'} Location Tracker
+          </Button>
+          <PermissionGate permission="lead_create">
+            <AddLeadModal />
+          </PermissionGate>
+        </div>
       </div>
+
+      {/* Geo Location Tracker */}
+      {showGeoTracker && (
+        <GeoLocationTracker showCheckIn={true} showTracking={true} />
+      )}
 
       {/* Stats Cards */}
       <LeadStatsCards leads={leads} userRole={user?.role || ''} />
@@ -94,7 +114,7 @@ const LeadManagement = () => {
             setPriorityFilter={setPriorityFilter}
             sourceFilter={sourceFilter}
             setSourceFilter={setSourceFilter}
-            showAdvancedFilters={showAdvancedFilters}
+            showAdvancedFilters={Boolean(showAdvancedFilters)}
             setShowAdvancedFilters={setShowAdvancedFilters}
             hasActiveFilters={hasActiveFilters}
             clearAllFilters={handleClearFilters}
