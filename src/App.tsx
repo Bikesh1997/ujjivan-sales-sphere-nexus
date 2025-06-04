@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
@@ -28,7 +29,15 @@ import NotFound from "./pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -59,116 +68,118 @@ const RoleBasedRoute = ({ children, featureId }: { children: React.ReactNode; fe
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<div>Login Page</div>} />
-            <Route path="/*" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<DashboardRouter />} />
-                    
-                    {/* Sales Executive Only Features */}
-                    <Route path="/funnel" element={
-                      <RoleBasedRoute featureId="sales_funnel">
-                        <SalesFunnel />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/leads" element={
-                      <RoleBasedRoute featureId="my_leads">
-                        <LeadManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/tasks" element={
-                      <RoleBasedRoute featureId="my_tasks">
-                        <TaskManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/customers" element={
-                      <RoleBasedRoute featureId="customer_360">
-                        <Customer360 />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/geo-location" element={
-                      <RoleBasedRoute featureId="geo_location">
-                        <GeoLocation />
-                      </RoleBasedRoute>
-                    } />
-                    
-                    {/* Supervisor Only Features */}
-                    <Route path="/executive-dashboard" element={
-                      <RoleBasedRoute featureId="executive_dashboard">
-                        <ExecutiveDashboard />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/customer-analytics" element={
-                      <RoleBasedRoute featureId="customer_analytics">
-                        <CustomerAnalytics />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/kpa-management" element={
-                      <RoleBasedRoute featureId="kpa_management">
-                        <KPAManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/risk-management" element={
-                      <RoleBasedRoute featureId="risk_management">
-                        <RiskManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/portfolio" element={
-                      <RoleBasedRoute featureId="portfolio_management">
-                        <PortfolioManagement />
-                      </RoleBasedRoute>
-                    } />
-                    
-                    {/* Supervisor feature pages - now with proper components */}
-                    <Route path="/team-management" element={
-                      <RoleBasedRoute featureId="team_management">
-                        <TeamManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/lead-allocation" element={
-                      <RoleBasedRoute featureId="lead_allocation">
-                        <LeadAllocation />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/team-tasks" element={
-                      <RoleBasedRoute featureId="team_tasks">
-                        <TeamTasks />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/team-performance" element={
-                      <RoleBasedRoute featureId="team_performance">
-                        <TeamPerformance />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/territory-management" element={
-                      <RoleBasedRoute featureId="territory_management">
-                        <TerritoryManagement />
-                      </RoleBasedRoute>
-                    } />
-                    <Route path="/reports" element={
-                      <RoleBasedRoute featureId="reports">
-                        <Reports />
-                      </RoleBasedRoute>
-                    } />
-                    
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Layout>
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<div>Login Page</div>} />
+              <Route path="/*" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<DashboardRouter />} />
+                      
+                      {/* Sales Executive Only Features */}
+                      <Route path="/funnel" element={
+                        <RoleBasedRoute featureId="sales_funnel">
+                          <SalesFunnel />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/leads" element={
+                        <RoleBasedRoute featureId="my_leads">
+                          <LeadManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/tasks" element={
+                        <RoleBasedRoute featureId="my_tasks">
+                          <TaskManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/customers" element={
+                        <RoleBasedRoute featureId="customer_360">
+                          <Customer360 />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/geo-location" element={
+                        <RoleBasedRoute featureId="geo_location">
+                          <GeoLocation />
+                        </RoleBasedRoute>
+                      } />
+                      
+                      {/* Supervisor Only Features */}
+                      <Route path="/executive-dashboard" element={
+                        <RoleBasedRoute featureId="executive_dashboard">
+                          <ExecutiveDashboard />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/customer-analytics" element={
+                        <RoleBasedRoute featureId="customer_analytics">
+                          <CustomerAnalytics />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/kpa-management" element={
+                        <RoleBasedRoute featureId="kpa_management">
+                          <KPAManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/risk-management" element={
+                        <RoleBasedRoute featureId="risk_management">
+                          <RiskManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/portfolio" element={
+                        <RoleBasedRoute featureId="portfolio_management">
+                          <PortfolioManagement />
+                        </RoleBasedRoute>
+                      } />
+                      
+                      {/* Supervisor feature pages - now with proper components */}
+                      <Route path="/team-management" element={
+                        <RoleBasedRoute featureId="team_management">
+                          <TeamManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/lead-allocation" element={
+                        <RoleBasedRoute featureId="lead_allocation">
+                          <LeadAllocation />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/team-tasks" element={
+                        <RoleBasedRoute featureId="team_tasks">
+                          <TeamTasks />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/team-performance" element={
+                        <RoleBasedRoute featureId="team_performance">
+                          <TeamPerformance />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/territory-management" element={
+                        <RoleBasedRoute featureId="territory_management">
+                          <TerritoryManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/reports" element={
+                        <RoleBasedRoute featureId="reports">
+                          <Reports />
+                        </RoleBasedRoute>
+                      } />
+                      
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
