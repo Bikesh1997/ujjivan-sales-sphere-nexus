@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,18 +23,57 @@ const Reports = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [selectedTeam, setSelectedTeam] = useState('all');
+  const [scheduledReports, setScheduledReports] = useState([
+    {
+      id: '1',
+      name: 'Weekly Sales Summary',
+      frequency: 'Weekly',
+      nextRun: '2024-01-22',
+      status: 'Active'
+    },
+    {
+      id: '2',
+      name: 'Monthly Team Performance',
+      frequency: 'Monthly',
+      nextRun: '2024-02-01',
+      status: 'Active'
+    }
+  ]);
 
   const handleGenerateReport = (reportType: string) => {
     toast({
       title: "Report Generated",
       description: `${reportType} report has been generated and is ready for download.`,
     });
+    
+    // Simulate report generation
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = '#';
+      link.download = `${reportType.replace(/\s+/g, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.click();
+      
+      toast({
+        title: "Download Ready",
+        description: `${reportType} report is now available for download.`,
+      });
+    }, 2000);
   };
 
-  const handleScheduleReport = () => {
+  const handleScheduleReport = (reportName?: string) => {
+    const newReport = {
+      id: Date.now().toString(),
+      name: reportName || 'Custom Report',
+      frequency: 'Weekly',
+      nextRun: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: 'Active'
+    };
+    
+    setScheduledReports(prev => [...prev, newReport]);
+    
     toast({
       title: "Report Scheduled",
-      description: "Your report has been scheduled for weekly delivery.",
+      description: `${newReport.name} has been scheduled for weekly delivery.`,
     });
   };
 
@@ -42,12 +82,43 @@ const Reports = () => {
       title: "Export Started",
       description: `Data export in ${format} format has been initiated.`,
     });
+    
+    // Simulate export
+    setTimeout(() => {
+      toast({
+        title: "Export Complete",
+        description: `Data has been exported successfully in ${format} format.`,
+      });
+    }, 3000);
   };
 
   const handleCreateCustomReport = () => {
     toast({
       title: "Custom Report Builder",
-      description: "Opening custom report builder...",
+      description: "Opening custom report builder interface...",
+    });
+    
+    // Simulate opening a modal or new interface
+    setTimeout(() => {
+      toast({
+        title: "Report Builder Ready",
+        description: "You can now configure your custom report parameters.",
+      });
+    }, 1000);
+  };
+
+  const handleDeleteScheduledReport = (reportId: string) => {
+    setScheduledReports(prev => prev.filter(report => report.id !== reportId));
+    toast({
+      title: "Report Deleted",
+      description: "Scheduled report has been removed.",
+    });
+  };
+
+  const handleApplyFilters = () => {
+    toast({
+      title: "Filters Applied",
+      description: `Showing data for ${selectedPeriod === 'month' ? 'this month' : selectedPeriod} and ${selectedTeam === 'all' ? 'all teams' : selectedTeam}.`,
     });
   };
 
@@ -96,7 +167,7 @@ const Reports = () => {
     },
     {
       title: 'Active Scheduled Reports',
-      value: '18',
+      value: scheduledReports.length.toString(),
       change: '+3',
       changeType: 'positive' as const,
       icon: Calendar
@@ -168,9 +239,9 @@ const Reports = () => {
           </SelectContent>
         </Select>
 
-        <Button variant="outline">
+        <Button variant="outline" onClick={handleApplyFilters}>
           <Filter size={16} className="mr-2" />
-          More Filters
+          Apply Filters
         </Button>
       </div>
 
@@ -233,7 +304,7 @@ const Reports = () => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={handleScheduleReport}
+                        onClick={() => handleScheduleReport(template.name)}
                       >
                         Schedule
                       </Button>
@@ -251,15 +322,40 @@ const Reports = () => {
               <CardTitle>Scheduled Reports</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Reports</h3>
-                <p className="text-gray-600 mb-4">Set up automated report generation</p>
-                <Button onClick={handleScheduleReport}>
-                  <Plus size={16} className="mr-2" />
-                  Schedule Report
-                </Button>
-              </div>
+              {scheduledReports.length > 0 ? (
+                <div className="space-y-4">
+                  {scheduledReports.map((report) => (
+                    <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium">{report.name}</h4>
+                        <p className="text-sm text-gray-600">
+                          {report.frequency} • Next run: {report.nextRun}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="secondary">{report.status}</Badge>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDeleteScheduledReport(report.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Reports</h3>
+                  <p className="text-gray-600 mb-4">Set up automated report generation</p>
+                  <Button onClick={() => handleScheduleReport()}>
+                    <Plus size={16} className="mr-2" />
+                    Schedule Report
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
