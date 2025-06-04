@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,15 +15,31 @@ import PermissionGate from '@/components/rbac/PermissionGate';
 
 const LEADS_PER_PAGE = 10;
 
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  status: string;
+  source: string;
+  value: string;
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  priority: string;
+}
+
 const LeadManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showGeoTracker, setShowGeoTracker] = useState(false);
+  const [leadsData, setLeadsData] = useState(allLeads);
   const { user } = useAuth();
 
   // Filter leads based on user role - sales executives only see their assigned leads
   const leads = user?.role === 'supervisor' 
-    ? allLeads 
-    : allLeads.filter(lead => lead.assignedToId === user?.id);
+    ? leadsData 
+    : leadsData.filter(lead => lead.assignedToId === user?.id);
 
   const {
     searchTerm,
@@ -59,6 +76,34 @@ const LeadManagement = () => {
     setShowGeoTracker(!showGeoTracker);
   };
 
+  const handleAddLead = (newLeadData: {
+    companyName: string;
+    contactName: string;
+    phone: string;
+    email: string;
+    source: string;
+    value: string;
+    priority: string;
+  }) => {
+    const newLead: Lead = {
+      id: (leadsData.length + 1).toString(),
+      name: newLeadData.companyName,
+      contact: newLeadData.contactName,
+      phone: newLeadData.phone,
+      email: newLeadData.email,
+      status: 'new',
+      source: newLeadData.source,
+      value: newLeadData.value,
+      assignedTo: user?.name || 'Unassigned',
+      assignedToId: user?.id || '1',
+      lastContact: 'Just now',
+      priority: newLeadData.priority
+    };
+
+    setLeadsData(prevLeads => [newLead, ...prevLeads]);
+    setCurrentPage(1); // Reset to first page to show the new lead
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -69,7 +114,7 @@ const LeadManagement = () => {
           </h1>
           <p className="text-gray-600">
             {user?.role === 'supervisor' 
-              ? `Manage and track all sales leads (${filteredLeads.length} of ${allLeads.length} total)` 
+              ? `Manage and track all sales leads (${filteredLeads.length} of ${leadsData.length} total)` 
               : `Manage and track your assigned leads (${filteredLeads.length} of ${leads.length} assigned)`
             }
           </p>
@@ -82,7 +127,7 @@ const LeadManagement = () => {
             {showGeoTracker ? 'Hide' : 'Show'} Location Tracker
           </Button>
           <PermissionGate permission="lead_create">
-            <AddLeadModal />
+            <AddLeadModal onAddLead={handleAddLead} />
           </PermissionGate>
         </div>
       </div>

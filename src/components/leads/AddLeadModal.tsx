@@ -8,7 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const AddLeadModal = () => {
+interface AddLeadModalProps {
+  onAddLead: (leadData: {
+    companyName: string;
+    contactName: string;
+    phone: string;
+    email: string;
+    source: string;
+    value: string;
+    priority: string;
+  }) => void;
+}
+
+const AddLeadModal = ({ onAddLead }: AddLeadModalProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     companyName: '',
@@ -24,6 +36,10 @@ const AddLeadModal = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Adding new lead:', formData);
+    
+    // Call the parent's onAddLead function
+    onAddLead(formData);
+    
     toast({
       title: "Lead Added",
       description: `New lead "${formData.companyName}" has been created successfully.`,
