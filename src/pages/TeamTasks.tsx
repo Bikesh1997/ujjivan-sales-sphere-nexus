@@ -509,7 +509,7 @@ const TeamTasks = () => {
                     <div className="flex items-center space-x-2 mb-2">
                       {getStatusIcon(task.status)}
                       <h4 className="font-medium text-sm">{task.title}</h4>
-                      <Badge className={getPriorityColor(task.priority)} size="sm">
+                      <Badge className={getPriorityColor(task.priority)}>
                         {task.priority}
                       </Badge>
                     </div>

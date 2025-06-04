@@ -1,9 +1,13 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   UserPlus, 
   Users, 
@@ -15,12 +19,17 @@ import {
   Filter
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { allLeads } from '@/data/leadsData';
 
 const LeadAllocation = () => {
   const { toast } = useToast();
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [assignmentHistory, setAssignmentHistory] = useState<Array<{id: string, leadName: string, memberName: string, timestamp: string}>>([]);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    priority: 'all',
+    source: 'all',
+    value: 'all'
+  });
 
   const teamMembers = [
     { 
@@ -57,7 +66,125 @@ const LeadAllocation = () => {
     }
   ];
 
-  const unassignedLeads = allLeads.filter(lead => !lead.assignedToId).slice(0, 12);
+  // Enhanced dummy data for unassigned leads
+  const unassignedLeads = [
+    {
+      id: '1',
+      name: 'TechCorp Solutions',
+      contact: 'Ravi Kumar',
+      phone: '+91 98765 43210',
+      email: 'ravi@techcorp.com',
+      priority: 'High',
+      source: 'Website',
+      value: '₹25L',
+      type: 'Business Loan'
+    },
+    {
+      id: '2',
+      name: 'Sunrise Enterprises',
+      contact: 'Meera Patel',
+      phone: '+91 98765 43211',
+      email: 'meera@sunrise.com',
+      priority: 'Medium',
+      source: 'Referral',
+      value: '₹15L',
+      type: 'MSME Loan'
+    },
+    {
+      id: '3',
+      name: 'Green Valley Farms',
+      contact: 'Suresh Singh',
+      phone: '+91 98765 43212',
+      email: 'suresh@greenvalley.com',
+      priority: 'High',
+      source: 'Cold Call',
+      value: '₹30L',
+      type: 'Agricultural Loan'
+    },
+    {
+      id: '4',
+      name: 'Urban Developers',
+      contact: 'Priya Sharma',
+      phone: '+91 98765 43213',
+      email: 'priya@urban.com',
+      priority: 'Low',
+      source: 'Website',
+      value: '₹50L',
+      type: 'Real Estate Loan'
+    },
+    {
+      id: '5',
+      name: 'Quick Transport',
+      contact: 'Amit Gupta',
+      phone: '+91 98765 43214',
+      email: 'amit@quicktransport.com',
+      priority: 'Medium',
+      source: 'Social Media',
+      value: '₹20L',
+      type: 'Vehicle Loan'
+    },
+    {
+      id: '6',
+      name: 'Bright Future School',
+      contact: 'Sunita Rani',
+      phone: '+91 98765 43215',
+      email: 'sunita@brightfuture.com',
+      priority: 'High',
+      source: 'Referral',
+      value: '₹35L',
+      type: 'Education Loan'
+    },
+    {
+      id: '7',
+      name: 'Medical Care Center',
+      contact: 'Dr. Rajesh',
+      phone: '+91 98765 43216',
+      email: 'rajesh@medicalcare.com',
+      priority: 'Medium',
+      source: 'Website',
+      value: '₹40L',
+      type: 'Healthcare Loan'
+    },
+    {
+      id: '8',
+      name: 'Fashion Hub',
+      contact: 'Neha Agarwal',
+      phone: '+91 98765 43217',
+      email: 'neha@fashionhub.com',
+      priority: 'Low',
+      source: 'Cold Call',
+      value: '₹12L',
+      type: 'Retail Loan'
+    },
+    {
+      id: '9',
+      name: 'Steel Works',
+      contact: 'Vikram Singh',
+      phone: '+91 98765 43218',
+      email: 'vikram@steelworks.com',
+      priority: 'High',
+      source: 'Referral',
+      value: '₹60L',
+      type: 'Industrial Loan'
+    },
+    {
+      id: '10',
+      name: 'Fresh Foods',
+      contact: 'Kavita Devi',
+      phone: '+91 98765 43219',
+      email: 'kavita@freshfoods.com',
+      priority: 'Medium',
+      source: 'Social Media',
+      value: '₹18L',
+      type: 'Food Business Loan'
+    }
+  ];
+
+  const filteredLeads = unassignedLeads.filter(lead => {
+    if (filters.priority !== 'all' && lead.priority !== filters.priority) return false;
+    if (filters.source !== 'all' && lead.source !== filters.source) return false;
+    return true;
+  });
 
   const handleLeadSelection = (leadId: string) => {
     setSelectedLeads(prev => 
@@ -68,17 +195,17 @@ const LeadAllocation = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedLeads.length === unassignedLeads.length) {
+    if (selectedLeads.length === filteredLeads.length) {
       setSelectedLeads([]);
       toast({
         title: "Selection Cleared",
         description: "All leads have been deselected",
       });
     } else {
-      setSelectedLeads(unassignedLeads.map(lead => lead.id));
+      setSelectedLeads(filteredLeads.map(lead => lead.id));
       toast({
         title: "All Leads Selected",
-        description: `${unassignedLeads.length} leads selected for assignment`,
+        description: `${filteredLeads.length} leads selected for assignment`,
       });
     }
   };
@@ -96,10 +223,10 @@ const LeadAllocation = () => {
     const member = teamMembers.find(m => m.id === memberId);
     if (!member) return;
 
-    if (member.currentLeads >= member.capacity) {
+    if (member.currentLeads + selectedLeads.length > member.capacity) {
       toast({
         title: "Capacity Exceeded",
-        description: `${member.name} has reached maximum capacity`,
+        description: `${member.name} would exceed capacity with this assignment`,
         variant: "destructive"
       });
       return;
@@ -107,7 +234,7 @@ const LeadAllocation = () => {
 
     // Create assignment history entries
     const newAssignments = selectedLeads.map(leadId => {
-      const lead = unassignedLeads.find(l => l.id === leadId);
+      const lead = filteredLeads.find(l => l.id === leadId);
       return {
         id: Date.now() + Math.random().toString(),
         leadName: lead?.name || 'Unknown Lead',
@@ -118,6 +245,12 @@ const LeadAllocation = () => {
 
     setAssignmentHistory(prev => [...newAssignments, ...prev].slice(0, 10));
     
+    // Update member capacity
+    const memberIndex = teamMembers.findIndex(m => m.id === memberId);
+    if (memberIndex !== -1) {
+      teamMembers[memberIndex].currentLeads += selectedLeads.length;
+    }
+    
     toast({
       title: "Leads Assigned Successfully",
       description: `${selectedLeads.length} leads assigned to ${member.name}`,
@@ -126,7 +259,7 @@ const LeadAllocation = () => {
   };
 
   const handleAutoAssign = () => {
-    if (unassignedLeads.length === 0) {
+    if (filteredLeads.length === 0) {
       toast({
         title: "No Unassigned Leads",
         description: "All leads have been assigned",
@@ -134,7 +267,6 @@ const LeadAllocation = () => {
       return;
     }
 
-    // Simulate auto-assignment logic
     const availableMembers = teamMembers.filter(m => m.currentLeads < m.capacity);
     
     if (availableMembers.length === 0) {
@@ -148,12 +280,11 @@ const LeadAllocation = () => {
 
     toast({
       title: "Auto-assignment Started",
-      description: `${unassignedLeads.length} leads are being auto-assigned based on capacity and performance`,
+      description: `${filteredLeads.length} leads are being auto-assigned based on capacity and performance`,
     });
 
-    // Simulate assignment process
     setTimeout(() => {
-      const assignments = unassignedLeads.map(lead => ({
+      const assignments = filteredLeads.slice(0, 5).map(lead => ({
         id: Date.now() + Math.random().toString(),
         leadName: lead.name,
         memberName: availableMembers[Math.floor(Math.random() * availableMembers.length)].name,
@@ -164,7 +295,7 @@ const LeadAllocation = () => {
       
       toast({
         title: "Auto-assignment Complete",
-        description: `${unassignedLeads.length} leads have been successfully auto-assigned`,
+        description: `${assignments.length} leads have been successfully auto-assigned`,
       });
     }, 2000);
   };
@@ -186,9 +317,26 @@ const LeadAllocation = () => {
   };
 
   const handleFilterLeads = () => {
+    setIsFilterModalOpen(true);
+  };
+
+  const handleApplyFilters = () => {
+    setIsFilterModalOpen(false);
     toast({
-      title: "Filter Options",
-      description: "Opening lead filtering options by priority, source, and value",
+      title: "Filters Applied",
+      description: `Showing leads filtered by: ${filters.priority !== 'all' ? filters.priority + ' priority' : ''} ${filters.source !== 'all' ? filters.source + ' source' : ''}`,
+    });
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      priority: 'all',
+      source: 'all',
+      value: 'all'
+    });
+    toast({
+      title: "Filters Cleared",
+      description: "All filters have been reset",
     });
   };
 
@@ -289,7 +437,7 @@ const LeadAllocation = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="h-5 w-5 text-orange-600" />
-                Unassigned Leads ({unassignedLeads.length})
+                Unassigned Leads ({filteredLeads.length})
               </CardTitle>
               <div className="flex items-center space-x-2">
                 {selectedLeads.length > 0 && (
@@ -300,7 +448,7 @@ const LeadAllocation = () => {
                   variant="outline"
                   onClick={handleSelectAll}
                 >
-                  {selectedLeads.length === unassignedLeads.length ? 'Deselect All' : 'Select All'}
+                  {selectedLeads.length === filteredLeads.length ? 'Deselect All' : 'Select All'}
                 </Button>
                 <Button
                   size="sm"
@@ -315,7 +463,7 @@ const LeadAllocation = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {unassignedLeads.map((lead) => (
+              {filteredLeads.map((lead) => (
                 <div 
                   key={lead.id} 
                   className={`p-3 border rounded-lg cursor-pointer transition-colors ${
@@ -326,7 +474,8 @@ const LeadAllocation = () => {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-medium text-sm">{lead.name}</h4>
-                      <p className="text-xs text-gray-500">{lead.contact}</p>
+                      <p className="text-xs text-gray-500">{lead.contact} • {lead.phone}</p>
+                      <p className="text-xs text-gray-500">{lead.email}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge className={getPriorityColor(lead.priority)}>
@@ -338,8 +487,8 @@ const LeadAllocation = () => {
                     </div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-600">
-                    <span>{lead.source}</span>
-                    <span>{lead.value}</span>
+                    <span>{lead.source} • {lead.type}</span>
+                    <span className="font-medium">{lead.value}</span>
                   </div>
                 </div>
               ))}
@@ -377,8 +526,8 @@ const LeadAllocation = () => {
                       <Button 
                         size="sm" 
                         onClick={() => handleBulkAssign(member.id)}
-                        disabled={member.currentLeads >= member.capacity}
-                        className={member.currentLeads >= member.capacity ? 'opacity-50' : ''}
+                        disabled={member.currentLeads + selectedLeads.length > member.capacity}
+                        className={member.currentLeads + selectedLeads.length > member.capacity ? 'opacity-50' : ''}
                       >
                         Assign
                       </Button>
@@ -432,6 +581,61 @@ const LeadAllocation = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Filter Modal */}
+      <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter Leads</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Priority</Label>
+              <Select value={filters.priority} onValueChange={(value) => 
+                setFilters(prev => ({ ...prev, priority: value }))
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Source</Label>
+              <Select value={filters.source} onValueChange={(value) => 
+                setFilters(prev => ({ ...prev, source: value }))
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sources</SelectItem>
+                  <SelectItem value="Website">Website</SelectItem>
+                  <SelectItem value="Referral">Referral</SelectItem>
+                  <SelectItem value="Cold Call">Cold Call</SelectItem>
+                  <SelectItem value="Social Media">Social Media</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex space-x-2 pt-4">
+              <Button onClick={handleApplyFilters} className="flex-1">
+                Apply Filters
+              </Button>
+              <Button variant="outline" onClick={handleClearFilters}>
+                Clear
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
