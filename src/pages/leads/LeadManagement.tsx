@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,72 +9,13 @@ import AddLeadModal from '@/components/leads/AddLeadModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { allLeads } from '@/data/leadsData';
 
 const LeadManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const { toast } = useToast();
   const { user } = useAuth();
-
-  // All leads with assigned person info
-  const allLeads = [
-    {
-      id: '1',
-      name: 'Rajesh Enterprises',
-      contact: 'Rajesh Kumar',
-      phone: '+91 98765 43210',
-      email: 'rajesh@enterprises.com',
-      status: 'new',
-      source: 'Website',
-      value: '₹12L',
-      assignedTo: 'Rahul Sharma',
-      assignedToId: '1',
-      lastContact: '2 hours ago',
-      priority: 'High'
-    },
-    {
-      id: '2',
-      name: 'Tech Solutions Ltd',
-      contact: 'Priya Patel',
-      phone: '+91 87654 32109',
-      email: 'priya@techsolutions.com',
-      status: 'qualified',
-      source: 'Referral',
-      value: '₹8.5L',
-      assignedTo: 'Rahul Sharma',
-      assignedToId: '1',
-      lastContact: '1 day ago',
-      priority: 'Medium'
-    },
-    {
-      id: '3',
-      name: 'Manufacturing Co',
-      contact: 'Suresh Gupta',
-      phone: '+91 76543 21098',
-      email: 'suresh@manufacturing.com',
-      status: 'converted',
-      source: 'Cold Call',
-      value: '₹15L',
-      assignedTo: 'Other Sales Rep',
-      assignedToId: '3',
-      lastContact: '3 days ago',
-      priority: 'High'
-    },
-    {
-      id: '4',
-      name: 'Retail Chain',
-      contact: 'Anita Roy',
-      phone: '+91 65432 10987',
-      email: 'anita@retailchain.com',
-      status: 'proposal',
-      source: 'Trade Show',
-      value: '₹20L',
-      assignedTo: 'Rahul Sharma',
-      assignedToId: '1',
-      lastContact: '5 hours ago',
-      priority: 'High'
-    }
-  ];
 
   // Filter leads based on user role
   const leads = user?.role === 'supervisor' 
@@ -119,11 +59,6 @@ const LeadManagement = () => {
 
   // Calculate sales stats for current user
   const userLeads = user?.role === 'supervisor' ? allLeads : leads;
-  const totalValue = userLeads.reduce((sum, lead) => {
-    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
-    return sum + value;
-  }, 0);
-
   const convertedLeads = userLeads.filter(lead => lead.status === 'converted');
   const convertedValue = convertedLeads.reduce((sum, lead) => {
     const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
@@ -140,8 +75,8 @@ const LeadManagement = () => {
           </h1>
           <p className="text-gray-600">
             {user?.role === 'supervisor' 
-              ? 'Manage and track all sales leads' 
-              : 'Manage and track your assigned leads'
+              ? `Manage and track all sales leads (${allLeads.length} total)` 
+              : `Manage and track your assigned leads (${leads.length} assigned)`
             }
           </p>
         </div>
