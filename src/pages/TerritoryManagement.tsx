@@ -88,7 +88,9 @@ const TerritoryManagement = () => {
     avgPerformance: Math.round(territories.reduce((sum, t) => sum + t.performance, 0) / territories.length)
   };
 
-  const handleCreateTerritory = (formData: FormData) => {
+  const handleCreateTerritory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
     const assignedTo = formData.get('assignedTo') as string;
     const area = formData.get('area') as string;
@@ -112,7 +114,9 @@ const TerritoryManagement = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateTerritory = (formData: FormData) => {
+  const handleUpdateTerritory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
     
     console.log('Updating territory:', selectedTerritory?.id);
@@ -171,7 +175,7 @@ const TerritoryManagement = () => {
             <DialogHeader>
               <DialogTitle>Create New Territory</DialogTitle>
             </DialogHeader>
-            <form action={handleCreateTerritory} className="space-y-4">
+            <form onSubmit={handleCreateTerritory} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name">Territory Name</Label>
@@ -495,7 +499,7 @@ const TerritoryManagement = () => {
             <DialogTitle>Edit Territory</DialogTitle>
           </DialogHeader>
           {selectedTerritory && (
-            <form action={handleUpdateTerritory} className="space-y-4">
+            <form onSubmit={handleUpdateTerritory} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="edit-name">Territory Name</Label>
