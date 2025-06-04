@@ -35,51 +35,75 @@ const SupervisorDashboard = () => {
   const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
 
-  // Team data
+  // Team data with proper structure for ViewDetailsModal
   const teamMembers = [
     { 
       id: '1', 
       name: 'Rahul Sharma', 
+      email: 'rahul.sharma@company.com',
       role: 'Sales Executive',
+      department: 'Sales',
+      status: 'active',
+      joinDate: '2023-01-15',
+      performance: 92,
+      targets: { monthly: 15, achieved: 12.5 },
+      lastActive: '2 hours ago',
       leads: 25, 
       converted: 8, 
       revenue: 12.5, 
       target: 15,
-      lastActivity: '2 hours ago',
-      status: 'active'
+      lastActivity: '2 hours ago'
     },
     { 
       id: '3', 
       name: 'Anjali Patel', 
+      email: 'anjali.patel@company.com',
       role: 'Sales Executive',
+      department: 'Sales',
+      status: 'active',
+      joinDate: '2023-03-10',
+      performance: 88,
+      targets: { monthly: 12, achieved: 8.2 },
+      lastActive: '30 min ago',
       leads: 18, 
       converted: 5, 
       revenue: 8.2, 
       target: 12,
-      lastActivity: '30 min ago',
-      status: 'active'
+      lastActivity: '30 min ago'
     },
     { 
       id: '4', 
       name: 'Vikash Kumar', 
+      email: 'vikash.kumar@company.com',
       role: 'Sales Executive',
+      department: 'Sales',
+      status: 'inactive',
+      joinDate: '2022-11-20',
+      performance: 76,
+      targets: { monthly: 14, achieved: 9.8 },
+      lastActive: '1 day ago',
       leads: 22, 
       converted: 6, 
       revenue: 9.8, 
       target: 14,
-      lastActivity: '1 day ago',
-      status: 'inactive'
+      lastActivity: '1 day ago'
     },
     { 
       id: '5', 
       name: 'Priya Singh', 
+      email: 'priya.singh@company.com',
       role: 'Sales Executive',
+      department: 'Sales',
+      status: 'active',
+      joinDate: '2023-05-05',
+      performance: 95,
+      targets: { monthly: 20, achieved: 18.5 },
+      lastActive: '1 hour ago',
       leads: 30, 
       converted: 12, 
       revenue: 18.5, 
       target: 20,
-      lastActivity: '1 hour ago',
-      status: 'active'
+      lastActivity: '1 hour ago'
     }
   ];
 
