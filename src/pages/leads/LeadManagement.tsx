@@ -27,6 +27,7 @@ const LeadManagement = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [leadsData, setLeadsData] = useState(allLeads);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     status: 'all',
     assignee: 'all',
@@ -37,16 +38,27 @@ const LeadManagement = () => {
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
 
   const filteredLeads = userLeads.filter(lead => {
+    // Search filter
+    const matchesSearch = searchTerm === '' || 
+      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.phone.includes(searchTerm);
+
+    // Status filter
     if (filters.status !== 'all' && lead.status !== filters.status) {
       return false;
     }
+    // Assignee filter
     if (filters.assignee !== 'all' && lead.assignedToId !== filters.assignee) {
       return false;
     }
+    // Priority filter
     if (filters.priority !== 'all' && lead.priority !== filters.priority) {
       return false;
     }
-    return true;
+    
+    return matchesSearch;
   });
 
   const handleEditLead = (leadId: string, updatedData: Partial<typeof allLeads[0]>) => {
@@ -85,6 +97,51 @@ const LeadManagement = () => {
 
     setLeadsData(prevLeads => [newLead, ...prevLeads]);
     console.log('New lead added:', newLead);
+  };
+
+  const handleExport = () => {
+    try {
+      // Convert filtered leads to CSV format
+      const csvHeaders = ['Name', 'Contact', 'Phone', 'Email', 'Status', 'Priority', 'Value', 'Assigned To', 'Last Contact'];
+      const csvData = filteredLeads.map(lead => [
+        lead.name,
+        lead.contact,
+        lead.phone,
+        lead.email,
+        lead.status,
+        lead.priority,
+        lead.value,
+        lead.assignedTo,
+        lead.lastContact
+      ]);
+
+      const csvContent = [csvHeaders, ...csvData]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n');
+
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${filteredLeads.length} leads to CSV file.`,
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the leads data.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -179,9 +236,11 @@ const LeadManagement = () => {
                 <Input
                   placeholder="Search leads..."
                   className="pl-10 w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download size={16} className="mr-2" />
                 Export
               </Button>
