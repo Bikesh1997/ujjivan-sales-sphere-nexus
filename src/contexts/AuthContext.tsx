@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
@@ -32,7 +33,7 @@ const MOCK_USERS: User[] = [
     email: 'sales2@bank.com',
     name: 'Anjali Patel',
     role: 'sales_executive',
-    department: 'outbound',
+    department: 'inbound',
     branch: 'Mumbai Central'
   }
 ];
