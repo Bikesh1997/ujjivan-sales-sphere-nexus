@@ -200,7 +200,6 @@ const LeadManagement = () => {
             </CardHeader>
             <CardContent>
               <LeadFilters
-                filteredLeads={filteredLeads}
                 onFilterChange={setFilteredLeads}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -215,6 +214,7 @@ const LeadManagement = () => {
             <BulkLeadActions
               onBulkAction={handleBulkAction}
               selectedLeads={selectedLeads}
+              onClearSelection={() => setSelectedLeads([])}
             />
           )}
 
@@ -223,12 +223,22 @@ const LeadManagement = () => {
             <CardContent className="p-0">
               <LeadsTable
                 leads={filteredLeads}
-                onSelectionChange={setSelectedLeads}
-                onEditLead={(lead) => {
+                selectedLeads={selectedLeads}
+                onSelectLead={(leadId: string) => {
+                  setSelectedLeads(prev => 
+                    prev.includes(leadId) 
+                      ? prev.filter(id => id !== leadId)
+                      : [...prev, leadId]
+                  );
+                }}
+                onSelectAll={(selected: boolean) => {
+                  setSelectedLeads(selected ? filteredLeads.map(lead => lead.id) : []);
+                }}
+                onEditLead={(lead: Lead) => {
                   setSelectedLead(lead);
                   setShowEditModal(true);
                 }}
-                onViewLead={(lead) => {
+                onViewLead={(lead: Lead) => {
                   setSelectedLead(lead);
                   setShowViewModal(true);
                 }}
@@ -264,7 +274,7 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
-        isOpen={showAddModal}
+        open={showAddModal}
         onClose={() => setShowAddModal(false)}
         onAddLead={handleAddLead}
       />
@@ -272,21 +282,21 @@ const LeadManagement = () => {
       {selectedLead && (
         <>
           <EditLeadModal
-            isOpen={showEditModal}
-            onClose={() => {
-              setShowEditModal(false);
-              setSelectedLead(null);
+            open={showEditModal}
+            onOpenChange={(open: boolean) => {
+              setShowEditModal(open);
+              if (!open) setSelectedLead(null);
             }}
             lead={selectedLead}
             onEditLead={handleEditLead}
           />
 
           <LeadViewModal
-            isOpen={showViewModal}
+            open={showViewModal}
             lead={selectedLead}
-            onClose={() => {
-              setShowViewModal(false);
-              setSelectedLead(null);
+            onOpenChange={(open: boolean) => {
+              setShowViewModal(open);
+              if (!open) setSelectedLead(null);
             }}
           />
         </>

@@ -48,7 +48,7 @@ export const FEATURES: Feature[] = [
     name: 'Geo Tracking',
     path: '/geo-location',
     icon: 'MapPin',
-    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    roles: ['sales_executive', 'relationship_manager'], // Removed inbound_agent
     description: 'Location tracking and beat planning'
   },
   {
