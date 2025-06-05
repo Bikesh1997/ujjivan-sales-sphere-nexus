@@ -116,12 +116,34 @@ const SupervisorDashboard = () => {
 
   // Unassigned leads requiring allocation (filter out already assigned leads)
   const unassignedLeads = allLeads.filter(lead => !lead.assignedToId && !assignedLeads.includes(lead.id)).slice(0, 8);
-  const teamPerformanceData = teamMembers.map(member => ({
-    name: member.name.split(' ')[0],
-    target: member.target,
-    achieved: member.revenue,
-    conversion: Math.round((member.converted / member.leads) * 100)
-  }));
+  
+  // Region-wise performance data for Team Performance Overview
+  const teamPerformanceData = [
+    {
+      name: 'Delhi',
+      target: 25,
+      achieved: 22.5,
+      conversion: 85
+    },
+    {
+      name: 'Pune',
+      target: 20,
+      achieved: 18.2,
+      conversion: 88
+    },
+    {
+      name: 'Mumbai',
+      target: 30,
+      achieved: 25.3,
+      conversion: 82
+    },
+    {
+      name: 'Bangalore',
+      target: 22,
+      achieved: 19.5,
+      conversion: 90
+    }
+  ];
 
   const kpis = [
     { 
@@ -384,10 +406,10 @@ const SupervisorDashboard = () => {
 
       {/* Team Performance & Lead Allocation */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Team Performance Chart */}
+        {/* Team Performance Chart - Now shows region-wise data */}
         <Card>
           <CardHeader>
-            <CardTitle>Team Performance Overview</CardTitle>
+            <CardTitle>Regional Performance Overview</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
