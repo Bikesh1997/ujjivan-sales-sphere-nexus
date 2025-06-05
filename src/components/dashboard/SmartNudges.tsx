@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Bell, TrendingUp, Target, MapPin, Users, IndianRupee, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,9 +30,6 @@ const SmartNudges = () => {
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
   const overdueLeads = userLeads.filter(lead => lead.lastContact.includes('days ago') || lead.lastContact.includes('week ago'));
   const highValueProspects = userLeads.filter(lead => parseFloat(lead.value.replace('₹', '').replace('L', '')) > 30);
-  const convertedValue = userLeads.filter(lead => lead.status === 'converted').reduce((sum, lead) => {
-    return sum + parseFloat(lead.value.replace('₹', '').replace('L', ''));
-  }, 0);
 
   const nudges: Nudge[] = [
     {
@@ -169,7 +166,7 @@ const SmartNudges = () => {
       <CardContent>
         <div className="space-y-4">
           {nudges.map((nudge) => (
-            <div key={nudge.id} className={`p-4 border rounded-lg ${getNudgeColor(nudge.type)} hover:shadow-md transition-shadow`}>
+            <div key={nudge.id} className={`p-4 border rounded-lg ${getNudgeColor(nudge.type)} hover:shadow-md transition-shadow cursor-pointer`}>
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3 flex-1">
                   {getNudgeIcon(nudge.type)}
@@ -224,6 +221,9 @@ const SmartNudges = () => {
                 {selectedNudge && getNudgeIcon(selectedNudge.type)}
                 <span className="ml-2">{selectedNudge?.title}</span>
               </DialogTitle>
+              <DialogDescription>
+                Take action on this smart nudge to improve your sales performance.
+              </DialogDescription>
             </DialogHeader>
             {selectedNudge && (
               <div className="space-y-4">
