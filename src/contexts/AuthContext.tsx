@@ -55,10 +55,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (savedUser && sessionExpiry) {
           const now = new Date().getTime();
           if (now < parseInt(sessionExpiry)) {
-            setUser(JSON.parse(savedUser));
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
             setIsAuthenticated(true);
+            console.log('User restored from session:', parsedUser);
           } else {
             // Session expired
+            console.log('Session expired, clearing storage');
             localStorage.removeItem('user');
             localStorage.removeItem('sessionExpiry');
           }
@@ -75,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
+    console.log('Login attempt with:', credentials.email);
     setIsLoading(true);
     
     try {
@@ -82,6 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
+      console.log('Found user:', foundUser);
       
       if (foundUser && credentials.password === 'password123') {
         setUser(foundUser);
@@ -92,10 +97,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('user', JSON.stringify(foundUser));
         localStorage.setItem('sessionExpiry', expiry.toString());
         
+        console.log('Login successful for:', foundUser.name);
         setIsLoading(false);
         return true;
       }
       
+      console.log('Login failed: Invalid credentials');
       setIsLoading(false);
       return false;
     } catch (error) {
