@@ -18,7 +18,7 @@ import KanbanBoard from '@/components/tasks/KanbanBoard';
 import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
-import LeadCallModal from '@/components/leads/LeadCallModal';
+import CallInProgressModal from '@/components/leads/CallInProgressModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
@@ -26,6 +26,8 @@ const SalesFunnel = () => {
   const { user } = useAuth();
   const [selectedStage, setSelectedStage] = useState('all');
   const [leadsData, setLeadsData] = useState(allLeads);
+  const [callInProgressOpen, setCallInProgressOpen] = useState(false);
+  const [selectedProspect, setSelectedProspect] = useState<any>(null);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
@@ -43,10 +45,11 @@ const SalesFunnel = () => {
 
   // Random real names for prospects
   const realNames = ['Amit Sharma', 'Priya Patel', 'Rahul Kumar', 'Sneha Singh', 'Arjun Mehta', 'Kavya Reddy'];
+  const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
 
-  const prospects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map(lead => ({
+  const prospects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map((lead, index) => ({
     id: lead.id,
-    name: lead.contact,
+    name: realNames[index % realNames.length],
     company: lead.name,
     stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
     value: lead.value,
@@ -54,7 +57,8 @@ const SalesFunnel = () => {
     lastContact: lead.lastContact,
     nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
                 lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
-    leadData: lead
+    leadData: lead,
+    businessName: businessNames[index % businessNames.length]
   }));
 
   const handleEditLead = (leadId: string, updatedData: Partial<typeof allLeads[0]>) => {
@@ -65,6 +69,12 @@ const SalesFunnel = () => {
           : lead
       )
     );
+  };
+
+  const handleCall = (prospect: any) => {
+    console.log('Calling prospect:', prospect);
+    setSelectedProspect(prospect);
+    setCallInProgressOpen(true);
   };
 
   const getStageColor = (stage: string) => {
@@ -177,7 +187,7 @@ const SalesFunnel = () => {
                       <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4">
                           <div>
-                            <div className="font-medium text-gray-900">{realNames[index % realNames.length]}</div>
+                            <div className="font-medium text-gray-900">{prospect.name}</div>
                             <div className="text-sm text-gray-500">{prospect.company}</div>
                           </div>
                         </td>
@@ -195,7 +205,23 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
-                          <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
+                          <div className="flex space-x-1">
+                            <Button size="sm" variant="ghost">
+                              <Eye size={14} />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Edit size={14} />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="default" 
+                              onClick={() => handleCall(prospect)}
+                              className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                            >
+                              <Phone size={14} className="mr-1" />
+                              Call
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -218,6 +244,17 @@ const SalesFunnel = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Call In Progress Modal */}
+      {selectedProspect && (
+        <CallInProgressModal 
+          prospectName={selectedProspect.name}
+          businessName={selectedProspect.businessName}
+          phoneNumber={selectedProspect.leadData.phone}
+          isOpen={callInProgressOpen}
+          onOpenChange={setCallInProgressOpen}
+        />
+      )}
     </div>
   );
 };

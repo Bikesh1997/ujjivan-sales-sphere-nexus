@@ -2,17 +2,19 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Phone, PhoneOff } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff } from 'lucide-react';
 
 interface CallInProgressModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  contactName: string;
+  prospectName: string;
+  businessName: string;
   phoneNumber: string;
 }
 
-const CallInProgressModal = ({ isOpen, onOpenChange, contactName, phoneNumber }: CallInProgressModalProps) => {
+const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName, phoneNumber }: CallInProgressModalProps) => {
   const [callDuration, setCallDuration] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -22,6 +24,7 @@ const CallInProgressModal = ({ isOpen, onOpenChange, contactName, phoneNumber }:
       }, 1000);
     } else {
       setCallDuration(0);
+      setIsRecording(false);
     }
     return () => clearInterval(interval);
   }, [isOpen]);
@@ -36,6 +39,10 @@ const CallInProgressModal = ({ isOpen, onOpenChange, contactName, phoneNumber }:
     onOpenChange(false);
   };
 
+  const handleToggleRecording = () => {
+    setIsRecording(!isRecording);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px]">
@@ -48,13 +55,24 @@ const CallInProgressModal = ({ isOpen, onOpenChange, contactName, phoneNumber }:
           </div>
           
           <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-900">{contactName}</h3>
+            <h3 className="text-xl font-semibold text-gray-900">{prospectName}</h3>
+            <p className="text-gray-600 text-sm">{businessName}</p>
             <p className="text-gray-600 font-mono text-lg">{phoneNumber}</p>
           </div>
           
           <div className="text-center">
             <div className="text-3xl font-mono text-gray-900">{formatDuration(callDuration)}</div>
             <p className="text-sm text-gray-500">Call duration</p>
+          </div>
+
+          <div className="flex space-x-4">
+            <Button 
+              onClick={handleToggleRecording}
+              className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-6 py-2 rounded-full`}
+            >
+              {isRecording ? <MicOff size={20} className="mr-2" /> : <Mic size={20} className="mr-2" />}
+              {isRecording ? 'Stop Recording' : 'Start Recording'}
+            </Button>
           </div>
           
           <Button 
