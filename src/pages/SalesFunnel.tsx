@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,12 +11,14 @@ import {
   Eye,
   Edit,
   ArrowRight,
-  Kanban
+  Kanban,
+  Phone
 } from 'lucide-react';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
 import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
+import LeadCallModal from '@/components/leads/LeadCallModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
@@ -25,6 +26,8 @@ const SalesFunnel = () => {
   const { user } = useAuth();
   const [selectedStage, setSelectedStage] = useState('all');
   const [leadsData, setLeadsData] = useState(allLeads);
+  const [callModalOpen, setCallModalOpen] = useState(false);
+  const [selectedProspect, setSelectedProspect] = useState<any>(null);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
@@ -63,6 +66,11 @@ const SalesFunnel = () => {
     );
   };
 
+  const handleCallProspect = (prospect: any) => {
+    setSelectedProspect(prospect);
+    setCallModalOpen(true);
+  };
+
   const getStageColor = (stage: string) => {
     switch (stage) {
       case 'Leads': return 'bg-gray-100 text-gray-800';
@@ -99,7 +107,7 @@ const SalesFunnel = () => {
           </TabsTrigger>
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <Kanban className="h-4 w-4" />
-            Task Board {isDragDropEnabled && <Badge variant="secondary" className="ml-1 text-xs">Drag & Drop</Badge>}
+            Task Board
           </TabsTrigger>
         </TabsList>
 
@@ -173,7 +181,7 @@ const SalesFunnel = () => {
                       <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4">
                           <div>
-                            <div className="font-medium text-gray-900">{prospect.name}</div>
+                            <div className="font-medium text-gray-900">Priya Sharma</div>
                             <div className="text-sm text-gray-500">{prospect.company}</div>
                           </div>
                         </td>
@@ -191,7 +199,18 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
-                          <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
+                          <div className="flex space-x-2">
+                            <Button 
+                              size="sm" 
+                              variant="default" 
+                              onClick={() => handleCallProspect(prospect)}
+                              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+                            >
+                              <Phone size={14} className="mr-1" />
+                              Call
+                            </Button>
+                            <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -214,6 +233,15 @@ const SalesFunnel = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Call Modal */}
+      {selectedProspect && (
+        <LeadCallModal 
+          lead={selectedProspect.leadData}
+          isOpen={callModalOpen}
+          onOpenChange={setCallModalOpen}
+        />
+      )}
     </div>
   );
 };
