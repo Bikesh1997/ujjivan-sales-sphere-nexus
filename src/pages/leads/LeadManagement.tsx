@@ -71,32 +71,14 @@ const LeadManagement = () => {
     );
   };
 
-  const handleAddLead = (leadData: {
-    companyName: string;
-    contactName: string;
-    phone: string;
-    email: string;
-    source: string;
-    value: string;
-    priority: string;
-  }) => {
-    const newLead = {
-      id: (leadsData.length + 1).toString(),
-      name: leadData.companyName,
-      contact: leadData.contactName,
-      phone: leadData.phone,
-      email: leadData.email,
-      status: 'new',
-      source: leadData.source,
-      value: leadData.value,
-      assignedTo: user?.name || 'Unassigned',
-      assignedToId: user?.id || '1',
-      lastContact: 'Just added',
-      priority: leadData.priority.toLowerCase()
+  const handleAddLead = (newLead: Omit<Lead, 'id'>) => {
+    const leadWithId = { 
+      ...newLead, 
+      id: Date.now().toString(),
+      nextFollowUp: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      notes: newLead.notes || ''
     };
-
-    setLeadsData(prevLeads => [newLead, ...prevLeads]);
-    console.log('New lead added:', newLead);
+    setLeadsData(prevLeads => [leadWithId, ...prevLeads]);
   };
 
   const handleExport = () => {

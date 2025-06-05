@@ -16,7 +16,7 @@ export const FEATURES: Feature[] = [
     name: 'My Dashboard',
     path: '/',
     icon: 'Home',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Personal performance dashboard'
   },
   {
@@ -24,7 +24,7 @@ export const FEATURES: Feature[] = [
     name: 'My Leads',
     path: '/leads',
     icon: 'UserPlus',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Manage assigned leads'
   },
   {
@@ -32,7 +32,7 @@ export const FEATURES: Feature[] = [
     name: 'My Tasks',
     path: '/tasks',
     icon: 'ClipboardList',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Personal task management'
   },
   {
@@ -40,7 +40,7 @@ export const FEATURES: Feature[] = [
     name: 'Customer 360',
     path: '/customers',
     icon: 'Users',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Customer relationship management'
   },
   {
@@ -48,7 +48,7 @@ export const FEATURES: Feature[] = [
     name: 'Geo Tracking',
     path: '/geo-location',
     icon: 'MapPin',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Location tracking and beat planning'
   },
   {
@@ -56,7 +56,7 @@ export const FEATURES: Feature[] = [
     name: 'My Pipeline',
     path: '/funnel',
     icon: 'BarChart3',
-    roles: ['sales_executive'],
+    roles: ['sales_executive', 'field_manager', 'relationship_manager'],
     description: 'Personal sales pipeline'
   },
 

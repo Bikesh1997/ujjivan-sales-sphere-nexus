@@ -62,6 +62,36 @@ export const ROLES: Role[] = [
     ]
   },
   {
+    id: 'field_manager',
+    name: 'Field Manager',
+    description: 'Field sales manager',
+    level: 1,
+    permissions: [
+      PERMISSIONS.LEAD_READ,
+      PERMISSIONS.LEAD_UPDATE,
+      PERMISSIONS.TASK_CREATE,
+      PERMISSIONS.TASK_READ,
+      PERMISSIONS.TASK_UPDATE,
+      PERMISSIONS.REPORT_VIEW,
+      PERMISSIONS.USER_VIEW,
+    ]
+  },
+  {
+    id: 'relationship_manager',
+    name: 'Relationship Manager',
+    description: 'Customer relationship manager',
+    level: 1,
+    permissions: [
+      PERMISSIONS.LEAD_READ,
+      PERMISSIONS.LEAD_UPDATE,
+      PERMISSIONS.TASK_CREATE,
+      PERMISSIONS.TASK_READ,
+      PERMISSIONS.TASK_UPDATE,
+      PERMISSIONS.REPORT_VIEW,
+      PERMISSIONS.USER_VIEW,
+    ]
+  },
+  {
     id: 'supervisor',
     name: 'Supervisor',
     description: 'Team supervisor with management access',

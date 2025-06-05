@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -39,6 +38,7 @@ const SupervisorDashboard = () => {
   const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [assignedLeads, setAssignedLeads] = useState<string[]>([]);
+  const [showTaskModal, setShowTaskModal] = useState(false);
 
   // Team data with proper structure for ViewDetailsModal
   const [teamMembers, setTeamMembers] = useState([
@@ -308,6 +308,15 @@ const SupervisorDashboard = () => {
     if (percentage >= 90) return 'text-green-600';
     if (percentage >= 70) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case 'high': return 'bg-red-100 text-red-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   const handleAddMember = (memberData: any) => {

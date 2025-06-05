@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -67,6 +66,8 @@ const Layout = ({ children }: LayoutProps) => {
     switch (role) {
       case 'sales_executive': return 'Sales Executive';
       case 'supervisor': return 'Supervisor';
+      case 'field_manager': return 'Field Manager';
+      case 'relationship_manager': return 'Relationship Manager';
       default: return role;
     }
   };
@@ -161,7 +162,10 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
+                {user?.role === 'supervisor' ? 'Supervisor Portal' : 
+                 user?.role === 'field_manager' ? 'Field Manager Portal' :
+                 user?.role === 'relationship_manager' ? 'Relationship Manager Portal' :
+                 'Sales Portal'}
               </div>
             </div>
             <nav className="px-3 space-y-1">

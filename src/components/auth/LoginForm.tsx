@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,11 +60,13 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor') => {
+  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor' | 'field' | 'relationship') => {
     const credentials = {
       sales: { email: 'sales@bank.com', password: 'password123' },
       sales2: { email: 'sales2@bank.com', password: 'password123' },
-      supervisor: { email: 'supervisor@bank.com', password: 'password123' }
+      supervisor: { email: 'supervisor@bank.com', password: 'password123' },
+      field: { email: 'field@bank.com', password: 'password123' },
+      relationship: { email: 'relationship@bank.com', password: 'password123' }
     };
     
     setEmail(credentials[userType].email);
@@ -250,6 +251,22 @@ const LoginForm = () => {
                 disabled={isLoading}
               >
                 Sales Executive Demo (Anjali)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('field')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Field Manager Demo (Vikram)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('relationship')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Relationship Manager Demo (Neha)
               </Button>
               <Button 
                 variant="outline" 

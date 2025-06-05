@@ -3,8 +3,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'sales_executive' | 'supervisor';
-  department?: 'inbound' | 'field';
+  role: 'sales_executive' | 'supervisor' | 'field_manager' | 'relationship_manager';
+  department?: 'inbound' | 'field' | 'branch';
   branch: string;
   avatar?: string;
 }
