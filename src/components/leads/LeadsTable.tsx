@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -8,7 +9,6 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { useNavigate } from 'react-router-dom';
 import LeadActionsMenu from './LeadActionsMenu';
 
 interface Lead {
@@ -33,8 +33,6 @@ interface LeadsTableProps {
 }
 
 const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
-  const navigate = useNavigate();
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
@@ -62,12 +60,6 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
       case 'Call Center': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const handleViewCustomer = (lead: Lead) => {
-    // Create a customer key based on the lead's contact name
-    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/customer-360?customer=${customerKey}`);
   };
 
   return (
@@ -124,16 +116,7 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
             )}
             <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
             <TableCell>
-              <div className="flex space-x-2">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleViewCustomer(lead)}
-                >
-                  View Customer
-                </Button>
-                <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
-              </div>
+              <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
             </TableCell>
           </TableRow>
         ))}

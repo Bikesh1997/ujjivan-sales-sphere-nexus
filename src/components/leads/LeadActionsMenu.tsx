@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LeadViewModal from './LeadViewModal';
 import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
@@ -28,6 +29,7 @@ interface LeadActionsMenuProps {
 }
 
 const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
+  const navigate = useNavigate();
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -38,9 +40,10 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
   const randomBusinessName = businessNames[Math.floor(Math.random() * businessNames.length)];
 
-  const handleView = () => {
-    console.log('Viewing lead:', lead);
-    setViewModalOpen(true);
+  const handleViewCustomer = () => {
+    // Create a customer key based on the lead's contact name
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/customer-360?customer=${customerKey}`);
   };
 
   const handleEdit = () => {
@@ -58,7 +61,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   return (
     <>
       <div className="flex space-x-1">
-        <Button size="sm" variant="ghost" onClick={handleView}>
+        <Button size="sm" variant="ghost" onClick={handleViewCustomer}>
           <Eye size={14} />
         </Button>
         <Button 

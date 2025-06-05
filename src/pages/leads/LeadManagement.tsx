@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -220,7 +221,7 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
-        open={isAddModalOpen}
+        isOpen={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
