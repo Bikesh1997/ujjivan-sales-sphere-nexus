@@ -21,18 +21,24 @@ import {
   Bell,
   Target
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import CustomerTable from '@/components/customers/CustomerTable';
 import SetAlertModal from '@/components/alerts/SetAlertModal';
 import CallCustomerModal from '@/components/customers/CallCustomerModal';
 import CreateOfferModal from '@/components/customers/CreateOfferModal';
+import CrossSellSuggestions from '@/components/customers/CrossSellSuggestions';
+import EnhancedFamilyTree from '@/components/customers/EnhancedFamilyTree';
+import GoalBasedNudges from '@/components/customers/GoalBasedNudges';
 
 const Customer360 = () => {
+  const { user } = useAuth();
   const [selectedCustomer, setSelectedCustomer] = useState('priya-sharma');
   const [setAlertModalOpen, setSetAlertModalOpen] = useState(false);
   const [callCustomerModalOpen, setCallCustomerModalOpen] = useState(false);
   const [createOfferModalOpen, setCreateOfferModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<string>('');
 
+  // Enhanced customer data with additional family members for Neha's account
   const customerData = {
     'priya-sharma': {
       name: 'Priya Sharma',
@@ -59,8 +65,35 @@ const Customer360 = () => {
         { date: '10 May 2024', type: 'SMS', purpose: 'Payment Reminder', outcome: 'Paid' },
       ],
       family: [
-        { name: 'Rajesh Sharma', relation: 'Spouse', products: ['Savings Account', 'SIP'] },
-        { name: 'Arjun Sharma', relation: 'Son', products: ['Student Account'] },
+        { 
+          name: 'Rajesh Sharma', 
+          relation: 'Spouse', 
+          age: 45,
+          products: ['Savings Account', 'SIP'], 
+          relationshipValue: '₹8.5L',
+          isCustomer: true,
+          phone: '+91 98765 43211',
+          email: 'rajesh.sharma@email.com',
+          opportunities: ['Life Insurance', 'Personal Loan']
+        },
+        { 
+          name: 'Arjun Sharma', 
+          relation: 'Son', 
+          age: 16,
+          products: ['Student Account'],
+          relationshipValue: '₹25K',
+          isCustomer: true,
+          opportunities: ['Education Loan', 'Study Abroad Loan']
+        },
+        { 
+          name: 'Meera Sharma', 
+          relation: 'Mother-in-law', 
+          age: 68,
+          products: [],
+          isCustomer: false,
+          phone: '+91 98765 43214',
+          opportunities: ['Senior Citizen FD', 'Health Insurance', 'Pension Plan']
+        }
       ],
       opportunities: [
         { product: 'Personal Loan', priority: 'High', reason: 'Good credit history & salary increment', potential: '₹8L' },
@@ -164,6 +197,9 @@ const Customer360 = () => {
 
   const customer = customerData[selectedCustomer];
 
+  // Check if current user is Neha Gupta (Relationship Manager)
+  const isNehaAccount = user?.id === '5' && user?.name === 'Neha Gupta';
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active': return 'bg-green-100 text-green-800';
@@ -187,13 +223,35 @@ const Customer360 = () => {
     setCreateOfferModalOpen(true);
   };
 
+  const handleAddFamilyMember = () => {
+    // Implementation for adding family member
+    console.log('Add family member functionality');
+  };
+
+  const handleContactFamilyMember = (member: any) => {
+    // Implementation for contacting family member
+    console.log('Contact family member:', member);
+  };
+
+  const handleCreateGoalPlan = (goalId: string) => {
+    // Implementation for creating goal-based plan
+    console.log('Create goal plan for:', goalId);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer 360° View</h1>
-          <p className="text-gray-600">Comprehensive customer relationship overview</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isNehaAccount ? 'Advanced Customer 360° View' : 'Customer 360° View'}
+          </h1>
+          <p className="text-gray-600">
+            {isNehaAccount ? 
+              'Comprehensive relationship management with AI-powered insights' : 
+              'Comprehensive customer relationship overview'
+            }
+          </p>
         </div>
         <div className="flex space-x-3">
           <Button 
@@ -315,12 +373,14 @@ const Customer360 = () => {
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="products" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
                 <TabsTrigger value="products">Products</TabsTrigger>
                 <TabsTrigger value="interactions">Interactions</TabsTrigger>
                 <TabsTrigger value="family">Family Tree</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
+                {isNehaAccount && <TabsTrigger value="cross-sell">AI Cross-Sell</TabsTrigger>}
+                {isNehaAccount && <TabsTrigger value="goals">Goal Planning</TabsTrigger>}
               </TabsList>
 
               <TabsContent value="products" className="space-y-4">
@@ -383,33 +443,43 @@ const Customer360 = () => {
               </TabsContent>
 
               <TabsContent value="family" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Relationships</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {customer.family.map((member, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-12 w-12">
-                            <AvatarFallback className="bg-blue-100 text-blue-700">
-                              {member.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h4 className="font-medium text-gray-900">{member.name}</h4>
-                            <p className="text-sm text-gray-500">{member.relation}</p>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {member.products.map((product, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
-                                  {product}
-                                </Badge>
-                              ))}
+                {isNehaAccount ? (
+                  <EnhancedFamilyTree
+                    family={customer.family}
+                    onAddFamilyMember={handleAddFamilyMember}
+                    onContactMember={handleContactFamilyMember}
+                  />
+                ) : (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Relationships</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {customer.family.map((member, index) => (
+                        <Card key={index} className="border border-gray-200">
+                          <CardContent className="p-4">
+                            <div className="flex items-center space-x-3">
+                              <Avatar className="h-12 w-12">
+                                <AvatarFallback className="bg-blue-100 text-blue-700">
+                                  {member.name.split(' ').map(n => n[0]).join('')}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <h4 className="font-medium text-gray-900">{member.name}</h4>
+                                <p className="text-sm text-gray-500">{member.relation}</p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {member.products.map((product, idx) => (
+                                    <Badge key={idx} variant="secondary" className="text-xs">
+                                      {product}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="opportunities" className="space-y-4">
@@ -459,6 +529,27 @@ const Customer360 = () => {
                   </Button>
                 </div>
               </TabsContent>
+
+              {/* Enhanced tabs only for Neha's account */}
+              {isNehaAccount && (
+                <>
+                  <TabsContent value="cross-sell" className="space-y-4">
+                    <CrossSellSuggestions
+                      customerName={customer.name}
+                      segment={customer.segment}
+                      relationshipValue={customer.relationshipValue}
+                      onCreateOffer={handleCreateOffer}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="goals" className="space-y-4">
+                    <GoalBasedNudges
+                      customerName={customer.name}
+                      onCreatePlan={handleCreateGoalPlan}
+                    />
+                  </TabsContent>
+                </>
+              )}
             </Tabs>
           </CardContent>
         </Card>

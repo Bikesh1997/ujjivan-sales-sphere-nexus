@@ -1,53 +1,117 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Upload, Download, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { allLeads, Lead } from '@/data/leadsData';
-import { useToast } from '@/hooks/use-toast';
-
-// Import components that exist in the project
+import { allLeads } from '@/data/leadsData';
+import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadsTable from '@/components/leads/LeadsTable';
 import LeadFilters from '@/components/leads/LeadFilters';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import EditLeadModal from '@/components/leads/EditLeadModal';
 import LeadViewModal from '@/components/leads/LeadViewModal';
+import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import BulkLeadActions from '@/components/leads/BulkLeadActions';
-import LeadStatsCards from '@/components/leads/LeadStatsCards';
+import LeadsPagination from '@/components/leads/LeadsPagination';
+import { Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  status: string;
+  source: string;
+  value: string;
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  priority: string;
+}
 
 const LeadManagement = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [leads, setLeads] = useState<Lead[]>(allLeads);
-  const [filteredLeads, setFilteredLeads] = useState<Lead[]>(allLeads);
-  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [leadsPerPage] = useState(10);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  
   const [filters, setFilters] = useState({
-    status: '',
-    priority: '',
-    source: '',
-    assignedTo: '',
-    dateRange: ''
+    status: 'all',
+    source: 'all',
+    priority: 'all',
+    assignedTo: 'all',
+    dateRange: '30'
   });
 
-  // Filter leads based on user role
-  const getUserLeads = () => {
-    if (user?.role === 'supervisor') {
-      return leads; // Supervisor sees all leads
+  useEffect(() => {
+    // Filter leads based on user role
+    let initialLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
+    setLeads(initialLeads);
+    setFilteredLeads(initialLeads);
+  }, [user]);
+
+  useEffect(() => {
+    // Apply search term and filters
+    let results = leads.filter(lead =>
+      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (filters.status !== 'all') {
+      results = results.filter(lead => lead.status === filters.status);
     }
-    return leads.filter(lead => lead.assignedToId === user?.id);
+    if (filters.source !== 'all') {
+      results = results.filter(lead => lead.source === filters.source);
+    }
+    if (filters.priority !== 'all') {
+      results = results.filter(lead => lead.priority === filters.priority);
+    }
+    if (filters.assignedTo !== 'all') {
+      results = results.filter(lead => lead.assignedToId === filters.assignedTo);
+    }
+
+    // Date range filter (simplified for example)
+    if (filters.dateRange !== 'all') {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - parseInt(filters.dateRange));
+      results = results.filter(lead => {
+        const lastContactDate = new Date(); // Replace with actual date parsing from lead.lastContact
+        return lastContactDate >= cutoffDate;
+      });
+    }
+
+    setFilteredLeads(results);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [leads, searchTerm, filters]);
+
+  const indexOfLastLead = currentPage * leadsPerPage;
+  const indexOfFirstLead = indexOfLastLead - leadsPerPage;
+  const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
+  const totalPages = Math.ceil(filteredLeads.length / leadsPerPage);
+
+  const handleEditLead = (leadId: string, updatedData: Partial<Lead>) => {
+    const updatedLeads = leads.map(lead => 
+      lead.id === leadId ? { ...lead, ...updatedData } : lead
+    );
+    setLeads(updatedLeads);
+    setIsEditModalOpen(false);
+    toast({
+      title: "Lead Updated",
+      description: "Lead information has been successfully updated.",
+    });
   };
 
-  const userLeads = getUserLeads();
-  
   const handleAddLead = (leadData: {
     companyName: string;
     contactName: string;
@@ -58,96 +122,29 @@ const LeadManagement = () => {
     priority: string;
   }) => {
     const newLead: Lead = {
-      id: (leads.length + 1).toString(),
-      name: leadData.companyName || '',
-      contact: leadData.contactName || '',
-      phone: leadData.phone || '',
-      email: leadData.email || '',
-      value: leadData.value || '₹0L',
+      id: `LEAD${(leads.length + 1).toString().padStart(3, '0')}`,
+      name: leadData.companyName,
+      contact: leadData.contactName,
+      phone: leadData.phone,
+      email: leadData.email,
       status: 'new',
-      priority: leadData.priority as 'low' | 'medium' | 'high',
-      source: leadData.source as 'Website' | 'Referral' | 'Cold Call' | 'Social Media',
-      assignedTo: user?.name || '',
+      source: leadData.source,
+      value: leadData.value,
+      assignedTo: user?.name || 'Unassigned',
       assignedToId: user?.id || '',
-      lastContact: 'Just created',
-      nextFollowUp: new Date().toISOString().split('T')[0],
-      notes: ''
+      lastContact: 'Just added',
+      priority: leadData.priority
     };
-    
-    setLeads(prevLeads => [...prevLeads, newLead]);
-    setFilteredLeads(prevLeads => [...prevLeads, newLead]);
-    
+
+    setLeads([...leads, newLead]);
+    setIsAddModalOpen(false);
     toast({
       title: "Lead Added",
-      description: `${newLead.name} has been added successfully.`,
+      description: "New lead has been successfully added to your pipeline.",
     });
   };
 
-  const handleEditLead = (leadId: string, updatedData: Partial<Lead>) => {
-    setLeads(prevLeads => prevLeads.map(lead => 
-      lead.id === leadId 
-        ? { ...lead, ...updatedData }
-        : lead
-    ));
-    
-    setFilteredLeads(prevLeads => prevLeads.map(lead => 
-      lead.id === leadId 
-        ? { ...lead, ...updatedData }
-        : lead
-    ));
-
-    const leadName = leads.find(l => l.id === leadId)?.name || 'Lead';
-    toast({
-      title: "Lead Updated",
-      description: `${leadName} has been updated successfully.`,
-    });
-  };
-
-  const handleDeleteLead = (leadId: string) => {
-    setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
-    setFilteredLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
-    
-    toast({
-      title: "Lead Deleted",
-      description: "Lead has been deleted successfully.",
-    });
-  };
-
-  const handleBulkAction = (action: string, leadIds: string[]) => {
-    switch (action) {
-      case 'delete':
-        setLeads(prevLeads => prevLeads.filter(lead => !leadIds.includes(lead.id)));
-        setFilteredLeads(prevLeads => prevLeads.filter(lead => !leadIds.includes(lead.id)));
-        break;
-      case 'assign':
-        // Handle bulk assignment
-        break;
-      case 'status':
-        // Handle bulk status update
-        break;
-    }
-    
-    setSelectedLeads([]);
-    
-    toast({
-      title: "Bulk Action Completed",
-      description: `Action applied to ${leadIds.length} leads.`,
-    });
-  };
-
-  const handleExport = () => {
-    toast({
-      title: "Export Started",
-      description: "Your lead data is being exported...",
-    });
-  };
-
-  const handleImport = () => {
-    toast({
-      title: "Import Feature",
-      description: "Import functionality will be available soon.",
-    });
-  };
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <div className="space-y-6">
@@ -155,149 +152,108 @@ const LeadManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
-          <p className="text-gray-600">
-            {user?.role === 'supervisor' 
-              ? 'Manage all leads and team assignments' 
-              : 'Manage your assigned leads and opportunities'
-            }
-          </p>
+          <p className="text-gray-600">Manage and track your sales prospects</p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline" size="sm" onClick={handleImport}>
-            <Upload size={16} className="mr-2" />
-            Import
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download size={16} className="mr-2" />
-            Export
-          </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={() => setShowAddModal(true)}>
-            <Plus size={16} className="mr-2" />
-            Add Lead
-          </Button>
-        </div>
+        <Button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-teal-600 hover:bg-teal-700"
+        >
+          <Plus size={16} className="mr-2" />
+          Add Lead
+        </Button>
       </div>
 
       {/* Stats Cards */}
-      <LeadStatsCards leads={userLeads} userRole={user?.role} />
+      <LeadStatsCards leads={filteredLeads} />
 
-      {/* Main Content */}
-      <Tabs defaultValue="list" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="list">Lead List</TabsTrigger>
-          <TabsTrigger value="pipeline">Pipeline View</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-6">
+          <LeadFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
+        </CardContent>
+      </Card>
 
-        <TabsContent value="list" className="space-y-6">
-          {/* Filters and Search */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Filters & Search</span>
-                <Badge variant="secondary">{filteredLeads.length} leads</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <LeadFilters
-                onFilterChange={setFilteredLeads}
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                filters={filters}
-                onFiltersChange={setFilters}
-              />
-            </CardContent>
-          </Card>
+      {/* Bulk Actions */}
+      {selectedLeads.length > 0 && (
+        <BulkLeadActions
+          selectedCount={selectedLeads.length}
+          onClearSelection={() => setSelectedLeads([])}
+          onBulkAction={(action) => {
+            console.log('Bulk action:', action, selectedLeads);
+            toast({
+              title: "Bulk Action",
+              description: `Applied ${action} to ${selectedLeads.length} leads`,
+            });
+            setSelectedLeads([]);
+          }}
+        />
+      )}
 
-          {/* Bulk Actions */}
-          {selectedLeads.length > 0 && (
-            <BulkLeadActions
-              onBulkAction={handleBulkAction}
-              selectedLeads={selectedLeads}
-              onClearSelection={() => setSelectedLeads([])}
-            />
-          )}
+      {/* Leads Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Leads ({filteredLeads.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LeadsTable
+            leads={currentLeads}
+            selectedLeads={selectedLeads}
+            onLeadSelect={(leadId) => {
+              setSelectedLeads(prev => 
+                prev.includes(leadId) 
+                  ? prev.filter(id => id !== leadId)
+                  : [...prev, leadId]
+              );
+            }}
+            onSelectAll={(checked) => {
+              setSelectedLeads(checked ? currentLeads.map(lead => lead.id) : []);
+            }}
+            onEditLead={(lead) => {
+              setSelectedLead(lead);
+              setIsEditModalOpen(true);
+            }}
+            onViewLead={(lead) => {
+              setSelectedLead(lead);
+              setIsViewModalOpen(true);
+            }}
+          />
+        </CardContent>
+      </Card>
 
-          {/* Leads Table */}
-          <Card>
-            <CardContent className="p-0">
-              <LeadsTable
-                leads={filteredLeads}
-                selectedLeads={selectedLeads}
-                onSelectLead={(leadId: string) => {
-                  setSelectedLeads(prev => 
-                    prev.includes(leadId) 
-                      ? prev.filter(id => id !== leadId)
-                      : [...prev, leadId]
-                  );
-                }}
-                onSelectAll={(selected: boolean) => {
-                  setSelectedLeads(selected ? filteredLeads.map(lead => lead.id) : []);
-                }}
-                onEditLead={(lead: Lead) => {
-                  setSelectedLead(lead);
-                  setShowEditModal(true);
-                }}
-                onViewLead={(lead: Lead) => {
-                  setSelectedLead(lead);
-                  setShowViewModal(true);
-                }}
-                onDeleteLead={handleDeleteLead}
-                currentPage={currentPage}
-                onPageChange={setCurrentPage}
-                userRole={user?.role}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pipeline">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <BarChart3 size={48} className="mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Pipeline View</h3>
-              <p className="text-gray-600">Visual pipeline representation coming soon...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <BarChart3 size={48} className="mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Lead Analytics</h3>
-              <p className="text-gray-600">Detailed analytics and insights coming soon...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* Pagination */}
+      <LeadsPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        totalLeads={filteredLeads.length}
+        leadsPerPage={leadsPerPage}
+      />
 
       {/* Modals */}
       <AddLeadModal
-        open={showAddModal}
-        onClose={() => setShowAddModal(false)}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         onAddLead={handleAddLead}
       />
 
       {selectedLead && (
         <>
           <EditLeadModal
-            open={showEditModal}
-            onOpenChange={(open: boolean) => {
-              setShowEditModal(open);
-              if (!open) setSelectedLead(null);
-            }}
+            isOpen={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
             lead={selectedLead}
             onEditLead={handleEditLead}
           />
 
           <LeadViewModal
-            open={showViewModal}
+            isOpen={isViewModalOpen}
             lead={selectedLead}
-            onOpenChange={(open: boolean) => {
-              setShowViewModal(open);
-              if (!open) setSelectedLead(null);
-            }}
+            onOpenChange={setIsViewModalOpen}
           />
         </>
       )}
