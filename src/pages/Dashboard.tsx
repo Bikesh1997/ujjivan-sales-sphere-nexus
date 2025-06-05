@@ -1,121 +1,37 @@
-
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import DashboardCard from '@/components/DashboardCard';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
+  TrendingUp, 
   Users, 
   Target, 
-  TrendingUp, 
-  IndianRupee, 
-  Calendar
+  IndianRupee,
+  Calendar,
+  Phone,
+  Clock,
+  CheckCircle,
+  Award,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
-import AlertSystem from '@/components/alerts/AlertSystem';
-import TodaysPlan from '@/components/dashboard/TodaysPlan';
 import SmartNudges from '@/components/dashboard/SmartNudges';
-import { useAuth } from '@/contexts/AuthContext';
+import EnhancedFunnelChart from '@/components/funnel/EnhancedFunnelChart';
 import { allLeads } from '@/data/leadsData';
-import PermissionGate from '@/components/rbac/PermissionGate';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  
-  // Calculate user-specific or team data based on role
+
+  // Calculate metrics based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
-  const convertedLeads = userLeads.filter(lead => lead.status === 'converted');
-  const convertedValue = convertedLeads.reduce((sum, lead) => {
+  const totalLeads = userLeads.length;
+  const convertedLeads = userLeads.filter(lead => lead.status === 'converted').length;
+  const openLeads = userLeads.filter(lead => lead.status !== 'converted').length;
+  const totalRevenue = userLeads.reduce((sum, lead) => {
     const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
     return sum + value;
   }, 0);
-
-  // Sales data - filtered by role
-  const salesData = user?.role === 'supervisor' ? [
-    { month: 'Jan', target: 250, achieved: 285 },
-    { month: 'Feb', target: 280, achieved: 310 },
-    { month: 'Mar', target: 300, achieved: 295 },
-    { month: 'Apr', target: 320, achieved: 340 },
-    { month: 'May', target: 350, achieved: 368 },
-    { month: 'Jun', target: 380, achieved: 425 },
-  ] : [
-    { month: 'Jan', target: 50, achieved: 45 },
-    { month: 'Feb', target: 55, achieved: 62 },
-    { month: 'Mar', target: 60, achieved: 58 },
-    { month: 'Apr', target: 65, achieved: 71 },
-    { month: 'May', target: 70, achieved: 75 },
-    { month: 'Jun', target: 75, achieved: 82 },
-  ];
-
-  // Pipeline data - filtered by role
-  const pipelineData = user?.role === 'supervisor' ? [
-    { name: 'Leads', value: 185, color: '#06b6d4' },
-    { name: 'Prospects', value: 128, color: '#14b8a6' },
-    { name: 'Qualified', value: 85, color: '#f59e0b' },
-    { name: 'Converted', value: 62, color: '#10b981' },
-  ] : [
-    { name: 'Leads', value: userLeads.filter(l => l.status === 'new').length, color: '#06b6d4' },
-    { name: 'Prospects', value: userLeads.filter(l => l.status === 'qualified').length, color: '#14b8a6' },
-    { name: 'Qualified', value: userLeads.filter(l => l.status === 'proposal').length, color: '#f59e0b' },
-    { name: 'Converted', value: convertedLeads.length, color: '#10b981' },
-  ];
-
-  const kpis = user?.role === 'supervisor' ? [
-    { 
-      title: 'Team Target', 
-      value: '₹380L', 
-      subtitle: 'Monthly team target', 
-      trend: { value: '12% above', isPositive: true }, 
-      icon: <Target size={20} /> 
-    },
-    { 
-      title: 'Total Customers', 
-      value: '2,847', 
-      subtitle: 'Active customer base', 
-      trend: { value: '18% growth', isPositive: true }, 
-      icon: <Users size={20} /> 
-    },
-    { 
-      title: 'Team Conversion Rate', 
-      value: '24.5%', 
-      subtitle: 'Team average', 
-      trend: { value: '5% up', isPositive: true }, 
-      icon: <TrendingUp size={20} /> 
-    },
-    { 
-      title: 'Team Revenue', 
-      value: '₹425L', 
-      subtitle: 'This month', 
-      trend: { value: '22% above target', isPositive: true }, 
-      icon: <IndianRupee size={20} /> 
-    },
-  ] : [
-    { 
-      title: 'My Target', 
-      value: '₹75L', 
-      subtitle: 'Personal monthly target', 
-      trend: { value: '9% above', isPositive: true }, 
-      icon: <Target size={20} /> 
-    },
-    { 
-      title: 'My Leads', 
-      value: userLeads.length.toString(), 
-      subtitle: 'Assigned leads', 
-      trend: { value: '3 new this week', isPositive: true }, 
-      icon: <Users size={20} /> 
-    },
-    { 
-      title: 'My Conversion Rate', 
-      value: userLeads.length > 0 ? `${Math.round((convertedLeads.length / userLeads.length) * 100)}%` : '0%', 
-      subtitle: 'Personal conversion', 
-      trend: { value: '2% up', isPositive: true }, 
-      icon: <TrendingUp size={20} /> 
-    },
-    { 
-      title: 'My Revenue', 
-      value: `₹${convertedValue}L`, 
-      subtitle: 'Personal achievement', 
-      trend: { value: '15% above target', isPositive: true }, 
-      icon: <IndianRupee size={20} /> 
-    },
-  ];
+  const averageConversionTime = 7; // Simulated data
 
   return (
     <div className="space-y-6">
@@ -123,90 +39,122 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {user?.role === 'supervisor' ? 'Team Dashboard' : 'My Sales Dashboard'}
+            Welcome back, {user?.name.split(' ')[0]}!
           </h1>
-          <p className="text-gray-600">
-            {user?.role === 'supervisor' 
-              ? `Welcome back, ${user?.name}! Here's your team's performance overview.`
-              : `Welcome back, ${user?.name}! Here's your personal performance overview.`
-            }
-          </p>
+          <p className="text-gray-600">Here's your sales performance overview</p>
         </div>
         <div className="flex space-x-3">
-          <TodaysPlan />
-          <AlertSystem />
+          <Button variant="outline" size="sm">
+            <Calendar size={16} className="mr-2" />
+            Today's Plan
+          </Button>
+          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+            <Phone size={16} className="mr-2" />
+            Start Calling
+          </Button>
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi, index) => (
-          <DashboardCard
-            key={index}
-            title={kpi.title}
-            value={kpi.value}
-            subtitle={kpi.subtitle}
-            icon={kpi.icon}
-            trend={kpi.trend}
-          />
-        ))}
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales Performance */}
         <Card>
-          <CardHeader>
-            <CardTitle>
-              {user?.role === 'supervisor' ? 'Team Sales Performance (₹L)' : 'My Sales Performance (₹L)'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={salesData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="target" fill="#e5e7eb" name="Target" />
-                <Bar dataKey="achieved" fill="#14b8a6" name="Achieved" />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{totalLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +12% from last month
+                </p>
+              </div>
+              <Users size={48} className="text-blue-500 opacity-50" />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Sales Pipeline */}
         <Card>
-          <CardHeader>
-            <CardTitle>
-              {user?.role === 'supervisor' ? 'Team Sales Pipeline' : 'My Sales Pipeline'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pipelineData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}`}
-                >
-                  {pipelineData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Converted Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{convertedLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +8% from last month
+                </p>
+              </div>
+              <CheckCircle size={48} className="text-green-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Open Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{openLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowDownRight size={14} className="inline-block mr-1" />
+                  -3% from last month
+                </p>
+              </div>
+              <Clock size={48} className="text-orange-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">₹{Math.round(totalRevenue)}L</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +15% from last month
+                </p>
+              </div>
+              <IndianRupee size={48} className="text-teal-500 opacity-50" />
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Enhanced Funnel Chart */}
+      <EnhancedFunnelChart />
 
       {/* Smart Nudges */}
       <SmartNudges />
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Target size={18} className="mr-2" />
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Users size={16} className="mr-2" />
+            Allocate Leads
+          </Button>
+          <Button className="bg-green-600 hover:bg-green-700">
+            <TrendingUp size={16} className="mr-2" />
+            Review Pipeline
+          </Button>
+          <Button className="bg-orange-600 hover:bg-orange-700">
+            <Calendar size={16} className="mr-2" />
+            Plan Territory Visits
+          </Button>
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <Award size={16} className="mr-2" />
+            Check KRA Progress
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };

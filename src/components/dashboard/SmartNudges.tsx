@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ interface Nudge {
   type: 'opportunity' | 'kra' | 'route' | 'follow-up' | 'cross-sell';
   priority: 'High' | 'Medium' | 'Low';
   actionLabel: string;
+  navigationPath: string;
   value?: string;
   count?: number;
   deadline?: string;
@@ -24,15 +25,13 @@ interface Nudge {
 const SmartNudges = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedNudge, setSelectedNudge] = useState<Nudge | null>(null);
 
   // Calculate dynamic nudges based on user data
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
   const overdueLeads = userLeads.filter(lead => lead.lastContact.includes('days ago') || lead.lastContact.includes('week ago'));
   const highValueProspects = userLeads.filter(lead => parseFloat(lead.value.replace('₹', '').replace('L', '')) > 30);
-  const convertedValue = userLeads.filter(lead => lead.status === 'converted').reduce((sum, lead) => {
-    return sum + parseFloat(lead.value.replace('₹', '').replace('L', ''));
-  }, 0);
 
   const nudges: Nudge[] = [
     {
@@ -42,6 +41,7 @@ const SmartNudges = () => {
       type: 'opportunity',
       priority: 'High',
       actionLabel: 'View Prospects',
+      navigationPath: '/leads',
       count: highValueProspects.length,
       value: '₹35L'
     },
@@ -52,6 +52,7 @@ const SmartNudges = () => {
       type: 'kra',
       priority: 'High',
       actionLabel: 'View Pipeline',
+      navigationPath: '/funnel',
       count: 3 - userLeads.filter(lead => lead.status === 'converted').length,
       value: '₹45K',
       deadline: '15 days left'
@@ -63,6 +64,7 @@ const SmartNudges = () => {
       type: 'route',
       priority: 'Medium',
       actionLabel: 'Plan Route',
+      navigationPath: '/geo-location',
       count: overdueLeads.length + 3
     },
     {
@@ -72,6 +74,7 @@ const SmartNudges = () => {
       type: 'follow-up',
       priority: 'High',
       actionLabel: 'View Overdue',
+      navigationPath: '/tasks',
       count: overdueLeads.length,
       value: `₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`
     },
@@ -82,6 +85,7 @@ const SmartNudges = () => {
       type: 'cross-sell',
       priority: 'Medium',
       actionLabel: 'View Customers',
+      navigationPath: '/customers',
       count: 3,
       value: '₹12L'
     }
@@ -106,13 +110,13 @@ const SmartNudges = () => {
       case 'route':
         toast({
           title: "Route Planner",
-          description: "Optimizing route for Bandra area visits...",
+          description: "Opening geo-location for route planning...",
         });
         break;
       case 'follow-up':
         toast({
           title: "Follow-up List",
-          description: `Showing ${nudge.count} overdue leads...`,
+          description: `Opening task management for ${nudge.count} overdue leads...`,
         });
         break;
       case 'cross-sell':
@@ -122,6 +126,9 @@ const SmartNudges = () => {
         });
         break;
     }
+    
+    // Navigate to the respective page
+    navigate(nudge.navigationPath);
   };
 
   const getNudgeIcon = (type: string) => {

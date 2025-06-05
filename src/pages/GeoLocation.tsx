@@ -1,19 +1,33 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { MapPin, Shield, Activity } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import GeoLocationTracker from '@/components/geo/GeoLocationTracker';
 import GeoFenceManager from '@/components/geo/GeoFenceManager';
 
 const GeoLocation = () => {
+  const { user } = useAuth();
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Geo Location & Fencing</h1>
-          <p className="text-gray-600">Track locations, manage geo-fences, and monitor field activities</p>
+          <p className="text-gray-600">
+            {user?.role === 'supervisor' 
+              ? 'Manage geo-fences and monitor team field activities'
+              : 'Track locations and log field activities'
+            }
+          </p>
         </div>
+        {user?.role === 'sales_executive' && (
+          <Badge className="bg-green-100 text-green-800">
+            Auto-tracking Enabled
+          </Badge>
+        )}
       </div>
 
       {/* Main Content */}
@@ -23,10 +37,12 @@ const GeoLocation = () => {
             <MapPin className="h-4 w-4" />
             Location Tracking
           </TabsTrigger>
-          <TabsTrigger value="geofencing" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Geo-Fencing
-          </TabsTrigger>
+          {user?.role === 'supervisor' && (
+            <TabsTrigger value="geofencing" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Geo-Fencing
+            </TabsTrigger>
+          )}
           <TabsTrigger value="activities" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
             Activities
@@ -75,9 +91,11 @@ const GeoLocation = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="geofencing" className="space-y-6">
-          <GeoFenceManager />
-        </TabsContent>
+        {user?.role === 'supervisor' && (
+          <TabsContent value="geofencing" className="space-y-6">
+            <GeoFenceManager />
+          </TabsContent>
+        )}
 
         <TabsContent value="activities" className="space-y-6">
           <Card>

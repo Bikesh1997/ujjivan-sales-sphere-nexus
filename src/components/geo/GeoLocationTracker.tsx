@@ -14,6 +14,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { useGeoLocation } from '@/hooks/useGeoLocation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface GeoLocationTrackerProps {
   leadId?: string;
@@ -26,6 +27,7 @@ const GeoLocationTracker = ({
   showCheckIn = true, 
   showTracking = false 
 }: GeoLocationTrackerProps) => {
+  const { user } = useAuth();
   const [checkInNotes, setCheckInNotes] = useState('');
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   
@@ -39,9 +41,16 @@ const GeoLocationTracker = ({
     stopTracking,
     createCheckIn,
   } = useGeoLocation({
-    enableTracking: showTracking,
+    enableTracking: showTracking || user?.role === 'sales_executive',
     enableGeoFencing: true,
   });
+
+  // Auto-start tracking for sales executives
+  useEffect(() => {
+    if (user?.role === 'sales_executive' && !isTracking) {
+      startTracking();
+    }
+  }, [user?.role, isTracking, startTracking]);
 
   const handleGetLocation = async () => {
     try {
@@ -88,6 +97,9 @@ const GeoLocationTracker = ({
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
           Location Services
+          {user?.role === 'sales_executive' && (
+            <Badge className="bg-green-100 text-green-800">Auto-enabled</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -133,7 +145,7 @@ const GeoLocationTracker = ({
         </div>
 
         {/* Location Tracking */}
-        {showTracking && (
+        {(showTracking || user?.role === 'sales_executive') && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Location Tracking:</span>
