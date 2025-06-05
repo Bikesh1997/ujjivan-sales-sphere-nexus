@@ -7,7 +7,6 @@ import {
   Target, 
   Users, 
   DollarSign,
-  Calendar,
   CheckCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,24 +19,24 @@ const PerformanceMetrics = () => {
     switch (user?.role) {
       case 'field_sales_officer':
         return [
-          { label: 'Daily Visits', current: 8, target: 10, color: 'bg-emerald-500' },
-          { label: 'Leads Converted', current: 3, target: 5, color: 'bg-blue-500' },
-          { label: 'Beat Coverage', current: 75, target: 100, color: 'bg-purple-500' },
-          { label: 'Monthly Target', current: 180000, target: 250000, color: 'bg-orange-500' }
+          { label: 'Daily Visits', current: 8, target: 10, color: '#229E82' },
+          { label: 'Leads Converted', current: 3, target: 5, color: '#FCB53E' },
+          { label: 'Beat Coverage', current: 75, target: 100, color: '#F78F35' },
+          { label: 'Monthly Target', current: 180000, target: 250000, color: '#229E82' }
         ];
       case 'relationship_manager':
         return [
-          { label: 'Portfolio Value', current: 8500000, target: 10000000, color: 'bg-emerald-500' },
-          { label: 'Cross-sell Success', current: 12, target: 20, color: 'bg-blue-500' },
-          { label: 'Customer Retention', current: 95, target: 98, color: 'bg-purple-500' },
-          { label: 'Monthly Revenue', current: 450000, target: 600000, color: 'bg-orange-500' }
+          { label: 'Portfolio Value', current: 8500000, target: 10000000, color: '#229E82' },
+          { label: 'Cross-sell Success', current: 12, target: 20, color: '#FCB53E' },
+          { label: 'Customer Retention', current: 95, target: 98, color: '#F78F35' },
+          { label: 'Monthly Revenue', current: 450000, target: 600000, color: '#229E82' }
         ];
       default:
         return [
-          { label: 'Daily Tasks', current: 6, target: 8, color: 'bg-emerald-500' },
-          { label: 'Leads Processed', current: 15, target: 20, color: 'bg-blue-500' },
-          { label: 'Response Rate', current: 85, target: 90, color: 'bg-purple-500' },
-          { label: 'Quality Score', current: 92, target: 95, color: 'bg-orange-500' }
+          { label: 'Daily Tasks', current: 6, target: 8, color: '#229E82' },
+          { label: 'Leads Processed', current: 15, target: 20, color: '#FCB53E' },
+          { label: 'Response Rate', current: 85, target: 90, color: '#F78F35' },
+          { label: 'Quality Score', current: 92, target: 95, color: '#229E82' }
         ];
     }
   };
@@ -63,7 +62,7 @@ const PerformanceMetrics = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
+            <Target className="h-5 w-5 text-bank-primary" />
             Performance Metrics
           </CardTitle>
         </CardHeader>
@@ -79,17 +78,24 @@ const PerformanceMetrics = () => {
                     <span className="text-sm font-medium text-gray-700">
                       {metric.label}
                     </span>
-                    <Badge variant={isOnTrack ? "default" : "secondary"} className="text-xs">
+                    <Badge 
+                      variant={isOnTrack ? "default" : "secondary"} 
+                      className="text-xs"
+                      style={{ backgroundColor: isOnTrack ? metric.color : '#e5e7eb' }}
+                    >
                       {formatValue(metric.current, metric.label)} / {formatValue(metric.target, metric.label)}
                     </Badge>
                   </div>
                   <Progress 
                     value={progress} 
                     className="h-2" 
+                    style={{ 
+                      '--progress-background': metric.color 
+                    } as React.CSSProperties}
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>{progress.toFixed(0)}% Complete</span>
-                    <span className={isOnTrack ? 'text-green-600' : 'text-orange-600'}>
+                    <span style={{ color: isOnTrack ? metric.color : '#F78F35' }}>
                       {isOnTrack ? 'On Track' : 'Needs Attention'}
                     </span>
                   </div>
@@ -100,56 +106,31 @@ const PerformanceMetrics = () => {
         </CardContent>
       </Card>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Calendar className="h-4 w-4 text-emerald-600" />
-              <div>
-                <p className="text-xs text-gray-500">Today's Tasks</p>
-                <p className="text-lg font-semibold">6/8</p>
-              </div>
+      {/* Achievement Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-bank-primary" />
+            Today's Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="text-center p-4 rounded-lg border border-bank-primary/20 bg-bank-primary/5">
+              <div className="text-2xl font-bold text-bank-primary">6/8</div>
+              <div className="text-sm text-gray-600">Tasks Completed</div>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-blue-600" />
-              <div>
-                <p className="text-xs text-gray-500">Active Leads</p>
-                <p className="text-lg font-semibold">23</p>
-              </div>
+            <div className="text-center p-4 rounded-lg border border-bank-secondary/20 bg-bank-secondary/5">
+              <div className="text-2xl font-bold text-bank-secondary">23</div>
+              <div className="text-sm text-gray-600">Active Leads</div>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4 text-purple-600" />
-              <div>
-                <p className="text-xs text-gray-500">This Week</p>
-                <p className="text-lg font-semibold">+12%</p>
-              </div>
+            <div className="text-center p-4 rounded-lg border border-bank-accent/20 bg-bank-accent/5">
+              <div className="text-2xl font-bold text-bank-accent">+12%</div>
+              <div className="text-sm text-gray-600">This Week</div>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <div>
-                <p className="text-xs text-gray-500">Completed</p>
-                <p className="text-lg font-semibold">18</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

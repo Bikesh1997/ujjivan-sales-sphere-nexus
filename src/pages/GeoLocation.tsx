@@ -23,7 +23,7 @@ const GeoLocation = () => {
             }
           </p>
         </div>
-        {user?.role === 'sales_executive' && (
+        {user?.role === 'field_sales_officer' && (
           <Badge className="bg-green-100 text-green-800">
             Auto-tracking Enabled
           </Badge>

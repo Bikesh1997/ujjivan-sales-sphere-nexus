@@ -87,7 +87,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation - Using bank colors */}
-      <nav className="bg-gradient-to-r from-emerald-800 to-emerald-700 shadow-lg border-b border-emerald-600">
+      <nav className="bg-bank-primary shadow-lg border-b border-bank-primary">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -95,7 +95,7 @@ const Layout = ({ children }: LayoutProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden mr-2 text-white hover:bg-emerald-700"
+                className="lg:hidden mr-2 text-white hover:bg-opacity-80"
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
@@ -109,21 +109,21 @@ const Layout = ({ children }: LayoutProps) => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-emerald-100">
+              <div className="text-sm text-white/90">
                 Branch: {user?.branch}
               </div>
               
               {/* Role Badge */}
-              <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 border-emerald-200">
+              <Badge className="bg-bank-secondary text-white border-bank-secondary">
                 {getRoleDisplay(user?.role || '')}
                 {user?.department && ` - ${getDepartmentDisplay(user.department)}`}
               </Badge>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-emerald-700">
+                  <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-opacity-80">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                      <AvatarFallback className="bg-bank-secondary text-white">
                         {user?.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
@@ -172,7 +172,7 @@ const Layout = ({ children }: LayoutProps) => {
                     onClick={() => setSidebarOpen(false)}
                     className={`${
                       isActive(item.href)
-                        ? 'bg-emerald-50 text-emerald-700 border-r-2 border-emerald-500'
+                        ? 'bg-bank-primary/10 text-bank-primary border-r-2 border-bank-primary'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
                   >

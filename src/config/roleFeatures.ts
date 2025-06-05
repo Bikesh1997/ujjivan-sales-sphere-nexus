@@ -30,7 +30,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'customer_visits',
     name: 'Customer Visits',
-    path: '/customers',
+    path: '/leads',
     icon: 'UserPlus',
     roles: ['field_sales_officer'],
     description: 'Track customer interactions'
@@ -38,7 +38,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'my_leads_fso',
     name: 'My Leads',
-    path: '/leads',
+    path: '/sales-funnel',
     icon: 'Users',
     roles: ['field_sales_officer'],
     description: 'Manage assigned leads'
@@ -65,7 +65,7 @@ export const FEATURES: Feature[] = [
     id: 'call_management',
     name: 'Tasks',
     path: '/tasks',
-    icon: 'Phone',
+    icon: 'ClipboardList',
     roles: ['inbound_contact_agent'],
     description: 'Log calls and interactions'
   },
@@ -82,7 +82,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'customer_360_rm',
     name: 'Customer 360',
-    path: '/customers',
+    path: '/leads',
     icon: 'Users',
     roles: ['relationship_manager'],
     description: 'Complete customer view with family'
@@ -90,7 +90,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'portfolio_management',
     name: 'Portfolio Management',
-    path: '/portfolio',
+    path: '/sales-funnel',
     icon: 'PieChart',
     roles: ['relationship_manager'],
     description: 'Manage high-value customers'
@@ -136,6 +136,14 @@ export const FEATURES: Feature[] = [
     icon: 'Activity',
     roles: ['supervisor'],
     description: 'Generate team reports'
+  },
+  {
+    id: 'geo_management',
+    name: 'Geo Management',
+    path: '/geo-location',
+    icon: 'MapPin',
+    roles: ['supervisor'],
+    description: 'Manage territories and geo-fencing'
   },
 
   // Admin/MIS Officer Features
