@@ -26,8 +26,6 @@ const SalesFunnel = () => {
   const { user } = useAuth();
   const [selectedStage, setSelectedStage] = useState('all');
   const [leadsData, setLeadsData] = useState(allLeads);
-  const [callModalOpen, setCallModalOpen] = useState(false);
-  const [selectedProspect, setSelectedProspect] = useState<any>(null);
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
@@ -42,6 +40,9 @@ const SalesFunnel = () => {
     { stage: 'Negotiation', count: userLeads.filter(l => l.status === 'negotiation').length, value: '₹22L', conversion: 27 },
     { stage: 'Closed Won', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
   ];
+
+  // Random real names for prospects
+  const realNames = ['Amit Sharma', 'Priya Patel', 'Rahul Kumar', 'Sneha Singh', 'Arjun Mehta', 'Kavya Reddy'];
 
   const prospects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map(lead => ({
     id: lead.id,
@@ -64,11 +65,6 @@ const SalesFunnel = () => {
           : lead
       )
     );
-  };
-
-  const handleCallProspect = (prospect: any) => {
-    setSelectedProspect(prospect);
-    setCallModalOpen(true);
   };
 
   const getStageColor = (stage: string) => {
@@ -177,11 +173,11 @@ const SalesFunnel = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {prospects.map((prospect) => (
+                    {prospects.map((prospect, index) => (
                       <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4">
                           <div>
-                            <div className="font-medium text-gray-900">Priya Sharma</div>
+                            <div className="font-medium text-gray-900">{realNames[index % realNames.length]}</div>
                             <div className="text-sm text-gray-500">{prospect.company}</div>
                           </div>
                         </td>
@@ -199,18 +195,7 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
-                          <div className="flex space-x-2">
-                            <Button 
-                              size="sm" 
-                              variant="default" 
-                              onClick={() => handleCallProspect(prospect)}
-                              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
-                            >
-                              <Phone size={14} className="mr-1" />
-                              Call
-                            </Button>
-                            <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
-                          </div>
+                          <LeadActionsMenu lead={prospect.leadData} onEditLead={handleEditLead} />
                         </td>
                       </tr>
                     ))}
@@ -233,15 +218,6 @@ const SalesFunnel = () => {
           </div>
         </TabsContent>
       </Tabs>
-
-      {/* Call Modal */}
-      {selectedProspect && (
-        <LeadCallModal 
-          lead={selectedProspect.leadData}
-          isOpen={callModalOpen}
-          onOpenChange={setCallModalOpen}
-        />
-      )}
     </div>
   );
 };

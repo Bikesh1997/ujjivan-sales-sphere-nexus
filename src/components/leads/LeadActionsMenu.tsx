@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
 import LeadViewModal from './LeadViewModal';
-import LeadCallModal from './LeadCallModal';
+import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
 import { useLeadActions } from '@/hooks/useLeadActions';
 
@@ -29,7 +29,7 @@ interface LeadActionsMenuProps {
 
 const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [callModalOpen, setCallModalOpen] = useState(false);
+  const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   
   const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(lead);
@@ -48,7 +48,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
 
   const handleCall = () => {
     console.log('Calling lead:', lead.phone);
-    setCallModalOpen(true);
+    setCallInProgressOpen(true);
   };
 
   return (
@@ -86,10 +86,11 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
         onOpenChange={setViewModalOpen}
       />
 
-      <LeadCallModal 
-        lead={lead}
-        isOpen={callModalOpen}
-        onOpenChange={setCallModalOpen}
+      <CallInProgressModal 
+        contactName={lead.contact}
+        phoneNumber={lead.phone}
+        isOpen={callInProgressOpen}
+        onOpenChange={setCallInProgressOpen}
       />
 
       {onEditLead && (

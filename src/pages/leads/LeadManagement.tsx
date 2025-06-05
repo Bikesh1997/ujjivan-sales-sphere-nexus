@@ -171,7 +171,7 @@ const LeadManagement = () => {
         <CardContent className="p-6">
           <LeadFilters
             searchTerm={searchTerm}
-            onSearchTermChange={setSearchTerm}
+            onSearchChange={setSearchTerm}
             filters={filters}
             onFiltersChange={setFilters}
           />
@@ -181,7 +181,7 @@ const LeadManagement = () => {
       {/* Bulk Actions */}
       {selectedLeads.length > 0 && (
         <BulkLeadActions
-          selectedLeadsCount={selectedLeads.length}
+          selectedLeads={selectedLeads}
           onClearSelection={() => setSelectedLeads([])}
           onBulkAction={(action) => {
             console.log('Bulk action:', action, selectedLeads);
@@ -202,25 +202,8 @@ const LeadManagement = () => {
         <CardContent>
           <LeadsTable
             leads={currentLeads}
-            selectedLeadIds={selectedLeads}
-            onLeadSelect={(leadId) => {
-              setSelectedLeads(prev => 
-                prev.includes(leadId) 
-                  ? prev.filter(id => id !== leadId)
-                  : [...prev, leadId]
-              );
-            }}
-            onSelectAll={(checked) => {
-              setSelectedLeads(checked ? currentLeads.map(lead => lead.id) : []);
-            }}
-            onEditLead={(lead) => {
-              setSelectedLead(lead);
-              setIsEditModalOpen(true);
-            }}
-            onViewLead={(lead) => {
-              setSelectedLead(lead);
-              setIsViewModalOpen(true);
-            }}
+            userRole={user?.role || 'agent'}
+            onEditLead={handleEditLead}
           />
         </CardContent>
       </Card>
@@ -237,7 +220,7 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
-        open={isAddModalOpen}
+        isOpen={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
