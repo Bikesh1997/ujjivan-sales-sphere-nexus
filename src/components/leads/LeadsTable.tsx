@@ -1,7 +1,4 @@
-
-import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { 
   Table, 
   TableBody, 
@@ -30,20 +27,10 @@ interface Lead {
 interface LeadsTableProps {
   leads: Lead[];
   userRole: string;
-  selectedLeads?: string[];
-  onSelectLead?: (leadId: string, selected: boolean) => void;
-  onSelectAll?: (selected: boolean) => void;
   onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
 }
 
-const LeadsTable = ({ 
-  leads, 
-  userRole, 
-  selectedLeads = [], 
-  onSelectLead, 
-  onSelectAll, 
-  onEditLead 
-}: LeadsTableProps) => {
+const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
@@ -64,22 +51,10 @@ const LeadsTable = ({
     }
   };
 
-  const isAllSelected = leads.length > 0 && selectedLeads.length === leads.length;
-  const isIndeterminate = selectedLeads.length > 0 && selectedLeads.length < leads.length;
-
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          {onSelectLead && (
-            <TableHead className="w-12">
-              <Checkbox
-                checked={isAllSelected}
-                onCheckedChange={(checked) => onSelectAll?.(!!checked)}
-                aria-label="Select all leads"
-              />
-            </TableHead>
-          )}
           <TableHead>Company</TableHead>
           <TableHead>Contact</TableHead>
           <TableHead>Status</TableHead>
@@ -95,15 +70,6 @@ const LeadsTable = ({
       <TableBody>
         {leads.map((lead) => (
           <TableRow key={lead.id}>
-            {onSelectLead && (
-              <TableCell>
-                <Checkbox
-                  checked={selectedLeads.includes(lead.id)}
-                  onCheckedChange={(checked) => onSelectLead(lead.id, !!checked)}
-                  aria-label={`Select lead ${lead.name}`}
-                />
-              </TableCell>
-            )}
             <TableCell>
               <div>
                 <div className="font-medium text-gray-900">{lead.name}</div>
