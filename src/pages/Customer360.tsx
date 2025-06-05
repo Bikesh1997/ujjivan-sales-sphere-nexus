@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import {
   Target
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { allLeads } from '@/data/leadsData';
 import CustomerTable from '@/components/customers/CustomerTable';
 import SetAlertModal from '@/components/alerts/SetAlertModal';
 import CallCustomerModal from '@/components/customers/CallCustomerModal';
@@ -32,14 +34,46 @@ import GoalBasedNudges from '@/components/customers/GoalBasedNudges';
 
 const Customer360 = () => {
   const { user } = useAuth();
-  const [selectedCustomer, setSelectedCustomer] = useState('priya-sharma');
+  const [searchParams] = useSearchParams();
+  const urlCustomer = searchParams.get('customer');
+  
+  const [selectedCustomer, setSelectedCustomer] = useState(urlCustomer || 'priya-sharma');
   const [setAlertModalOpen, setSetAlertModalOpen] = useState(false);
   const [callCustomerModalOpen, setCallCustomerModalOpen] = useState(false);
   const [createOfferModalOpen, setCreateOfferModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<string>('');
 
-  // Enhanced customer data with additional family members for Neha's account
-  const customerData = {
+  // Create customer data from leads
+  const createCustomerFromLead = (lead: any) => {
+    const customerKey = lead.contact.toLowerCase().replace(' ', '-');
+    return {
+      key: customerKey,
+      name: lead.contact,
+      id: lead.id,
+      segment: lead.priority === 'High' ? 'Premium' : lead.priority === 'Medium' ? 'Gold' : 'Silver',
+      relationshipValue: lead.priority === 'High' ? 'High' : 'Medium',
+      totalRelationship: lead.value,
+      phone: lead.phone,
+      email: lead.email,
+      address: 'Address not available',
+      joinDate: '01 Jan 2024',
+      lastContact: lead.lastContact,
+      riskScore: 'Low',
+      products: [
+        { type: 'Savings Account', balance: '₹1.5L', status: 'Active' },
+      ],
+      interactions: [
+        { date: '25 May 2024', type: 'Call', purpose: 'Lead Follow-up', outcome: 'Interested' },
+      ],
+      family: [],
+      opportunities: [
+        { product: 'Personal Loan', priority: 'Medium', reason: 'New customer opportunity', potential: '₹5L' },
+      ]
+    };
+  };
+
+  // Enhanced customer data with additional family members for Neha's account + leads
+  const staticCustomerData = {
     'priya-sharma': {
       name: 'Priya Sharma',
       id: 'CUST001234',
@@ -190,6 +224,17 @@ const Customer360 = () => {
     }
   };
 
+  // Combine static customer data with leads data
+  const customerData = { ...staticCustomerData };
+  
+  // Add customers from leads
+  allLeads.forEach(lead => {
+    const customerKey = lead.contact.toLowerCase().replace(' ', '-');
+    if (!customerData[customerKey]) {
+      customerData[customerKey] = createCustomerFromLead(lead);
+    }
+  });
+
   const customers = Object.entries(customerData).map(([key, data]) => ({
     key,
     ...data
@@ -199,6 +244,13 @@ const Customer360 = () => {
 
   // Check if current user is Neha Gupta (Relationship Manager)
   const isNehaAccount = user?.id === '5' && user?.name === 'Neha Gupta';
+
+  // Update selected customer when URL parameter changes
+  useEffect(() => {
+    if (urlCustomer && customerData[urlCustomer]) {
+      setSelectedCustomer(urlCustomer);
+    }
+  }, [urlCustomer]);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
