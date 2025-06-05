@@ -99,9 +99,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
+      // Direct role-based login
+      let foundUser = null;
       
-      if (foundUser && credentials.password === 'password123') {
+      if (credentials.email && credentials.password === 'password123') {
+        foundUser = MOCK_USERS.find(u => u.email === credentials.email);
+      }
+      
+      if (foundUser) {
         setUser(foundUser);
         setIsAuthenticated(true);
         
@@ -131,7 +136,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
-    if (user) {
+    // Only supervisors can switch roles
+    if (user && user.role === 'supervisor') {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));

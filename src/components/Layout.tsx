@@ -159,15 +159,22 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  {getRoleOptions().map(role => (
-                    <DropdownMenuItem 
-                      key={role.value}
-                      onClick={() => switchRole(role.value as any)}
-                    >
-                      Switch to {role.label}
-                    </DropdownMenuItem>
-                  ))}
+                  
+                  {/* Only show role switching for supervisors */}
+                  {user?.role === 'supervisor' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {getRoleOptions().map(role => (
+                        <DropdownMenuItem 
+                          key={role.value}
+                          onClick={() => switchRole(role.value as any)}
+                        >
+                          Switch to {role.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </>
+                  )}
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />

@@ -6,7 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
+import { 
+  Eye, 
+  EyeOff, 
+  Loader2, 
+  KeyRound, 
+  MapPin, 
+  Phone, 
+  Users, 
+  Shield, 
+  Settings 
+} from 'lucide-react';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -61,17 +71,56 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor') => {
-    const credentials = {
-      sales: { email: 'sales@bank.com', password: 'password123' },
-      sales2: { email: 'sales2@bank.com', password: 'password123' },
-      supervisor: { email: 'supervisor@bank.com', password: 'password123' }
-    };
-    
-    setEmail(credentials[userType].email);
-    setPassword(credentials[userType].password);
+  const handleRoleLogin = async (roleEmail: string) => {
+    setIsLoading(true);
     setError('');
+    
+    const success = await login({ email: roleEmail, password: 'password123' });
+    
+    if (!success) {
+      setError('Login failed. Please try again.');
+    }
+    
+    setIsLoading(false);
   };
+
+  const userRoles = [
+    {
+      email: 'fso@bank.com',
+      name: 'Field Sales Officer',
+      description: 'Beat planning and customer visits',
+      icon: MapPin,
+      color: 'bg-blue-500 hover:bg-blue-600'
+    },
+    {
+      email: 'inbound@bank.com',
+      name: 'Inbound Contact Agent',
+      description: 'Customer inquiries and lead verification',
+      icon: Phone,
+      color: 'bg-green-500 hover:bg-green-600'
+    },
+    {
+      email: 'rm@bank.com',
+      name: 'Relationship Manager',
+      description: 'Portfolio and relationship management',
+      icon: Users,
+      color: 'bg-purple-500 hover:bg-purple-600'
+    },
+    {
+      email: 'supervisor@bank.com',
+      name: 'Supervisor',
+      description: 'Team management and monitoring',
+      icon: Shield,
+      color: 'bg-orange-500 hover:bg-orange-600'
+    },
+    {
+      email: 'admin@bank.com',
+      name: 'Admin/MIS Officer',
+      description: 'System administration and reporting',
+      icon: Settings,
+      color: 'bg-red-500 hover:bg-red-600'
+    }
+  ];
 
   if (showForgotPassword) {
     return (
@@ -146,19 +195,65 @@ const LoginForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to Banking CRM
+      <div className="max-w-4xl w-full space-y-8">
+        <div className="text-center">
+          <img 
+            src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
+            alt="Ujjivan Small Finance Bank" 
+            className="h-16 w-auto mx-auto mb-4"
+          />
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Banking CRM Portal
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sales Force Automation Platform
+          <p className="mt-2 text-sm text-gray-600">
+            Select your role to access the Sales Force Automation Platform
           </p>
         </div>
-        
-        <Card>
+
+        {/* Role-based Login Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {userRoles.map((role) => {
+            const Icon = role.icon;
+            return (
+              <Card 
+                key={role.email} 
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => handleRoleLogin(role.email)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex flex-col items-center text-center space-y-3">
+                    <div className={`p-3 rounded-full ${role.color} text-white`}>
+                      <Icon size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{role.name}</h3>
+                      <p className="text-xs text-gray-600 mt-1">{role.description}</p>
+                    </div>
+                    <Button 
+                      className={`w-full text-white ${role.color}`}
+                      disabled={isLoading}
+                      size="sm"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        'Login'
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Manual Login Form */}
+        <Card className="max-w-md mx-auto">
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle className="text-center">Manual Login</CardTitle>
+            <p className="text-sm text-gray-600 text-center">
+              Or enter your credentials manually
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -231,36 +326,9 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            <div className="mt-6 space-y-3">
-              <div className="text-center text-sm text-gray-600 mb-3">
-                Demo Accounts:
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('sales')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Sales Executive Demo (Rahul)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('sales2')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Sales Executive Demo (Anjali)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('supervisor')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Supervisor Demo
-              </Button>
-              <div className="text-center text-xs text-gray-500 mt-2">
-                Password: password123
+            <div className="mt-4 text-center">
+              <div className="text-xs text-gray-500">
+                Demo Password: password123
               </div>
             </div>
           </CardContent>

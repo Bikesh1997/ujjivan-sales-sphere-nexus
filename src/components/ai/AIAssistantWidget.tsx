@@ -15,7 +15,8 @@ import {
   Phone,
   TrendingUp,
   Users,
-  AlertCircle
+  AlertCircle,
+  Zap
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -37,51 +38,93 @@ const AIAssistantWidget = () => {
   const getRoleSpecificPrompt = () => {
     switch (user?.role) {
       case 'field_sales_officer':
-        return "I'm your Field Sales AI assistant. I can help you with beat planning, customer visits, and converting leads. What would you like assistance with today?";
+        return "🚗 Field Sales AI Assistant: I can help you with beat planning, customer visits, route optimization, and converting leads. Try asking: 'Plan my route for today' or 'Show KRA progress'";
       case 'inbound_contact_agent':
-        return "I'm your Inbound Contact AI assistant. I can help you manage incoming leads, verify KYC, and handle customer inquiries. How can I assist you?";
+        return "📞 Inbound Contact AI Assistant: I can help you manage incoming leads, verify KYC, handle customer inquiries, and schedule callbacks. Try asking: 'Show pending callbacks' or 'Verify customer details'";
       case 'relationship_manager':
-        return "I'm your Relationship Management AI assistant. I can help you manage your portfolio, identify cross-sell opportunities, and nurture customer relationships. What do you need help with?";
+        return "👥 Relationship Management AI Assistant: I can help you manage your portfolio, identify cross-sell opportunities, and nurture customer relationships. Try asking: 'Show portfolio insights' or 'Find cross-sell opportunities'";
       case 'supervisor':
-        return "I'm your Supervisory AI assistant. I can help you monitor team performance, track field coverage, and manage compliance. How can I support your team today?";
+        return "👨‍💼 Supervisory AI Assistant: I can help you monitor team performance, track field coverage, manage compliance, and view real-time analytics. Try asking: 'Show team status' or 'Performance summary'";
       case 'admin_mis_officer':
-        return "I'm your Admin/MIS AI assistant. I can help you with system configurations, MIS reports, and user management. What would you like assistance with?";
+        return "⚙️ Admin/MIS AI Assistant: I can help you with system configurations, MIS reports, user management, and system monitoring. Try asking: 'Generate MIS report' or 'System health check'";
       default:
         return "Hello! I'm your AI assistant. How can I help you today?";
+    }
+  };
+
+  const getQuickSuggestions = () => {
+    switch (user?.role) {
+      case 'field_sales_officer':
+        return [
+          'Plan my route for today',
+          'Show KRA progress',
+          'Find nearby prospects',
+          'Update visit status'
+        ];
+      case 'inbound_contact_agent':
+        return [
+          'Show pending callbacks',
+          'Verify customer KYC',
+          'Check lead priority',
+          'Schedule follow-up'
+        ];
+      case 'relationship_manager':
+        return [
+          'Portfolio insights',
+          'Cross-sell opportunities',
+          'Customer risk analysis',
+          'Relationship mapping'
+        ];
+      case 'supervisor':
+        return [
+          'Team performance',
+          'Field coverage status',
+          'Compliance alerts',
+          'Resource allocation'
+        ];
+      case 'admin_mis_officer':
+        return [
+          'Generate MIS report',
+          'System health check',
+          'User activity log',
+          'Data sync status'
+        ];
+      default:
+        return ['Help me get started', 'What can you do?'];
     }
   };
 
   const generateAIResponse = (userMessage: string): Message => {
     const roleResponses = {
       'field_sales_officer': {
-        'route': "Based on your beat plan, I suggest visiting 3 high-priority customers in Bandra today. Customer A (loan renewal due), Customer B (FD maturity), and Customer C (new prospect). Optimal route: A→B→C saves 2 hours travel time.",
-        'kra': "You're currently at 75% of your monthly KRA. Convert 2 more loans (₹15L target remaining) to unlock ₹4,000 incentive. I've identified 5 hot prospects within 1km of your current location.",
-        'customer': "Customer Raj Singh last visited 45 days ago, has ₹25L FD maturing next week. High cross-sell score for gold loan. Suggest calling today to schedule visit.",
-        'default': "I can help you with beat planning, customer visits, KRA tracking, and lead conversion. Try asking about your route, KRA progress, or specific customers."
+        'route': "🗺️ Based on your beat plan for Bandra area, I suggest visiting: \n1. Raj Enterprises (₹25L potential) - 10:00 AM\n2. Tech Solutions (Follow-up) - 11:30 AM\n3. Manufacturing Co (New prospect) - 2:00 PM\n\nOptimal route saves 2 hours. Current location: Mumbai Central.",
+        'kra': "📊 KRA Progress Update:\n✅ Target: ₹50L (75% achieved - ₹37.5L)\n✅ Visits: 45/60 (On track)\n✅ Conversions: 8/12 (Ahead by 2)\n\n🎯 Need ₹12.5L more to unlock ₹8,000 incentive!\nRecommended: Focus on 3 hot prospects worth ₹15L total.",
+        'nearby': "📍 Nearby High-Value Prospects (1km radius):\n• Sharma Industries - ₹30L potential\n• Digital Hub - ₹18L potential  \n• Food Processing - ₹22L potential\n\nAll have warm leads. Suggest calling before visiting.",
+        'default': "I can help you with beat planning, route optimization, KRA tracking, customer visits, and lead conversion strategies. What specific task can I assist with?"
       },
       'inbound_contact_agent': {
-        'lead': "New lead from WhatsApp - Priya Mehta, interested in home loan. KYC pending, credit score 750+. Suggest immediate callback and schedule field visit within 24 hours.",
-        'verify': "For KYC verification, I need: PAN, Aadhaar, Income proof, and Bank statements. I can generate the verification checklist and set follow-up reminders.",
-        'callback': "You have 5 pending callbacks today. Priority order: High-value prospects first. Mrs. Sharma (₹50L loan inquiry) - call by 2 PM, Mr. Gupta (FD inquiry) - call by 4 PM.",
-        'default': "I can help you manage incoming leads, verify customer details, schedule callbacks, and route leads to field teams. What specific task can I assist with?"
+        'callbacks': "📞 Priority Callbacks Today:\n🔥 High: Mrs. Priya Sharma (₹50L Home Loan) - Call by 2 PM\n⚡ Medium: Mr. Gupta (₹25L Business Loan) - Call by 4 PM\n📋 Normal: 3 other prospects - After 5 PM\n\nSuggested script templates available.",
+        'verify': "🔍 KYC Verification Checklist:\n✅ PAN Card validation\n✅ Aadhaar verification  \n📋 Pending: Income proof, Bank statements\n\nI can generate verification templates and set follow-up reminders automatically.",
+        'priority': "⭐ Lead Priority Matrix:\n🔥 Hot (3): Ready to convert within 24hrs\n⚡ Warm (7): Need follow-up within 48hrs\n📋 Cold (12): Long-term nurturing required\n\nFocus on hot leads first for maximum conversion.",
+        'default': "I can help you manage incoming leads, verify customer details, schedule callbacks, prioritize prospects, and route leads to field teams. What do you need help with?"
       },
       'relationship_manager': {
-        'portfolio': "Your portfolio: 45 customers, ₹2.5Cr total assets. 3 FDs maturing this month (₹75L), 2 customers inactive 30+ days. Cross-sell opportunity: 5 customers eligible for gold loans.",
-        'cross-sell': "Mr. Agarwal's FD matures in 7 days. He has gold worth ₹15L, credit score 780. Perfect candidate for gold loan at 8.5% interest. Suggest meeting this week.",
-        'relationship': "Family network identified: Sharma family has 4 banking relationships across branches. Son eligible for education loan, father has recurring deposits. Schedule family meeting for comprehensive planning.",
-        'default': "I can help you manage your high-value customer portfolio, identify cross-sell opportunities, track customer relationships, and plan family banking strategies."
+        'portfolio': "💼 Portfolio Overview:\n📊 Total AUM: ₹2.5Cr across 45 customers\n📈 Growth: +15% QoQ\n⚠️ Alerts: 3 FDs maturing (₹75L), 2 inactive customers\n\n🎯 Opportunities: 5 customers eligible for gold loans worth ₹45L potential.",
+        'cross-sell': "🎯 Top Cross-sell Opportunities:\n1. Mr. Agarwal - Gold Loan (₹15L, Score: 95%)\n2. Mrs. Shah - Education Loan (₹8L, Score: 88%)\n3. Sharma Family - Insurance (₹2L premium, Score: 92%)\n\nRecommended: Schedule family meetings this week.",
+        'risk': "⚠️ Portfolio Risk Analysis:\n🟢 Low Risk: 35 customers (78%)\n🟡 Medium Risk: 8 customers (18%)\n🔴 High Risk: 2 customers (4%)\n\nAction needed: Review high-risk accounts, suggest restructuring options.",
+        'default': "I can help you manage your high-value customer portfolio, identify cross-sell opportunities, analyze customer relationships, and plan family banking strategies."
       },
       'supervisor': {
-        'team': "Team status: 4/5 field officers active, 85% beat coverage today. Rahul completed 6/8 planned visits, Anjali at 4/6. Overall team performance 82% vs target.",
-        'tracking': "Real-time locations: Rahul - Bandra West (on schedule), Anjali - Andheri (30 min behind), Vikash - offline since 2 PM (needs check-in).",
-        'performance': "Weekly performance: Team achieved 92% of lead targets, 78% conversion rate. Top performer: Priya (110% target). Training needed: Vikash (cross-sell techniques).",
-        'default': "I can help you monitor team performance, track field coverage, manage compliance, and identify coaching opportunities for your team members."
+        'team': "👥 Team Status (Real-time):\n🟢 Active: 4/5 officers (80% coverage)\n📍 Locations: All within geo-fence\n🎯 Performance: 85% of daily targets\n⚠️ Alert: Vikash offline since 2 PM\n\n📊 Today's Metrics: 15 visits, 8 leads, 3 conversions",
+        'performance': "📈 Team Performance Summary:\n🥇 Top Performer: Priya (110% target)\n📊 Team Average: 92% target achievement\n🎯 Conversion Rate: 78% (Above benchmark)\n📋 Training Needed: Vikash (cross-sell techniques)",
+        'compliance': "🛡️ Compliance Dashboard:\n✅ Geo-fence: All compliant\n⚠️ Pending: 3 KYC verifications\n🔍 Audit Items: 2 document reviews\n📊 Overall Score: 94% (Excellent)",
+        'default': "I can help you monitor team performance, track field coverage, manage compliance, analyze productivity metrics, and coordinate resource allocation."
       },
       'admin_mis_officer': {
-        'reports': "Daily MIS ready: 127 new leads, 89% data sync success, 3 inactive users detected. Lead sources: WhatsApp 45%, Website 35%, Referrals 20%.",
-        'config': "System health: All APIs running, KRA targets updated for Q2, 2 new user accounts pending approval. 5 WhatsApp leads failed sync - API timeout issue detected.",
-        'audit': "Audit alert: 3 users with no activity in 14 days, 5 leads without proper KYC verification, 2 geo-fence violations this week require review.",
-        'default': "I can help you with system configurations, generate MIS reports, manage user accounts, monitor data sync, and track system performance."
+        'report': "📊 Daily MIS Report Generated:\n📈 New Leads: 127 (↑15% vs yesterday)\n🔄 Data Sync: 89% success rate\n👥 Active Users: 45/48\n📍 Geo Tracking: 98% accuracy\n\n⚠️ Issues: 3 API timeouts, 2 sync failures",
+        'health': "🔧 System Health Check:\n✅ All APIs operational\n✅ Database performance: Optimal\n⚠️ Warning: Server load at 78%\n🔄 Last backup: 2 hours ago\n\n💡 Recommendation: Schedule maintenance window",
+        'users': "👥 User Activity Summary:\n🟢 Active: 42 users online\n🟡 Inactive: 3 users (>7 days)\n🔐 Security: No unauthorized access\n📱 Mobile app usage: 85%\n\n📋 Action: Deactivate inactive accounts",
+        'default': "I can help you with system configurations, generate MIS reports, manage user accounts, monitor data sync, track system performance, and handle administrative tasks."
       }
     };
 
@@ -91,10 +134,16 @@ const AIAssistantWidget = () => {
     let responseContent = responses.default;
     const lowerMessage = userMessage.toLowerCase();
     
-    // Simple keyword matching for demo
+    // Enhanced keyword matching
     Object.entries(responses).forEach(([key, value]) => {
-      if (key !== 'default' && lowerMessage.includes(key)) {
-        responseContent = value;
+      if (key !== 'default') {
+        if (lowerMessage.includes(key) || 
+            lowerMessage.includes(key.replace(/[_-]/g, ' ')) ||
+            (key === 'callbacks' && lowerMessage.includes('call')) ||
+            (key === 'nearby' && lowerMessage.includes('prospect')) ||
+            (key === 'health' && lowerMessage.includes('system'))) {
+          responseContent = value;
+        }
       }
     });
 
@@ -103,7 +152,7 @@ const AIAssistantWidget = () => {
       type: 'assistant',
       content: responseContent,
       timestamp: new Date(),
-      actions: ['View Details', 'Take Action']
+      actions: ['View Details', 'Take Action', 'Set Reminder']
     };
   };
 
@@ -123,6 +172,11 @@ const AIAssistantWidget = () => {
     setInputMessage('');
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputMessage(suggestion);
+    setTimeout(() => handleSendMessage(), 100);
+  };
+
   const getRoleIcon = () => {
     switch (user?.role) {
       case 'field_sales_officer': return <MapPin size={16} />;
@@ -135,7 +189,14 @@ const AIAssistantWidget = () => {
   };
 
   const getRoleName = () => {
-    return user?.role?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'AI Assistant';
+    switch (user?.role) {
+      case 'field_sales_officer': return 'Field Sales AI';
+      case 'inbound_contact_agent': return 'Contact Center AI';
+      case 'relationship_manager': return 'Relationship AI';
+      case 'supervisor': return 'Supervisor AI';
+      case 'admin_mis_officer': return 'Admin AI';
+      default: return 'AI Assistant';
+    }
   };
 
   if (isMinimized) {
@@ -159,8 +220,11 @@ const AIAssistantWidget = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center text-sm">
               {getRoleIcon()}
-              <span className="ml-2">{getRoleName()} AI</span>
-              <Badge variant="secondary" className="ml-2 text-xs">Online</Badge>
+              <span className="ml-2">{getRoleName()}</span>
+              <Badge variant="secondary" className="ml-2 text-xs bg-green-100 text-green-800">
+                <Zap size={10} className="mr-1" />
+                Smart
+              </Badge>
             </CardTitle>
             <Button
               variant="ghost"
@@ -174,13 +238,31 @@ const AIAssistantWidget = () => {
         <CardContent className="p-0">
           <ScrollArea className="h-64 p-3">
             {messages.length === 0 && (
-              <div className="text-sm text-gray-600 mb-3">
-                {getRoleSpecificPrompt()}
+              <div className="space-y-3">
+                <div className="text-xs text-gray-600">
+                  {getRoleSpecificPrompt()}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs font-medium text-gray-700">Quick Actions:</div>
+                  <div className="grid grid-cols-1 gap-1">
+                    {getQuickSuggestions().map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs h-7 justify-start"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
             {messages.map((message) => (
               <div key={message.id} className={`mb-3 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
-                <div className={`inline-block p-2 rounded-lg text-xs max-w-[90%] ${
+                <div className={`inline-block p-2 rounded-lg text-xs max-w-[90%] whitespace-pre-line ${
                   message.type === 'user' 
                     ? 'bg-teal-600 text-white' 
                     : 'bg-gray-100 text-gray-900'
@@ -199,21 +281,23 @@ const AIAssistantWidget = () => {
               </div>
             ))}
           </ScrollArea>
-          <div className="p-3 border-t flex space-x-2">
-            <Input
-              placeholder="Ask me anything..."
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="text-sm"
-            />
-            <Button
-              onClick={handleSendMessage}
-              size="sm"
-              className="bg-teal-600 hover:bg-teal-700"
-            >
-              <Send size={14} />
-            </Button>
+          <div className="p-3 border-t">
+            <div className="flex space-x-2">
+              <Input
+                placeholder={`Ask your ${getRoleName()}...`}
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                className="text-sm"
+              />
+              <Button
+                onClick={handleSendMessage}
+                size="sm"
+                className="bg-teal-600 hover:bg-teal-700"
+              >
+                <Send size={14} />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
