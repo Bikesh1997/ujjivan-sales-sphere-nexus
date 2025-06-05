@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,7 +32,7 @@ const LeadManagement = () => {
   const { toast } = useToast();
   const [leadsData, setLeadsData] = useState(allLeads);
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [filters, setFilters] = useState({
     status: 'all',
     assignee: 'all',
