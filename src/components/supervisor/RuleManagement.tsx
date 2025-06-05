@@ -35,7 +35,8 @@ interface Rule {
   channel: string;
   value: string;
   priority: 'P1' | 'P2' | 'P3';
-  team: string;
+  region: string;
+  agentName: string;
   meetingType: string;
   productType: string;
   isActive: boolean;
@@ -52,7 +53,8 @@ const RuleManagement = () => {
       channel: 'Website Forms',
       value: '50L',
       priority: 'P1',
-      team: 'Sales Executive',
+      region: 'Mumbai',
+      agentName: 'Vikram',
       meetingType: 'In Person',
       productType: 'MSME Loan',
       isActive: true,
@@ -63,7 +65,8 @@ const RuleManagement = () => {
       channel: 'WhatsApp Business',
       value: '25L',
       priority: 'P2',
-      team: 'Sales Executive',
+      region: 'Pune',
+      agentName: 'Rahul',
       meetingType: 'Virtual',
       productType: 'Personal Loan',
       isActive: true,
@@ -74,7 +77,8 @@ const RuleManagement = () => {
       channel: 'Call Center',
       value: '100L',
       priority: 'P1',
-      team: 'Senior Sales Executive',
+      region: 'Delhi',
+      agentName: 'Anjali',
       meetingType: 'In Person',
       productType: 'Business Loan',
       isActive: false,
@@ -86,7 +90,8 @@ const RuleManagement = () => {
     channel: '',
     value: '',
     priority: 'P1' as 'P1' | 'P2' | 'P3',
-    team: '',
+    region: '',
+    agentName: '',
     meetingType: '',
     productType: ''
   });
@@ -117,11 +122,24 @@ const RuleManagement = () => {
     'Insurance Products'
   ];
 
-  const teams = [
-    'Sales Executive',
-    'Senior Sales Executive',
-    'Team Lead',
-    'Branch Manager'
+  const regions = [
+    'Mumbai',
+    'Pune',
+    'Delhi',
+    'Bangalore',
+    'Chennai',
+    'Hyderabad',
+    'Kolkata',
+    'Ahmedabad'
+  ];
+
+  const agentNames = [
+    'Vikram',
+    'Rahul',
+    'Anjali',
+    'Priya',
+    'Suresh',
+    'Kavita'
   ];
 
   const meetingTypes = [
@@ -136,7 +154,8 @@ const RuleManagement = () => {
       channel: '',
       value: '',
       priority: 'P1',
-      team: '',
+      region: '',
+      agentName: '',
       meetingType: '',
       productType: ''
     });
@@ -145,7 +164,7 @@ const RuleManagement = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.channel || !formData.value || !formData.team || !formData.meetingType || !formData.productType) {
+    if (!formData.channel || !formData.value || !formData.region || !formData.agentName || !formData.meetingType || !formData.productType) {
       toast({
         title: "Validation Error",
         description: "All fields are required",
@@ -191,7 +210,8 @@ const RuleManagement = () => {
       channel: rule.channel,
       value: rule.value,
       priority: rule.priority,
-      team: rule.team,
+      region: rule.region,
+      agentName: rule.agentName,
       meetingType: rule.meetingType,
       productType: rule.productType
     });
@@ -281,14 +301,28 @@ const RuleManagement = () => {
               </div>
 
               <div>
-                <Label htmlFor="team">Team</Label>
-                <Select value={formData.team} onValueChange={(value) => setFormData({...formData, team: value})}>
+                <Label htmlFor="region">Region</Label>
+                <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select team" />
+                    <SelectValue placeholder="Select region" />
                   </SelectTrigger>
                   <SelectContent>
-                    {teams.map(team => (
-                      <SelectItem key={team} value={team}>{team}</SelectItem>
+                    {regions.map(region => (
+                      <SelectItem key={region} value={region}>{region}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="agentName">Agent Name</Label>
+                <Select value={formData.agentName} onValueChange={(value) => setFormData({...formData, agentName: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select agent" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {agentNames.map(agent => (
+                      <SelectItem key={agent} value={agent}>{agent}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -354,7 +388,8 @@ const RuleManagement = () => {
                 <TableHead>Channel</TableHead>
                 <TableHead>Value</TableHead>
                 <TableHead>Priority</TableHead>
-                <TableHead>Team</TableHead>
+                <TableHead>Region</TableHead>
+                <TableHead>Agent Name</TableHead>
                 <TableHead>Meeting Type</TableHead>
                 <TableHead>Product Type</TableHead>
                 <TableHead>Status</TableHead>
@@ -371,7 +406,8 @@ const RuleManagement = () => {
                       {rule.priority}
                     </Badge>
                   </TableCell>
-                  <TableCell>{rule.team}</TableCell>
+                  <TableCell>{rule.region}</TableCell>
+                  <TableCell>{rule.agentName}</TableCell>
                   <TableCell>{rule.meetingType}</TableCell>
                   <TableCell>{rule.productType}</TableCell>
                   <TableCell>

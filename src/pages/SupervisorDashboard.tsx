@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -471,79 +470,6 @@ const SupervisorDashboard = () => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Team Members Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Members</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {teamMembers.map((member) => (
-                  <Card key={member.id} className="border">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-teal-100 text-teal-700">
-                              {member.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h4 className="font-medium">{member.name}</h4>
-                            <p className="text-sm text-gray-500">{member.role}</p>
-                          </div>
-                        </div>
-                        <Badge className={getStatusColor(member.status)}>
-                          {member.status}
-                        </Badge>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="text-gray-600">Leads</p>
-                          <p className="font-medium">{member.leads}/{member.capacity}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Converted</p>
-                          <p className="font-medium">{member.converted}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Revenue</p>
-                          <p className={`font-medium ${getPerformanceColor(member.revenue, member.target)}`}>
-                            ₹{member.revenue}L / ₹{member.target}L
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Last Active</p>
-                          <p className="font-medium">{member.lastActivity}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-2 mt-3">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => handleViewDetails(member)}
-                        >
-                          View Details
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => handleAssignLeads(member)}
-                        >
-                          Assign Leads
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
