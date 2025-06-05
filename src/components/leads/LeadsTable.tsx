@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { 
   Table, 
@@ -51,6 +52,15 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
     }
   };
 
+  const getSourceColor = (source: string) => {
+    switch (source) {
+      case 'Website Forms': return 'bg-blue-100 text-blue-800';
+      case 'WhatsApp Business': return 'bg-green-100 text-green-800';
+      case 'Call Center': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -60,6 +70,7 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
           <TableHead>Status</TableHead>
           <TableHead>Value</TableHead>
           <TableHead>Priority</TableHead>
+          <TableHead>Source</TableHead>
           {userRole === 'supervisor' && (
             <TableHead>Assigned To</TableHead>
           )}
@@ -73,7 +84,7 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
             <TableCell>
               <div>
                 <div className="font-medium text-gray-900">{lead.name}</div>
-                <div className="text-sm text-gray-500">{lead.source}</div>
+                <div className="text-sm text-gray-500">{lead.id}</div>
               </div>
             </TableCell>
             <TableCell>
@@ -92,6 +103,11 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
             <TableCell>
               <Badge className={getPriorityColor(lead.priority)}>
                 {lead.priority}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge className={getSourceColor(lead.source)}>
+                {lead.source}
               </Badge>
             </TableCell>
             {userRole === 'supervisor' && (
