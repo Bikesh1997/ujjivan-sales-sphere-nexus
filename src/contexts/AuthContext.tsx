@@ -1,56 +1,41 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
-  updateUserRole: (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
+  switchRole: (role: 'sales_executive' | 'supervisor') => void;
+  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with new roles
+// Enhanced user data with more details
 const MOCK_USERS: User[] = [
   {
     id: '1',
-    email: 'fso@bank.com',
+    email: 'sales@bank.com',
     name: 'Rahul Sharma',
-    role: 'field_sales_officer',
+    role: 'sales_executive',
     department: 'field',
     branch: 'Mumbai Central'
   },
   {
     id: '2',
-    email: 'inbound@bank.com',
-    name: 'Priya Agent',
-    role: 'inbound_contact_agent',
-    department: 'inbound',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '3',
-    email: 'rm@bank.com',
-    name: 'Anjali Manager',
-    role: 'relationship_manager',
-    department: 'relationship',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '4',
     email: 'supervisor@bank.com',
-    name: 'Suresh Supervisor',
+    name: 'Priya Manager',
     role: 'supervisor',
     branch: 'Mumbai Central'
   },
   {
-    id: '5',
-    email: 'admin@bank.com',
-    name: 'Admin Officer',
-    role: 'admin_mis_officer',
-    department: 'admin',
+    id: '3',
+    email: 'sales2@bank.com',
+    name: 'Anjali Patel',
+    role: 'sales_executive',
+    department: 'inbound',
     branch: 'Mumbai Central'
   }
 ];
@@ -127,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('sessionExpiry');
   };
 
-  const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
+  const switchRole = (role: 'sales_executive' | 'supervisor') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
@@ -135,8 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateUserRole = (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
-    if (user?.role === 'supervisor' || user?.role === 'admin_mis_officer') {
+  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor') => {
+    if (user?.role === 'supervisor') {
       const targetUser = MOCK_USERS.find(u => u.id === userId);
       if (targetUser) {
         targetUser.role = newRole;

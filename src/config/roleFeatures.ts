@@ -10,98 +10,54 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
-  // Field Sales Officer Features
+  // Sales Executive Features
   {
-    id: 'fso_dashboard',
-    name: 'Beat Dashboard',
+    id: 'dashboard',
+    name: 'My Dashboard',
     path: '/',
     icon: 'Home',
-    roles: ['field_sales_officer'],
-    description: 'Beat planning and visit management'
+    roles: ['sales_executive'],
+    description: 'Personal performance dashboard'
   },
   {
-    id: 'beat_planning',
-    name: 'Beat Planning',
-    path: '/geo-location',
-    icon: 'MapPin',
-    roles: ['field_sales_officer'],
-    description: 'Plan customer visits and routes'
-  },
-  {
-    id: 'customer_visits',
-    name: 'Customer Visits',
+    id: 'my_leads',
+    name: 'My Leads',
     path: '/leads',
     icon: 'UserPlus',
-    roles: ['field_sales_officer'],
-    description: 'Track customer interactions'
-  },
-  {
-    id: 'my_leads_fso',
-    name: 'My Leads',
-    path: '/sales-funnel',
-    icon: 'Users',
-    roles: ['field_sales_officer'],
+    roles: ['sales_executive'],
     description: 'Manage assigned leads'
   },
-
-  // Inbound Contact Agent Features
   {
-    id: 'inbound_dashboard',
-    name: 'Contact Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['inbound_contact_agent'],
-    description: 'Handle incoming inquiries'
-  },
-  {
-    id: 'lead_verification',
-    name: 'Lead Management',
-    path: '/leads',
-    icon: 'Shield',
-    roles: ['inbound_contact_agent'],
-    description: 'Verify and process leads'
-  },
-  {
-    id: 'call_management',
-    name: 'Tasks',
+    id: 'my_tasks',
+    name: 'My Tasks',
     path: '/tasks',
     icon: 'ClipboardList',
-    roles: ['inbound_contact_agent'],
-    description: 'Log calls and interactions'
-  },
-
-  // Relationship Manager Features
-  {
-    id: 'rm_dashboard',
-    name: 'Portfolio Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['relationship_manager'],
-    description: 'Portfolio overview and management'
+    roles: ['sales_executive'],
+    description: 'Personal task management'
   },
   {
-    id: 'customer_360_rm',
+    id: 'customer_360',
     name: 'Customer 360',
-    path: '/leads',
+    path: '/customers',
     icon: 'Users',
-    roles: ['relationship_manager'],
-    description: 'Complete customer view with family'
+    roles: ['sales_executive'],
+    description: 'Customer relationship management'
   },
   {
-    id: 'portfolio_management',
-    name: 'Portfolio Management',
-    path: '/sales-funnel',
-    icon: 'PieChart',
-    roles: ['relationship_manager'],
-    description: 'Manage high-value customers'
+    id: 'geo_location',
+    name: 'Geo Tracking',
+    path: '/geo-location',
+    icon: 'MapPin',
+    roles: ['sales_executive'],
+    description: 'Location tracking and beat planning'
   },
   {
-    id: 'cross_sell',
-    name: 'Reports',
-    path: '/reports',
-    icon: 'TrendingUp',
-    roles: ['relationship_manager'],
-    description: 'Identify upsell opportunities'
+    id: 'sales_funnel',
+    name: 'My Pipeline',
+    path: '/funnel',
+    icon: 'BarChart3',
+    roles: ['sales_executive'],
+    description: 'Personal sales pipeline'
   },
 
   // Supervisor Features
@@ -119,65 +75,89 @@ export const FEATURES: Feature[] = [
     path: '/team-management',
     icon: 'Users',
     roles: ['supervisor'],
-    description: 'Manage team members'
+    description: 'Manage team members and assignments'
   },
   {
-    id: 'performance_monitoring',
-    name: 'Performance Monitor',
+    id: 'lead_allocation',
+    name: 'Lead Allocation',
+    path: '/lead-allocation',
+    icon: 'UserPlus',
+    roles: ['supervisor'],
+    description: 'Assign leads to team members'
+  },
+  {
+    id: 'team_tasks',
+    name: 'Team Tasks',
+    path: '/team-tasks',
+    icon: 'ClipboardList',
+    roles: ['supervisor'],
+    description: 'Monitor team task progress'
+  },
+  {
+    id: 'team_performance',
+    name: 'Performance Analytics',
     path: '/team-performance',
-    icon: 'BarChart3',
+    icon: 'TrendingUp',
     roles: ['supervisor'],
-    description: 'Monitor team performance'
+    description: 'Team performance analytics'
   },
   {
-    id: 'reports_supervisor',
-    name: 'Reports',
-    path: '/reports',
-    icon: 'Activity',
-    roles: ['supervisor'],
-    description: 'Generate team reports'
-  },
-  {
-    id: 'geo_management',
-    name: 'Geo Management',
-    path: '/geo-location',
+    id: 'territory_management',
+    name: 'Territory Management',
+    path: '/territory-management',
     icon: 'MapPin',
     roles: ['supervisor'],
-    description: 'Manage territories and geo-fencing'
-  },
-
-  // Admin/MIS Officer Features
-  {
-    id: 'admin_dashboard',
-    name: 'Admin Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['admin_mis_officer'],
-    description: 'System administration overview'
+    description: 'Manage sales territories'
   },
   {
-    id: 'user_management',
-    name: 'User Management',
-    path: '/team-management',
-    icon: 'Users',
-    roles: ['admin_mis_officer'],
-    description: 'Manage system users'
-  },
-  {
-    id: 'reports_admin',
+    id: 'reports',
     name: 'Reports & Analytics',
     path: '/reports',
     icon: 'BarChart3',
-    roles: ['admin_mis_officer'],
-    description: 'Generate system reports'
+    roles: ['supervisor'],
+    description: 'Generate team reports'
+  },
+  
+  // Executive Level Features (both roles with different access levels)
+  {
+    id: 'executive_dashboard',
+    name: 'Executive Dashboard',
+    path: '/executive-dashboard',
+    icon: 'TrendingUp',
+    roles: ['supervisor'],
+    description: 'High-level performance metrics'
   },
   {
-    id: 'system_config',
-    name: 'System Configuration',
-    path: '/team-performance',
-    icon: 'Settings',
-    roles: ['admin_mis_officer'],
-    description: 'Configure system rules and settings'
+    id: 'customer_analytics',
+    name: 'Customer Analytics',
+    path: '/customer-analytics',
+    icon: 'Activity',
+    roles: ['supervisor'],
+    description: 'Customer behavior analysis'
+  },
+  {
+    id: 'kpa_management',
+    name: 'KPA Management',
+    path: '/kpa-management',
+    icon: 'Target',
+    roles: ['supervisor'],
+    description: 'Key performance area management'
+  },
+  {
+    id: 'portfolio_management',
+    name: 'Portfolio Management',
+    path: '/portfolio',
+    icon: 'PieChart',
+    roles: ['supervisor'],
+    description: 'Portfolio oversight'
+  },
+  {
+    id: 'risk_management',
+    name: 'Risk Management',
+    path: '/risk-management',
+    icon: 'Shield',
+    roles: ['supervisor'],
+    description: 'Risk assessment and management'
   }
 ];
 
@@ -205,9 +185,7 @@ export const getIconName = (iconName: string) => {
     'Activity': 'Activity',
     'Target': 'Target',
     'PieChart': 'PieChart',
-    'Shield': 'Shield',
-    'Settings': 'Settings',
-    'Phone': 'Phone'
+    'Shield': 'Shield'
   };
   return iconMap[iconName] || 'Home';
 };

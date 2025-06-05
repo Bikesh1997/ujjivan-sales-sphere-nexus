@@ -6,18 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  KeyRound, 
-  MapPin, 
-  Phone, 
-  TrendingUp, 
-  BarChart3, 
-  Settings,
-  Users
-} from 'lucide-react';
+import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -72,69 +61,32 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const roleCards = [
-    {
-      title: 'Field Sales Officer',
-      subtitle: 'Beat planning and customer visits',
-      email: 'fso@bank.com',
-      icon: MapPin,
-      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
-      iconColor: 'text-emerald-600'
-    },
-    {
-      title: 'Inbound Contact Agent',
-      subtitle: 'Customer inquiries and lead verification',
-      email: 'inbound@bank.com',
-      icon: Phone,
-      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
-      iconColor: 'text-emerald-600'
-    },
-    {
-      title: 'Relationship Manager',
-      subtitle: 'Portfolio and relationship management',
-      email: 'rm@bank.com',
-      icon: TrendingUp,
-      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
-      iconColor: 'text-emerald-600'
-    },
-    {
-      title: 'Supervisor',
-      subtitle: 'Team management and monitoring',
-      email: 'supervisor@bank.com',
-      icon: BarChart3,
-      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
-      iconColor: 'text-emerald-600'
-    },
-    {
-      title: 'Admin/MIS Officer',
-      subtitle: 'System configuration and reports',
-      email: 'admin@bank.com',
-      icon: Settings,
-      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
-      iconColor: 'text-emerald-600'
-    }
-  ];
-
-  const fillCredentials = (roleEmail: string) => {
-    setEmail(roleEmail);
-    setPassword('password123');
+  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor') => {
+    const credentials = {
+      sales: { email: 'sales@bank.com', password: 'password123' },
+      sales2: { email: 'sales2@bank.com', password: 'password123' },
+      supervisor: { email: 'supervisor@bank.com', password: 'password123' }
+    };
+    
+    setEmail(credentials[userType].email);
+    setPassword(credentials[userType].password);
     setError('');
   };
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Reset Password
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-gray-600">
               Enter your email to receive reset instructions
             </p>
           </div>
           
-          <Card className="shadow-lg">
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <KeyRound size={20} />
@@ -164,7 +116,7 @@ const LoginForm = () => {
                 <div className="flex gap-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                    className="flex-1 bg-teal-600 hover:bg-teal-700"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -193,154 +145,126 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <img 
-            src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
-            alt="Ujjivan Small Finance Bank" 
-            className="h-20 w-auto mx-auto mb-6"
-          />
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Banking CRM Portal
-          </h1>
-          <p className="text-lg text-gray-600">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to Banking CRM
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
             Sales Force Automation Platform
           </p>
         </div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Role Cards */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                Select Your Role
-              </h2>
-              <div className="grid gap-4">
-                {roleCards.map((role, index) => {
-                  const IconComponent = role.icon;
-                  return (
-                    <Card 
-                      key={index}
-                      className={`cursor-pointer transition-all duration-200 ${role.color}`}
-                      onClick={() => fillCredentials(role.email)}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-3 rounded-full bg-white shadow-sm ${role.iconColor}`}>
-                            <IconComponent size={24} />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900">{role.title}</h3>
-                            <p className="text-sm text-gray-600">{role.subtitle}</p>
-                          </div>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-                          >
-                            Login
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Login</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  disabled={isLoading}
+                />
               </div>
-            </div>
-          </div>
-
-          {/* Login Form */}
-          <div className="lg:sticky lg:top-8">
-            <Card className="shadow-2xl border-0">
-              <CardHeader className="bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-t-lg">
-                <CardTitle className="text-center text-xl">Sign In</CardTitle>
-              </CardHeader>
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <Label htmlFor="email" className="text-gray-700">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      required
-                      disabled={isLoading}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="password" className="text-gray-700">Password</Label>
-                    <div className="relative mt-1">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        required
-                        disabled={isLoading}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={isLoading}
-                      >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-medium py-3"
+              
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
                     disabled={isLoading}
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Signing in...
-                      </>
-                    ) : (
-                      'Sign In'
-                    )}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </Button>
-
-                  <Button 
-                    type="button" 
-                    variant="link"
-                    className="w-full text-sm text-gray-600 hover:text-gray-800"
-                    onClick={() => setShowForgotPassword(true)}
-                  >
-                    Forgot your password?
-                  </Button>
-                </form>
-
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <div className="text-center text-sm text-gray-600 mb-4">
-                    Demo Credentials
-                  </div>
-                  <div className="text-center text-xs text-gray-500">
-                    Click any role card above or use password: <code className="bg-gray-100 px-1 rounded">password123</code>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              </div>
+
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <Button 
+                type="submit" 
+                className="w-full bg-teal-600 hover:bg-teal-700"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+
+              <Button 
+                type="button" 
+                variant="link"
+                className="w-full text-sm"
+                onClick={() => setShowForgotPassword(true)}
+              >
+                Forgot your password?
+              </Button>
+            </form>
+
+            <div className="mt-6 space-y-3">
+              <div className="text-center text-sm text-gray-600 mb-3">
+                Demo Accounts:
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('sales')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Sales Executive Demo (Rahul)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('sales2')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Sales Executive Demo (Anjali)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('supervisor')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Supervisor Demo
+              </Button>
+              <div className="text-center text-xs text-gray-500 mt-2">
+                Password: password123
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

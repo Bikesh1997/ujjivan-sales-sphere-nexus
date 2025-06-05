@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,13 +41,13 @@ const GeoLocationTracker = ({
     stopTracking,
     createCheckIn,
   } = useGeoLocation({
-    enableTracking: showTracking || user?.role === 'field_sales_officer',
+    enableTracking: showTracking || user?.role === 'sales_executive',
     enableGeoFencing: true,
   });
 
-  // Auto-start tracking for field sales officers
+  // Auto-start tracking for sales executives
   useEffect(() => {
-    if (user?.role === 'field_sales_officer' && !isTracking) {
+    if (user?.role === 'sales_executive' && !isTracking) {
       startTracking();
     }
   }, [user?.role, isTracking, startTracking]);
@@ -96,7 +97,7 @@ const GeoLocationTracker = ({
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
           Location Services
-          {user?.role === 'field_sales_officer' && (
+          {user?.role === 'sales_executive' && (
             <Badge className="bg-green-100 text-green-800">Auto-enabled</Badge>
           )}
         </CardTitle>
@@ -144,7 +145,7 @@ const GeoLocationTracker = ({
         </div>
 
         {/* Location Tracking */}
-        {(showTracking || user?.role === 'field_sales_officer') && (
+        {(showTracking || user?.role === 'sales_executive') && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Location Tracking:</span>
