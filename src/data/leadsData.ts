@@ -1,283 +1,78 @@
+export interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  value: string;
+  status: 'new' | 'qualified' | 'proposal' | 'negotiation' | 'converted';
+  priority: 'low' | 'medium' | 'high';
+  source: 'Website' | 'Referral' | 'Cold Call' | 'Social Media';
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  nextFollowUp: string;
+  notes: string;
+}
 
-export const allLeads = [
+// Function to format a number as currency
+export const formatCurrency = (amount: number, currency: string = '₹') => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
+export const allLeads: Lead[] = [
+  // First 50 leads with various statuses
   {
     id: '1',
-    name: 'Rajesh Enterprises',
+    name: 'Tech Solutions Pvt Ltd',
     contact: 'Rajesh Kumar',
     phone: '+91 98765 43210',
-    email: 'rajesh@enterprises.com',
-    status: 'new',
-    source: 'Website',
+    email: 'rajesh@techsolutions.com',
     value: '₹25L',
+    status: 'qualified',
+    priority: 'high',
+    source: 'Website',
     assignedTo: 'Rahul Sharma',
     assignedToId: '1',
     lastContact: '2 hours ago',
-    priority: 'High'
+    nextFollowUp: '2024-06-07',
+    notes: 'Interested in business loan for expansion'
   },
   {
     id: '2',
-    name: 'Tech Solutions Ltd',
-    contact: 'Priya Patel',
-    phone: '+91 87654 32109',
-    email: 'priya@techsolutions.com',
-    status: 'qualified',
-    source: 'Referral',
-    value: '₹18.5L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 day ago',
-    priority: 'Medium'
-  },
-  {
-    id: '3',
     name: 'Manufacturing Co',
-    contact: 'Suresh Gupta',
-    phone: '+91 76543 21098',
-    email: 'suresh@manufacturing.com',
-    status: 'converted',
-    source: 'Cold Call',
-    value: '₹35L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '3 days ago',
-    priority: 'High'
-  },
-  {
-    id: '4',
-    name: 'Retail Chain',
-    contact: 'Anita Roy',
-    phone: '+91 65432 10987',
-    email: 'anita@retailchain.com',
-    status: 'proposal',
-    source: 'Trade Show',
-    value: '₹42L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '5 hours ago',
-    priority: 'High'
-  },
-  {
-    id: '5',
-    name: 'Digital Agency',
-    contact: 'Amit Singh',
-    phone: '+91 98123 45678',
-    email: 'amit@digitalagency.com',
-    status: 'qualified',
-    source: 'Bank Branch',
-    value: '₹15L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '3 hours ago',
-    priority: 'Medium'
-  },
-  {
-    id: '6',
-    name: 'Construction Corp',
-    contact: 'Deepak Yadav',
-    phone: '+91 87654 21987',
-    email: 'deepak@construction.com',
-    status: 'converted',
-    source: 'Partner Referral',
-    value: '₹65L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 week ago',
-    priority: 'High'
-  },
-  {
-    id: '7',
-    name: 'Healthcare Systems',
-    contact: 'Dr. Kavita Sharma',
-    phone: '+91 76543 87654',
-    email: 'kavita@healthcare.com',
-    status: 'proposal',
-    source: 'Digital Marketing',
-    value: '₹28L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '2 days ago',
-    priority: 'High'
-  },
-  {
-    id: '8',
-    name: 'Logistics Ltd',
-    contact: 'Ravi Agarwal',
-    phone: '+91 98765 12345',
-    email: 'ravi@logistics.com',
-    status: 'new',
-    source: 'Trade Show',
-    value: '₹22L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '4 hours ago',
-    priority: 'Medium'
-  },
-  {
-    id: '9',
-    name: 'Food Processing',
-    contact: 'Sunita Devi',
-    phone: '+91 87654 98765',
-    email: 'sunita@foodprocessing.com',
-    status: 'qualified',
-    source: 'Website',
-    value: '₹32L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 day ago',
-    priority: 'High'
-  },
-  {
-    id: '10',
-    name: 'Education Trust',
-    contact: 'Prof. Mohan Lal',
-    phone: '+91 76543 54321',
-    email: 'mohan@education.com',
-    status: 'converted',
-    source: 'Bank Branch',
+    contact: 'Priya Singh',
+    phone: '+91 98765 43211',
+    email: 'priya@manufacturing.com',
     value: '₹45L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '5 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: '11',
-    name: 'Textile Mills',
-    contact: 'Rekha Jain',
-    phone: '+91 98123 76543',
-    email: 'rekha@textile.com',
-    status: 'lost',
-    source: 'Cold Call',
-    value: '₹12L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '2 weeks ago',
-    priority: 'Low'
-  },
-  {
-    id: '12',
-    name: 'Pharma Industries',
-    contact: 'Dr. Rajiv Khanna',
-    phone: '+91 87654 23456',
-    email: 'rajiv@pharma.com',
     status: 'proposal',
-    source: 'Partner Referral',
-    value: '₹38L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '6 hours ago',
-    priority: 'High'
-  },
-  {
-    id: '13',
-    name: 'Auto Components',
-    contact: 'Vinod Kumar',
-    phone: '+91 76543 65432',
-    email: 'vinod@auto.com',
-    status: 'new',
-    source: 'Digital Marketing',
-    value: '₹27L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 hour ago',
-    priority: 'High'
-  },
-  {
-    id: '14',
-    name: 'Real Estate Group',
-    contact: 'Neha Gupta',
-    phone: '+91 98765 87654',
-    email: 'neha@realestate.com',
-    status: 'qualified',
-    source: 'Website',
-    value: '₹55L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '8 hours ago',
-    priority: 'High'
-  },
-  {
-    id: '15',
-    name: 'IT Services',
-    contact: 'Arun Prasad',
-    phone: '+91 87654 76543',
-    email: 'arun@itservices.com',
-    status: 'converted',
+    priority: 'high',
     source: 'Referral',
-    value: '₹33L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '4 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: '16',
-    name: 'Chemical Works',
-    contact: 'Sanjay Shah',
-    phone: '+91 76543 23456',
-    email: 'sanjay@chemical.com',
-    status: 'new',
-    source: 'Bank Branch',
-    value: '₹29L',
-    assignedTo: 'Other Sales Rep',
+    assignedTo: 'Anjali Patel',
     assignedToId: '3',
-    lastContact: '3 hours ago',
-    priority: 'Medium'
+    lastContact: '1 day ago',
+    nextFollowUp: '2024-06-08',
+    notes: 'Equipment financing requirement'
   },
-  {
-    id: '17',
-    name: 'Export House',
-    contact: 'Meera Joshi',
-    phone: '+91 98123 54321',
-    email: 'meera@export.com',
-    status: 'proposal',
-    source: 'Trade Show',
-    value: '₹48L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '12 hours ago',
-    priority: 'High'
-  },
-  {
-    id: '18',
-    name: 'Steel Industries',
-    contact: 'Ashok Singh',
-    phone: '+91 87654 12398',
-    email: 'ashok@steel.com',
-    status: 'qualified',
-    source: 'Partner Referral',
-    value: '₹62L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '2 days ago',
-    priority: 'High'
-  },
-  {
-    id: '19',
-    name: 'Hospitality Group',
-    contact: 'Pooja Verma',
-    phone: '+91 76543 98712',
-    email: 'pooja@hospitality.com',
-    status: 'converted',
-    source: 'Digital Marketing',
-    value: '₹41L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '6 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: '20',
-    name: 'Furniture Mart',
-    contact: 'Rakesh Agarwal',
-    phone: '+91 98765 23456',
-    email: 'rakesh@furniture.com',
-    status: 'lost',
-    source: 'Cold Call',
-    value: '₹16L',
-    assignedTo: 'Other Sales Rep',
-    assignedToId: '3',
-    lastContact: '10 days ago',
-    priority: 'Low'
-  }
+  // Generate 200+ more leads
+  ...Array.from({ length: 250 }, (_, i) => ({
+    id: `${i + 3}`,
+    name: `Business ${i + 3}`,
+    contact: `Contact ${i + 3}`,
+    phone: `+91 ${String(9876543000 + i).slice(0, 5)} ${String(9876543000 + i).slice(5)}`,
+    email: `contact${i + 3}@business.com`,
+    value: `₹${Math.floor(Math.random() * 50) + 5}L`,
+    status: ['new', 'qualified', 'proposal', 'negotiation', 'converted'][Math.floor(Math.random() * 5)] as Lead['status'],
+    priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as Lead['priority'],
+    source: ['Website', 'Referral', 'Cold Call', 'Social Media'][Math.floor(Math.random() * 4)] as Lead['source'],
+    assignedTo: ['Rahul Sharma', 'Anjali Patel', 'Priya Manager'][Math.floor(Math.random() * 3)],
+    assignedToId: ['1', '3', '2'][Math.floor(Math.random() * 3)],
+    lastContact: ['1 hour ago', '2 hours ago', '1 day ago', '2 days ago'][Math.floor(Math.random() * 4)],
+    nextFollowUp: '2024-06-08',
+    notes: `Generated lead ${i + 3} notes`
+  }))
 ];

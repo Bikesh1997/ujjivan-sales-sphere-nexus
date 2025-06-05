@@ -8,22 +8,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
-  TrendingUp, 
-  IndianRupee, 
-  Filter,
   Search,
-  Plus,
   Eye,
   Edit,
   ArrowRight,
-  BarChart3,
   Kanban
 } from 'lucide-react';
-import InteractiveFunnelChart from '@/components/funnel/InteractiveFunnelChart';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
-import PermissionGate from '@/components/rbac/PermissionGate';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
@@ -53,7 +46,6 @@ const SalesFunnel = () => {
     lastContact: lead.lastContact,
     nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
                 lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
-    // Include full lead data for LeadActionsMenu
     leadData: lead
   }));
 
@@ -89,30 +81,26 @@ const SalesFunnel = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales Funnel & Pipeline</h1>
+          <h1 className="text-2xl font-bold text-gray-900">My Sales Pipeline</h1>
           <p className="text-gray-600">Track your sales pipeline and manage tasks efficiently</p>
         </div>
       </div>
 
       {/* Tabs for different views */}
-      <Tabs defaultValue="funnel" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="funnel" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Sales Funnel
+      <Tabs defaultValue="pipeline" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="pipeline" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Sales Pipeline
           </TabsTrigger>
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <Kanban className="h-4 w-4" />
             Task Board
           </TabsTrigger>
-          <TabsTrigger value="prospects" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Prospects
-          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="funnel" className="space-y-6">
-          {/* Funnel Overview */}
+        <TabsContent value="pipeline" className="space-y-6">
+          {/* Pipeline Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             {funnelData.map((stage, index) => (
               <Card key={stage.stage} className="hover:shadow-md transition-shadow">
@@ -135,24 +123,6 @@ const SalesFunnel = () => {
             ))}
           </div>
 
-          {/* Interactive Chart */}
-          <InteractiveFunnelChart />
-        </TabsContent>
-
-        <TabsContent value="tasks">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Task Management</h2>
-              <AddTaskModal onAddTask={(task) => {
-                // Handle adding task to Kanban board
-                console.log('New task added:', task);
-              }} />
-            </div>
-            <KanbanBoard />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="prospects" className="space-y-6">
           {/* Prospects Table */}
           <Card>
             <CardHeader>
@@ -226,6 +196,18 @@ const SalesFunnel = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="tasks">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">Task Management</h2>
+              <AddTaskModal onAddTask={(task) => {
+                console.log('New task added:', task);
+              }} />
+            </div>
+            <KanbanBoard />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

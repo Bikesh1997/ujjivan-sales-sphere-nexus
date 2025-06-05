@@ -1,3 +1,4 @@
+
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,6 @@ import {
   ArrowDownRight
 } from 'lucide-react';
 import SmartNudges from '@/components/dashboard/SmartNudges';
-import EnhancedFunnelChart from '@/components/funnel/EnhancedFunnelChart';
 import { allLeads } from '@/data/leadsData';
 
 const Dashboard = () => {
@@ -31,7 +31,6 @@ const Dashboard = () => {
     const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
     return sum + value;
   }, 0);
-  const averageConversionTime = 7; // Simulated data
 
   return (
     <div className="space-y-6">
@@ -122,39 +121,8 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Enhanced Funnel Chart */}
-      <EnhancedFunnelChart />
-
       {/* Smart Nudges */}
       <SmartNudges />
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Target size={18} className="mr-2" />
-            Quick Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Users size={16} className="mr-2" />
-            Allocate Leads
-          </Button>
-          <Button className="bg-green-600 hover:bg-green-700">
-            <TrendingUp size={16} className="mr-2" />
-            Review Pipeline
-          </Button>
-          <Button className="bg-orange-600 hover:bg-orange-700">
-            <Calendar size={16} className="mr-2" />
-            Plan Territory Visits
-          </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            <Award size={16} className="mr-2" />
-            Check KRA Progress
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 };
