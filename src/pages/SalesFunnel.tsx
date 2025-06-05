@@ -15,6 +15,7 @@ import {
   Kanban
 } from 'lucide-react';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
+import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,6 +28,9 @@ const SalesFunnel = () => {
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
+
+  // Check if current user is Anjali Patel (assuming she has the prospect_manager role)
+  const isDragDropEnabled = user?.name === 'Anjali Patel';
 
   const funnelData = [
     { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
@@ -95,7 +99,7 @@ const SalesFunnel = () => {
           </TabsTrigger>
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <Kanban className="h-4 w-4" />
-            Task Board
+            Task Board {isDragDropEnabled && <Badge variant="secondary" className="ml-1 text-xs">Drag & Drop</Badge>}
           </TabsTrigger>
         </TabsList>
 
@@ -206,12 +210,29 @@ const SalesFunnel = () => {
                 console.log('New task added:', task);
               }} />
             </div>
-            <KanbanBoard />
+            {isDragDropEnabled ? <DragDropKanbanBoard /> : <KanbanBoard />}
           </div>
         </TabsContent>
       </Tabs>
     </div>
   );
+
+  function getStageColor(stage: string) {
+    switch (stage) {
+      case 'Leads': return 'bg-gray-100 text-gray-800';
+      case 'Qualified': return 'bg-blue-100 text-blue-800';
+      case 'Proposal': return 'bg-yellow-100 text-yellow-800';
+      case 'Negotiation': return 'bg-orange-100 text-orange-800';
+      case 'Closed Won': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  function getProbabilityColor(probability: number) {
+    if (probability >= 80) return 'text-green-600 bg-green-50';
+    if (probability >= 60) return 'text-yellow-600 bg-yellow-50';
+    return 'text-red-600 bg-red-50';
+  }
 };
 
 export default SalesFunnel;

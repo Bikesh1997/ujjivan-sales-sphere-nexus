@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -164,14 +165,14 @@ const LeadManagement = () => {
       </div>
 
       {/* Stats Cards */}
-      <LeadStatsCards leads={filteredLeads} />
+      <LeadStatsCards leads={filteredLeads} userRole={user?.role || 'agent'} />
 
       {/* Filters */}
       <Card>
         <CardContent className="p-6">
           <LeadFilters
             searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            onSearchTermChange={setSearchTerm}
             filters={filters}
             onFiltersChange={setFilters}
           />
@@ -181,7 +182,7 @@ const LeadManagement = () => {
       {/* Bulk Actions */}
       {selectedLeads.length > 0 && (
         <BulkLeadActions
-          selectedCount={selectedLeads.length}
+          selectedLeadsCount={selectedLeads.length}
           onClearSelection={() => setSelectedLeads([])}
           onBulkAction={(action) => {
             console.log('Bulk action:', action, selectedLeads);
@@ -202,7 +203,7 @@ const LeadManagement = () => {
         <CardContent>
           <LeadsTable
             leads={currentLeads}
-            selectedLeads={selectedLeads}
+            selectedLeadIds={selectedLeads}
             onLeadSelect={(leadId) => {
               setSelectedLeads(prev => 
                 prev.includes(leadId) 
@@ -232,12 +233,13 @@ const LeadManagement = () => {
         onPageChange={setCurrentPage}
         totalLeads={filteredLeads.length}
         leadsPerPage={leadsPerPage}
+        startIndex={indexOfFirstLead}
       />
 
       {/* Modals */}
       <AddLeadModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
 
