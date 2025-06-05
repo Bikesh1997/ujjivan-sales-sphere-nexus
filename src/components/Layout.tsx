@@ -18,7 +18,11 @@ import {
   Activity,
   Target,
   PieChart,
-  Shield
+  Shield,
+  Phone,
+  PhoneCall,
+  UserCheck,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -30,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import AIAssistantWidget from '@/components/ai/AIAssistantWidget';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -53,7 +58,11 @@ const Layout = ({ children }: LayoutProps) => {
     Activity: Activity,
     Target: Target,
     PieChart: PieChart,
-    Shield: Shield
+    Shield: Shield,
+    Phone: Phone,
+    PhoneCall: PhoneCall,
+    UserCheck: UserCheck,
+    Settings: Settings
   };
 
   const navigationItems = getNavigationItems().map(item => ({
@@ -65,19 +74,34 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
-      case 'sales_executive': return 'Sales Executive';
+      case 'field_sales_officer': return 'Field Sales Officer';
+      case 'inbound_contact_agent': return 'Inbound Contact Agent';
+      case 'relationship_manager': return 'Relationship Manager';
       case 'supervisor': return 'Supervisor';
+      case 'admin_mis_officer': return 'Admin/MIS Officer';
       default: return role;
     }
   };
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'outbound': return 'Outbound';
-      case 'inbound': return 'Inbound';
       case 'field': return 'Field';
+      case 'inbound': return 'Inbound';
+      case 'relationship': return 'Relationship';
+      case 'admin': return 'Admin';
       default: return '';
     }
+  };
+
+  const getRoleOptions = () => {
+    const roles = [
+      { value: 'field_sales_officer', label: 'Field Sales Officer' },
+      { value: 'inbound_contact_agent', label: 'Inbound Contact Agent' },
+      { value: 'relationship_manager', label: 'Relationship Manager' },
+      { value: 'supervisor', label: 'Supervisor' },
+      { value: 'admin_mis_officer', label: 'Admin/MIS Officer' }
+    ];
+    return roles.filter(role => role.value !== user?.role);
   };
 
   return (
@@ -136,11 +160,14 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
-                  >
-                    Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
-                  </DropdownMenuItem>
+                  {getRoleOptions().map(role => (
+                    <DropdownMenuItem 
+                      key={role.value}
+                      onClick={() => switchRole(role.value as any)}
+                    >
+                      Switch to {role.label}
+                    </DropdownMenuItem>
+                  ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
@@ -161,7 +188,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
+                {getRoleDisplay(user?.role || '')} Portal
               </div>
             </div>
             <nav className="px-3 space-y-1">
@@ -194,6 +221,9 @@ const Layout = ({ children }: LayoutProps) => {
           </main>
         </div>
       </div>
+
+      {/* AI Assistant Widget */}
+      <AIAssistantWidget />
 
       {/* Overlay for mobile */}
       {sidebarOpen && (
