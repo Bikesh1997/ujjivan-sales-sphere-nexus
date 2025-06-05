@@ -19,12 +19,10 @@ import CustomerAnalytics from "./pages/CustomerAnalytics";
 import RiskManagement from "./pages/RiskManagement";
 import PortfolioManagement from "./pages/PortfolioManagement";
 import KPAManagement from "./pages/KPAManagement";
-import TeamManagement from "./pages/TeamManagement";
-import LeadAllocation from "./pages/LeadAllocation";
-import TeamTasks from "./pages/TeamTasks";
 import TeamPerformance from "./pages/TeamPerformance";
 import TerritoryManagement from "./pages/TerritoryManagement";
 import Reports from "./pages/Reports";
+import RuleManagement from "./pages/RuleManagement";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
@@ -136,23 +134,6 @@ const App = () => (
                           <PortfolioManagement />
                         </RoleBasedRoute>
                       } />
-                      
-                      {/* Supervisor feature pages - now with proper components */}
-                      <Route path="/team-management" element={
-                        <RoleBasedRoute featureId="team_management">
-                          <TeamManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/lead-allocation" element={
-                        <RoleBasedRoute featureId="lead_allocation">
-                          <LeadAllocation />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/team-tasks" element={
-                        <RoleBasedRoute featureId="team_tasks">
-                          <TeamTasks />
-                        </RoleBasedRoute>
-                      } />
                       <Route path="/team-performance" element={
                         <RoleBasedRoute featureId="team_performance">
                           <TeamPerformance />
@@ -166,6 +147,11 @@ const App = () => (
                       <Route path="/reports" element={
                         <RoleBasedRoute featureId="reports">
                           <Reports />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/rule-management" element={
+                        <RoleBasedRoute featureId="rule_management">
+                          <RuleManagement />
                         </RoleBasedRoute>
                       } />
                       

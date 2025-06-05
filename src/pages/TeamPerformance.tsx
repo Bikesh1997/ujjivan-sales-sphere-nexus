@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,10 +14,10 @@ import {
 
 const TeamPerformance = () => {
   const teamPerformanceData = [
-    { name: 'Rahul', target: 15, achieved: 12, conversion: 32, calls: 95 },
-    { name: 'Anjali', target: 12, achieved: 11, conversion: 28, calls: 78 },
-    { name: 'Vikash', target: 14, achieved: 8, conversion: 18, calls: 65 },
-    { name: 'Priya', target: 18, achieved: 17, conversion: 35, calls: 102 }
+    { name: 'Pune', target: 15, achieved: 12, conversion: 32, calls: 95 },
+    { name: 'Mumbai', target: 12, achieved: 11, conversion: 28, calls: 78 },
+    { name: 'Delhi', target: 14, achieved: 8, conversion: 18, calls: 65 },
+    { name: 'Bangalore', target: 18, achieved: 17, conversion: 35, calls: 102 }
   ];
 
   const monthlyTrends = [
@@ -41,8 +40,8 @@ const TeamPerformance = () => {
   const teamMembers = [
     {
       id: '1',
-      name: 'Rahul Sharma',
-      position: 'Senior Sales Executive',
+      name: 'Pune Branch',
+      position: 'Regional Branch',
       target: 15,
       achieved: 12,
       conversion: 32,
@@ -51,8 +50,8 @@ const TeamPerformance = () => {
     },
     {
       id: '2',
-      name: 'Anjali Patel',
-      position: 'Sales Executive',
+      name: 'Mumbai Branch',
+      position: 'Metropolitan Branch',
       target: 12,
       achieved: 11,
       conversion: 28,
@@ -61,8 +60,8 @@ const TeamPerformance = () => {
     },
     {
       id: '3',
-      name: 'Vikash Kumar',
-      position: 'Sales Executive',
+      name: 'Delhi Branch',
+      position: 'Capital Branch',
       target: 14,
       achieved: 8,
       conversion: 18,
@@ -71,8 +70,8 @@ const TeamPerformance = () => {
     },
     {
       id: '4',
-      name: 'Priya Singh',
-      position: 'Senior Sales Executive',
+      name: 'Bangalore Branch',
+      position: 'Tech Hub Branch',
       target: 18,
       achieved: 17,
       conversion: 35,
@@ -123,7 +122,7 @@ const TeamPerformance = () => {
     },
     {
       title: 'Top Performer',
-      value: 'Priya Singh',
+      value: 'Bangalore Branch',
       subtitle: '94% target achievement',
       trend: { value: 'Leading this month', isPositive: true },
       icon: <Users size={20} />
@@ -164,33 +163,12 @@ const TeamPerformance = () => {
         ))}
       </div>
 
-      <Tabs defaultValue="individual" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="individual">Individual Performance</TabsTrigger>
+      <Tabs defaultValue="trends" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="trends">Monthly Trends</TabsTrigger>
           <TabsTrigger value="products">Product Performance</TabsTrigger>
           <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="individual" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Individual Performance Comparison</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={teamPerformanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
-                  <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="trends" className="space-y-6">
           <Card>
@@ -244,7 +222,7 @@ const TeamPerformance = () => {
         <TabsContent value="leaderboard" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Team Leaderboard</CardTitle>
+              <CardTitle>Branch Leaderboard</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -258,7 +236,7 @@ const TeamPerformance = () => {
                         </Badge>
                         <Avatar className="h-12 w-12">
                           <AvatarFallback className="bg-teal-100 text-teal-700">
-                            {member.name.split(' ').map(n => n[0]).join('')}
+                            {member.name.split(' ')[0].substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div>

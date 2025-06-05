@@ -1,4 +1,3 @@
-
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -48,7 +47,7 @@ export const FEATURES: Feature[] = [
     name: 'Geo Tracking',
     path: '/geo-location',
     icon: 'MapPin',
-    roles: ['sales_executive', 'relationship_manager'], // Removed inbound_agent
+    roles: ['sales_executive', 'relationship_manager'],
     description: 'Location tracking and beat planning'
   },
   {
@@ -68,30 +67,6 @@ export const FEATURES: Feature[] = [
     icon: 'Home',
     roles: ['supervisor'],
     description: 'Team performance overview'
-  },
-  {
-    id: 'team_management',
-    name: 'Team Management',
-    path: '/team-management',
-    icon: 'Users',
-    roles: ['supervisor'],
-    description: 'Manage team members and assignments'
-  },
-  {
-    id: 'lead_allocation',
-    name: 'Lead Allocation',
-    path: '/lead-allocation',
-    icon: 'UserPlus',
-    roles: ['supervisor'],
-    description: 'Assign leads to team members'
-  },
-  {
-    id: 'team_tasks',
-    name: 'Team Tasks',
-    path: '/team-tasks',
-    icon: 'ClipboardList',
-    roles: ['supervisor'],
-    description: 'Monitor team task progress'
   },
   {
     id: 'team_performance',
@@ -116,6 +91,14 @@ export const FEATURES: Feature[] = [
     icon: 'BarChart3',
     roles: ['supervisor'],
     description: 'Generate team reports'
+  },
+  {
+    id: 'rule_management',
+    name: 'Rule Management',
+    path: '/rule-management',
+    icon: 'Shield',
+    roles: ['supervisor'],
+    description: 'Manage business rules and automation'
   },
   
   // Executive Level Features
