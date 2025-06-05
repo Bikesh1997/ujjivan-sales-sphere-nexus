@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,7 +37,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const { user, logout, switchRole } = useAuth();
+  const { user, logout } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
 
   // Icon mapping
@@ -65,17 +64,21 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
-      case 'sales_executive': return 'Sales Executive';
+      case 'field_sales_officer': return 'Field Sales Officer';
+      case 'inbound_contact_agent': return 'Contact Agent';
+      case 'relationship_manager': return 'Relationship Manager';
       case 'supervisor': return 'Supervisor';
+      case 'admin_mis_officer': return 'Admin/MIS';
       default: return role;
     }
   };
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'outbound': return 'Outbound';
-      case 'inbound': return 'Inbound';
       case 'field': return 'Field';
+      case 'inbound': return 'Inbound';
+      case 'relationship': return 'Relationship';
+      case 'admin': return 'Admin';
       default: return '';
     }
   };
@@ -136,12 +139,6 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
-                  >
-                    Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
                     Logout
@@ -161,7 +158,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
+                {getRoleDisplay(user?.role || '')} Portal
               </div>
             </div>
             <nav className="px-3 space-y-1">

@@ -28,6 +28,7 @@ import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
+import AIAssistantWidget from "./components/ai/AIAssistantWidget";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -171,6 +172,7 @@ const App = () => (
                       
                       <Route path="*" element={<NotFound />} />
                     </Routes>
+                    <AIAssistantWidget />
                   </Layout>
                 </ProtectedRoute>
               } />

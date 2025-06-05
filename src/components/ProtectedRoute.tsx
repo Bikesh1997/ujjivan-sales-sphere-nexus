@@ -9,7 +9,7 @@ import { ShieldX, Home } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: 'sales_executive' | 'supervisor';
+  requiredRole?: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer';
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
