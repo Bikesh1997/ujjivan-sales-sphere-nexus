@@ -15,10 +15,10 @@ import {
 
 const TeamPerformance = () => {
   const teamPerformanceData = [
-    { name: 'Pune', target: 15, achieved: 12, conversion: 32, calls: 95 },
-    { name: 'Mumbai', target: 12, achieved: 11, conversion: 28, calls: 78 },
-    { name: 'Delhi', target: 14, achieved: 8, conversion: 18, calls: 65 },
-    { name: 'Bangalore', target: 18, achieved: 17, conversion: 35, calls: 102 }
+    { name: 'Rahul', target: 15, achieved: 12, conversion: 32, calls: 95 },
+    { name: 'Anjali', target: 12, achieved: 11, conversion: 28, calls: 78 },
+    { name: 'Vikash', target: 14, achieved: 8, conversion: 18, calls: 65 },
+    { name: 'Priya', target: 18, achieved: 17, conversion: 35, calls: 102 }
   ];
 
   const monthlyTrends = [
@@ -41,8 +41,8 @@ const TeamPerformance = () => {
   const teamMembers = [
     {
       id: '1',
-      name: 'Pune',
-      position: 'Regional Sales Hub',
+      name: 'Rahul Sharma',
+      position: 'Senior Sales Executive',
       target: 15,
       achieved: 12,
       conversion: 32,
@@ -51,8 +51,8 @@ const TeamPerformance = () => {
     },
     {
       id: '2',
-      name: 'Mumbai',
-      position: 'Regional Sales Hub',
+      name: 'Anjali Patel',
+      position: 'Sales Executive',
       target: 12,
       achieved: 11,
       conversion: 28,
@@ -61,8 +61,8 @@ const TeamPerformance = () => {
     },
     {
       id: '3',
-      name: 'Delhi',
-      position: 'Regional Sales Hub',
+      name: 'Vikash Kumar',
+      position: 'Sales Executive',
       target: 14,
       achieved: 8,
       conversion: 18,
@@ -71,8 +71,8 @@ const TeamPerformance = () => {
     },
     {
       id: '4',
-      name: 'Bangalore',
-      position: 'Regional Sales Hub',
+      name: 'Priya Singh',
+      position: 'Senior Sales Executive',
       target: 18,
       achieved: 17,
       conversion: 35,
@@ -123,7 +123,7 @@ const TeamPerformance = () => {
     },
     {
       title: 'Top Performer',
-      value: 'Bangalore',
+      value: 'Priya Singh',
       subtitle: '94% target achievement',
       trend: { value: 'Leading this month', isPositive: true },
       icon: <Users size={20} />
@@ -135,7 +135,7 @@ const TeamPerformance = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Performance Analytics</h1>
-          <p className="text-gray-600">Regional performance metrics and analytics</p>
+          <p className="text-gray-600">Team performance metrics and analytics</p>
         </div>
       </div>
 
@@ -164,12 +164,33 @@ const TeamPerformance = () => {
         ))}
       </div>
 
-      <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="individual" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="individual">Individual Performance</TabsTrigger>
           <TabsTrigger value="trends">Monthly Trends</TabsTrigger>
           <TabsTrigger value="products">Product Performance</TabsTrigger>
           <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="individual" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Individual Performance Comparison</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={teamPerformanceData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
+                  <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="trends" className="space-y-6">
           <Card>
@@ -223,7 +244,7 @@ const TeamPerformance = () => {
         <TabsContent value="leaderboard" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Regional Leaderboard</CardTitle>
+              <CardTitle>Team Leaderboard</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -237,7 +258,7 @@ const TeamPerformance = () => {
                         </Badge>
                         <Avatar className="h-12 w-12">
                           <AvatarFallback className="bg-teal-100 text-teal-700">
-                            {member.name.substring(0, 2).toUpperCase()}
+                            {member.name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
                         <div>
