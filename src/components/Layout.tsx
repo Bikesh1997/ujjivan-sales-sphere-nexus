@@ -38,7 +38,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const { user, logout, switchRole } = useAuth();
+  const { user, logout } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
 
   // Icon mapping
@@ -65,61 +65,65 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
-      case 'sales_executive': return 'Sales Executive';
+      case 'field_sales_officer': return 'Field Sales Officer';
+      case 'inbound_contact_agent': return 'Contact Agent';
+      case 'relationship_manager': return 'Relationship Manager';
       case 'supervisor': return 'Supervisor';
+      case 'admin_mis_officer': return 'Admin/MIS';
       default: return role;
     }
   };
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'outbound': return 'Outbound';
-      case 'inbound': return 'Inbound';
       case 'field': return 'Field';
+      case 'inbound': return 'Inbound';
+      case 'relationship': return 'Relationship';
+      case 'admin': return 'Admin';
       default: return '';
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Top Navigation - Using bank colors */}
+      <nav className="bg-bank-primary shadow-lg border-b border-bank-primary">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden mr-2"
+                className="lg:hidden mr-2 text-white hover:bg-opacity-80"
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <img 
                   src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
                   alt="Ujjivan Small Finance Bank" 
-                  className="h-10 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-white/90">
                 Branch: {user?.branch}
               </div>
               
               {/* Role Badge */}
-              <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+              <Badge className="bg-bank-secondary text-white border-bank-secondary">
                 {getRoleDisplay(user?.role || '')}
                 {user?.department && ` - ${getDepartmentDisplay(user.department)}`}
               </Badge>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
+                  <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-opacity-80">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-teal-100 text-teal-700">
+                      <AvatarFallback className="bg-bank-secondary text-white">
                         {user?.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
@@ -127,7 +131,7 @@ const Layout = ({ children }: LayoutProps) => {
                     <ChevronDown size={16} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200">
                   <div className="px-2 py-2">
                     <p className="text-sm font-medium">{user?.name}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
@@ -135,12 +139,6 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
-                  >
-                    Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
@@ -161,7 +159,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
+                {getRoleDisplay(user?.role || '')} Portal
               </div>
             </div>
             <nav className="px-3 space-y-1">
@@ -174,7 +172,7 @@ const Layout = ({ children }: LayoutProps) => {
                     onClick={() => setSidebarOpen(false)}
                     className={`${
                       isActive(item.href)
-                        ? 'bg-teal-50 text-teal-700 border-r-2 border-teal-500'
+                        ? 'bg-bank-primary/10 text-bank-primary border-r-2 border-bank-primary'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
                   >

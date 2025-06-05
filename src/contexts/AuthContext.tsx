@@ -1,49 +1,56 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'field_sales_officer' | 'inbound_agent' | 'relationship_manager' | 'branch_supervisor') => void;
+  switchRole: (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
+  updateUserRole: (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for the 4 roles
+// Enhanced user data with new roles
 const MOCK_USERS: User[] = [
   {
     id: '1',
-    email: 'fso@ujjivan.com',
+    email: 'fso@bank.com',
     name: 'Rahul Sharma',
     role: 'field_sales_officer',
-    department: 'Field Sales',
+    department: 'field',
     branch: 'Mumbai Central'
   },
   {
     id: '2',
-    email: 'agent@ujjivan.com',
-    name: 'Priya Patel',
-    role: 'inbound_agent',
-    department: 'Contact Center',
+    email: 'inbound@bank.com',
+    name: 'Priya Agent',
+    role: 'inbound_contact_agent',
+    department: 'inbound',
     branch: 'Mumbai Central'
   },
   {
     id: '3',
-    email: 'rm@ujjivan.com',
-    name: 'Amit Kumar',
+    email: 'rm@bank.com',
+    name: 'Anjali Manager',
     role: 'relationship_manager',
-    department: 'Relationship Management',
+    department: 'relationship',
     branch: 'Mumbai Central'
   },
   {
     id: '4',
-    email: 'supervisor@ujjivan.com',
-    name: 'Sunita Manager',
-    role: 'branch_supervisor',
-    department: 'Management',
+    email: 'supervisor@bank.com',
+    name: 'Suresh Supervisor',
+    role: 'supervisor',
+    branch: 'Mumbai Central'
+  },
+  {
+    id: '5',
+    email: 'admin@bank.com',
+    name: 'Admin Officer',
+    role: 'admin_mis_officer',
+    department: 'admin',
     branch: 'Mumbai Central'
   }
 ];
@@ -54,6 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check for existing session with timeout
     const initAuth = async () => {
       try {
         const savedUser = localStorage.getItem('user');
@@ -65,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(JSON.parse(savedUser));
             setIsAuthenticated(true);
           } else {
+            // Session expired
             localStorage.removeItem('user');
             localStorage.removeItem('sessionExpiry');
           }
@@ -84,14 +93,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     
     try {
+      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
       
-      if (foundUser && credentials.password === 'ujjivan123') {
+      if (foundUser && credentials.password === 'password123') {
         setUser(foundUser);
         setIsAuthenticated(true);
         
+        // Set session expiry (24 hours)
         const expiry = new Date().getTime() + (24 * 60 * 60 * 1000);
         localStorage.setItem('user', JSON.stringify(foundUser));
         localStorage.setItem('sessionExpiry', expiry.toString());
@@ -116,11 +127,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('sessionExpiry');
   };
 
-  const switchRole = (role: 'field_sales_officer' | 'inbound_agent' | 'relationship_manager' | 'branch_supervisor') => {
+  const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+  };
+
+  const updateUserRole = (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
+    if (user?.role === 'supervisor' || user?.role === 'admin_mis_officer') {
+      const targetUser = MOCK_USERS.find(u => u.id === userId);
+      if (targetUser) {
+        targetUser.role = newRole;
+        if (user.id === userId) {
+          const updatedUser = { ...user, role: newRole };
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        }
+      }
     }
   };
 
@@ -133,6 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (email: string): Promise<boolean> => {
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     const userExists = MOCK_USERS.some(u => u.email === email);
     return userExists;
@@ -146,6 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout,
       switchRole,
+      updateUserRole,
       updateProfile,
       resetPassword
     }}>

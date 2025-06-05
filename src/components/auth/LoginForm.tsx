@@ -6,7 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, Loader2, Building2, User, Phone, Users, Shield } from 'lucide-react';
+import { 
+  Eye, 
+  EyeOff, 
+  Loader2, 
+  KeyRound, 
+  MapPin, 
+  Phone, 
+  TrendingUp, 
+  BarChart3, 
+  Settings,
+  Users
+} from 'lucide-react';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -18,41 +29,6 @@ const LoginForm = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
   const { login, resetPassword } = useAuth();
-
-  const userTypes = [
-    {
-      id: 'fso',
-      title: 'Field Sales Officer (FSO)',
-      subtitle: 'Relationship Officer',
-      email: 'fso@ujjivan.com',
-      icon: User,
-      description: 'Field sales and customer acquisition'
-    },
-    {
-      id: 'agent',
-      title: 'Inbound Contact Center Agent',
-      subtitle: 'Customer Service',
-      email: 'agent@ujjivan.com',
-      icon: Phone,
-      description: 'Inbound customer support and service'
-    },
-    {
-      id: 'rm',
-      title: 'Relationship Manager (RM)',
-      subtitle: 'Client Relations',
-      email: 'rm@ujjivan.com',
-      icon: Users,
-      description: 'Customer relationship management'
-    },
-    {
-      id: 'supervisor',
-      title: 'Branch Supervisor',
-      subtitle: 'Area Manager',
-      email: 'supervisor@ujjivan.com',
-      icon: Shield,
-      description: 'Branch operations and team management'
-    }
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,40 +72,85 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillUserCredentials = (userEmail: string) => {
-    setEmail(userEmail);
-    setPassword('ujjivan123');
+  const roleCards = [
+    {
+      title: 'Field Sales Officer',
+      subtitle: 'Beat planning and customer visits',
+      email: 'fso@bank.com',
+      icon: MapPin,
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
+    },
+    {
+      title: 'Inbound Contact Agent',
+      subtitle: 'Customer inquiries and lead verification',
+      email: 'inbound@bank.com',
+      icon: Phone,
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
+    },
+    {
+      title: 'Relationship Manager',
+      subtitle: 'Portfolio and relationship management',
+      email: 'rm@bank.com',
+      icon: TrendingUp,
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
+    },
+    {
+      title: 'Supervisor',
+      subtitle: 'Team management and monitoring',
+      email: 'supervisor@bank.com',
+      icon: BarChart3,
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
+    },
+    {
+      title: 'Admin/MIS Officer',
+      subtitle: 'System configuration and reports',
+      email: 'admin@bank.com',
+      icon: Settings,
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
+    }
+  ];
+
+  const fillCredentials = (roleEmail: string) => {
+    setEmail(roleEmail);
+    setPassword('password123');
     setError('');
   };
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <img 
-              src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
-              alt="Ujjivan Small Finance Bank" 
-              className="h-16 w-auto mx-auto mb-6"
-            />
-            <h2 className="text-2xl font-bold text-slate-800">Reset Password</h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              Reset Password
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
               Enter your email to receive reset instructions
             </p>
           </div>
           
-          <Card className="shadow-lg border-0">
-            <CardContent className="p-6">
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <KeyRound size={20} />
+                Password Reset
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div>
-                  <Label htmlFor="resetEmail" className="text-slate-700">Email Address</Label>
+                  <Label htmlFor="resetEmail">Email Address</Label>
                   <Input
                     id="resetEmail"
                     type="email"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="mt-1"
                     required
                   />
                 </div>
@@ -140,10 +161,10 @@ const LoginForm = () => {
                   </Alert>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -159,9 +180,8 @@ const LoginForm = () => {
                     type="button" 
                     variant="outline"
                     onClick={() => setShowForgotPassword(false)}
-                    className="border-slate-300"
                   >
-                    Back
+                    Back to Login
                   </Button>
                 </div>
               </form>
@@ -173,138 +193,152 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
-      <div className="max-w-4xl w-full space-y-8">
-        {/* Header with Logo */}
-        <div className="text-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
           <img 
             src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
             alt="Ujjivan Small Finance Bank" 
             className="h-20 w-auto mx-auto mb-6"
           />
-          <h1 className="text-3xl font-bold text-slate-800">Banking CRM Portal</h1>
-          <p className="mt-2 text-slate-600">
-            Ujjivan Small Finance Bank Ltd.
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Banking CRM Portal
+          </h1>
+          <p className="text-lg text-gray-600">
+            Sales Force Automation Platform
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Role Cards */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                Select Your Role
+              </h2>
+              <div className="grid gap-4">
+                {roleCards.map((role, index) => {
+                  const IconComponent = role.icon;
+                  return (
+                    <Card 
+                      key={index}
+                      className={`cursor-pointer transition-all duration-200 ${role.color}`}
+                      onClick={() => fillCredentials(role.email)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-4">
+                          <div className={`p-3 rounded-full bg-white shadow-sm ${role.iconColor}`}>
+                            <IconComponent size={24} />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900">{role.title}</h3>
+                            <p className="text-sm text-gray-600">{role.subtitle}</p>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                          >
+                            Login
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* Login Form */}
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-slate-800 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <Building2 size={20} />
-                Employee Login
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="email" className="text-slate-700">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your official email"
-                    className="mt-1"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="password" className="text-slate-700">Password</Label>
-                  <div className="relative mt-1">
+          <div className="lg:sticky lg:top-8">
+            <Card className="shadow-2xl border-0">
+              <CardHeader className="bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-t-lg">
+                <CardTitle className="text-center text-xl">Sign In</CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <Label htmlFor="email" className="text-gray-700">Email Address</Label>
                     <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
                       required
                       disabled={isLoading}
+                      className="mt-1"
                     />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </Button>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="password" className="text-gray-700">Password</Label>
+                    <div className="relative mt-1">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        required
+                        disabled={isLoading}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                        disabled={isLoading}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-medium py-3"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </Button>
+
+                  <Button 
+                    type="button" 
+                    variant="link"
+                    className="w-full text-sm text-gray-600 hover:text-gray-800"
+                    onClick={() => setShowForgotPassword(true)}
+                  >
+                    Forgot your password?
+                  </Button>
+                </form>
+
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <div className="text-center text-sm text-gray-600 mb-4">
+                    Demo Credentials
+                  </div>
+                  <div className="text-center text-xs text-gray-500">
+                    Click any role card above or use password: <code className="bg-gray-100 px-1 rounded">password123</code>
                   </div>
                 </div>
-
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-
-                <Button 
-                  type="submit" 
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    'Sign In'
-                  )}
-                </Button>
-
-                <Button 
-                  type="button" 
-                  variant="link"
-                  className="w-full text-sm text-slate-600"
-                  onClick={() => setShowForgotPassword(true)}
-                >
-                  Forgot your password?
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* User Types */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Quick Access - Demo Accounts</h3>
-            <div className="space-y-3">
-              {userTypes.map((userType) => {
-                const IconComponent = userType.icon;
-                return (
-                  <Card 
-                    key={userType.id}
-                    className="cursor-pointer hover:shadow-md transition-shadow border border-slate-200 hover:border-blue-300"
-                    onClick={() => fillUserCredentials(userType.email)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-blue-50 rounded-lg">
-                          <IconComponent size={20} className="text-blue-600" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-slate-800">{userType.title}</h4>
-                          <p className="text-sm text-blue-600 font-medium">{userType.subtitle}</p>
-                          <p className="text-xs text-slate-500 mt-1">{userType.description}</p>
-                          <p className="text-xs text-slate-400 mt-1">{userType.email}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-            <div className="text-center">
-              <p className="text-xs text-slate-500">
-                Demo Password: <span className="font-mono bg-slate-100 px-1 rounded">ujjivan123</span>
-              </p>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
