@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -5,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   Target, 
@@ -17,7 +19,8 @@ import {
   Settings,
   UserPlus,
   BarChart3,
-  Calendar
+  Calendar,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -25,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
 import TeamSettingsModal from '@/components/team/TeamSettingsModal';
 import ViewDetailsModal from '@/components/team/ViewDetailsModal';
+import RuleManagement from '@/components/supervisor/RuleManagement';
 
 const SupervisorDashboard = () => {
   const { user } = useAuth();
@@ -114,8 +118,6 @@ const SupervisorDashboard = () => {
 
   // Unassigned leads requiring allocation (filter out already assigned leads)
   const unassignedLeads = allLeads.filter(lead => !lead.assignedToId && !assignedLeads.includes(lead.id)).slice(0, 8);
-
-  // Team performance data
   const teamPerformanceData = teamMembers.map(member => ({
     name: member.name.split(' ')[0],
     target: member.target,
@@ -163,11 +165,9 @@ const SupervisorDashboard = () => {
       return;
     }
 
-    // Get available team members (active and under capacity)
     const availableMembers = teamMembers
       .filter(m => m.status === 'active' && m.leads < m.capacity)
       .sort((a, b) => {
-        // Sort by available capacity (most available first)
         const aCapacity = a.capacity - a.leads;
         const bCapacity = b.capacity - b.leads;
         return bCapacity - aCapacity;
@@ -182,7 +182,6 @@ const SupervisorDashboard = () => {
       return;
     }
 
-    // Sort leads by priority (High > Medium > Low)
     const prioritySortedLeads = [...unassignedLeads].sort((a, b) => {
       const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
       return priorityOrder[b.priority as keyof typeof priorityOrder] - priorityOrder[a.priority as keyof typeof priorityOrder];
@@ -192,7 +191,6 @@ const SupervisorDashboard = () => {
     const updatedMembers = [...teamMembers];
     const newlyAssignedLeads: string[] = [];
 
-    // Assign leads to available members
     for (const lead of prioritySortedLeads) {
       const bestMember = availableMembers.find(member => member.leads < member.capacity);
 
@@ -204,17 +202,14 @@ const SupervisorDashboard = () => {
           memberName: bestMember.name
         });
 
-        // Update member's lead count
         const memberIndex = updatedMembers.findIndex(m => m.id === bestMember.id);
         if (memberIndex !== -1) {
           updatedMembers[memberIndex].leads++;
         }
 
-        // Update available member's count
         const availableMemberIndex = availableMembers.findIndex(m => m.id === bestMember.id);
         if (availableMemberIndex !== -1) {
           availableMembers[availableMemberIndex].leads++;
-          // Remove from available list if at capacity
           if (availableMembers[availableMemberIndex].leads >= availableMembers[availableMemberIndex].capacity) {
             availableMembers.splice(availableMemberIndex, 1);
           }
@@ -222,12 +217,10 @@ const SupervisorDashboard = () => {
 
         newlyAssignedLeads.push(lead.id);
 
-        // Break if no more available members
         if (availableMembers.length === 0) break;
       }
     }
 
-    // Update state
     setTeamMembers(updatedMembers);
     setAssignedLeads(prev => [...prev, ...newlyAssignedLeads]);
 
@@ -242,7 +235,6 @@ const SupervisorDashboard = () => {
     const lead = unassignedLeads.find(l => l.id === leadId);
     
     if (member && lead) {
-      // Check capacity
       if (member.leads >= member.capacity) {
         toast({
           title: "Capacity Exceeded",
@@ -252,14 +244,12 @@ const SupervisorDashboard = () => {
         return;
       }
 
-      // Update member's lead count
       setTeamMembers(prev => prev.map(m => 
         m.id === memberId 
           ? { ...m, leads: m.leads + 1 }
           : m
       ));
 
-      // Mark lead as assigned
       setAssignedLeads(prev => [...prev, leadId]);
 
       toast({
@@ -371,199 +361,216 @@ const SupervisorDashboard = () => {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi, index) => (
-          <DashboardCard
-            key={index}
-            title={kpi.title}
-            value={kpi.value}
-            subtitle={kpi.subtitle}
-            icon={kpi.icon}
-            trend={kpi.trend}
-          />
-        ))}
-      </div>
+      {/* Main Tabs */}
+      <Tabs defaultValue="dashboard" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="dashboard">Team Dashboard</TabsTrigger>
+          <TabsTrigger value="rules">
+            <Shield size={16} className="mr-2" />
+            Rule Management
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Team Performance & Lead Allocation */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Team Performance Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Performance Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={teamPerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
-                <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Unassigned Leads */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Lead Allocation Required</CardTitle>
-              <Button 
-                size="sm" 
-                className="bg-orange-600 hover:bg-orange-700"
-                onClick={handleAutoAssign}
-                disabled={unassignedLeads.length === 0}
-              >
-                Auto-Assign
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {unassignedLeads.length === 0 ? (
-              <div className="text-center py-8">
-                <UserCheck size={48} className="mx-auto text-green-500 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">All Leads Assigned!</h3>
-                <p className="text-gray-600">Great job! All leads have been assigned to team members.</p>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {unassignedLeads.map((lead, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium text-sm">{lead.name}</p>
-                      <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
-                      <Badge className={`text-xs mt-1 ${
-                        lead.priority === 'High' ? 'bg-red-100 text-red-800' :
-                        lead.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {lead.priority}
-                      </Badge>
-                    </div>
-                    <div className="flex space-x-2">
-                      <select 
-                        className="text-xs border rounded px-2 py-1"
-                        onChange={(e) => e.target.value && handleAssignLead(lead.id, e.target.value)}
-                        defaultValue=""
-                      >
-                        <option value="">Assign to...</option>
-                        {teamMembers.filter(m => m.status === 'active' && m.leads < m.capacity).map(member => (
-                          <option key={member.id} value={member.id}>
-                            {member.name} ({member.capacity - member.leads} slots)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Team Members Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Team Members</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {teamMembers.map((member) => (
-              <Card key={member.id} className="border">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-teal-100 text-teal-700">
-                          {member.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h4 className="font-medium">{member.name}</h4>
-                        <p className="text-sm text-gray-500">{member.role}</p>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(member.status)}>
-                      {member.status}
-                    </Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-600">Leads</p>
-                      <p className="font-medium">{member.leads}/{member.capacity}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Converted</p>
-                      <p className="font-medium">{member.converted}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Revenue</p>
-                      <p className={`font-medium ${getPerformanceColor(member.revenue, member.target)}`}>
-                        ₹{member.revenue}L / ₹{member.target}L
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Last Active</p>
-                      <p className="font-medium">{member.lastActivity}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex space-x-2 mt-3">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => handleViewDetails(member)}
-                    >
-                      View Details
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => handleAssignLeads(member)}
-                    >
-                      Assign Leads
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+        <TabsContent value="dashboard" className="space-y-6">
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {kpis.map((kpi, index) => (
+              <DashboardCard
+                key={index}
+                title={kpi.title}
+                value={kpi.value}
+                subtitle={kpi.subtitle}
+                icon={kpi.icon}
+                trend={kpi.trend}
+              />
             ))}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleGenerateReports}>
-          <CardContent className="p-6 text-center">
-            <BarChart3 size={32} className="mx-auto text-blue-600 mb-3" />
-            <h3 className="font-medium mb-2">Performance Reports</h3>
-            <p className="text-sm text-gray-600">Generate team performance analytics</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleScheduleReview}>
-          <CardContent className="p-6 text-center">
-            <Calendar size={32} className="mx-auto text-green-600 mb-3" />
-            <h3 className="font-medium mb-2">Schedule Review</h3>
-            <p className="text-sm text-gray-600">One-on-one team member reviews</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleSetTargets}>
-          <CardContent className="p-6 text-center">
-            <Award size={32} className="mx-auto text-purple-600 mb-3" />
-            <h3 className="font-medium mb-2">Set Targets</h3>
-            <p className="text-sm text-gray-600">Define goals and KPIs for team</p>
-          </CardContent>
-        </Card>
-      </div>
+          {/* Team Performance & Lead Allocation */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Team Performance Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Team Performance Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={teamPerformanceData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
+                    <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Unassigned Leads */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Lead Allocation Required</CardTitle>
+                  <Button 
+                    size="sm" 
+                    className="bg-orange-600 hover:bg-orange-700"
+                    onClick={handleAutoAssign}
+                    disabled={unassignedLeads.length === 0}
+                  >
+                    Auto-Assign
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {unassignedLeads.length === 0 ? (
+                  <div className="text-center py-8">
+                    <UserCheck size={48} className="mx-auto text-green-500 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">All Leads Assigned!</h3>
+                    <p className="text-gray-600">Great job! All leads have been assigned to team members.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {unassignedLeads.map((lead, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <p className="font-medium text-sm">{lead.name}</p>
+                          <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
+                          <Badge className={`text-xs mt-1 ${
+                            lead.priority === 'High' ? 'bg-red-100 text-red-800' :
+                            lead.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-blue-100 text-blue-800'
+                          }`}>
+                            {lead.priority}
+                          </Badge>
+                        </div>
+                        <div className="flex space-x-2">
+                          <select 
+                            className="text-xs border rounded px-2 py-1"
+                            onChange={(e) => e.target.value && handleAssignLead(lead.id, e.target.value)}
+                            defaultValue=""
+                          >
+                            <option value="">Assign to...</option>
+                            {teamMembers.filter(m => m.status === 'active' && m.leads < m.capacity).map(member => (
+                              <option key={member.id} value={member.id}>
+                                {member.name} ({member.capacity - member.leads} slots)
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Team Members Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Members</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {teamMembers.map((member) => (
+                  <Card key={member.id} className="border">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-teal-100 text-teal-700">
+                              {member.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-medium">{member.name}</h4>
+                            <p className="text-sm text-gray-500">{member.role}</p>
+                          </div>
+                        </div>
+                        <Badge className={getStatusColor(member.status)}>
+                          {member.status}
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-600">Leads</p>
+                          <p className="font-medium">{member.leads}/{member.capacity}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Converted</p>
+                          <p className="font-medium">{member.converted}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Revenue</p>
+                          <p className={`font-medium ${getPerformanceColor(member.revenue, member.target)}`}>
+                            ₹{member.revenue}L / ₹{member.target}L
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Last Active</p>
+                          <p className="font-medium">{member.lastActivity}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-2 mt-3">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => handleViewDetails(member)}
+                        >
+                          View Details
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => handleAssignLeads(member)}
+                        >
+                          Assign Leads
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleGenerateReports}>
+              <CardContent className="p-6 text-center">
+                <BarChart3 size={32} className="mx-auto text-blue-600 mb-3" />
+                <h3 className="font-medium mb-2">Performance Reports</h3>
+                <p className="text-sm text-gray-600">Generate team performance analytics</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleScheduleReview}>
+              <CardContent className="p-6 text-center">
+                <Calendar size={32} className="mx-auto text-green-600 mb-3" />
+                <h3 className="font-medium mb-2">Schedule Review</h3>
+                <p className="text-sm text-gray-600">One-on-one team member reviews</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={handleSetTargets}>
+              <CardContent className="p-6 text-center">
+                <Award size={32} className="mx-auto text-purple-600 mb-3" />
+                <h3 className="font-medium mb-2">Set Targets</h3>
+                <p className="text-sm text-gray-600">Define goals and KPIs for team</p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="rules">
+          <RuleManagement />
+        </TabsContent>
+      </Tabs>
 
       {/* Modals */}
       <AddTeamMemberModal 
