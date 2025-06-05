@@ -1,19 +1,18 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
-  updateUserRole: (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
+  switchRole: (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor') => void;
+  updateUserRole: (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with new role structure
+// Enhanced user data with Admin/MIS Officer removed
 const MOCK_USERS: User[] = [
   {
     id: '1',
@@ -46,14 +45,6 @@ const MOCK_USERS: User[] = [
     name: 'Vikash Kumar',
     role: 'relationship_manager',
     department: 'relationship',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '5',
-    email: 'admin@bank.com',
-    name: 'Deepak Singh',
-    role: 'admin_mis_officer',
-    department: 'admin',
     branch: 'Mumbai Central'
   }
 ];
@@ -135,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('sessionExpiry');
   };
 
-  const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
+  const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor') => {
     // Only supervisors can switch roles
     if (user && user.role === 'supervisor') {
       const updatedUser = { ...user, role };
@@ -144,8 +135,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateUserRole = (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
-    if (user?.role === 'supervisor' || user?.role === 'admin_mis_officer') {
+  const updateUserRole = (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor') => {
+    if (user?.role === 'supervisor') {
       const targetUser = MOCK_USERS.find(u => u.id === userId);
       if (targetUser) {
         targetUser.role = newRole;

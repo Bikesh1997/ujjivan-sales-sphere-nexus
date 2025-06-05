@@ -78,7 +78,6 @@ const Layout = ({ children }: LayoutProps) => {
       case 'inbound_contact_agent': return 'Inbound Contact Agent';
       case 'relationship_manager': return 'Relationship Manager';
       case 'supervisor': return 'Supervisor';
-      case 'admin_mis_officer': return 'Admin/MIS Officer';
       default: return role;
     }
   };
@@ -88,7 +87,6 @@ const Layout = ({ children }: LayoutProps) => {
       case 'field': return 'Field';
       case 'inbound': return 'Inbound';
       case 'relationship': return 'Relationship';
-      case 'admin': return 'Admin';
       default: return '';
     }
   };
@@ -98,17 +96,16 @@ const Layout = ({ children }: LayoutProps) => {
       { value: 'field_sales_officer', label: 'Field Sales Officer' },
       { value: 'inbound_contact_agent', label: 'Inbound Contact Agent' },
       { value: 'relationship_manager', label: 'Relationship Manager' },
-      { value: 'supervisor', label: 'Supervisor' },
-      { value: 'admin_mis_officer', label: 'Admin/MIS Officer' }
+      { value: 'supervisor', label: 'Supervisor' }
     ];
     return roles.filter(role => role.value !== user?.role);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Top Navigation - 100% width */}
+      <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Button

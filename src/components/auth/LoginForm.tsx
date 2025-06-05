@@ -14,8 +14,7 @@ import {
   MapPin, 
   Phone, 
   Users, 
-  Shield, 
-  Settings 
+  Shield
 } from 'lucide-react';
 
 const LoginForm = () => {
@@ -112,13 +111,6 @@ const LoginForm = () => {
       description: 'Team management and monitoring',
       icon: Shield,
       color: 'bg-orange-500 hover:bg-orange-600'
-    },
-    {
-      email: 'admin@bank.com',
-      name: 'Admin/MIS Officer',
-      description: 'System administration and reporting',
-      icon: Settings,
-      color: 'bg-red-500 hover:bg-red-600'
     }
   ];
 
@@ -211,7 +203,7 @@ const LoginForm = () => {
         </div>
 
         {/* Role-based Login Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-8">
           {userRoles.map((role) => {
             const Icon = role.icon;
             return (
