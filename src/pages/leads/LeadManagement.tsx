@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Filter, Search, Download, Upload, UserPlus, BarChart3 } from 'lucide-react';
+import { Plus, Upload, Download, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads, Lead } from '@/data/leadsData';
 import { useToast } from '@/hooks/use-toast';
@@ -48,22 +48,30 @@ const LeadManagement = () => {
 
   const userLeads = getUserLeads();
   
-  const handleAddLead = (leadData: Partial<Lead>) => {
+  const handleAddLead = (leadData: {
+    companyName: string;
+    contactName: string;
+    phone: string;
+    email: string;
+    source: string;
+    value: string;
+    priority: string;
+  }) => {
     const newLead: Lead = {
       id: (leads.length + 1).toString(),
-      name: leadData.name || '',
-      contact: leadData.contact || '',
+      name: leadData.companyName || '',
+      contact: leadData.contactName || '',
       phone: leadData.phone || '',
       email: leadData.email || '',
       value: leadData.value || '₹0L',
-      status: leadData.status || 'new',
-      priority: leadData.priority || 'medium',
-      source: leadData.source || 'Website',
-      assignedTo: leadData.assignedTo || user?.name || '',
-      assignedToId: leadData.assignedToId || user?.id || '',
+      status: 'new',
+      priority: leadData.priority as 'low' | 'medium' | 'high',
+      source: leadData.source as 'Website' | 'Referral' | 'Cold Call' | 'Social Media',
+      assignedTo: user?.name || '',
+      assignedToId: user?.id || '',
       lastContact: 'Just created',
-      nextFollowUp: leadData.nextFollowUp || new Date().toISOString().split('T')[0],
-      notes: leadData.notes || ''
+      nextFollowUp: new Date().toISOString().split('T')[0],
+      notes: ''
     };
     
     setLeads(prevLeads => [...prevLeads, newLead]);
@@ -75,24 +83,23 @@ const LeadManagement = () => {
     });
   };
 
-  const handleEditLead = (leadData: Partial<Lead>) => {
-    if (!selectedLead) return;
-    
+  const handleEditLead = (leadId: string, updatedData: Partial<Lead>) => {
     setLeads(prevLeads => prevLeads.map(lead => 
-      lead.id === selectedLead.id 
-        ? { ...lead, ...leadData }
+      lead.id === leadId 
+        ? { ...lead, ...updatedData }
         : lead
     ));
     
     setFilteredLeads(prevLeads => prevLeads.map(lead => 
-      lead.id === selectedLead.id 
-        ? { ...lead, ...leadData }
+      lead.id === leadId 
+        ? { ...lead, ...updatedData }
         : lead
     ));
 
+    const leadName = leads.find(l => l.id === leadId)?.name || 'Lead';
     toast({
       title: "Lead Updated",
-      description: `${selectedLead.name} has been updated successfully.`,
+      description: `${leadName} has been updated successfully.`,
     });
   };
 
@@ -172,7 +179,7 @@ const LeadManagement = () => {
       </div>
 
       {/* Stats Cards */}
-      <LeadStatsCards leads={userLeads} />
+      <LeadStatsCards leads={userLeads} userRole={user?.role} />
 
       {/* Main Content */}
       <Tabs defaultValue="list" className="space-y-6">
@@ -193,7 +200,6 @@ const LeadManagement = () => {
             </CardHeader>
             <CardContent>
               <LeadFilters
-                leads={userLeads}
                 filteredLeads={filteredLeads}
                 onFilterChange={setFilteredLeads}
                 searchTerm={searchTerm}
@@ -207,7 +213,6 @@ const LeadManagement = () => {
           {/* Bulk Actions */}
           {selectedLeads.length > 0 && (
             <BulkLeadActions
-              selectedCount={selectedLeads.length}
               onBulkAction={handleBulkAction}
               selectedLeads={selectedLeads}
             />
@@ -218,7 +223,6 @@ const LeadManagement = () => {
             <CardContent className="p-0">
               <LeadsTable
                 leads={filteredLeads}
-                selectedLeads={selectedLeads}
                 onSelectionChange={setSelectedLeads}
                 onEditLead={(lead) => {
                   setSelectedLead(lead);
@@ -279,11 +283,11 @@ const LeadManagement = () => {
 
           <LeadViewModal
             isOpen={showViewModal}
+            lead={selectedLead}
             onClose={() => {
               setShowViewModal(false);
               setSelectedLead(null);
             }}
-            lead={selectedLead}
           />
         </>
       )}

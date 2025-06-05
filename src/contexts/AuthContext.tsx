@@ -56,12 +56,16 @@ const MOCK_USERS: User[] = [
   }
 ];
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-  useEffect(() => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
     // Check for existing session with timeout
     const initAuth = async () => {
       try {
@@ -90,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
   }, []);
 
-  const login = async (credentials: LoginCredentials): Promise<boolean> => {
+  const login = React.useCallback(async (credentials: LoginCredentials): Promise<boolean> => {
     setIsLoading(true);
     
     try {
@@ -119,24 +123,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
       return false;
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = React.useCallback(() => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('user');
     localStorage.removeItem('sessionExpiry');
-  };
+  }, []);
 
-  const switchRole = (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
+  const switchRole = React.useCallback((role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
     }
-  };
+  }, [user]);
 
-  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
+  const updateUserRole = React.useCallback((userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
     if (user?.role === 'supervisor') {
       const targetUser = MOCK_USERS.find(u => u.id === userId);
       if (targetUser) {
@@ -148,35 +152,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     }
-  };
+  }, [user]);
 
-  const updateProfile = (updates: Partial<User>) => {
+  const updateProfile = React.useCallback((updates: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
     }
-  };
+  }, [user]);
 
-  const resetPassword = async (email: string): Promise<boolean> => {
+  const resetPassword = React.useCallback(async (email: string): Promise<boolean> => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     const userExists = MOCK_USERS.some(u => u.email === email);
     return userExists;
-  };
+  }, []);
+
+  const contextValue = React.useMemo(() => ({
+    user,
+    isAuthenticated,
+    isLoading,
+    login,
+    logout,
+    switchRole,
+    updateUserRole,
+    updateProfile,
+    resetPassword
+  }), [user, isAuthenticated, isLoading, login, logout, switchRole, updateUserRole, updateProfile, resetPassword]);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated,
-      isLoading,
-      login,
-      logout,
-      switchRole,
-      updateUserRole,
-      updateProfile,
-      resetPassword
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
