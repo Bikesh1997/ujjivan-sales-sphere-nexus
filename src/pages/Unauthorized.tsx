@@ -1,21 +1,21 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, Search } from 'lucide-react';
+import { ShieldX, Home } from 'lucide-react';
 
-const NotFound = () => {
+const Unauthorized = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="max-w-md w-full text-center">
         <CardHeader>
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <Search className="w-8 h-8 text-gray-400" />
+          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <ShieldX className="w-8 h-8 text-red-600" />
           </div>
-          <CardTitle className="text-2xl">Page Not Found</CardTitle>
+          <CardTitle className="text-2xl">Access Denied</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-gray-600">
-            The page you're looking for doesn't exist or has been moved.
+            You don't have permission to access this resource. Please contact your administrator if you believe this is an error.
           </p>
           <Button 
             onClick={() => window.location.href = '/'}
@@ -30,4 +30,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default Unauthorized;

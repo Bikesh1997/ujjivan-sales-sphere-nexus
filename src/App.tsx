@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
@@ -33,8 +34,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<NotFound />} />
         <Route 
           path="/rules" 
           element={
@@ -45,6 +44,8 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
