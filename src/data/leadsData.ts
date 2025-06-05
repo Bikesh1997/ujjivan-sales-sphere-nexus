@@ -1,111 +1,143 @@
 
-export interface Lead {
-  id: string;
-  name: string;
-  contact: string;
-  phone: string;
-  email: string;
-  value: string;
-  status: 'new' | 'qualified' | 'proposal' | 'negotiation' | 'converted';
-  priority: 'low' | 'medium' | 'high';
-  source: 'Website' | 'Referral' | 'Cold Call' | 'Social Media';
-  assignedTo: string;
-  assignedToId: string;
-  lastContact: string;
-  nextFollowUp: string;
-  notes: string;
-}
-
-// Function to format a number as currency
-export const formatCurrency = (amount: number, currency: string = '₹') => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
-
-export const allLeads: Lead[] = [
-  // First leads with assigned users
+export const allLeads = [
   {
-    id: '1',
-    name: 'Tech Solutions Pvt Ltd',
+    id: 'LEAD001',
+    name: 'Acme Corp',
     contact: 'Rajesh Kumar',
     phone: '+91 98765 43210',
-    email: 'rajesh@techsolutions.com',
-    value: '₹25L',
-    status: 'qualified',
-    priority: 'high',
-    source: 'Website',
+    email: 'rajesh@acmecorp.com',
+    status: 'new',
+    source: 'Website Forms',
+    value: '₹45L',
     assignedTo: 'Rahul Sharma',
     assignedToId: '1',
-    lastContact: '2 hours ago',
-    nextFollowUp: '2024-06-07',
-    notes: 'Interested in business loan for expansion'
+    lastContact: '2 days ago',
+    priority: 'High'
   },
   {
-    id: '2',
-    name: 'Manufacturing Co',
+    id: 'LEAD002',
+    name: 'Tech Solutions Ltd',
     contact: 'Priya Singh',
-    phone: '+91 98765 43211',
-    email: 'priya@manufacturing.com',
-    value: '₹45L',
-    status: 'proposal',
-    priority: 'high',
-    source: 'Referral',
+    phone: '+91 87654 32109',
+    email: 'priya@techsolutions.com',
+    status: 'qualified',
+    source: 'WhatsApp Business',
+    value: '₹32L',
     assignedTo: 'Anjali Patel',
     assignedToId: '3',
     lastContact: '1 day ago',
-    nextFollowUp: '2024-06-08',
-    notes: 'Equipment financing requirement'
+    priority: 'Medium'
   },
   {
-    id: '3',
-    name: 'Inbound Lead Corp',
-    contact: 'Ravi Verma',
-    phone: '+91 98765 43212',
-    email: 'ravi@inboundcorp.com',
-    value: '₹35L',
-    status: 'new',
-    priority: 'medium',
-    source: 'Cold Call',
+    id: 'LEAD003',
+    name: 'Global Enterprises',
+    contact: 'Amit Patel',
+    phone: '+91 76543 21098',
+    email: 'amit@globalent.com',
+    status: 'proposal',
+    source: 'Call Center',
+    value: '₹28L',
     assignedTo: 'Vikram Singh',
     assignedToId: '4',
-    lastContact: '3 hours ago',
-    nextFollowUp: '2024-06-09',
-    notes: 'Contacted via inbound center, interested in SME loan'
+    lastContact: '3 days ago',
+    priority: 'High'
   },
   {
-    id: '4',
-    name: 'Premium Investment Ltd',
-    contact: 'Sunita Agarwal',
-    phone: '+91 98765 43213',
-    email: 'sunita@premiuminvest.com',
-    value: '₹55L',
-    status: 'qualified',
-    priority: 'high',
-    source: 'Referral',
+    id: 'LEAD004',
+    name: 'Future Innovations',
+    contact: 'Sneha Reddy',
+    phone: '+91 65432 10987',
+    email: 'sneha@futureinno.com',
+    status: 'negotiation',
+    source: 'Website Forms',
+    value: '₹52L',
     assignedTo: 'Neha Gupta',
     assignedToId: '5',
-    lastContact: '1 hour ago',
-    nextFollowUp: '2024-06-06',
-    notes: 'High-value client looking for portfolio management services'
+    lastContact: '1 day ago',
+    priority: 'High'
   },
-  // Generate 250+ more leads with varied assignments
-  ...Array.from({ length: 250 }, (_, i) => ({
-    id: `${i + 5}`,
-    name: `Business ${i + 5}`,
-    contact: `Contact ${i + 5}`,
-    phone: `+91 ${String(9876543000 + i).slice(0, 5)} ${String(9876543000 + i).slice(5)}`,
-    email: `contact${i + 5}@business.com`,
-    value: `₹${Math.floor(Math.random() * 50) + 5}L`,
-    status: ['new', 'qualified', 'proposal', 'negotiation', 'converted'][Math.floor(Math.random() * 5)] as Lead['status'],
-    priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as Lead['priority'],
-    source: ['Website', 'Referral', 'Cold Call', 'Social Media'][Math.floor(Math.random() * 4)] as Lead['source'],
-    assignedTo: ['Rahul Sharma', 'Anjali Patel', 'Vikram Singh', 'Neha Gupta'][Math.floor(Math.random() * 4)],
-    assignedToId: ['1', '3', '4', '5'][Math.floor(Math.random() * 4)],
-    lastContact: ['1 hour ago', '2 hours ago', '1 day ago', '2 days ago'][Math.floor(Math.random() * 4)],
-    nextFollowUp: '2024-06-08',
-    notes: `Generated lead ${i + 5} notes`
-  }))
+  {
+    id: 'LEAD005',
+    name: 'Smart Systems',
+    contact: 'Arjun Mehta',
+    phone: '+91 54321 09876',
+    email: 'arjun@smartsys.com',
+    status: 'converted',
+    source: 'WhatsApp Business',
+    value: '₹38L',
+    assignedTo: 'Rahul Sharma',
+    assignedToId: '1',
+    lastContact: '5 days ago',
+    priority: 'Medium'
+  },
+  {
+    id: 'LEAD006',
+    name: 'Digital Dynamics',
+    contact: 'Kavya Sharma',
+    phone: '+91 43210 98765',
+    email: 'kavya@digitaldyn.com',
+    status: 'new',
+    source: 'Call Center',
+    value: '₹42L',
+    assignedTo: 'Anjali Patel',
+    assignedToId: '3',
+    lastContact: '4 days ago',
+    priority: 'Low'
+  },
+  {
+    id: 'LEAD007',
+    name: 'Modern Tech',
+    contact: 'Ravi Kumar',
+    phone: '+91 32109 87654',
+    email: 'ravi@moderntech.com',
+    status: 'qualified',
+    source: 'Website Forms',
+    value: '₹35L',
+    assignedTo: 'Vikram Singh',
+    assignedToId: '4',
+    lastContact: '2 days ago',
+    priority: 'Medium'
+  },
+  {
+    id: 'LEAD008',
+    name: 'Business Solutions',
+    contact: 'Pooja Gupta',
+    phone: '+91 21098 76543',
+    email: 'pooja@bizsol.com',
+    status: 'proposal',
+    source: 'WhatsApp Business',
+    value: '₹29L',
+    assignedTo: 'Neha Gupta',
+    assignedToId: '5',
+    lastContact: '1 week ago',
+    priority: 'High'
+  },
+  {
+    id: 'LEAD009',
+    name: 'Innovation Hub',
+    contact: 'Suresh Patel',
+    phone: '+91 10987 65432',
+    email: 'suresh@innohub.com',
+    status: 'lost',
+    source: 'Call Center',
+    value: '₹25L',
+    assignedTo: 'Rahul Sharma',
+    assignedToId: '1',
+    lastContact: '2 weeks ago',
+    priority: 'Low'
+  },
+  {
+    id: 'LEAD010',
+    name: 'NextGen Solutions',
+    contact: 'Deepika Singh',
+    phone: '+91 09876 54321',
+    email: 'deepika@nextgen.com',
+    status: 'converted',
+    source: 'Website Forms',
+    value: '₹48L',
+    assignedTo: 'Anjali Patel',
+    assignedToId: '3',
+    lastContact: '3 days ago',
+    priority: 'High'
+  }
 ];

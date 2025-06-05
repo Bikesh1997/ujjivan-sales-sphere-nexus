@@ -34,6 +34,10 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   
   const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(lead);
 
+  // Random business names for the call modal
+  const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
+  const randomBusinessName = businessNames[Math.floor(Math.random() * businessNames.length)];
+
   const handleView = () => {
     console.log('Viewing lead:', lead);
     setViewModalOpen(true);
@@ -87,7 +91,8 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
       />
 
       <CallInProgressModal 
-        contactName={lead.contact}
+        prospectName={lead.contact}
+        businessName={randomBusinessName}
         phoneNumber={lead.phone}
         isOpen={callInProgressOpen}
         onOpenChange={setCallInProgressOpen}

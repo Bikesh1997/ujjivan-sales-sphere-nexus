@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -50,16 +49,6 @@ const SmartNudges = () => {
         deadline: '15 days left'
       },
       {
-        id: '3',
-        title: 'Beat Plan Optimization',
-        description: `Visit customers in Bandra area today. ${overdueLeads.length + 3} high-value prospects within 2km radius.`,
-        type: 'route',
-        priority: 'Medium',
-        actionLabel: 'Plan Route',
-        navigationPath: '/geo-location',
-        count: overdueLeads.length + 3
-      },
-      {
         id: '4',
         title: 'Follow-up Required',
         description: `${overdueLeads.length} leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
@@ -82,6 +71,20 @@ const SmartNudges = () => {
         value: '₹12L'
       }
     ];
+
+    // Add Beat Plan Optimization for all users except Vikram Singh
+    if (user?.name !== 'Vikram Singh') {
+      baseNudges.splice(1, 0, {
+        id: '3',
+        title: 'Beat Plan Optimization',
+        description: `Visit customers in Bandra area today. ${overdueLeads.length + 3} high-value prospects within 2km radius.`,
+        type: 'route',
+        priority: 'Medium',
+        actionLabel: 'Plan Route',
+        navigationPath: '/geo-location',
+        count: overdueLeads.length + 3
+      });
+    }
 
     // Only show High-Value Portfolio Opportunity for Neha (Relationship Manager)
     if (user?.id === '5' && user?.name === 'Neha Gupta') {
