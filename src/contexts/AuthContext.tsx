@@ -5,37 +5,45 @@ import { User, AuthState, LoginCredentials } from '@/types/auth';
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'sales_executive' | 'supervisor') => void;
-  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor') => void;
+  switchRole: (role: 'field_sales_officer' | 'inbound_agent' | 'relationship_manager' | 'branch_supervisor') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details
+// Mock users for the 4 roles
 const MOCK_USERS: User[] = [
   {
     id: '1',
-    email: 'sales@bank.com',
+    email: 'fso@ujjivan.com',
     name: 'Rahul Sharma',
-    role: 'sales_executive',
-    department: 'field',
+    role: 'field_sales_officer',
+    department: 'Field Sales',
     branch: 'Mumbai Central'
   },
   {
     id: '2',
-    email: 'supervisor@bank.com',
-    name: 'Priya Manager',
-    role: 'supervisor',
+    email: 'agent@ujjivan.com',
+    name: 'Priya Patel',
+    role: 'inbound_agent',
+    department: 'Contact Center',
     branch: 'Mumbai Central'
   },
   {
     id: '3',
-    email: 'sales2@bank.com',
-    name: 'Anjali Patel',
-    role: 'sales_executive',
-    department: 'inbound',
+    email: 'rm@ujjivan.com',
+    name: 'Amit Kumar',
+    role: 'relationship_manager',
+    department: 'Relationship Management',
+    branch: 'Mumbai Central'
+  },
+  {
+    id: '4',
+    email: 'supervisor@ujjivan.com',
+    name: 'Sunita Manager',
+    role: 'branch_supervisor',
+    department: 'Management',
     branch: 'Mumbai Central'
   }
 ];
@@ -46,7 +54,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session with timeout
     const initAuth = async () => {
       try {
         const savedUser = localStorage.getItem('user');
@@ -58,7 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(JSON.parse(savedUser));
             setIsAuthenticated(true);
           } else {
-            // Session expired
             localStorage.removeItem('user');
             localStorage.removeItem('sessionExpiry');
           }
@@ -78,16 +84,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
       
-      if (foundUser && credentials.password === 'password123') {
+      if (foundUser && credentials.password === 'ujjivan123') {
         setUser(foundUser);
         setIsAuthenticated(true);
         
-        // Set session expiry (24 hours)
         const expiry = new Date().getTime() + (24 * 60 * 60 * 1000);
         localStorage.setItem('user', JSON.stringify(foundUser));
         localStorage.setItem('sessionExpiry', expiry.toString());
@@ -112,25 +116,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('sessionExpiry');
   };
 
-  const switchRole = (role: 'sales_executive' | 'supervisor') => {
+  const switchRole = (role: 'field_sales_officer' | 'inbound_agent' | 'relationship_manager' | 'branch_supervisor') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
-  };
-
-  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor') => {
-    if (user?.role === 'supervisor') {
-      const targetUser = MOCK_USERS.find(u => u.id === userId);
-      if (targetUser) {
-        targetUser.role = newRole;
-        if (user.id === userId) {
-          const updatedUser = { ...user, role: newRole };
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-        }
-      }
     }
   };
 
@@ -143,7 +133,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (email: string): Promise<boolean> => {
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     const userExists = MOCK_USERS.some(u => u.email === email);
     return userExists;
@@ -157,7 +146,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout,
       switchRole,
-      updateUserRole,
       updateProfile,
       resetPassword
     }}>
