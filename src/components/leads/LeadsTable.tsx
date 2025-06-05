@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -9,7 +8,6 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LeadActionsMenu from './LeadActionsMenu';
 
@@ -68,7 +66,7 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
 
   const handleViewCustomer = (lead: Lead) => {
     // Create a customer key based on the lead's contact name
-    const customerKey = lead.contact.toLowerCase().replace(' ', '-');
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
     navigate(`/customer-360?customer=${customerKey}`);
   };
 
@@ -132,8 +130,7 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
                   variant="outline"
                   onClick={() => handleViewCustomer(lead)}
                 >
-                  <Eye size={14} className="mr-1" />
-                  View
+                  View Customer
                 </Button>
                 <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
               </div>

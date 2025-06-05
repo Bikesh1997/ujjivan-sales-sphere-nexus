@@ -45,7 +45,7 @@ const Customer360 = () => {
 
   // Create customer data from leads
   const createCustomerFromLead = (lead: any) => {
-    const customerKey = lead.contact.toLowerCase().replace(' ', '-');
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
     return {
       key: customerKey,
       name: lead.contact,
@@ -58,6 +58,7 @@ const Customer360 = () => {
       address: 'Address not available',
       joinDate: '01 Jan 2024',
       lastContact: lead.lastContact,
+      lastInteraction: lead.lastContact,
       riskScore: 'Low',
       products: [
         { type: 'Savings Account', balance: '₹1.5L', status: 'Active' },
@@ -227,9 +228,9 @@ const Customer360 = () => {
   // Combine static customer data with leads data
   const customerData = { ...staticCustomerData };
   
-  // Add customers from leads
+  // Add customers from leads - ensure all leads are included
   allLeads.forEach(lead => {
-    const customerKey = lead.contact.toLowerCase().replace(' ', '-');
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
     if (!customerData[customerKey]) {
       customerData[customerKey] = createCustomerFromLead(lead);
     }

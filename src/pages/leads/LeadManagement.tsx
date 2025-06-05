@@ -220,7 +220,7 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
-        isOpen={isAddModalOpen}
+        open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
