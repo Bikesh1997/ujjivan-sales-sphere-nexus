@@ -61,16 +61,20 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor') => {
+  const directLogin = (userType: 'fso' | 'inbound' | 'rm' | 'supervisor') => {
     const credentials = {
-      sales: { email: 'sales@bank.com', password: 'password123' },
-      sales2: { email: 'sales2@bank.com', password: 'password123' },
+      fso: { email: 'fso@bank.com', password: 'password123' },
+      inbound: { email: 'inbound@bank.com', password: 'password123' },
+      rm: { email: 'rm@bank.com', password: 'password123' },
       supervisor: { email: 'supervisor@bank.com', password: 'password123' }
     };
     
     setEmail(credentials[userType].email);
     setPassword(credentials[userType].password);
     setError('');
+    
+    // Auto-login for the selected user type
+    login(credentials[userType]);
   };
 
   if (showForgotPassword) {
@@ -158,10 +162,69 @@ const LoginForm = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Select Your Role</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-3 mb-6">
+              <Button 
+                variant="outline" 
+                onClick={() => directLogin('fso')}
+                className="w-full text-left justify-start"
+                disabled={isLoading}
+              >
+                <div>
+                  <div className="font-medium">Field Sales Officer</div>
+                  <div className="text-xs text-gray-500">Beat planning & customer visits</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={() => directLogin('inbound')}
+                className="w-full text-left justify-start"
+                disabled={isLoading}
+              >
+                <div>
+                  <div className="font-medium">Inbound Contact Agent</div>
+                  <div className="text-xs text-gray-500">Lead management & customer support</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={() => directLogin('rm')}
+                className="w-full text-left justify-start"
+                disabled={isLoading}
+              >
+                <div>
+                  <div className="font-medium">Relationship Manager</div>
+                  <div className="text-xs text-gray-500">Portfolio & client management</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={() => directLogin('supervisor')}
+                className="w-full text-left justify-start"
+                disabled={isLoading}
+              >
+                <div>
+                  <div className="font-medium">Supervisor</div>
+                  <div className="text-xs text-gray-500">Team management & monitoring</div>
+                </div>
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-muted-foreground">Or login manually</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4 mt-6">
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -231,37 +294,8 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            <div className="mt-6 space-y-3">
-              <div className="text-center text-sm text-gray-600 mb-3">
-                Demo Accounts:
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('sales')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Sales Executive Demo (Rahul)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('sales2')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Sales Executive Demo (Anjali)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('supervisor')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Supervisor Demo
-              </Button>
-              <div className="text-center text-xs text-gray-500 mt-2">
-                Password: password123
-              </div>
+            <div className="text-center text-xs text-gray-500 mt-4">
+              Default password for all demo accounts: password123
             </div>
           </CardContent>
         </Card>

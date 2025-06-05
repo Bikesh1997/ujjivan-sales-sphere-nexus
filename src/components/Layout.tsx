@@ -43,8 +43,8 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const { user, logout, switchRole } = useAuth();
-  const { getNavigationItems } = useRoleFeatures();
+  const { user, logout, switchRole, canSwitchRoles } = useAuth();
+  const { getNavigationItems, canAccessFeature } = useRoleFeatures();
 
   // Icon mapping
   const iconMap = {
@@ -65,10 +65,37 @@ const Layout = ({ children }: LayoutProps) => {
     Settings: Settings
   };
 
-  const navigationItems = getNavigationItems().map(item => ({
-    ...item,
-    icon: iconMap[item.icon as keyof typeof iconMap] || Home
-  }));
+  // Filter navigation items based on permissions
+  const navigationItems = getNavigationItems()
+    .filter(item => {
+      // Extract feature ID from path
+      const featureMap: { [key: string]: string } = {
+        '/': 'dashboard',
+        '/funnel': 'sales_funnel',
+        '/leads': 'my_leads',
+        '/tasks': 'my_tasks',
+        '/customers': 'customer_360',
+        '/geo-location': 'geo_location',
+        '/executive-dashboard': 'executive_dashboard',
+        '/customer-analytics': 'customer_analytics',
+        '/kpa-management': 'kpa_management',
+        '/risk-management': 'risk_management',
+        '/portfolio': 'portfolio_management',
+        '/team-management': 'team_management',
+        '/lead-allocation': 'lead_allocation',
+        '/team-tasks': 'team_tasks',
+        '/team-performance': 'team_performance',
+        '/territory-management': 'territory_management',
+        '/reports': 'reports'
+      };
+      
+      const featureId = featureMap[item.href];
+      return featureId ? canAccessFeature(featureId) : true;
+    })
+    .map(item => ({
+      ...item,
+      icon: iconMap[item.icon as keyof typeof iconMap] || Home
+    }));
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -107,8 +134,8 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Button
@@ -159,15 +186,22 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  {getRoleOptions().map(role => (
-                    <DropdownMenuItem 
-                      key={role.value}
-                      onClick={() => switchRole(role.value as any)}
-                    >
-                      Switch to {role.label}
-                    </DropdownMenuItem>
-                  ))}
+                  
+                  {/* Role switching only for supervisors */}
+                  {canSwitchRoles && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {getRoleOptions().map(role => (
+                        <DropdownMenuItem 
+                          key={role.value}
+                          onClick={() => switchRole(role.value as any)}
+                        >
+                          Switch to {role.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </>
+                  )}
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
