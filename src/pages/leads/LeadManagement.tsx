@@ -172,7 +172,7 @@ const LeadManagement = () => {
         <CardContent className="p-6">
           <LeadFilters
             searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+            onSearchTermChange={setSearchTerm}
             filters={filters}
             onFiltersChange={setFilters}
           />
@@ -182,7 +182,7 @@ const LeadManagement = () => {
       {/* Bulk Actions */}
       {selectedLeads.length > 0 && (
         <BulkLeadActions
-          selectedLeads={selectedLeads.length}
+          selectedLeadsCount={selectedLeads.length}
           onClearSelection={() => setSelectedLeads([])}
           onBulkAction={(action) => {
             console.log('Bulk action:', action, selectedLeads);
@@ -203,7 +203,7 @@ const LeadManagement = () => {
         <CardContent>
           <LeadsTable
             leads={currentLeads}
-            selectedLeads={selectedLeads}
+            selectedLeadIds={selectedLeads}
             onLeadSelect={(leadId) => {
               setSelectedLeads(prev => 
                 prev.includes(leadId) 
@@ -238,8 +238,8 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
 

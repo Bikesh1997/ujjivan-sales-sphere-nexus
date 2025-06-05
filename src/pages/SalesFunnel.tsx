@@ -29,8 +29,8 @@ const SalesFunnel = () => {
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
 
-  // Check if current user is Anjali Patel (assuming she has the prospect_manager role)
-  const isDragDropEnabled = user?.name === 'Anjali Patel';
+  // Check if current user has drag and drop enabled (Vikram Singh, Rahul Sharma, Neha Gupta)
+  const isDragDropEnabled = user?.name === 'Vikram Singh' || user?.name === 'Rahul Sharma' || user?.name === 'Neha Gupta';
 
   const funnelData = [
     { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
