@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -85,44 +86,44 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Top Navigation - Using bank colors */}
+      <nav className="bg-gradient-to-r from-emerald-800 to-emerald-700 shadow-lg border-b border-emerald-600">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden mr-2"
+                className="lg:hidden mr-2 text-white hover:bg-emerald-700"
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <img 
                   src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
                   alt="Ujjivan Small Finance Bank" 
-                  className="h-10 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-emerald-100">
                 Branch: {user?.branch}
               </div>
               
               {/* Role Badge */}
-              <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+              <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 border-emerald-200">
                 {getRoleDisplay(user?.role || '')}
                 {user?.department && ` - ${getDepartmentDisplay(user.department)}`}
               </Badge>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
+                  <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-emerald-700">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-teal-100 text-teal-700">
+                      <AvatarFallback className="bg-emerald-100 text-emerald-700">
                         {user?.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
@@ -130,7 +131,7 @@ const Layout = ({ children }: LayoutProps) => {
                     <ChevronDown size={16} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200">
                   <div className="px-2 py-2">
                     <p className="text-sm font-medium">{user?.name}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
@@ -171,7 +172,7 @@ const Layout = ({ children }: LayoutProps) => {
                     onClick={() => setSidebarOpen(false)}
                     className={`${
                       isActive(item.href)
-                        ? 'bg-teal-50 text-teal-700 border-r-2 border-teal-500'
+                        ? 'bg-emerald-50 text-emerald-700 border-r-2 border-emerald-500'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
                   >

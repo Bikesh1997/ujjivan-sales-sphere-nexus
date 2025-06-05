@@ -78,40 +78,40 @@ const LoginForm = () => {
       subtitle: 'Beat planning and customer visits',
       email: 'fso@bank.com',
       icon: MapPin,
-      color: 'border-blue-200 hover:border-blue-400 bg-blue-50',
-      iconColor: 'text-blue-600'
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
     },
     {
       title: 'Inbound Contact Agent',
       subtitle: 'Customer inquiries and lead verification',
       email: 'inbound@bank.com',
       icon: Phone,
-      color: 'border-green-200 hover:border-green-400 bg-green-50',
-      iconColor: 'text-green-600'
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
     },
     {
       title: 'Relationship Manager',
       subtitle: 'Portfolio and relationship management',
       email: 'rm@bank.com',
       icon: TrendingUp,
-      color: 'border-purple-200 hover:border-purple-400 bg-purple-50',
-      iconColor: 'text-purple-600'
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
     },
     {
       title: 'Supervisor',
       subtitle: 'Team management and monitoring',
       email: 'supervisor@bank.com',
       icon: BarChart3,
-      color: 'border-orange-200 hover:border-orange-400 bg-orange-50',
-      iconColor: 'text-orange-600'
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
     },
     {
       title: 'Admin/MIS Officer',
       subtitle: 'System configuration and reports',
       email: 'admin@bank.com',
       icon: Settings,
-      color: 'border-red-200 hover:border-red-400 bg-red-50',
-      iconColor: 'text-red-600'
+      color: 'border-slate-200 hover:border-emerald-300 bg-slate-50 hover:bg-emerald-50',
+      iconColor: 'text-emerald-600'
     }
   ];
 
@@ -123,7 +123,7 @@ const LoginForm = () => {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-teal-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold text-gray-900">
@@ -164,7 +164,7 @@ const LoginForm = () => {
                 <div className="flex gap-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -193,14 +193,14 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <img 
             src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
             alt="Ujjivan Small Finance Bank" 
-            className="h-16 w-auto mx-auto mb-6"
+            className="h-20 w-auto mx-auto mb-6"
           />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Banking CRM Portal
@@ -238,7 +238,7 @@ const LoginForm = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            className="text-xs"
+                            className="text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50"
                           >
                             Login
                           </Button>
@@ -254,7 +254,7 @@ const LoginForm = () => {
           {/* Login Form */}
           <div className="lg:sticky lg:top-8">
             <Card className="shadow-2xl border-0">
-              <CardHeader className="bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-t-lg">
+              <CardHeader className="bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-t-lg">
                 <CardTitle className="text-center text-xl">Sign In</CardTitle>
               </CardHeader>
               <CardContent className="p-8">
@@ -306,7 +306,7 @@ const LoginForm = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-medium py-3"
+                    className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-medium py-3"
                     disabled={isLoading}
                   >
                     {isLoading ? (

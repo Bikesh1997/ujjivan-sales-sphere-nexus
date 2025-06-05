@@ -1,3 +1,4 @@
+
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -21,7 +22,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'beat_planning',
     name: 'Beat Planning',
-    path: '/beat-planning',
+    path: '/geo-location',
     icon: 'MapPin',
     roles: ['field_sales_officer'],
     description: 'Plan customer visits and routes'
@@ -29,7 +30,7 @@ export const FEATURES: Feature[] = [
   {
     id: 'customer_visits',
     name: 'Customer Visits',
-    path: '/customer-visits',
+    path: '/customers',
     icon: 'UserPlus',
     roles: ['field_sales_officer'],
     description: 'Track customer interactions'
@@ -54,16 +55,16 @@ export const FEATURES: Feature[] = [
   },
   {
     id: 'lead_verification',
-    name: 'Lead Verification',
-    path: '/lead-verification',
+    name: 'Lead Management',
+    path: '/leads',
     icon: 'Shield',
     roles: ['inbound_contact_agent'],
     description: 'Verify and process leads'
   },
   {
     id: 'call_management',
-    name: 'Call Management',
-    path: '/call-management',
+    name: 'Tasks',
+    path: '/tasks',
     icon: 'Phone',
     roles: ['inbound_contact_agent'],
     description: 'Log calls and interactions'
@@ -96,8 +97,8 @@ export const FEATURES: Feature[] = [
   },
   {
     id: 'cross_sell',
-    name: 'Cross-Sell Opportunities',
-    path: '/cross-sell',
+    name: 'Reports',
+    path: '/reports',
     icon: 'TrendingUp',
     roles: ['relationship_manager'],
     description: 'Identify upsell opportunities'
@@ -129,12 +130,12 @@ export const FEATURES: Feature[] = [
     description: 'Monitor team performance'
   },
   {
-    id: 'live_tracking',
-    name: 'Live Tracking',
-    path: '/live-tracking',
-    icon: 'MapPin',
+    id: 'reports_supervisor',
+    name: 'Reports',
+    path: '/reports',
+    icon: 'Activity',
     roles: ['supervisor'],
-    description: 'Real-time field team tracking'
+    description: 'Generate team reports'
   },
 
   // Admin/MIS Officer Features
@@ -147,12 +148,12 @@ export const FEATURES: Feature[] = [
     description: 'System administration overview'
   },
   {
-    id: 'system_config',
-    name: 'System Configuration',
-    path: '/system-config',
-    icon: 'Settings',
+    id: 'user_management',
+    name: 'User Management',
+    path: '/team-management',
+    icon: 'Users',
     roles: ['admin_mis_officer'],
-    description: 'Configure system rules and settings'
+    description: 'Manage system users'
   },
   {
     id: 'reports_admin',
@@ -163,12 +164,12 @@ export const FEATURES: Feature[] = [
     description: 'Generate system reports'
   },
   {
-    id: 'user_management',
-    name: 'User Management',
-    path: '/user-management',
-    icon: 'Users',
+    id: 'system_config',
+    name: 'System Configuration',
+    path: '/team-performance',
+    icon: 'Settings',
     roles: ['admin_mis_officer'],
-    description: 'Manage system users'
+    description: 'Configure system rules and settings'
   }
 ];
 
@@ -196,7 +197,9 @@ export const getIconName = (iconName: string) => {
     'Activity': 'Activity',
     'Target': 'Target',
     'PieChart': 'PieChart',
-    'Shield': 'Shield'
+    'Shield': 'Shield',
+    'Settings': 'Settings',
+    'Phone': 'Phone'
   };
   return iconMap[iconName] || 'Home';
 };
