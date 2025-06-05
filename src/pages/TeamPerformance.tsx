@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -164,33 +163,12 @@ const TeamPerformance = () => {
         ))}
       </div>
 
-      <Tabs defaultValue="individual" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="individual">Individual Performance</TabsTrigger>
+      <Tabs defaultValue="trends" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="trends">Monthly Trends</TabsTrigger>
           <TabsTrigger value="products">Product Performance</TabsTrigger>
           <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="individual" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Individual Performance Comparison</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={teamPerformanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
-                  <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="trends" className="space-y-6">
           <Card>
