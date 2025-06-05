@@ -10,13 +10,13 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
-  // Sales Executive Features
+  // Field Sales Officer Features
   {
     id: 'dashboard',
     name: 'My Dashboard',
     path: '/',
     icon: 'Home',
-    roles: ['sales_executive'],
+    roles: ['field_sales_officer'],
     description: 'Personal performance dashboard'
   },
   {
@@ -24,7 +24,7 @@ export const FEATURES: Feature[] = [
     name: 'My Leads',
     path: '/leads',
     icon: 'UserPlus',
-    roles: ['sales_executive'],
+    roles: ['field_sales_officer'],
     description: 'Manage assigned leads'
   },
   {
@@ -32,7 +32,7 @@ export const FEATURES: Feature[] = [
     name: 'My Tasks',
     path: '/tasks',
     icon: 'ClipboardList',
-    roles: ['sales_executive'],
+    roles: ['field_sales_officer'],
     description: 'Personal task management'
   },
   {
@@ -40,27 +40,71 @@ export const FEATURES: Feature[] = [
     name: 'Customer 360',
     path: '/customers',
     icon: 'Users',
-    roles: ['sales_executive'],
+    roles: ['field_sales_officer', 'relationship_manager'],
     description: 'Customer relationship management'
-  },
-  {
-    id: 'geo_location',
-    name: 'Geo Tracking',
-    path: '/geo-location',
-    icon: 'MapPin',
-    roles: ['sales_executive'],
-    description: 'Location tracking and beat planning'
   },
   {
     id: 'sales_funnel',
     name: 'My Pipeline',
     path: '/funnel',
     icon: 'BarChart3',
-    roles: ['sales_executive'],
+    roles: ['field_sales_officer', 'relationship_manager'],
     description: 'Personal sales pipeline'
   },
 
-  // Supervisor Features
+  // Inbound Contact Agent Features
+  {
+    id: 'inbound_dashboard',
+    name: 'Contact Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['inbound_contact_agent'],
+    description: 'Inbound call management dashboard'
+  },
+  {
+    id: 'inbound_leads',
+    name: 'Inbound Leads',
+    path: '/leads',
+    icon: 'UserPlus',
+    roles: ['inbound_contact_agent'],
+    description: 'Handle incoming lead inquiries'
+  },
+  {
+    id: 'call_management',
+    name: 'Call Management',
+    path: '/tasks',
+    icon: 'ClipboardList',
+    roles: ['inbound_contact_agent'],
+    description: 'Manage inbound calls and follow-ups'
+  },
+
+  // Relationship Manager Features
+  {
+    id: 'rm_dashboard',
+    name: 'RM Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['relationship_manager'],
+    description: 'Relationship management dashboard'
+  },
+  {
+    id: 'portfolio_leads',
+    name: 'Portfolio Leads',
+    path: '/leads',
+    icon: 'UserPlus',
+    roles: ['relationship_manager'],
+    description: 'Manage high-value client leads'
+  },
+  {
+    id: 'relationship_tasks',
+    name: 'Client Tasks',
+    path: '/tasks',
+    icon: 'ClipboardList',
+    roles: ['relationship_manager'],
+    description: 'Client relationship activities'
+  },
+
+  // Supervisor Features (with geo tracking restriction)
   {
     id: 'supervisor_dashboard',
     name: 'Team Dashboard',
@@ -94,6 +138,14 @@ export const FEATURES: Feature[] = [
     description: 'Monitor team task progress'
   },
   {
+    id: 'geo_location',
+    name: 'Geo Tracking',
+    path: '/geo-location',
+    icon: 'MapPin',
+    roles: ['supervisor'],
+    description: 'Location tracking and geo-fencing (Supervisor only)'
+  },
+  {
     id: 'team_performance',
     name: 'Performance Analytics',
     path: '/team-performance',
@@ -116,48 +168,6 @@ export const FEATURES: Feature[] = [
     icon: 'BarChart3',
     roles: ['supervisor'],
     description: 'Generate team reports'
-  },
-  
-  // Executive Level Features (both roles with different access levels)
-  {
-    id: 'executive_dashboard',
-    name: 'Executive Dashboard',
-    path: '/executive-dashboard',
-    icon: 'TrendingUp',
-    roles: ['supervisor'],
-    description: 'High-level performance metrics'
-  },
-  {
-    id: 'customer_analytics',
-    name: 'Customer Analytics',
-    path: '/customer-analytics',
-    icon: 'Activity',
-    roles: ['supervisor'],
-    description: 'Customer behavior analysis'
-  },
-  {
-    id: 'kpa_management',
-    name: 'KPA Management',
-    path: '/kpa-management',
-    icon: 'Target',
-    roles: ['supervisor'],
-    description: 'Key performance area management'
-  },
-  {
-    id: 'portfolio_management',
-    name: 'Portfolio Management',
-    path: '/portfolio',
-    icon: 'PieChart',
-    roles: ['supervisor'],
-    description: 'Portfolio oversight'
-  },
-  {
-    id: 'risk_management',
-    name: 'Risk Management',
-    path: '/risk-management',
-    icon: 'Shield',
-    roles: ['supervisor'],
-    description: 'Risk assessment and management'
   }
 ];
 

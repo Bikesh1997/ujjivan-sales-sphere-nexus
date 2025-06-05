@@ -65,7 +65,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
-      case 'sales_executive': return 'Sales Executive';
+      case 'field_sales_officer': return 'Field Sales Officer';
+      case 'inbound_contact_agent': return 'Inbound Contact Agent';
+      case 'relationship_manager': return 'Relationship Manager';
       case 'supervisor': return 'Supervisor';
       default: return role;
     }
@@ -95,7 +97,8 @@ const Layout = ({ children }: LayoutProps) => {
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-start">
+              {/* Left-aligned logo */}
+              <div className="flex items-center">
                 <img 
                   src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
                   alt="Ujjivan Small Finance Bank" 
@@ -137,9 +140,9 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
+                    onClick={() => switchRole(user?.role === 'field_sales_officer' ? 'supervisor' : 'field_sales_officer')}
                   >
-                    Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
+                    Switch Role
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">

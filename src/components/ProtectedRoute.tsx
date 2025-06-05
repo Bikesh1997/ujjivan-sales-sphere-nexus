@@ -9,7 +9,7 @@ import { ShieldX, Home } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: 'sales_executive' | 'supervisor';
+  requiredRole?: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor';
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
@@ -38,12 +38,12 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
               You don't have permission to access this page. 
               {requiredRole && (
                 <span className="block mt-1 text-sm">
-                  Required role: <span className="font-medium">{requiredRole.replace('_', ' ')}</span>
+                  Required role: <span className="font-medium">{requiredRole.replace(/_/g, ' ')}</span>
                 </span>
               )}
               {user?.role && (
                 <span className="block mt-1 text-sm">
-                  Your role: <span className="font-medium">{user.role.replace('_', ' ')}</span>
+                  Your role: <span className="font-medium">{user.role.replace(/_/g, ' ')}</span>
                 </span>
               )}
             </p>
