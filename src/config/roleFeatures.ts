@@ -1,4 +1,3 @@
-
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -9,7 +8,7 @@ export interface Feature {
   description: string;
 }
 
-export const FEATURES: Feature[] = [
+export const features: Feature[] = [
   // Sales Executive Features
   {
     id: 'dashboard',
@@ -158,17 +157,25 @@ export const FEATURES: Feature[] = [
     icon: 'Shield',
     roles: ['supervisor'],
     description: 'Risk assessment and management'
+  },
+  {
+    id: 'rules',
+    name: 'Rules',
+    description: 'Manage lead assignment and prioritization rules',
+    path: '/rules',
+    icon: 'Shield',
+    roles: ['supervisor']
   }
 ];
 
 // Get features for a specific role
 export const getFeaturesForRole = (role: string): Feature[] => {
-  return FEATURES.filter(feature => feature.roles.includes(role));
+  return features.filter(feature => feature.roles.includes(role));
 };
 
 // Check if a role has access to a feature
 export const hasFeatureAccess = (role: string, featureId: string): boolean => {
-  const feature = FEATURES.find(f => f.id === featureId);
+  const feature = features.find(f => f.id === featureId);
   return feature ? feature.roles.includes(role) : false;
 };
 
