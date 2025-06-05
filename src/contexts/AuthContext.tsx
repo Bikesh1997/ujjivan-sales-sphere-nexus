@@ -1,11 +1,12 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'sales_executive' | 'supervisor' | 'field_manager' | 'relationship_manager') => void;
-  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'field_manager' | 'relationship_manager') => void;
+  switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
+  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
@@ -39,10 +40,10 @@ const MOCK_USERS: User[] = [
   },
   {
     id: '4',
-    email: 'field@bank.com',
+    email: 'inbound@bank.com',
     name: 'Vikram Singh',
-    role: 'field_manager',
-    department: 'field',
+    role: 'inbound_agent',
+    department: 'inbound',
     branch: 'Mumbai Central'
   },
   {
@@ -127,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('sessionExpiry');
   };
 
-  const switchRole = (role: 'sales_executive' | 'supervisor' | 'field_manager' | 'relationship_manager') => {
+  const switchRole = (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
@@ -135,7 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor' | 'field_manager' | 'relationship_manager') => {
+  const updateUserRole = (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
     if (user?.role === 'supervisor') {
       const targetUser = MOCK_USERS.find(u => u.id === userId);
       if (targetUser) {

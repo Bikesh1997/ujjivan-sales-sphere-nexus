@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,63 +34,74 @@ const SmartNudges = () => {
   const overdueLeads = userLeads.filter(lead => lead.lastContact.includes('days ago') || lead.lastContact.includes('week ago'));
   const highValueProspects = userLeads.filter(lead => parseFloat(lead.value.replace('₹', '').replace('L', '')) > 30);
 
-  const nudges: Nudge[] = [
-    {
-      id: '1',
-      title: 'High-Value Portfolio Opportunity',
-      description: `You have ${highValueProspects.length} senior citizens eligible for FD products. Average ticket size: ₹35L`,
-      type: 'opportunity',
-      priority: 'High',
-      actionLabel: 'View Prospects',
-      navigationPath: '/leads',
-      count: highValueProspects.length,
-      value: '₹35L'
-    },
-    {
-      id: '2',
-      title: 'KRA Achievement Alert',
-      description: `Complete ${3 - userLeads.filter(lead => lead.status === 'converted').length} more loan disbursals to achieve 100% KRA and unlock ₹45K incentive`,
-      type: 'kra',
-      priority: 'High',
-      actionLabel: 'View Pipeline',
-      navigationPath: '/funnel',
-      count: 3 - userLeads.filter(lead => lead.status === 'converted').length,
-      value: '₹45K',
-      deadline: '15 days left'
-    },
-    {
-      id: '3',
-      title: 'Beat Plan Optimization',
-      description: `Visit customers in Bandra area today. ${overdueLeads.length + 3} high-value prospects within 2km radius.`,
-      type: 'route',
-      priority: 'Medium',
-      actionLabel: 'Plan Route',
-      navigationPath: '/geo-location',
-      count: overdueLeads.length + 3
-    },
-    {
-      id: '4',
-      title: 'Follow-up Required',
-      description: `${overdueLeads.length} leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
-      type: 'follow-up',
-      priority: 'High',
-      actionLabel: 'View Overdue',
-      navigationPath: '/tasks',
-      count: overdueLeads.length,
-      value: `₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`
-    },
-    {
-      id: '5',
-      title: 'Cross-Sell Opportunity',
-      description: `3 converted customers are eligible for insurance products. Potential additional revenue: ₹12L`,
-      type: 'cross-sell',
-      priority: 'Medium',
-      actionLabel: 'View Customers',
-      navigationPath: '/customers',
-      count: 3,
-      value: '₹12L'
+  // Define nudges based on user role
+  const getBaseNudges = (): Nudge[] => {
+    const baseNudges: Nudge[] = [
+      {
+        id: '2',
+        title: 'KRA Achievement Alert',
+        description: `Complete ${3 - userLeads.filter(lead => lead.status === 'converted').length} more loan disbursals to achieve 100% KRA and unlock ₹45K incentive`,
+        type: 'kra',
+        priority: 'High',
+        actionLabel: 'View Pipeline',
+        navigationPath: '/funnel',
+        count: 3 - userLeads.filter(lead => lead.status === 'converted').length,
+        value: '₹45K',
+        deadline: '15 days left'
+      },
+      {
+        id: '3',
+        title: 'Beat Plan Optimization',
+        description: `Visit customers in Bandra area today. ${overdueLeads.length + 3} high-value prospects within 2km radius.`,
+        type: 'route',
+        priority: 'Medium',
+        actionLabel: 'Plan Route',
+        navigationPath: '/geo-location',
+        count: overdueLeads.length + 3
+      },
+      {
+        id: '4',
+        title: 'Follow-up Required',
+        description: `${overdueLeads.length} leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
+        type: 'follow-up',
+        priority: 'High',
+        actionLabel: 'View Overdue',
+        navigationPath: '/tasks',
+        count: overdueLeads.length,
+        value: `₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`
+      },
+      {
+        id: '5',
+        title: 'Cross-Sell Opportunity',
+        description: `3 converted customers are eligible for insurance products. Potential additional revenue: ₹12L`,
+        type: 'cross-sell',
+        priority: 'Medium',
+        actionLabel: 'View Customers',
+        navigationPath: '/customers',
+        count: 3,
+        value: '₹12L'
+      }
+    ];
+
+    // Only show High-Value Portfolio Opportunity for Neha (Relationship Manager)
+    if (user?.id === '5' && user?.name === 'Neha Gupta') {
+      baseNudges.unshift({
+        id: '1',
+        title: 'High-Value Portfolio Opportunity',
+        description: `You have ${highValueProspects.length} senior citizens eligible for FD products. Average ticket size: ₹35L`,
+        type: 'opportunity',
+        priority: 'High',
+        actionLabel: 'View Prospects',
+        navigationPath: '/leads',
+        count: highValueProspects.length,
+        value: '₹35L'
+      });
     }
-  ];
+
+    return baseNudges;
+  };
+
+  const nudges = getBaseNudges();
 
   const handleNudgeAction = (nudge: Nudge) => {
     setSelectedNudge(nudge);

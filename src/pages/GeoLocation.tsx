@@ -23,7 +23,7 @@ const GeoLocation = () => {
             }
           </p>
         </div>
-        {user?.role === 'sales_executive' && (
+        {user?.role !== 'supervisor' && (
           <Badge className="bg-green-100 text-green-800">
             Auto-tracking Enabled
           </Badge>
@@ -32,7 +32,7 @@ const GeoLocation = () => {
 
       {/* Main Content */}
       <Tabs defaultValue="tracking" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={`grid w-full ${user?.role === 'supervisor' ? 'grid-cols-3' : 'grid-cols-2'}`}>
           <TabsTrigger value="tracking" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
             Location Tracking

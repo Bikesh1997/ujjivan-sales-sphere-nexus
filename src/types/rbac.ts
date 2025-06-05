@@ -62,9 +62,9 @@ export const ROLES: Role[] = [
     ]
   },
   {
-    id: 'field_manager',
-    name: 'Field Manager',
-    description: 'Field sales manager',
+    id: 'inbound_agent',
+    name: 'Inbound Contact Center Agent',
+    description: 'Inbound contact center agent',
     level: 1,
     permissions: [
       PERMISSIONS.LEAD_READ,

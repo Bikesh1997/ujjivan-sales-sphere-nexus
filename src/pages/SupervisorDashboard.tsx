@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
@@ -80,28 +81,28 @@ const SupervisorDashboard = () => {
     },
     { 
       id: '4', 
-      name: 'Vikash Kumar', 
-      email: 'vikash.kumar@company.com',
-      role: 'Sales Executive',
-      department: 'Sales',
-      status: 'inactive',
+      name: 'Vikram Singh', 
+      email: 'vikram.singh@company.com',
+      role: 'Inbound Contact Center Agent',
+      department: 'Inbound',
+      status: 'active',
       joinDate: '2022-11-20',
-      performance: 76,
-      targets: { monthly: 14, achieved: 9.8 },
-      lastActive: '1 day ago',
-      leads: 22, 
-      converted: 6, 
-      revenue: 9.8, 
-      target: 14,
-      lastActivity: '1 day ago',
-      capacity: 28
+      performance: 85,
+      targets: { monthly: 18, achieved: 15.3 },
+      lastActive: '45 min ago',
+      leads: 32, 
+      converted: 11, 
+      revenue: 15.3, 
+      target: 18,
+      lastActivity: '45 min ago',
+      capacity: 35
     },
     { 
       id: '5', 
-      name: 'Priya Singh', 
-      email: 'priya.singh@company.com',
-      role: 'Sales Executive',
-      department: 'Sales',
+      name: 'Neha Gupta', 
+      email: 'neha.gupta@company.com',
+      role: 'Relationship Manager',
+      department: 'Branch',
       status: 'active',
       joinDate: '2023-05-05',
       performance: 95,
@@ -135,16 +136,16 @@ const SupervisorDashboard = () => {
     },
     { 
       title: 'Team Target', 
-      value: '₹61L', 
+      value: '₹65L', 
       subtitle: 'Monthly collective target', 
       trend: { value: '12% above last month', isPositive: true }, 
       icon: <Target size={20} /> 
     },
     { 
       title: 'Team Achievement', 
-      value: '₹49L', 
+      value: '₹54.5L', 
       subtitle: 'Current month revenue', 
-      trend: { value: '80% of target', isPositive: true }, 
+      trend: { value: '84% of target', isPositive: true }, 
       icon: <TrendingUp size={20} /> 
     },
     { 
@@ -183,8 +184,8 @@ const SupervisorDashboard = () => {
     }
 
     const prioritySortedLeads = [...unassignedLeads].sort((a, b) => {
-      const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-      return priorityOrder[b.priority as keyof typeof priorityOrder] - priorityOrder[a.priority as keyof typeof priorityOrder];
+      const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
 
     const assignments: { leadId: string; memberId: string; leadName: string; memberName: string }[] = [];
@@ -445,11 +446,7 @@ const SupervisorDashboard = () => {
                         <div>
                           <p className="font-medium text-sm">{lead.name}</p>
                           <p className="text-xs text-gray-500">{lead.contact} • {lead.value}</p>
-                          <Badge className={`text-xs mt-1 ${
-                            lead.priority === 'High' ? 'bg-red-100 text-red-800' :
-                            lead.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
+                          <Badge className={`text-xs mt-1 ${getPriorityColor(lead.priority)}`}>
                             {lead.priority}
                           </Badge>
                         </div>
