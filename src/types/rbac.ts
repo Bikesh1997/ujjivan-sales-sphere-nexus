@@ -43,15 +43,12 @@ export const PERMISSIONS = {
   // User Management
   USER_MANAGE: { id: 'user_manage', name: 'Manage Users', resource: 'users', action: 'manage' as const },
   USER_VIEW: { id: 'user_view', name: 'View Users', resource: 'users', action: 'read' as const },
-
-  // Geo Tracking (Supervisor only)
-  GEO_TRACK: { id: 'geo_track', name: 'Geo Tracking', resource: 'geo', action: 'manage' as const },
 };
 
 export const ROLES: Role[] = [
   {
-    id: 'field_sales_officer',
-    name: 'Field Sales Officer',
+    id: 'sales_executive',
+    name: 'Sales Executive',
     description: 'Field sales representative',
     level: 1,
     permissions: [
@@ -65,43 +62,10 @@ export const ROLES: Role[] = [
     ]
   },
   {
-    id: 'inbound_contact_agent',
-    name: 'Inbound Contact Agent',
-    description: 'Handles inbound customer inquiries',
-    level: 1,
-    permissions: [
-      PERMISSIONS.LEAD_CREATE,
-      PERMISSIONS.LEAD_READ,
-      PERMISSIONS.LEAD_UPDATE,
-      PERMISSIONS.TASK_CREATE,
-      PERMISSIONS.TASK_READ,
-      PERMISSIONS.TASK_UPDATE,
-      PERMISSIONS.REPORT_VIEW,
-      PERMISSIONS.USER_VIEW,
-    ]
-  },
-  {
-    id: 'relationship_manager',
-    name: 'Relationship Manager',
-    description: 'Manages high-value client relationships',
-    level: 2,
-    permissions: [
-      PERMISSIONS.LEAD_CREATE,
-      PERMISSIONS.LEAD_READ,
-      PERMISSIONS.LEAD_UPDATE,
-      PERMISSIONS.TASK_CREATE,
-      PERMISSIONS.TASK_READ,
-      PERMISSIONS.TASK_UPDATE,
-      PERMISSIONS.REPORT_VIEW,
-      PERMISSIONS.REPORT_GENERATE,
-      PERMISSIONS.USER_VIEW,
-    ]
-  },
-  {
     id: 'supervisor',
     name: 'Supervisor',
-    description: 'Team supervisor with management access and geo tracking',
-    level: 3,
+    description: 'Team supervisor with management access',
+    level: 2,
     permissions: [
       PERMISSIONS.LEAD_CREATE,
       PERMISSIONS.LEAD_READ,
@@ -116,7 +80,6 @@ export const ROLES: Role[] = [
       PERMISSIONS.REPORT_GENERATE,
       PERMISSIONS.USER_MANAGE,
       PERMISSIONS.USER_VIEW,
-      PERMISSIONS.GEO_TRACK,
     ]
   }
 ];

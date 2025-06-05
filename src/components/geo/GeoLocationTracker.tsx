@@ -11,8 +11,7 @@ import {
   Target, 
   Clock,
   CheckCircle,
-  AlertCircle,
-  Shield
+  AlertCircle 
 } from 'lucide-react';
 import { useGeoLocation } from '@/hooks/useGeoLocation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -32,9 +31,6 @@ const GeoLocationTracker = ({
   const [checkInNotes, setCheckInNotes] = useState('');
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   
-  // Only supervisor has access to geo tracking features
-  const hasGeoAccess = user?.role === 'supervisor';
-  
   const {
     currentLocation,
     isLoading,
@@ -45,16 +41,16 @@ const GeoLocationTracker = ({
     stopTracking,
     createCheckIn,
   } = useGeoLocation({
-    enableTracking: hasGeoAccess,
-    enableGeoFencing: hasGeoAccess,
+    enableTracking: showTracking || user?.role === 'sales_executive',
+    enableGeoFencing: true,
   });
 
-  // No auto-start tracking - only supervisors can control tracking
+  // Auto-start tracking for sales executives
   useEffect(() => {
-    if (!hasGeoAccess && isTracking) {
-      stopTracking();
+    if (user?.role === 'sales_executive' && !isTracking) {
+      startTracking();
     }
-  }, [hasGeoAccess, isTracking, stopTracking]);
+  }, [user?.role, isTracking, startTracking]);
 
   const handleGetLocation = async () => {
     try {
@@ -77,8 +73,6 @@ const GeoLocationTracker = ({
   };
 
   const handleToggleTracking = () => {
-    if (!hasGeoAccess) return;
-    
     if (isTracking) {
       stopTracking();
     } else {
@@ -97,35 +91,15 @@ const GeoLocationTracker = ({
     return 'Low';
   };
 
-  // Show access restriction for non-supervisors
-  if (!hasGeoAccess) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Location Services
-            <Badge className="bg-red-100 text-red-800">Supervisor Only</Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center py-8">
-          <Shield className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Access Restricted</h3>
-          <p className="text-gray-600">
-            Geo tracking and location features are only available to supervisors.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
           Location Services
-          <Badge className="bg-blue-100 text-blue-800">Supervisor Access</Badge>
+          {user?.role === 'sales_executive' && (
+            <Badge className="bg-green-100 text-green-800">Auto-enabled</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -170,8 +144,8 @@ const GeoLocationTracker = ({
           )}
         </div>
 
-        {/* Location Tracking - Supervisor only */}
-        {showTracking && (
+        {/* Location Tracking */}
+        {(showTracking || user?.role === 'sales_executive') && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Location Tracking:</span>
