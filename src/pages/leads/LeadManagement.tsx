@@ -1,7 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Download, Plus } from 'lucide-react';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
@@ -10,7 +10,6 @@ import LeadsPagination from '@/components/leads/LeadsPagination';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import EditLeadModal from '@/components/leads/EditLeadModal';
 import LeadNotesModal from '@/components/leads/LeadNotesModal';
-import CallLeadModal from '@/components/leads/CallLeadModal';
 import { useToast } from '@/hooks/use-toast';
 
 const LeadManagement = () => {
@@ -21,15 +20,16 @@ const LeadManagement = () => {
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
+    source: 'all',
     priority: 'all',
-    dateRange: null,
+    assignedTo: 'all',
+    dateRange: '',
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
   const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false);
   const [isLeadNotesModalOpen, setIsLeadNotesModalOpen] = useState(false);
-  const [isCallLeadModalOpen, setIsCallLeadModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
 
   useEffect(() => {
@@ -41,30 +41,45 @@ const LeadManagement = () => {
           id: '1',
           name: 'John Doe',
           contact: 'john.doe@example.com',
-          status: 'New',
+          phone: '+91-9876543210',
+          email: 'john.doe@example.com',
+          status: 'new',
+          source: 'Website Forms',
           priority: 'High',
-          value: '50L',
+          value: '₹50L',
           assignedTo: 'Rahul Sharma',
+          assignedToId: 'RS001',
+          lastContact: '2024-01-15',
           createdDate: '2024-01-15',
         },
         {
           id: '2',
           name: 'Jane Smith',
           contact: 'jane.smith@example.com',
-          status: 'Contacted',
+          phone: '+91-9876543211',
+          email: 'jane.smith@example.com',
+          status: 'qualified',
+          source: 'WhatsApp Business',
           priority: 'Medium',
-          value: '25L',
+          value: '₹25L',
           assignedTo: 'Anjali Patel',
+          assignedToId: 'AP001',
+          lastContact: '2024-01-20',
           createdDate: '2024-01-20',
         },
         {
           id: '3',
           name: 'Michael Johnson',
           contact: 'michael.johnson@example.com',
-          status: 'Qualified',
+          phone: '+91-9876543212',
+          email: 'michael.johnson@example.com',
+          status: 'converted',
+          source: 'Call Center',
           priority: 'Low',
-          value: '100L',
+          value: '₹100L',
           assignedTo: 'Vikash Kumar',
+          assignedToId: 'VK001',
+          lastContact: '2024-01-25',
           createdDate: '2024-01-25',
         },
       ];
@@ -86,15 +101,14 @@ const LeadManagement = () => {
     if (filters.status !== 'all') {
       filtered = filtered.filter(lead => lead.status === filters.status);
     }
+    if (filters.source !== 'all') {
+      filtered = filtered.filter(lead => lead.source === filters.source);
+    }
     if (filters.priority !== 'all') {
       filtered = filtered.filter(lead => lead.priority === filters.priority);
     }
-    if (filters.dateRange && filters.dateRange.length === 2) {
-      const [start, end] = filters.dateRange;
-      filtered = filtered.filter(lead => {
-        const leadDate = new Date(lead.createdDate);
-        return leadDate >= start && leadDate <= end;
-      });
+    if (filters.assignedTo !== 'all') {
+      filtered = filtered.filter(lead => lead.assignedTo === filters.assignedTo);
     }
     setFilteredLeads(filtered);
     setCurrentPage(1);
@@ -102,6 +116,7 @@ const LeadManagement = () => {
 
   const totalPages = Math.ceil(filteredLeads.length / pageSize);
   const currentLeads = filteredLeads.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const startIndex = (currentPage - 1) * pageSize + 1;
 
   const handleBulkActions = () => {
     toast({
@@ -111,16 +126,26 @@ const LeadManagement = () => {
   };
 
   const handleAddLead = (newLead) => {
-    setLeads(prev => [...prev, newLead]);
+    const leadWithId = {
+      ...newLead,
+      id: Date.now().toString(),
+      createdDate: new Date().toISOString().split('T')[0],
+    };
+    setLeads(prev => [...prev, leadWithId]);
     toast({
       title: "Lead Added",
       description: `Lead ${newLead.name} has been added successfully.`,
     });
   };
 
-  const handleEditLead = (lead) => {
-    setSelectedLead(lead);
-    setIsEditLeadModalOpen(true);
+  const handleEditLead = (leadId, updatedData) => {
+    setLeads(prev => prev.map(lead => 
+      lead.id === leadId ? { ...lead, ...updatedData } : lead
+    ));
+    toast({
+      title: "Lead Updated",
+      description: "Lead has been updated successfully.",
+    });
   };
 
   const handleUpdateLead = (updatedLead) => {
@@ -133,36 +158,25 @@ const LeadManagement = () => {
     setSelectedLead(null);
   };
 
-  const handleDeleteLead = (leadId) => {
-    setLeads(prev => prev.filter(lead => lead.id !== leadId));
-    toast({
-      title: "Lead Deleted",
-      description: "Lead has been deleted successfully.",
-      variant: "destructive"
-    });
-  };
-
-  const handleLeadClick = (lead) => {
-    setSelectedLead(lead);
-  };
-
   const handleNotesClick = (lead) => {
     setSelectedLead(lead);
     setIsLeadNotesModalOpen(true);
-  };
-
-  const handleCallClick = (lead) => {
-    setSelectedLead(lead);
-    setIsCallLeadModalOpen(true);
   };
 
   const handleClearFilters = () => {
     setFilters({
       search: '',
       status: 'all',
+      source: 'all',
       priority: 'all',
-      dateRange: null,
+      assignedTo: 'all',
+      dateRange: '',
     });
+  };
+
+  const handleEditLeadModal = (lead) => {
+    setSelectedLead(lead);
+    setIsEditLeadModalOpen(true);
   };
 
   return (
@@ -192,7 +206,7 @@ const LeadManagement = () => {
       </div>
 
       {/* Stats Cards */}
-      <LeadStatsCards leads={filteredLeads} />
+      <LeadStatsCards leads={filteredLeads} userRole="executive" />
 
       {/* Filters */}
       <LeadFilters 
@@ -209,15 +223,15 @@ const LeadManagement = () => {
         <CardContent>
           <LeadsTable 
             leads={currentLeads}
-            onLeadClick={handleLeadClick}
+            userRole="executive"
             onEditLead={handleEditLead}
-            onDeleteLead={handleDeleteLead}
-            onNotesClick={handleNotesClick}
-            onCallClick={handleCallClick}
           />
           <LeadsPagination 
             currentPage={currentPage}
             totalPages={totalPages}
+            startIndex={startIndex}
+            leadsPerPage={pageSize}
+            totalLeads={filteredLeads.length}
             onPageChange={setCurrentPage}
           />
         </CardContent>
@@ -225,27 +239,21 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal 
-        open={isAddLeadModalOpen}
+        isOpen={isAddLeadModalOpen}
         onOpenChange={setIsAddLeadModalOpen}
         onAddLead={handleAddLead}
       />
       
       <EditLeadModal 
-        open={isEditLeadModalOpen}
+        isOpen={isEditLeadModalOpen}
         onOpenChange={setIsEditLeadModalOpen}
         lead={selectedLead}
         onUpdateLead={handleUpdateLead}
       />
 
       <LeadNotesModal 
-        open={isLeadNotesModalOpen}
+        isOpen={isLeadNotesModalOpen}
         onOpenChange={setIsLeadNotesModalOpen}
-        lead={selectedLead}
-      />
-
-      <CallLeadModal 
-        open={isCallLeadModalOpen}
-        onOpenChange={setIsCallLeadModalOpen}
         lead={selectedLead}
       />
     </div>
