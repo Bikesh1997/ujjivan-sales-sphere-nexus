@@ -47,6 +47,8 @@ const RuleManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingRule, setEditingRule] = useState<Rule | null>(null);
   const [newRule, setNewRule] = useState({
     name: '',
     description: '',
@@ -134,13 +136,33 @@ const RuleManagement = () => {
   const priorities = ['P1', 'P2', 'P3'];
   const teams = ['Sales Executive', 'Supervisor', 'Manager'];
   const meetingTypes = ['In Person', 'Virtual', 'Phone Call'];
-  const productTypes = ['MSME Loan', 'Personal Loan', 'Home Loan', 'Business Loan', 'Car Loan', 'Savings Account'];
+  
+  // Updated product types based on the comprehensive banking products shown in the image
+  const productTypes = [
+    'Savings Account', 'Current Account', 'Deposits', 'Home Loans', 'Two Wheeler Loan',
+    'MSME Loan', 'Video Banking', 'Gold Loan', 'Agri. Loans', 'Micro Loan',
+    'Insurance', 'Retail Forex & Trade', 'Sampoorna Family Banking', 'Life Event Based Banking Services',
+    'Navratna', 'Micro-Mortgages', 'Lodge a complaint'
+  ];
 
   const filteredRules = rules.filter(rule =>
     rule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     rule.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     rule.channel.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const resetForm = () => {
+    setNewRule({
+      name: '',
+      description: '',
+      channel: '',
+      value: '',
+      priority: '',
+      team: '',
+      meetingType: '',
+      productType: ''
+    });
+  };
 
   const handleAddRule = () => {
     if (!newRule.name || !newRule.channel || !newRule.priority) {
@@ -160,16 +182,7 @@ const RuleManagement = () => {
     };
 
     setRules([...rules, rule]);
-    setNewRule({
-      name: '',
-      description: '',
-      channel: '',
-      value: '',
-      priority: '',
-      team: '',
-      meetingType: '',
-      productType: ''
-    });
+    resetForm();
     setIsAddModalOpen(false);
 
     toast({
@@ -178,12 +191,65 @@ const RuleManagement = () => {
     });
   };
 
+  const handleEditRule = (rule: Rule) => {
+    setEditingRule(rule);
+    setNewRule({
+      name: rule.name,
+      description: rule.description,
+      channel: rule.channel,
+      value: rule.value,
+      priority: rule.priority,
+      team: rule.team,
+      meetingType: rule.meetingType,
+      productType: rule.productType
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateRule = () => {
+    if (!newRule.name || !newRule.channel || !newRule.priority || !editingRule) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const updatedRule: Rule = {
+      ...editingRule,
+      ...newRule
+    };
+
+    setRules(rules.map(rule => 
+      rule.id === editingRule.id ? updatedRule : rule
+    ));
+
+    resetForm();
+    setEditingRule(null);
+    setIsEditModalOpen(false);
+
+    toast({
+      title: "Rule Updated",
+      description: `${updatedRule.name} has been successfully updated`,
+    });
+  };
+
   const handleDeleteRule = (id: string) => {
+    const ruleToDelete = rules.find(rule => rule.id === id);
     setRules(rules.filter(rule => rule.id !== id));
+    
     toast({
       title: "Rule Deleted",
-      description: "Rule has been successfully removed",
+      description: `${ruleToDelete?.name || 'Rule'} has been successfully removed`,
     });
+  };
+
+  const handleCloseModals = () => {
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
+    setEditingRule(null);
+    resetForm();
   };
 
   const getPriorityColor = (priority: string) => {
@@ -200,6 +266,100 @@ const RuleManagement = () => {
     if (value.includes('25L-50L') || value.includes('Medium')) return 'bg-blue-100 text-blue-800';
     return 'bg-green-100 text-green-800';
   };
+
+  const renderRuleForm = () => (
+    <div className="grid grid-cols-2 gap-4">
+      <div className="col-span-2">
+        <label className="block text-sm font-medium mb-2">Rule Name *</label>
+        <Input
+          value={newRule.name}
+          onChange={(e) => setNewRule({...newRule, name: e.target.value})}
+          placeholder="Enter rule name"
+        />
+      </div>
+      <div className="col-span-2">
+        <label className="block text-sm font-medium mb-2">Description</label>
+        <Input
+          value={newRule.description}
+          onChange={(e) => setNewRule({...newRule, description: e.target.value})}
+          placeholder="Enter rule description"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Channel *</label>
+        <Select value={newRule.channel} onValueChange={(value) => setNewRule({...newRule, channel: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select channel" />
+          </SelectTrigger>
+          <SelectContent>
+            {channels.map(channel => (
+              <SelectItem key={channel} value={channel}>{channel}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Value</label>
+        <Input
+          value={newRule.value}
+          onChange={(e) => setNewRule({...newRule, value: e.target.value})}
+          placeholder="e.g., 50L+"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Priority *</label>
+        <Select value={newRule.priority} onValueChange={(value) => setNewRule({...newRule, priority: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select priority" />
+          </SelectTrigger>
+          <SelectContent>
+            {priorities.map(priority => (
+              <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Team</label>
+        <Select value={newRule.team} onValueChange={(value) => setNewRule({...newRule, team: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select team" />
+          </SelectTrigger>
+          <SelectContent>
+            {teams.map(team => (
+              <SelectItem key={team} value={team}>{team}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Meeting Type</label>
+        <Select value={newRule.meetingType} onValueChange={(value) => setNewRule({...newRule, meetingType: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select meeting type" />
+          </SelectTrigger>
+          <SelectContent>
+            {meetingTypes.map(type => (
+              <SelectItem key={type} value={type}>{type}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-2">Product Type</label>
+        <Select value={newRule.productType} onValueChange={(value) => setNewRule({...newRule, productType: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select product type" />
+          </SelectTrigger>
+          <SelectContent>
+            {productTypes.map(type => (
+              <SelectItem key={type} value={type}>{type}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -220,99 +380,9 @@ const RuleManagement = () => {
             <DialogHeader>
               <DialogTitle>Add New Rule</DialogTitle>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="block text-sm font-medium mb-2">Rule Name *</label>
-                <Input
-                  value={newRule.name}
-                  onChange={(e) => setNewRule({...newRule, name: e.target.value})}
-                  placeholder="Enter rule name"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block text-sm font-medium mb-2">Description</label>
-                <Input
-                  value={newRule.description}
-                  onChange={(e) => setNewRule({...newRule, description: e.target.value})}
-                  placeholder="Enter rule description"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Channel *</label>
-                <Select value={newRule.channel} onValueChange={(value) => setNewRule({...newRule, channel: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select channel" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {channels.map(channel => (
-                      <SelectItem key={channel} value={channel}>{channel}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Value</label>
-                <Input
-                  value={newRule.value}
-                  onChange={(e) => setNewRule({...newRule, value: e.target.value})}
-                  placeholder="e.g., 50L+"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Priority *</label>
-                <Select value={newRule.priority} onValueChange={(value) => setNewRule({...newRule, priority: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priorities.map(priority => (
-                      <SelectItem key={priority} value={priority}>{priority}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Team</label>
-                <Select value={newRule.team} onValueChange={(value) => setNewRule({...newRule, team: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teams.map(team => (
-                      <SelectItem key={team} value={team}>{team}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Meeting Type</label>
-                <Select value={newRule.meetingType} onValueChange={(value) => setNewRule({...newRule, meetingType: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select meeting type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {meetingTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Product Type</label>
-                <Select value={newRule.productType} onValueChange={(value) => setNewRule({...newRule, productType: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select product type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {productTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            {renderRuleForm()}
             <div className="flex justify-end space-x-2 mt-6">
-              <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
+              <Button variant="outline" onClick={handleCloseModals}>
                 Cancel
               </Button>
               <Button onClick={handleAddRule} className="bg-blue-600 hover:bg-blue-700">
@@ -322,6 +392,24 @@ const RuleManagement = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Rule</DialogTitle>
+          </DialogHeader>
+          {renderRuleForm()}
+          <div className="flex justify-end space-x-2 mt-6">
+            <Button variant="outline" onClick={handleCloseModals}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateRule} className="bg-blue-600 hover:bg-blue-700">
+              Update Rule
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Search */}
       <Card>
@@ -401,7 +489,11 @@ const RuleManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleEditRule(rule)}
+                      >
                         <Edit size={16} />
                       </Button>
                       <Button 
