@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
@@ -61,9 +60,6 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   return (
     <>
       <div className="flex space-x-1">
-        <Button size="sm" variant="ghost" onClick={handleViewCustomer}>
-          <Eye size={14} />
-        </Button>
         <Button 
           size="sm" 
           variant="ghost" 

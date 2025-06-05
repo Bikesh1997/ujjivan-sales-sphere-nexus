@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,7 +48,7 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 10;
+  const customersPerPage = 5;
 
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -244,4 +243,3 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
 };
 
 export default CustomerTable;
-
