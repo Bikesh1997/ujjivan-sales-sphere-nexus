@@ -14,6 +14,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Search, Phone, Mail, MapPin, TrendingUp, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 
 interface Customer {
   key: string;
@@ -37,13 +46,22 @@ interface CustomerTableProps {
 }
 
 const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: CustomerTableProps) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 10;
 
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination calculations
+  const indexOfLastCustomer = currentPage * customersPerPage;
+  const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+  const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+  const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
 
   const getSegmentColor = (segment: string) => {
     switch (segment) {
@@ -63,105 +81,167 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
     }
   };
 
+  const handleViewCustomer = (customer: Customer, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate('/customers');
+    onCustomerSelect(customer.key);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>Customer Directory</CardTitle>
-          <div className="relative w-80">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              placeholder="Search customers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Customer Directory</CardTitle>
+            <div className="relative w-80">
+              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input
+                placeholder="Search customers..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1); // Reset to first page on search
+                }}
+                className="pl-10"
+              />
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead>Segment</TableHead>
-              <TableHead>Relationship Value</TableHead>
-              <TableHead>Risk Score</TableHead>
-              <TableHead>Last Interaction</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredCustomers.map((customer) => (
-              <TableRow 
-                key={customer.key}
-                className={`cursor-pointer hover:bg-gray-50 ${
-                  selectedCustomer === customer.key ? 'bg-teal-50 border-l-4 border-teal-500' : ''
-                }`}
-                onClick={() => onCustomerSelect(customer.key)}
-              >
-                <TableCell>
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-teal-100 text-teal-700">
-                        {customer.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{customer.name}</div>
-                      <div className="text-sm text-gray-500">{customer.id}</div>
-                      <div className="text-xs text-gray-400">{customer.email}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getSegmentColor(customer.segment)}>
-                    {customer.segment}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <TrendingUp size={14} className="mr-1 text-teal-600" />
-                    <span className="font-medium">{customer.totalRelationship}</span>
-                  </div>
-                  <div className="text-xs text-gray-500">{customer.relationshipValue} Value</div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getRiskColor(customer.riskScore)}>
-                    {customer.riskScore}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm text-gray-600">
-                  {customer.lastInteraction}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onCustomerSelect(customer.key);
-                      }}
-                    >
-                      <Eye size={14} className="mr-1" />
-                      View
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                      <Phone size={14} />
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                      <Mail size={14} />
-                    </Button>
-                  </div>
-                </TableCell>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead>Segment</TableHead>
+                <TableHead>Relationship Value</TableHead>
+                <TableHead>Risk Score</TableHead>
+                <TableHead>Last Interaction</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {currentCustomers.map((customer) => (
+                <TableRow 
+                  key={customer.key}
+                  className={`cursor-pointer hover:bg-gray-50 ${
+                    selectedCustomer === customer.key ? 'bg-teal-50 border-l-4 border-teal-500' : ''
+                  }`}
+                  onClick={() => onCustomerSelect(customer.key)}
+                >
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-teal-100 text-teal-700">
+                          {customer.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{customer.name}</div>
+                        <div className="text-sm text-gray-500">{customer.id}</div>
+                        <div className="text-xs text-gray-400">{customer.email}</div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getSegmentColor(customer.segment)}>
+                      {customer.segment}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <TrendingUp size={14} className="mr-1 text-teal-600" />
+                      <span className="font-medium">{customer.totalRelationship}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">{customer.relationshipValue} Value</div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getRiskColor(customer.riskScore)}>
+                      {customer.riskScore}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-600">
+                    {customer.lastInteraction}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={(e) => handleViewCustomer(customer, e)}
+                      >
+                        <Eye size={14} className="mr-1" />
+                        View
+                      </Button>
+                      <Button size="sm" variant="ghost">
+                        <Phone size={14} />
+                      </Button>
+                      <Button size="sm" variant="ghost">
+                        <Mail size={14} />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-700">
+            Showing {indexOfFirstCustomer + 1} to {Math.min(indexOfLastCustomer, filteredCustomers.length)} of {filteredCustomers.length} customers
+          </div>
+          
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                />
+              </PaginationItem>
+              
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNumber = index + 1;
+                if (
+                  pageNumber === 1 ||
+                  pageNumber === totalPages ||
+                  (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                ) {
+                  return (
+                    <PaginationItem key={pageNumber}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(pageNumber)}
+                        isActive={currentPage === pageNumber}
+                        className="cursor-pointer"
+                      >
+                        {pageNumber}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+                return null;
+              })}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+    </div>
   );
 };
 
 export default CustomerTable;
+
