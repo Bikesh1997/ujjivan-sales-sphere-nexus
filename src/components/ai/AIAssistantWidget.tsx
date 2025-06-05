@@ -45,8 +45,6 @@ const AIAssistantWidget = () => {
         return "👥 Relationship Management AI Assistant: I can help you manage your portfolio, identify cross-sell opportunities, and nurture customer relationships. Try asking: 'Show portfolio insights' or 'Find cross-sell opportunities'";
       case 'supervisor':
         return "👨‍💼 Supervisory AI Assistant: I can help you monitor team performance, track field coverage, manage compliance, and view real-time analytics. Try asking: 'Show team status' or 'Performance summary'";
-      case 'admin_mis_officer':
-        return "⚙️ Admin/MIS AI Assistant: I can help you with system configurations, MIS reports, user management, and system monitoring. Try asking: 'Generate MIS report' or 'System health check'";
       default:
         return "Hello! I'm your AI assistant. How can I help you today?";
     }
@@ -82,13 +80,6 @@ const AIAssistantWidget = () => {
           'Compliance alerts',
           'Resource allocation'
         ];
-      case 'admin_mis_officer':
-        return [
-          'Generate MIS report',
-          'System health check',
-          'User activity log',
-          'Data sync status'
-        ];
       default:
         return ['Help me get started', 'What can you do?'];
     }
@@ -119,12 +110,6 @@ const AIAssistantWidget = () => {
         'performance': "📈 Team Performance Summary:\n🥇 Top Performer: Priya (110% target)\n📊 Team Average: 92% target achievement\n🎯 Conversion Rate: 78% (Above benchmark)\n📋 Training Needed: Vikash (cross-sell techniques)",
         'compliance': "🛡️ Compliance Dashboard:\n✅ Geo-fence: All compliant\n⚠️ Pending: 3 KYC verifications\n🔍 Audit Items: 2 document reviews\n📊 Overall Score: 94% (Excellent)",
         'default': "I can help you monitor team performance, track field coverage, manage compliance, analyze productivity metrics, and coordinate resource allocation."
-      },
-      'admin_mis_officer': {
-        'report': "📊 Daily MIS Report Generated:\n📈 New Leads: 127 (↑15% vs yesterday)\n🔄 Data Sync: 89% success rate\n👥 Active Users: 45/48\n📍 Geo Tracking: 98% accuracy\n\n⚠️ Issues: 3 API timeouts, 2 sync failures",
-        'health': "🔧 System Health Check:\n✅ All APIs operational\n✅ Database performance: Optimal\n⚠️ Warning: Server load at 78%\n🔄 Last backup: 2 hours ago\n\n💡 Recommendation: Schedule maintenance window",
-        'users': "👥 User Activity Summary:\n🟢 Active: 42 users online\n🟡 Inactive: 3 users (>7 days)\n🔐 Security: No unauthorized access\n📱 Mobile app usage: 85%\n\n📋 Action: Deactivate inactive accounts",
-        'default': "I can help you with system configurations, generate MIS reports, manage user accounts, monitor data sync, track system performance, and handle administrative tasks."
       }
     };
 
@@ -183,7 +168,6 @@ const AIAssistantWidget = () => {
       case 'inbound_contact_agent': return <Phone size={16} />;
       case 'relationship_manager': return <Users size={16} />;
       case 'supervisor': return <TrendingUp size={16} />;
-      case 'admin_mis_officer': return <AlertCircle size={16} />;
       default: return <Bot size={16} />;
     }
   };
@@ -194,7 +178,6 @@ const AIAssistantWidget = () => {
       case 'inbound_contact_agent': return 'Contact Center AI';
       case 'relationship_manager': return 'Relationship AI';
       case 'supervisor': return 'Supervisor AI';
-      case 'admin_mis_officer': return 'Admin AI';
       default: return 'AI Assistant';
     }
   };
