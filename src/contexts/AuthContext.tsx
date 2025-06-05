@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
@@ -8,7 +9,6 @@ interface AuthContextType extends AuthState {
   updateUserRole: (userId: string, newRole: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
-  canSwitchRoles: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,8 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const canSwitchRoles = user?.role === 'supervisor';
 
   useEffect(() => {
     // Check for existing session with timeout
@@ -133,8 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor' | 'admin_mis_officer') => {
-    // Only supervisors can switch roles
-    if (user?.role === 'supervisor') {
+    if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -180,8 +177,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       switchRole,
       updateUserRole,
       updateProfile,
-      resetPassword,
-      canSwitchRoles
+      resetPassword
     }}>
       {children}
     </AuthContext.Provider>

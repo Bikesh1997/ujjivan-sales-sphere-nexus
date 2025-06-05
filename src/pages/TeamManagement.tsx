@@ -2,320 +2,465 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   UserPlus, 
-  Search,
-  Filter,
-  Download,
-  BarChart3,
-  Activity
+  Edit, 
+  Trash2, 
+  MoreHorizontal,
+  Target,
+  Award,
+  Clock,
+  Settings,
+  Eye,
+  FileText,
+  Calendar
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import TeamMemberCard from '@/components/team/TeamMemberCard';
 import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
-import EditTeamMemberModal from '@/components/team/EditTeamMemberModal';
+import TeamSettingsModal from '@/components/team/TeamSettingsModal';
+import ViewDetailsModal from '@/components/team/ViewDetailsModal';
 import SetTargetsModal from '@/components/team/SetTargetsModal';
 import ScheduleReviewModal from '@/components/team/ScheduleReviewModal';
-import TeamPerformanceChart from '@/components/team/TeamPerformanceChart';
-import TeamActivityFeed from '@/components/team/TeamActivityFeed';
-import RealTimeTeamMonitor from '@/components/supervisor/RealTimeTeamMonitor';
 
 const TeamManagement = () => {
   const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showTargetsModal, setShowTargetsModal] = useState(false);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
+  const [isSetTargetsOpen, setIsSetTargetsOpen] = useState(false);
+  const [isScheduleReviewOpen, setIsScheduleReviewOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [targetMember, setTargetMember] = useState(null);
 
   const [teamMembers, setTeamMembers] = useState([
-    {
-      id: '1',
-      name: 'Rahul Sharma',
-      role: 'Senior Sales Executive',
+    { 
+      id: '1', 
+      name: 'Rahul Sharma', 
       email: 'rahul.sharma@bank.com',
-      phone: '+91 98765 43210',
-      department: 'Field Sales',
-      joiningDate: '2023-01-15',
-      status: 'active' as const,
-      performance: { target: 50000, achieved: 38000, percentage: 76 },
-      location: 'Mumbai - Andheri',
-      lastActivity: '2 hours ago'
-    },
-    {
-      id: '2',
-      name: 'Anjali Patel',
-      role: 'Sales Executive',
-      email: 'anjali.patel@bank.com',
-      phone: '+91 87654 32109',
-      department: 'Inbound Sales',
-      joiningDate: '2023-03-10',
-      status: 'active' as const,
-      performance: { target: 45000, achieved: 41000, percentage: 91 },
-      location: 'Mumbai - Bandra',
-      lastActivity: '1 hour ago'
-    },
-    {
-      id: '3',
-      name: 'Vikash Kumar',
-      role: 'Sales Executive',
-      email: 'vikash.kumar@bank.com',
-      phone: '+91 76543 21098',
-      department: 'Field Sales',
-      joiningDate: '2023-02-20',
-      status: 'active' as const,
-      performance: { target: 40000, achieved: 28000, percentage: 70 },
-      location: 'Mumbai - Kurla',
-      lastActivity: '3 hours ago'
-    },
-    {
-      id: '4',
-      name: 'Priya Singh',
       role: 'Senior Sales Executive',
+      department: 'Field Sales',
+      status: 'active',
+      joinDate: '2023-01-15',
+      performance: 92,
+      targets: { monthly: 15, achieved: 12 },
+      lastActive: '2 hours ago'
+    },
+    { 
+      id: '2', 
+      name: 'Anjali Patel', 
+      email: 'anjali.patel@bank.com',
+      role: 'Sales Executive',
+      department: 'Inbound Sales',
+      status: 'active',
+      joinDate: '2023-03-20',
+      performance: 88,
+      targets: { monthly: 12, achieved: 11 },
+      lastActive: '30 minutes ago'
+    },
+    { 
+      id: '3', 
+      name: 'Vikash Kumar', 
+      email: 'vikash.kumar@bank.com',
+      role: 'Sales Executive',
+      department: 'Field Sales',
+      status: 'inactive',
+      joinDate: '2022-11-10',
+      performance: 76,
+      targets: { monthly: 14, achieved: 8 },
+      lastActive: '2 days ago'
+    },
+    { 
+      id: '4', 
+      name: 'Priya Singh', 
       email: 'priya.singh@bank.com',
-      phone: '+91 65432 10987',
+      role: 'Senior Sales Executive',
       department: 'Outbound Sales',
-      joiningDate: '2022-11-05',
-      status: 'active' as const,
-      performance: { target: 42000, achieved: 35000, percentage: 83 },
-      location: 'Mumbai - Powai',
-      lastActivity: '45 minutes ago'
+      status: 'active',
+      joinDate: '2022-08-05',
+      performance: 95,
+      targets: { monthly: 18, achieved: 17 },
+      lastActive: '1 hour ago'
     }
   ]);
 
-  const filteredMembers = teamMembers.filter(member =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.department.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleAddMember = (memberData: any) => {
-    const newMember = {
-      id: Date.now().toString(),
-      ...memberData,
-      status: 'active' as const,
-      performance: { target: 40000, achieved: 0, percentage: 0 },
-      lastActivity: 'Just added'
-    };
-    setTeamMembers([...teamMembers, newMember]);
-  };
-
-  const handleEditMember = (member: any) => {
-    setSelectedMember(member);
-    setShowEditModal(true);
-  };
-
-  const handleUpdateMember = (memberId: string, updates: any) => {
-    setTeamMembers(teamMembers.map(member => 
-      member.id === memberId ? { ...member, ...updates } : member
-    ));
-  };
-
-  const handleRemoveMember = (memberId: string) => {
-    setTeamMembers(teamMembers.filter(member => member.id !== memberId));
+  const handleAutoAssign = () => {
     toast({
-      title: "Member Removed",
-      description: "Team member has been successfully removed",
+      title: "Auto-Assignment Started",
+      description: "Leads are being automatically assigned based on capacity and performance",
+    });
+  };
+
+  const handleViewDetails = (member: any) => {
+    setSelectedMember(member);
+    setIsViewDetailsOpen(true);
+  };
+
+  const handleAssignLeads = (memberName: string) => {
+    toast({
+      title: "Lead Assignment",
+      description: `Opening lead assignment for ${memberName}`,
+    });
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Performance Report Generated",
+      description: "Team performance analytics report has been generated",
     });
   };
 
   const handleSetTargets = (member: any) => {
-    setSelectedMember(member);
-    setShowTargetsModal(true);
+    setTargetMember(member);
+    setIsSetTargetsOpen(true);
   };
 
-  const handleScheduleReview = (member: any) => {
-    setSelectedMember(member);
-    setShowReviewModal(true);
+  const handleEditMember = (member: any) => {
+    toast({
+      title: "Edit Member",
+      description: `Opening edit form for ${member.name}`,
+    });
+    // You can add edit member modal logic here
   };
 
-  const teamStats = {
-    total: teamMembers.length,
-    active: teamMembers.filter(m => m.status === 'active').length,
-    avgPerformance: Math.round(teamMembers.reduce((acc, m) => acc + m.performance.percentage, 0) / teamMembers.length),
-    totalTarget: teamMembers.reduce((acc, m) => acc + m.performance.target, 0),
-    totalAchieved: teamMembers.reduce((acc, m) => acc + m.performance.achieved, 0)
+  const handleRemoveMember = (member: any) => {
+    setTeamMembers(prevMembers => prevMembers.filter(m => m.id !== member.id));
+    toast({
+      title: "Member Removed",
+      description: `${member.name} has been removed from the team`,
+      variant: "destructive"
+    });
+  };
+
+  const handleAddMember = (memberData: any) => {
+    const newMember = {
+      id: (teamMembers.length + 1).toString(),
+      name: memberData.name,
+      email: memberData.email,
+      role: memberData.role,
+      department: memberData.department,
+      status: 'active',
+      joinDate: memberData.joiningDate || new Date().toISOString().split('T')[0],
+      performance: 0,
+      targets: { monthly: 0, achieved: 0 },
+      lastActive: 'Just joined'
+    };
+    
+    setTeamMembers(prevMembers => [...prevMembers, newMember]);
+  };
+
+  const getStatusColor = (status: string) => {
+    return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+  };
+
+  const getPerformanceColor = (performance: number) => {
+    if (performance >= 90) return 'text-green-600';
+    if (performance >= 80) return 'text-blue-600';
+    if (performance >= 70) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Team Management</h1>
-          <p className="text-gray-600">Manage your team members and track performance</p>
+          <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+          <p className="text-gray-600">Manage team members and assignments</p>
         </div>
-        <Button onClick={() => setShowAddModal(true)} className="bg-teal-600 hover:bg-teal-700">
-          <UserPlus size={16} className="mr-2" />
-          Add Team Member
+        <div className="flex space-x-3">
+          <Button 
+            variant="outline"
+            onClick={() => setIsSettingsOpen(true)}
+          >
+            <Settings size={16} className="mr-2" />
+            Team Settings
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={handleAutoAssign}
+          >
+            <Target size={16} className="mr-2" />
+            Auto-Assign
+          </Button>
+          <Button 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setIsAddMemberOpen(true)}
+          >
+            <UserPlus size={16} className="mr-2" />
+            Add Team Member
+          </Button>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={handleGenerateReport}
+        >
+          <FileText size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Performance Reports</p>
+            <p className="text-sm text-gray-500">Generate team analytics</p>
+          </div>
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={() => setIsScheduleReviewOpen(true)}
+        >
+          <Calendar size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Schedule Review</p>
+            <p className="text-sm text-gray-500">One-on-one team reviews</p>
+          </div>
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="h-16 justify-start"
+          onClick={() => setIsSetTargetsOpen(true)}
+        >
+          <Target size={20} className="mr-3" />
+          <div className="text-left">
+            <p className="font-medium">Set Targets</p>
+            <p className="text-sm text-gray-500">Define goals and KPIs</p>
+          </div>
         </Button>
       </div>
 
-      {/* Team Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Members</p>
-                <p className="text-2xl font-bold">{teamStats.total}</p>
-              </div>
-              <Users className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Team Overview</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="assignments">Assignments</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Active Members</p>
-                <p className="text-2xl font-bold">{teamStats.active}</p>
-              </div>
-              <Activity className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Members</p>
+                    <p className="text-2xl font-bold">{teamMembers.length}</p>
+                  </div>
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Avg Performance</p>
-                <p className="text-2xl font-bold">{teamStats.avgPerformance}%</p>
-              </div>
-              <BarChart3 className="h-8 w-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Active Members</p>
+                    <p className="text-2xl font-bold">{teamMembers.filter(m => m.status === 'active').length}</p>
+                  </div>
+                  <Award className="h-8 w-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Team Performance</p>
-                <p className="text-2xl font-bold">
-                  {Math.round((teamStats.totalAchieved / teamStats.totalTarget) * 100)}%
-                </p>
-              </div>
-              <BarChart3 className="h-8 w-8 text-teal-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex space-x-4 border-b">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`pb-2 px-1 border-b-2 transition-colors ${
-            activeTab === 'overview' 
-              ? 'border-teal-500 text-teal-600' 
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Team Overview
-        </button>
-        <button
-          onClick={() => setActiveTab('performance')}
-          className={`pb-2 px-1 border-b-2 transition-colors ${
-            activeTab === 'performance' 
-              ? 'border-teal-500 text-teal-600' 
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Performance Analytics
-        </button>
-        <button
-          onClick={() => setActiveTab('realtime')}
-          className={`pb-2 px-1 border-b-2 transition-colors ${
-            activeTab === 'realtime' 
-              ? 'border-teal-500 text-teal-600' 
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Real-time Monitor
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'overview' && (
-        <>
-          {/* Search and Filters */}
-          <div className="flex space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-              <Input
-                placeholder="Search team members..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline">
-              <Filter size={16} className="mr-2" />
-              Filters
-            </Button>
-            <Button variant="outline">
-              <Download size={16} className="mr-2" />
-              Export
-            </Button>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Avg Performance</p>
+                    <p className="text-2xl font-bold">
+                      {teamMembers.length > 0 ? Math.round(teamMembers.reduce((acc, m) => acc + m.performance, 0) / teamMembers.length) : 0}%
+                    </p>
+                  </div>
+                  <Target className="h-8 w-8 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Team Members Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredMembers.map((member) => (
-              <TeamMemberCard
-                key={member.id}
-                member={member}
-                onEdit={handleEditMember}
-                onRemove={handleRemoveMember}
-                onSetTargets={handleSetTargets}
-                onScheduleReview={handleScheduleReview}
-              />
-            ))}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Members</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {teamMembers.map((member) => (
+                  <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback className="bg-teal-100 text-teal-700">
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h4 className="font-medium">{member.name}</h4>
+                        <p className="text-sm text-gray-500">{member.email}</p>
+                        <p className="text-sm text-gray-500">{member.role} • {member.department}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <Badge className={getStatusColor(member.status)}>
+                        {member.status}
+                      </Badge>
+                      <div className="text-right">
+                        <p className={`text-sm font-medium ${getPerformanceColor(member.performance)}`}>
+                          {member.performance}% Performance
+                        </p>
+                        <p className="text-xs text-gray-500">{member.lastActive}</p>
+                      </div>
+                      
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewDetails(member)}
+                        >
+                          <Eye size={14} className="mr-1" />
+                          View Details
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => handleAssignLeads(member.name)}
+                        >
+                          Assign Leads
+                        </Button>
+                      </div>
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem onClick={() => handleEditMember(member)}>
+                            <Edit size={14} className="mr-2" />
+                            Edit Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSetTargets(member)}>
+                            <Target size={14} className="mr-2" />
+                            Set Targets
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleRemoveMember(member)}
+                          >
+                            <Trash2 size={14} className="mr-2" />
+                            Remove Member
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Activity Feed */}
-          <TeamActivityFeed />
-        </>
-      )}
+        <TabsContent value="performance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Performance Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {teamMembers.map((member) => (
+                  <div key={member.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback className="bg-teal-100 text-teal-700">
+                            {member.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h4 className="font-medium">{member.name}</h4>
+                          <p className="text-sm text-gray-500">{member.role}</p>
+                        </div>
+                      </div>
+                      <div className={`text-lg font-bold ${getPerformanceColor(member.performance)}`}>
+                        {member.performance}%
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600">Monthly Target</p>
+                        <p className="font-medium">₹{member.targets.monthly}L</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Achieved</p>
+                        <p className="font-medium">₹{member.targets.achieved}L</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Achievement Rate</p>
+                        <p className="font-medium">{member.targets.monthly > 0 ? Math.round((member.targets.achieved / member.targets.monthly) * 100) : 0}%</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {activeTab === 'performance' && (
-        <TeamPerformanceChart teamData={teamMembers} />
-      )}
-
-      {activeTab === 'realtime' && (
-        <RealTimeTeamMonitor />
-      )}
+        <TabsContent value="assignments" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Current Assignments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <Clock size={48} className="mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Assignment Management</h3>
+                <p className="text-gray-600 mb-4">Manage team member assignments and territories</p>
+                <Button>Create New Assignment</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Modals */}
-      <AddTeamMemberModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
+      <AddTeamMemberModal 
+        isOpen={isAddMemberOpen} 
+        onClose={() => setIsAddMemberOpen(false)}
         onAddMember={handleAddMember}
       />
-
-      <EditTeamMemberModal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+      
+      <TeamSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
+      
+      <ViewDetailsModal 
+        isOpen={isViewDetailsOpen} 
+        onClose={() => setIsViewDetailsOpen(false)} 
         member={selectedMember}
-        onUpdateMember={handleUpdateMember}
       />
-
-      <SetTargetsModal
-        isOpen={showTargetsModal}
-        onClose={() => setShowTargetsModal(false)}
-        preSelectedMember={selectedMember}
+      
+      <SetTargetsModal 
+        isOpen={isSetTargetsOpen} 
+        onClose={() => setIsSetTargetsOpen(false)}
+        preSelectedMember={targetMember}
       />
-
-      <ScheduleReviewModal
-        isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
+      
+      <ScheduleReviewModal 
+        isOpen={isScheduleReviewOpen} 
+        onClose={() => setIsScheduleReviewOpen(false)} 
       />
     </div>
   );
