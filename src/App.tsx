@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,7 @@ import TeamPerformance from "./pages/TeamPerformance";
 import TerritoryManagement from "./pages/TerritoryManagement";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
+import RuleManagementPage from "./pages/RuleManagement";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
@@ -133,8 +135,6 @@ const App = () => (
                           <PortfolioManagement />
                         </RoleBasedRoute>
                       } />
-                      
-                      {/* Keep only Team Performance route for supervisor features */}
                       <Route path="/team-performance" element={
                         <RoleBasedRoute featureId="team_performance">
                           <TeamPerformance />
@@ -143,6 +143,11 @@ const App = () => (
                       <Route path="/territory-management" element={
                         <RoleBasedRoute featureId="territory_management">
                           <TerritoryManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/rule-management" element={
+                        <RoleBasedRoute featureId="rule_management">
+                          <RuleManagementPage />
                         </RoleBasedRoute>
                       } />
                       <Route path="/reports" element={

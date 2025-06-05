@@ -212,7 +212,6 @@ const LeadManagement = () => {
       <LeadFilters 
         filters={filters}
         onFiltersChange={setFilters}
-        onClearFilters={handleClearFilters}
       />
 
       {/* Leads Table */}
@@ -239,20 +238,20 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal 
-        isOpen={isAddLeadModalOpen}
+        open={isAddLeadModalOpen}
         onOpenChange={setIsAddLeadModalOpen}
         onAddLead={handleAddLead}
       />
       
       <EditLeadModal 
-        isOpen={isEditLeadModalOpen}
+        open={isEditLeadModalOpen}
         onOpenChange={setIsEditLeadModalOpen}
         lead={selectedLead}
-        onUpdateLead={handleUpdateLead}
+        onSave={handleUpdateLead}
       />
 
       <LeadNotesModal 
-        isOpen={isLeadNotesModalOpen}
+        open={isLeadNotesModalOpen}
         onOpenChange={setIsLeadNotesModalOpen}
         lead={selectedLead}
       />

@@ -1,3 +1,4 @@
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,10 +15,10 @@ import {
 
 const TeamPerformance = () => {
   const teamPerformanceData = [
-    { name: 'Rahul', target: 15, achieved: 12, conversion: 32, calls: 95 },
-    { name: 'Anjali', target: 12, achieved: 11, conversion: 28, calls: 78 },
-    { name: 'Vikash', target: 14, achieved: 8, conversion: 18, calls: 65 },
-    { name: 'Priya', target: 18, achieved: 17, conversion: 35, calls: 102 }
+    { name: 'Pune', target: 15, achieved: 12, conversion: 32, calls: 95 },
+    { name: 'Mumbai', target: 12, achieved: 11, conversion: 28, calls: 78 },
+    { name: 'Delhi', target: 14, achieved: 8, conversion: 18, calls: 65 },
+    { name: 'Bangalore', target: 18, achieved: 17, conversion: 35, calls: 102 }
   ];
 
   const monthlyTrends = [
@@ -40,8 +41,8 @@ const TeamPerformance = () => {
   const teamMembers = [
     {
       id: '1',
-      name: 'Rahul Sharma',
-      position: 'Senior Sales Executive',
+      name: 'Pune',
+      position: 'Regional Sales Hub',
       target: 15,
       achieved: 12,
       conversion: 32,
@@ -50,8 +51,8 @@ const TeamPerformance = () => {
     },
     {
       id: '2',
-      name: 'Anjali Patel',
-      position: 'Sales Executive',
+      name: 'Mumbai',
+      position: 'Regional Sales Hub',
       target: 12,
       achieved: 11,
       conversion: 28,
@@ -60,8 +61,8 @@ const TeamPerformance = () => {
     },
     {
       id: '3',
-      name: 'Vikash Kumar',
-      position: 'Sales Executive',
+      name: 'Delhi',
+      position: 'Regional Sales Hub',
       target: 14,
       achieved: 8,
       conversion: 18,
@@ -70,8 +71,8 @@ const TeamPerformance = () => {
     },
     {
       id: '4',
-      name: 'Priya Singh',
-      position: 'Senior Sales Executive',
+      name: 'Bangalore',
+      position: 'Regional Sales Hub',
       target: 18,
       achieved: 17,
       conversion: 35,
@@ -122,7 +123,7 @@ const TeamPerformance = () => {
     },
     {
       title: 'Top Performer',
-      value: 'Priya Singh',
+      value: 'Bangalore',
       subtitle: '94% target achievement',
       trend: { value: 'Leading this month', isPositive: true },
       icon: <Users size={20} />
@@ -134,7 +135,7 @@ const TeamPerformance = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Performance Analytics</h1>
-          <p className="text-gray-600">Team performance metrics and analytics</p>
+          <p className="text-gray-600">Regional performance metrics and analytics</p>
         </div>
       </div>
 
@@ -222,7 +223,7 @@ const TeamPerformance = () => {
         <TabsContent value="leaderboard" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Team Leaderboard</CardTitle>
+              <CardTitle>Regional Leaderboard</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -236,7 +237,7 @@ const TeamPerformance = () => {
                         </Badge>
                         <Avatar className="h-12 w-12">
                           <AvatarFallback className="bg-teal-100 text-teal-700">
-                            {member.name.split(' ').map(n => n[0]).join('')}
+                            {member.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div>
