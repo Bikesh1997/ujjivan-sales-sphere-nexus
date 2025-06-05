@@ -44,19 +44,15 @@ export const PERMISSIONS = {
   USER_MANAGE: { id: 'user_manage', name: 'Manage Users', resource: 'users', action: 'manage' as const },
   USER_VIEW: { id: 'user_view', name: 'View Users', resource: 'users', action: 'read' as const },
 
-  // Geo Location
-  GEO_TRACK: { id: 'geo_track', name: 'Track Location', resource: 'geo', action: 'manage' as const },
-  GEO_VIEW: { id: 'geo_view', name: 'View Location', resource: 'geo', action: 'read' as const },
-
-  // AI Assistant
-  AI_ASSISTANT: { id: 'ai_assistant', name: 'Use AI Assistant', resource: 'ai', action: 'read' as const },
+  // Geo Tracking (Supervisor only)
+  GEO_TRACK: { id: 'geo_track', name: 'Geo Tracking', resource: 'geo', action: 'manage' as const },
 };
 
 export const ROLES: Role[] = [
   {
     id: 'field_sales_officer',
     name: 'Field Sales Officer',
-    description: 'Field sales representative with beat planning and customer visit management',
+    description: 'Field sales representative',
     level: 1,
     permissions: [
       PERMISSIONS.LEAD_READ,
@@ -66,14 +62,12 @@ export const ROLES: Role[] = [
       PERMISSIONS.TASK_UPDATE,
       PERMISSIONS.REPORT_VIEW,
       PERMISSIONS.USER_VIEW,
-      PERMISSIONS.GEO_VIEW,
-      PERMISSIONS.AI_ASSISTANT,
     ]
   },
   {
     id: 'inbound_contact_agent',
     name: 'Inbound Contact Agent',
-    description: 'Handles incoming customer inquiries and lead verification',
+    description: 'Handles inbound customer inquiries',
     level: 1,
     permissions: [
       PERMISSIONS.LEAD_CREATE,
@@ -82,14 +76,14 @@ export const ROLES: Role[] = [
       PERMISSIONS.TASK_CREATE,
       PERMISSIONS.TASK_READ,
       PERMISSIONS.TASK_UPDATE,
+      PERMISSIONS.REPORT_VIEW,
       PERMISSIONS.USER_VIEW,
-      PERMISSIONS.AI_ASSISTANT,
     ]
   },
   {
     id: 'relationship_manager',
     name: 'Relationship Manager',
-    description: 'Manages high-value customer relationships and portfolio',
+    description: 'Manages high-value client relationships',
     level: 2,
     permissions: [
       PERMISSIONS.LEAD_CREATE,
@@ -99,14 +93,14 @@ export const ROLES: Role[] = [
       PERMISSIONS.TASK_READ,
       PERMISSIONS.TASK_UPDATE,
       PERMISSIONS.REPORT_VIEW,
+      PERMISSIONS.REPORT_GENERATE,
       PERMISSIONS.USER_VIEW,
-      PERMISSIONS.AI_ASSISTANT,
     ]
   },
   {
     id: 'supervisor',
-    name: 'Branch Supervisor',
-    description: 'Team supervisor with management access and geo-tracking oversight',
+    name: 'Supervisor',
+    description: 'Team supervisor with management access and geo tracking',
     level: 3,
     permissions: [
       PERMISSIONS.LEAD_CREATE,
@@ -123,32 +117,6 @@ export const ROLES: Role[] = [
       PERMISSIONS.USER_MANAGE,
       PERMISSIONS.USER_VIEW,
       PERMISSIONS.GEO_TRACK,
-      PERMISSIONS.GEO_VIEW,
-      PERMISSIONS.AI_ASSISTANT,
-    ]
-  },
-  {
-    id: 'admin_mis_officer',
-    name: 'Admin/MIS Officer',
-    description: 'System administration and MIS reporting',
-    level: 4,
-    permissions: [
-      PERMISSIONS.LEAD_CREATE,
-      PERMISSIONS.LEAD_READ,
-      PERMISSIONS.LEAD_UPDATE,
-      PERMISSIONS.LEAD_DELETE,
-      PERMISSIONS.LEAD_ASSIGN,
-      PERMISSIONS.TASK_CREATE,
-      PERMISSIONS.TASK_READ,
-      PERMISSIONS.TASK_UPDATE,
-      PERMISSIONS.TASK_DELETE,
-      PERMISSIONS.REPORT_VIEW,
-      PERMISSIONS.REPORT_GENERATE,
-      PERMISSIONS.USER_MANAGE,
-      PERMISSIONS.USER_VIEW,
-      PERMISSIONS.GEO_TRACK,
-      PERMISSIONS.GEO_VIEW,
-      PERMISSIONS.AI_ASSISTANT,
     ]
   }
 ];

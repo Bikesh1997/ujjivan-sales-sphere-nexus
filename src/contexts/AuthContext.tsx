@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
@@ -12,17 +13,15 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with Admin/MIS Officer removed
+// Enhanced user data with new user types
 const MOCK_USERS: User[] = [
   {
     id: '1',
-    email: 'fso@bank.com',
+    email: 'field@bank.com',
     name: 'Rahul Sharma',
     role: 'field_sales_officer',
     department: 'field',
-    branch: 'Mumbai Central',
-    beatPlan: 'Beat A - Bandra',
-    territory: 'Mumbai West'
+    branch: 'Mumbai Central'
   },
   {
     id: '2',
@@ -90,14 +89,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Direct role-based login
-      let foundUser = null;
+      const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
       
-      if (credentials.email && credentials.password === 'password123') {
-        foundUser = MOCK_USERS.find(u => u.email === credentials.email);
-      }
-      
-      if (foundUser) {
+      if (foundUser && credentials.password === 'password123') {
         setUser(foundUser);
         setIsAuthenticated(true);
         
@@ -127,8 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const switchRole = (role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor') => {
-    // Only supervisors can switch roles
-    if (user && user.role === 'supervisor') {
+    if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));

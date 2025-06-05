@@ -4,11 +4,9 @@ export interface User {
   email: string;
   name: string;
   role: 'field_sales_officer' | 'inbound_contact_agent' | 'relationship_manager' | 'supervisor';
-  department?: 'field' | 'inbound' | 'relationship';
+  department?: 'inbound' | 'field' | 'relationship';
   branch: string;
   avatar?: string;
-  beatPlan?: string;
-  territory?: string;
 }
 
 export interface AuthState {

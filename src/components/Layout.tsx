@@ -18,11 +18,7 @@ import {
   Activity,
   Target,
   PieChart,
-  Shield,
-  Phone,
-  PhoneCall,
-  UserCheck,
-  Settings
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -34,7 +30,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import AIAssistantWidget from '@/components/ai/AIAssistantWidget';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -58,11 +53,7 @@ const Layout = ({ children }: LayoutProps) => {
     Activity: Activity,
     Target: Target,
     PieChart: PieChart,
-    Shield: Shield,
-    Phone: Phone,
-    PhoneCall: PhoneCall,
-    UserCheck: UserCheck,
-    Settings: Settings
+    Shield: Shield
   };
 
   const navigationItems = getNavigationItems().map(item => ({
@@ -84,28 +75,18 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getDepartmentDisplay = (dept?: string) => {
     switch (dept) {
-      case 'field': return 'Field';
+      case 'outbound': return 'Outbound';
       case 'inbound': return 'Inbound';
-      case 'relationship': return 'Relationship';
+      case 'field': return 'Field';
       default: return '';
     }
   };
 
-  const getRoleOptions = () => {
-    const roles = [
-      { value: 'field_sales_officer', label: 'Field Sales Officer' },
-      { value: 'inbound_contact_agent', label: 'Inbound Contact Agent' },
-      { value: 'relationship_manager', label: 'Relationship Manager' },
-      { value: 'supervisor', label: 'Supervisor' }
-    ];
-    return roles.filter(role => role.value !== user?.role);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation - 100% width */}
-      <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
+      {/* Top Navigation */}
+      <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Button
@@ -116,7 +97,8 @@ const Layout = ({ children }: LayoutProps) => {
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-start">
+              {/* Left-aligned logo */}
+              <div className="flex items-center">
                 <img 
                   src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
                   alt="Ujjivan Small Finance Bank" 
@@ -156,22 +138,12 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  
-                  {/* Only show role switching for supervisors */}
-                  {user?.role === 'supervisor' && (
-                    <>
-                      <DropdownMenuSeparator />
-                      {getRoleOptions().map(role => (
-                        <DropdownMenuItem 
-                          key={role.value}
-                          onClick={() => switchRole(role.value as any)}
-                        >
-                          Switch to {role.label}
-                        </DropdownMenuItem>
-                      ))}
-                    </>
-                  )}
-                  
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => switchRole(user?.role === 'field_sales_officer' ? 'supervisor' : 'field_sales_officer')}
+                  >
+                    Switch Role
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
@@ -192,7 +164,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {getRoleDisplay(user?.role || '')} Portal
+                {user?.role === 'supervisor' ? 'Supervisor Portal' : 'Sales Portal'}
               </div>
             </div>
             <nav className="px-3 space-y-1">
@@ -225,9 +197,6 @@ const Layout = ({ children }: LayoutProps) => {
           </main>
         </div>
       </div>
-
-      {/* AI Assistant Widget */}
-      <AIAssistantWidget />
 
       {/* Overlay for mobile */}
       {sidebarOpen && (
