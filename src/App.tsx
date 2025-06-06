@@ -21,6 +21,7 @@ import CustomerAnalytics from './pages/CustomerAnalytics';
 import KPAManagement from './pages/KPAManagement';
 import PortfolioManagement from './pages/PortfolioManagement';
 import RiskManagement from './pages/RiskManagement';
+import UserManagement from './pages/UserManagement';
 import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuth } from './contexts/AuthContext';
@@ -132,6 +133,11 @@ function AppContent() {
         <Route path="/risk-management" element={
           <ProtectedRoute>
             <RiskManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/user-management" element={
+          <ProtectedRoute>
+            <UserManagement />
           </ProtectedRoute>
         } />
         <Route path="*" element={<NotFound />} />
