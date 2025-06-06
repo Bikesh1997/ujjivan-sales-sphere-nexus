@@ -1,9 +1,6 @@
 
-// Export the lead data both as named export and default export
-export const leadsData = allLeads;
-export default allLeads;
-
-export const allLeads = [
+// Define the array first, then export it
+const allLeads = [
   {
     id: 'LEAD001',
     name: 'Acme Corp',
@@ -495,3 +492,7 @@ export const allLeads = [
     priority: 'Medium'
   }
 ];
+
+// Export the lead data both as named export and default export
+export const leadsData = allLeads;
+export default allLeads;

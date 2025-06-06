@@ -18,12 +18,28 @@ import LeadViewModal from '@/components/leads/LeadViewModal';
 import BulkLeadActions from '@/components/leads/BulkLeadActions';
 import { leadsData } from '@/data/leadsData';
 
+// Define the Lead interface to match what's expected
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  status: string;
+  source: string;
+  value: string;
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  priority: string;
+}
+
 const LeadManagement = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [leads, setLeads] = useState(leadsData);
+  const [leads, setLeads] = useState<Lead[]>(leadsData);
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -31,7 +47,7 @@ const LeadManagement = () => {
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   // Custom hooks for lead filtering
   const {
@@ -72,10 +88,10 @@ const LeadManagement = () => {
 
   const stats = {
     total: filteredLeads.length,
-    new: filteredLeads.filter(lead => lead.status === 'New').length,
-    contacted: filteredLeads.filter(lead => lead.status === 'Contacted').length,
-    qualified: filteredLeads.filter(lead => lead.status === 'Qualified').length,
-    converted: filteredLeads.filter(lead => lead.status === 'Converted').length
+    new: filteredLeads.filter(lead => lead.status.toLowerCase() === 'new').length,
+    contacted: filteredLeads.filter(lead => lead.status.toLowerCase() === 'contacted').length,
+    qualified: filteredLeads.filter(lead => lead.status.toLowerCase() === 'qualified').length,
+    converted: filteredLeads.filter(lead => lead.status.toLowerCase() === 'converted').length
   };
 
   const handleSelectLead = (leadId: string) => {
@@ -195,31 +211,43 @@ const LeadManagement = () => {
 
       {/* Modals */}
       <AddLeadModal
+        isOpen={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
         onAddLead={handleAddLead}
       />
 
       {selectedLead && (
         <>
           <EditLeadModal
+            isOpen={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
             lead={selectedLead}
-            onUpdateLead={handleUpdateLead}
+            onEditLead={handleUpdateLead}
           />
 
           <LeadNotesModal
-            lead={selectedLead}
+            isOpen={isNotesModalOpen}
+            onOpenChange={setIsNotesModalOpen}
+            leadId={selectedLead.id}
+            leadName={selectedLead.name}
           />
 
           <LeadCallModal
-            lead={selectedLead}
+            isOpen={isCallModalOpen}
+            onOpenChange={setIsCallModalOpen}
+            leadName={selectedLead.name}
+            phoneNumber={selectedLead.phone}
           />
 
           <LeadViewModal
+            isOpen={isViewModalOpen}
+            onOpenChange={setIsViewModalOpen}
             lead={selectedLead}
-            onEdit={() => {
+            onEditRequest={() => {
               setIsViewModalOpen(false);
               setIsEditModalOpen(true);
             }}
-            onCall={() => {
+            onCallRequest={() => {
               setIsViewModalOpen(false);
               setIsCallModalOpen(true);
             }}
