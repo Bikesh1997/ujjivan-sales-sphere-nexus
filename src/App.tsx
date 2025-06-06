@@ -20,6 +20,7 @@ import CustomerAnalytics from './pages/CustomerAnalytics';
 import KPAManagement from './pages/KPAManagement';
 import PortfolioManagement from './pages/PortfolioManagement';
 import RiskManagement from './pages/RiskManagement';
+import UserManagement from './pages/UserManagement';
 import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuth } from './contexts/AuthContext';

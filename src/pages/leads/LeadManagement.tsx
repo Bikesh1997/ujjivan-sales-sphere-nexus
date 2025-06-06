@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const LeadManagement = () => {
   const [isLeadNotesModalOpen, setIsLeadNotesModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const leadsPerPage = 5;
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [filters, setFilters] = useState({
     status: '',
@@ -96,6 +98,7 @@ const LeadManagement = () => {
       assignedTo: '',
       dateRange: '',
     });
+    setSearchTerm('');
   };
 
   const filteredLeads = leads.filter(lead => {
@@ -147,6 +150,8 @@ const LeadManagement = () => {
 
       {/* Lead Filters */}
       <LeadFilters 
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
         filters={filters}
         onFiltersChange={setFilters}
         onClearFilters={handleClearFilters}
@@ -160,8 +165,8 @@ const LeadManagement = () => {
         <CardContent>
           <LeadsTable
             leads={currentLeads}
-            onEditLead={handleEditLead}
-            onDeleteLead={handleDeleteLead}
+            userRole={user?.role || ''}
+            onEditLead={handleDeleteLead}
             onLeadClick={handleLeadClick}
             onNotesClick={handleNotesClick}
             onCallClick={handleCallClick}
@@ -178,26 +183,23 @@ const LeadManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Modals */}
-      <AddLeadModal 
-        open={isAddLeadModalOpen}
-        onOpenChange={setIsAddLeadModalOpen}
-        onAddLead={handleAddLead}
-      />
+      {/* Let's update the AddLeadModal usage to match its interface */}
+      <AddLeadModal onAddLead={handleAddLead} />
       
+      {/* Update EditLeadModal and LeadNotesModal with their proper interfaces */}
       {selectedLead && (
         <>
           <EditLeadModal 
-            open={isEditLeadModalOpen}
-            onOpenChange={setIsEditLeadModalOpen}
             lead={selectedLead}
-            onUpdateLead={handleUpdateLead}
+            isOpen={isEditLeadModalOpen}
+            onOpenChange={setIsEditLeadModalOpen}
+            onEditLead={handleUpdateLead}
           />
           
           <LeadNotesModal 
-            open={isLeadNotesModalOpen}
-            onOpenChange={setIsLeadNotesModalOpen}
             lead={selectedLead}
+            isOpen={isLeadNotesModalOpen}
+            onOpenChange={setIsLeadNotesModalOpen}
           />
         </>
       )}

@@ -39,7 +39,7 @@ const LeadFilters = ({
         </div>
         <Select value={filters.status} onValueChange={(value) => onFiltersChange({ ...filters, status: value })}>
           <SelectTrigger className="w-32">
-            <SelectValue />
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
