@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -67,6 +66,11 @@ function AppContent() {
         <Route path="/leads" element={
           <ProtectedRoute>
             <LeadManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/user-management" element={
+          <ProtectedRoute>
+            <UserManagement />
           </ProtectedRoute>
         } />
         <Route path="/tasks" element={

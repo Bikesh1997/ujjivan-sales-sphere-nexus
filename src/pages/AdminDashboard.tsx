@@ -5,12 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import DashboardCard from '@/components/DashboardCard';
 import { 
-  Settings, 
   Shield, 
-  Target, 
-  UserPlus, 
-  Database, 
-  BarChart3, 
   Users,
   Activity,
   AlertTriangle,
@@ -18,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -36,14 +32,14 @@ const AdminDashboard = () => {
       value: '98.5%', 
       subtitle: 'System-wide accuracy', 
       trend: { value: '2.1% improvement', isPositive: true }, 
-      icon: <Database size={20} /> 
+      icon: <AlertTriangle size={20} /> 
     },
     { 
       title: 'Rule Violations', 
       value: '3', 
       subtitle: 'Requiring attention', 
       trend: { value: '5 resolved today', isPositive: true }, 
-      icon: <AlertTriangle size={20} /> 
+      icon: <Shield size={20} /> 
     },
     { 
       title: 'System Health', 
@@ -56,40 +52,16 @@ const AdminDashboard = () => {
 
   const configurationModules = [
     {
-      title: 'System Configuration',
-      description: 'Configure system-wide settings and parameters',
-      icon: <Settings size={32} className="text-blue-600" />,
-      action: () => handleModuleClick('System Configuration')
+      title: 'User Management',
+      description: 'Manage users, roles and permissions',
+      icon: <Users size={32} className="text-purple-600" />,
+      action: '/user-management'
     },
     {
       title: 'Rule Configuration',
       description: 'Manage business rules and automation mappings',
       icon: <Shield size={32} className="text-green-600" />,
-      action: () => handleModuleClick('Rule Configuration')
-    },
-    {
-      title: 'KRA Target Management',
-      description: 'Set and configure KRA targets and metrics',
-      icon: <Target size={32} className="text-purple-600" />,
-      action: () => handleModuleClick('KRA Target Management')
-    },
-    {
-      title: 'Lead Source Management',
-      description: 'Configure lead sources and channel mappings',
-      icon: <UserPlus size={32} className="text-orange-600" />,
-      action: () => handleModuleClick('Lead Source Management')
-    },
-    {
-      title: 'Data Management',
-      description: 'Monitor and maintain data accuracy',
-      icon: <Database size={32} className="text-teal-600" />,
-      action: () => handleModuleClick('Data Management')
-    },
-    {
-      title: 'Reporting Layers',
-      description: 'Configure reporting structure and hierarchies',
-      icon: <BarChart3 size={32} className="text-red-600" />,
-      action: () => handleModuleClick('Reporting Layers')
+      action: '/rule-management'
     }
   ];
 
@@ -100,13 +72,6 @@ const AdminDashboard = () => {
     { action: 'User Added', description: 'New sales executive onboarded', time: '1 day ago', status: 'info' },
     { action: 'System Alert', description: 'Data accuracy threshold alert resolved', time: '2 days ago', status: 'warning' }
   ];
-
-  const handleModuleClick = (moduleName: string) => {
-    toast({
-      title: "Module Access",
-      description: `Opening ${moduleName} interface...`,
-    });
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -129,10 +94,6 @@ const AdminDashboard = () => {
           <Button variant="outline" size="sm">
             <Activity size={16} className="mr-2" />
             System Health
-          </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-            <Settings size={16} className="mr-2" />
-            Quick Config
           </Button>
         </div>
       </div>
@@ -157,15 +118,17 @@ const AdminDashboard = () => {
           <CardTitle>Configuration Modules</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {configurationModules.map((module, index) => (
-              <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={module.action}>
-                <CardContent className="p-6 text-center">
-                  {module.icon}
-                  <h3 className="font-medium mb-2 mt-3">{module.title}</h3>
-                  <p className="text-sm text-gray-600">{module.description}</p>
-                </CardContent>
-              </Card>
+              <Link to={module.action} key={index}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 text-center">
+                    {module.icon}
+                    <h3 className="font-medium mb-2 mt-3">{module.title}</h3>
+                    <p className="text-sm text-gray-600">{module.description}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </CardContent>
