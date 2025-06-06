@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,13 +60,14 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
+  const fillDemoCredentials = (userType: 'sales' | 'sales2' | 'supervisor' | 'inbound' | 'relationship' | 'admin') => {
     const credentials = {
       sales: { email: 'sales@bank.com', password: 'password123' },
       sales2: { email: 'sales2@bank.com', password: 'password123' },
       supervisor: { email: 'supervisor@bank.com', password: 'password123' },
       inbound: { email: 'inbound@bank.com', password: 'password123' },
-      relationship: { email: 'relationship@bank.com', password: 'password123' }
+      relationship: { email: 'relationship@bank.com', password: 'password123' },
+      admin: { email: 'admin@bank.com', password: 'password123' }
     };
     
     setEmail(credentials[userType].email);
@@ -275,7 +275,15 @@ const LoginForm = () => {
                 className="w-full"
                 disabled={isLoading}
               >
-                Supervisor Demo
+                Supervisor Demo (Priya)
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('admin')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Admin / Sales Operations Demo
               </Button>
               <div className="text-center text-xs text-gray-500 mt-2">
                 Password: password123

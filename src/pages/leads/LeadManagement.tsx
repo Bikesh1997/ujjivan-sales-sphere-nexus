@@ -11,9 +11,11 @@ import EditLeadModal from '@/components/leads/EditLeadModal';
 import LeadNotesModal from '@/components/leads/LeadNotesModal';
 import { allLeads } from '@/data/leadsData';
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
 
 const LeadManagement = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [leads, setLeads] = useState(allLeads);
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
@@ -26,6 +28,8 @@ const LeadManagement = () => {
     status: '',
     priority: '',
     source: '',
+    assignedTo: '',
+    dateRange: '',
   });
 
   const handleAddLead = (newLead: any) => {
@@ -89,6 +93,8 @@ const LeadManagement = () => {
       status: '',
       priority: '',
       source: '',
+      assignedTo: '',
+      dateRange: '',
     });
   };
 
@@ -137,7 +143,7 @@ const LeadManagement = () => {
       </div>
 
       {/* Lead Stats Cards */}
-      <LeadStatsCards leads={filteredLeads} />
+      <LeadStatsCards leads={filteredLeads} userRole={user?.role} />
 
       {/* Lead Filters */}
       <LeadFilters 
@@ -165,29 +171,32 @@ const LeadManagement = () => {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            startIndex={indexOfFirstLead}
+            leadsPerPage={leadsPerPage}
+            totalLeads={filteredLeads.length}
           />
         </CardContent>
       </Card>
 
       {/* Modals */}
       <AddLeadModal 
-        isOpen={isAddLeadModalOpen}
-        onClose={() => setIsAddLeadModalOpen(false)}
+        open={isAddLeadModalOpen}
+        onOpenChange={setIsAddLeadModalOpen}
         onAddLead={handleAddLead}
       />
       
       {selectedLead && (
         <>
           <EditLeadModal 
-            isOpen={isEditLeadModalOpen}
-            onClose={() => setIsEditLeadModalOpen(false)}
+            open={isEditLeadModalOpen}
+            onOpenChange={setIsEditLeadModalOpen}
             lead={selectedLead}
             onUpdateLead={handleUpdateLead}
           />
           
           <LeadNotesModal 
-            isOpen={isLeadNotesModalOpen}
-            onClose={() => setIsLeadNotesModalOpen(false)}
+            open={isLeadNotesModalOpen}
+            onOpenChange={setIsLeadNotesModalOpen}
             lead={selectedLead}
           />
         </>

@@ -1,3 +1,4 @@
+
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -141,6 +142,72 @@ export const FEATURES: Feature[] = [
     icon: 'Shield',
     roles: ['supervisor'],
     description: 'Risk assessment and management'
+  },
+
+  // Admin Features
+  {
+    id: 'admin_dashboard',
+    name: 'System Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['admin'],
+    description: 'System overview and configuration'
+  },
+  {
+    id: 'system_configuration',
+    name: 'System Configuration',
+    path: '/system-config',
+    icon: 'Settings',
+    roles: ['admin'],
+    description: 'Configure system-wide settings'
+  },
+  {
+    id: 'rule_configuration',
+    name: 'Rule Configuration',
+    path: '/rule-management',
+    icon: 'Shield',
+    roles: ['admin'],
+    description: 'Configure business rules and mappings'
+  },
+  {
+    id: 'kra_targets',
+    name: 'KRA Target Management',
+    path: '/kra-targets',
+    icon: 'Target',
+    roles: ['admin'],
+    description: 'Configure KRA targets and metrics'
+  },
+  {
+    id: 'lead_sources',
+    name: 'Lead Source Management',
+    path: '/lead-sources',
+    icon: 'UserPlus',
+    roles: ['admin'],
+    description: 'Manage lead sources and channels'
+  },
+  {
+    id: 'data_management',
+    name: 'Data Management',
+    path: '/data-management',
+    icon: 'Database',
+    roles: ['admin'],
+    description: 'Data accuracy and integrity tools'
+  },
+  {
+    id: 'reporting_layers',
+    name: 'Reporting Layers',
+    path: '/reporting-layers',
+    icon: 'BarChart3',
+    roles: ['admin'],
+    description: 'Configure reporting structure and layers'
+  },
+  {
+    id: 'user_management',
+    name: 'User Management',
+    path: '/user-management',
+    icon: 'Users',
+    roles: ['admin'],
+    description: 'Manage users and permissions'
   }
 ];
 
@@ -168,7 +235,9 @@ export const getIconName = (iconName: string) => {
     'Activity': 'Activity',
     'Target': 'Target',
     'PieChart': 'PieChart',
-    'Shield': 'Shield'
+    'Shield': 'Shield',
+    'Settings': 'Settings',
+    'Database': 'Database'
   };
   return iconMap[iconName] || 'Home';
 };
