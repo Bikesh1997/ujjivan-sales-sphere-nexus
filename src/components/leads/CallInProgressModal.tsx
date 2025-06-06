@@ -15,6 +15,7 @@ interface CallInProgressModalProps {
 const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName, phoneNumber }: CallInProgressModalProps) => {
   const [callDuration, setCallDuration] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -25,6 +26,7 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
     } else {
       setCallDuration(0);
       setIsRecording(false);
+      setIsMuted(false);
     }
     return () => clearInterval(interval);
   }, [isOpen]);
@@ -41,6 +43,12 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
 
   const handleToggleRecording = () => {
     setIsRecording(!isRecording);
+    console.log(`Recording ${!isRecording ? 'started' : 'stopped'}`);
+  };
+
+  const handleToggleMute = () => {
+    setIsMuted(!isMuted);
+    console.log(`Microphone ${!isMuted ? 'muted' : 'unmuted'}`);
   };
 
   return (
@@ -89,15 +97,30 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
 
           {/* Call Controls */}
           <div className="flex justify-center space-x-4">
-            <button className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-              <MicOff size={20} className="text-gray-600" />
+            <button 
+              onClick={handleToggleMute}
+              className={`w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-colors ${
+                isMuted ? 'bg-red-100' : 'bg-gray-100'
+              }`}
+            >
+              {isMuted ? (
+                <MicOff size={20} className="text-red-600" />
+              ) : (
+                <Mic size={20} className="text-gray-600" />
+              )}
             </button>
             
             <button 
               onClick={handleToggleRecording}
-              className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              className={`w-12 h-12 rounded-full flex items-center justify-center hover:opacity-80 transition-colors ${
+                isRecording ? 'bg-red-500' : 'bg-gray-100'
+              }`}
             >
-              {isRecording ? <div className="w-3 h-3 bg-white rounded-sm" /> : <div className="w-3 h-3 bg-white rounded-full" />}
+              {isRecording ? (
+                <div className="w-3 h-3 bg-white rounded-sm" />
+              ) : (
+                <div className="w-3 h-3 bg-red-500 rounded-full" />
+              )}
             </button>
             
             <button className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
@@ -105,13 +128,21 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
             </button>
           </div>
 
-          {/* Recording Status */}
-          {isRecording && (
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-red-500">Recording in progress</span>
-            </div>
-          )}
+          {/* Status Messages */}
+          <div className="text-center space-y-2">
+            {isRecording && (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-red-500">Recording in progress</span>
+              </div>
+            )}
+            {isMuted && (
+              <div className="flex items-center justify-center space-x-2">
+                <MicOff size={14} className="text-red-500" />
+                <span className="text-sm text-red-500">Microphone muted</span>
+              </div>
+            )}
+          </div>
 
           {/* End Call Button */}
           <Button 
