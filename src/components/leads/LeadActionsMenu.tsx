@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
@@ -40,9 +41,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const randomBusinessName = businessNames[Math.floor(Math.random() * businessNames.length)];
 
   const handleViewCustomer = () => {
-    // Create a customer key based on the lead's contact name
-    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/customer-360?customer=${customerKey}`);
+    navigate('/customer');
   };
 
   const handleEdit = () => {
@@ -60,6 +59,13 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   return (
     <>
       <div className="flex space-x-1">
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          onClick={handleViewCustomer}
+        >
+          <Eye size={14} />
+        </Button>
         <Button 
           size="sm" 
           variant="ghost" 
