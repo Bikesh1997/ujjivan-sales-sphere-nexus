@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +31,8 @@ import { allLeads } from '@/data/leadsData';
 
 const TaskManagement = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  
   const [filters, setFilters] = useState({
     search: '',
     type: '',
