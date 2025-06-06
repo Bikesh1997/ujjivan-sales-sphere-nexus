@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,7 +67,7 @@ const SmartNudges = () => {
         type: 'cross-sell',
         priority: 'Medium',
         actionLabel: 'View Customers',
-        navigationPath: '/customers',
+        navigationPath: '/leads',
         count: 3,
         value: '₹12L'
       }

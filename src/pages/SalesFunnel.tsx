@@ -50,23 +50,82 @@ const SalesFunnel = () => {
     { stage: 'Closed Won', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
   ];
 
-  // Random real names for prospects
-  const realNames = ['Amit Sharma', 'Priya Patel', 'Rahul Kumar', 'Sneha Singh', 'Arjun Mehta', 'Kavya Reddy'];
-  const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
+  // Extended real names and business names for 40+ prospects
+  const realNames = [
+    'Amit Sharma', 'Priya Patel', 'Rahul Kumar', 'Sneha Singh', 'Arjun Mehta', 'Kavya Reddy',
+    'Vikash Gupta', 'Anjali Joshi', 'Rohit Agarwal', 'Deepika Verma', 'Sanjay Yadav', 'Meera Nair',
+    'Arun Krishnan', 'Pooja Tiwari', 'Karan Malhotra', 'Ritu Saxena', 'Suresh Chandra', 'Nisha Kapoor',
+    'Varun Sinha', 'Swati Bhatt', 'Manoj Pandey', 'Shweta Agrawal', 'Rajesh Jain', 'Anita Desai',
+    'Harish Bhatia', 'Sunita Rai', 'Ashish Dubey', 'Preeti Goyal', 'Naveen Choudhary', 'Richa Mittal',
+    'Gaurav Srivastava', 'Neha Bansal', 'Ajay Mishra', 'Divya Prasad', 'Vivek Tyagi', 'Shilpa Modi',
+    'Rajeev Sharma', 'Kritika Jain', 'Abhishek Gupta', 'Pallavi Singh', 'Mukesh Agarwal', 'Simran Kohli',
+    'Sandeep Rana', 'Tanvi Joshi', 'Nitin Verma', 'Rashmi Patel'
+  ];
 
-  const prospects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status)).map((lead, index) => ({
-    id: lead.id,
-    name: realNames[index % realNames.length],
-    company: lead.name,
-    stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
-    value: lead.value,
-    probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
-    lastContact: lead.lastContact,
-    nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
-                lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
-    leadData: lead,
-    businessName: businessNames[index % businessNames.length]
-  }));
+  const businessNames = [
+    'TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries',
+    'Alpha Technologies', 'Beta Consulting', 'Gamma Manufacturing', 'Delta Services', 'Epsilon Group', 'Zeta Corp',
+    'Theta Solutions', 'Lambda Tech', 'Sigma Industries', 'Omega Systems', 'Phoenix Corp', 'Orion Enterprises',
+    'Nexus Solutions', 'Vertex Technologies', 'Matrix Systems', 'Quantum Dynamics', 'Infinity Corp', 'Stellar Industries',
+    'Horizon Group', 'Pinnacle Solutions', 'Summit Technologies', 'Apex Systems', 'Prime Ventures', 'Elite Corp',
+    'Zenith Industries', 'Nova Enterprises', 'Catalyst Solutions', 'Velocity Systems', 'Momentum Corp', 'Synergy Group',
+    'Fusion Technologies', 'Nexus Innovations', 'Quantum Solutions', 'Stellar Dynamics', 'Horizon Enterprises', 'Prime Systems',
+    'Elite Technologies', 'Zenith Ventures', 'Nova Industries', 'Catalyst Corp'
+  ];
+
+  // Create extended prospects list with 40+ entries
+  const allProspects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status));
+  const extendedProspects = [];
+
+  // Add original prospects
+  allProspects.forEach((lead, index) => {
+    extendedProspects.push({
+      id: lead.id,
+      name: realNames[index % realNames.length],
+      company: lead.name,
+      stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
+      value: lead.value,
+      probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
+      lastContact: lead.lastContact,
+      nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
+                  lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
+      leadData: lead,
+      businessName: businessNames[index % businessNames.length]
+    });
+  });
+
+  // Add 40 more prospects
+  for (let i = 0; i < 40; i++) {
+    const statusOptions = ['qualified', 'proposal', 'negotiation'];
+    const status = statusOptions[i % statusOptions.length];
+    const value = `₹${Math.floor(Math.random() * 50) + 10}L`;
+    
+    extendedProspects.push({
+      id: `ext-${i + 1}`,
+      name: realNames[(allProspects.length + i) % realNames.length],
+      company: businessNames[(allProspects.length + i) % businessNames.length],
+      stage: status.charAt(0).toUpperCase() + status.slice(1),
+      value: value,
+      probability: status === 'qualified' ? Math.floor(Math.random() * 20) + 55 : 
+                   status === 'proposal' ? Math.floor(Math.random() * 20) + 65 : 
+                   Math.floor(Math.random() * 20) + 75,
+      lastContact: ['2 days ago', '1 week ago', '3 days ago', '5 days ago'][i % 4],
+      nextAction: status === 'qualified' ? 'Proposal presentation' : 
+                  status === 'proposal' ? 'Follow-up call' : 'Contract review',
+      leadData: {
+        id: `ext-${i + 1}`,
+        name: businessNames[(allProspects.length + i) % businessNames.length],
+        status: status,
+        value: value,
+        phone: `+91 98765${(43210 + i).toString().slice(-5)}`,
+        email: `contact${i + 1}@${businessNames[(allProspects.length + i) % businessNames.length].toLowerCase().replace(/\s+/g, '')}.com`,
+        lastContact: ['2 days ago', '1 week ago', '3 days ago', '5 days ago'][i % 4]
+      },
+      businessName: businessNames[(allProspects.length + i) % businessNames.length]
+    });
+  }
+
+  const prospects = extendedProspects;
 
   // Pagination calculations
   const totalProspects = prospects.length;
@@ -176,7 +235,7 @@ const SalesFunnel = () => {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Active Prospects</CardTitle>
+                <CardTitle>Active Prospects ({totalProspects} total)</CardTitle>
                 <div className="flex space-x-2">
                   <div className="relative">
                     <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

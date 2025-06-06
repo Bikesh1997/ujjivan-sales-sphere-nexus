@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,9 +36,9 @@ const TaskManagement = () => {
   
   const [filters, setFilters] = useState({
     search: '',
-    type: '',
-    priority: '',
-    status: '',
+    type: 'all',
+    priority: 'all',
+    status: 'all',
     date: new Date()
   });
 
