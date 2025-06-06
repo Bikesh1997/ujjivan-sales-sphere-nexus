@@ -1,5 +1,5 @@
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, ScatterChart, Scatter } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import DashboardCard from '@/components/DashboardCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,9 +8,6 @@ import {
   TrendingUp, 
   Heart,
   UserPlus,
-  CreditCard,
-  Clock,
-  Target,
   Star
 } from 'lucide-react';
 
@@ -61,32 +58,6 @@ const CustomerAnalytics = () => {
     { ageGroup: '55+', count: 6100, percentage: 6.1 },
   ];
 
-  const customerJourney = [
-    { stage: 'Awareness', customers: 10000, conversion: 100 },
-    { stage: 'Interest', customers: 6500, conversion: 65 },
-    { stage: 'Consideration', customers: 4200, conversion: 42 },
-    { stage: 'Intent', customers: 2800, conversion: 28 },
-    { stage: 'Purchase', customers: 1850, conversion: 18.5 },
-    { stage: 'Retention', customers: 1650, conversion: 16.5 },
-  ];
-
-  const productAdoption = [
-    { product: 'Savings Account', adoption: 85, satisfaction: 4.5 },
-    { product: 'Personal Loan', adoption: 45, satisfaction: 4.2 },
-    { product: 'Credit Card', adoption: 35, satisfaction: 4.0 },
-    { product: 'Home Loan', adoption: 25, satisfaction: 4.6 },
-    { product: 'Investment', adoption: 20, satisfaction: 4.3 },
-    { product: 'Insurance', adoption: 15, satisfaction: 3.8 },
-  ];
-
-  const customerLifetime = [
-    { tenure: '0-1 Year', count: 25400, avgValue: 45000 },
-    { tenure: '1-3 Years', count: 35200, avgValue: 125000 },
-    { tenure: '3-5 Years', count: 28500, avgValue: 285000 },
-    { tenure: '5-10 Years', count: 22800, avgValue: 465000 },
-    { tenure: '10+ Years', count: 14100, avgValue: 725000 },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -113,11 +84,8 @@ const CustomerAnalytics = () => {
 
       {/* Customer Analytics Tabs */}
       <Tabs defaultValue="segments" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="segments">Segmentation</TabsTrigger>
-          <TabsTrigger value="journey">Customer Journey</TabsTrigger>
-          <TabsTrigger value="products">Product Adoption</TabsTrigger>
-          <TabsTrigger value="lifetime">Lifetime Value</TabsTrigger>
         </TabsList>
 
         <TabsContent value="segments" className="space-y-6">
@@ -168,66 +136,6 @@ const CustomerAnalytics = () => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        <TabsContent value="journey" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Journey Funnel</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={customerJourney} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="stage" type="category" />
-                  <Tooltip />
-                  <Bar dataKey="customers" fill="#14b8a6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="products" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Adoption vs Satisfaction</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <ScatterChart data={productAdoption}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="adoption" name="Adoption Rate" unit="%" />
-                  <YAxis dataKey="satisfaction" name="Satisfaction" domain={[3.5, 5]} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                  <Scatter dataKey="satisfaction" fill="#14b8a6" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="lifetime" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Lifetime Value by Tenure</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={customerLifetime}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="tenure" />
-                  <YAxis />
-                  <Tooltip formatter={(value, name) => [
-                    name === 'count' ? `${value} customers` : `₹${Math.round(Number(value)/1000)}K`,
-                    name === 'count' ? 'Customer Count' : 'Average Lifetime Value'
-                  ]} />
-                  <Bar dataKey="avgValue" fill="#3b82f6" name="avgValue" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
