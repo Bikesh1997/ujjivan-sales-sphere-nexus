@@ -1,14 +1,15 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AddLeadModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onAddLead: (leadData: {
     companyName: string;
     contactName: string;
@@ -20,8 +21,7 @@ interface AddLeadModalProps {
   }) => void;
 }
 
-const AddLeadModal = ({ onAddLead }: AddLeadModalProps) => {
-  const [open, setOpen] = useState(false);
+const AddLeadModal = ({ open, onOpenChange, onAddLead }: AddLeadModalProps) => {
   const [formData, setFormData] = useState({
     companyName: '',
     contactName: '',
@@ -44,7 +44,7 @@ const AddLeadModal = ({ onAddLead }: AddLeadModalProps) => {
       title: "Lead Added",
       description: `New lead "${formData.companyName}" has been created successfully.`,
     });
-    setOpen(false);
+    onOpenChange(false);
     setFormData({
       companyName: '',
       contactName: '',
@@ -57,13 +57,7 @@ const AddLeadModal = ({ onAddLead }: AddLeadModalProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-teal-600 hover:bg-teal-700">
-          <Plus size={16} className="mr-2" />
-          Add New Lead
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Lead</DialogTitle>
@@ -148,7 +142,7 @@ const AddLeadModal = ({ onAddLead }: AddLeadModalProps) => {
             </Select>
           </div>
           <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit">Add Lead</Button>
