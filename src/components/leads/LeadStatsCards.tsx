@@ -1,71 +1,85 @@
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, CheckCircle2, UserCheck, BadgeCheck } from "lucide-react";
 
-interface Lead {
-  id: string;
-  name: string;
-  contact: string;
-  phone: string;
-  email: string;
-  status: string;
-  source: string;
-  value: string;
-  assignedTo: string;
-  assignedToId: string;
-  lastContact: string;
-  priority: string;
+export interface LeadStatsCardsProps {
+  stats: {
+    total: number;
+    new: number;
+    contacted: number;
+    qualified: number;
+    converted: number;
+  };
 }
 
-interface LeadStatsCardsProps {
-  leads: Lead[];
-  userRole: string;
-}
-
-const LeadStatsCards = ({ leads, userRole }: LeadStatsCardsProps) => {
-  const convertedLeads = leads.filter(lead => lead.status === 'converted');
-  const convertedValue = convertedLeads.reduce((sum, lead) => {
-    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
-    return sum + value;
-  }, 0);
-
+const LeadStatsCards = ({ stats }: LeadStatsCardsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
       <Card>
-        <CardContent className="p-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {leads.filter(lead => lead.status === 'new').length}
+        <CardContent className="pt-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-gray-100 rounded-full mr-3">
+              <Users size={20} className="text-gray-600" />
             </div>
-            <div className="text-sm text-gray-600">New Leads</div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Total Leads</p>
+              <h3 className="text-2xl font-bold">{stats.total}</h3>
+            </div>
           </div>
         </CardContent>
       </Card>
+      
       <Card>
-        <CardContent className="p-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">
-              {leads.filter(lead => lead.status === 'qualified').length}
+        <CardContent className="pt-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-blue-100 rounded-full mr-3">
+              <Users size={20} className="text-blue-600" />
             </div>
-            <div className="text-sm text-gray-600">Qualified</div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">New</p>
+              <h3 className="text-2xl font-bold">{stats.new}</h3>
+            </div>
           </div>
         </CardContent>
       </Card>
+      
       <Card>
-        <CardContent className="p-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {convertedLeads.length}
+        <CardContent className="pt-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-yellow-100 rounded-full mr-3">
+              <UserCheck size={20} className="text-yellow-600" />
             </div>
-            <div className="text-sm text-gray-600">Converted</div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Contacted</p>
+              <h3 className="text-2xl font-bold">{stats.contacted}</h3>
+            </div>
           </div>
         </CardContent>
       </Card>
+      
       <Card>
-        <CardContent className="p-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600">₹{convertedValue}L</div>
-            <div className="text-sm text-gray-600">
-              {userRole === 'supervisor' ? 'Total Sales' : 'My Sales'}
+        <CardContent className="pt-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-purple-100 rounded-full mr-3">
+              <CheckCircle2 size={20} className="text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Qualified</p>
+              <h3 className="text-2xl font-bold">{stats.qualified}</h3>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-green-100 rounded-full mr-3">
+              <BadgeCheck size={20} className="text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Converted</p>
+              <h3 className="text-2xl font-bold">{stats.converted}</h3>
             </div>
           </div>
         </CardContent>

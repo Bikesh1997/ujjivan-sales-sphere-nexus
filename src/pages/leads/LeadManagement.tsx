@@ -33,13 +33,26 @@ const LeadManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<any>(null);
 
+  // Custom hooks for lead filtering
   const {
-    filters,
-    setFilters,
+    searchTerm: filterSearchTerm,
+    setSearchTerm: setFilterSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    priorityFilter,
+    setPriorityFilter,
+    sourceFilter,
+    setSourceFilter,
     filteredLeads,
-    clearFilters
-  } = useLeadFilters(leads, searchTerm);
+    clearAllFilters
+  } = useLeadFilters(leads);
 
+  // Update search term in filters when it changes in the component
+  useEffect(() => {
+    setFilterSearchTerm(searchTerm);
+  }, [searchTerm, setFilterSearchTerm]);
+
+  // Custom hook for lead actions
   const {
     handleAddLead,
     handleUpdateLead,
@@ -47,7 +60,15 @@ const LeadManagement = () => {
     handleViewLead,
     handleEditLead,
     handleNotesClick
-  } = useLeadActions(leads, setLeads, setSelectedLead, setIsCallModalOpen, setIsViewModalOpen, setIsEditModalOpen, setIsNotesModalOpen);
+  } = useLeadActions(
+    leads, 
+    setLeads, 
+    setSelectedLead, 
+    setIsCallModalOpen, 
+    setIsViewModalOpen, 
+    setIsEditModalOpen, 
+    setIsNotesModalOpen
+  );
 
   const stats = {
     total: filteredLeads.length,
@@ -71,6 +92,26 @@ const LeadManagement = () => {
     } else {
       setSelectedLeads(filteredLeads.map(lead => lead.id));
     }
+  };
+
+  const handleBulkAction = (action: string) => {
+    console.log('Performing bulk action:', action, 'on leads:', selectedLeads);
+    // Implement bulk actions logic here
+    setSelectedLeads([]);
+  };
+
+  const filters = {
+    status: statusFilter,
+    source: sourceFilter,
+    priority: priorityFilter,
+    assignedTo: 'all',
+    dateRange: 'all'
+  };
+
+  const handleFiltersChange = (newFilters: any) => {
+    setStatusFilter(newFilters.status);
+    setSourceFilter(newFilters.source);
+    setPriorityFilter(newFilters.priority);
   };
 
   return (
@@ -118,8 +159,10 @@ const LeadManagement = () => {
         {showFilters && (
           <CardContent className="pt-0">
             <LeadFilters
+              searchTerm={filterSearchTerm}
+              onSearchChange={setFilterSearchTerm}
               filters={filters}
-              onFiltersChange={setFilters}
+              onFiltersChange={handleFiltersChange}
             />
           </CardContent>
         )}
@@ -130,6 +173,7 @@ const LeadManagement = () => {
         <BulkLeadActions
           selectedLeads={selectedLeads}
           onClearSelection={() => setSelectedLeads([])}
+          onBulkAction={handleBulkAction}
         />
       )}
 
@@ -138,45 +182,38 @@ const LeadManagement = () => {
         <CardContent className="p-0">
           <LeadsTable
             leads={filteredLeads}
-            selectedLeads={selectedLeads}
             onSelectLead={handleSelectLead}
             onSelectAll={handleSelectAll}
             onCallClick={handleCallClick}
+            onViewClick={handleViewLead}
+            onEditClick={handleEditLead}
+            onNotesClick={handleNotesClick}
+            selectedLeads={selectedLeads}
           />
         </CardContent>
       </Card>
 
       {/* Modals */}
       <AddLeadModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
         onAddLead={handleAddLead}
       />
 
       {selectedLead && (
         <>
           <EditLeadModal
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
             lead={selectedLead}
             onUpdateLead={handleUpdateLead}
           />
 
           <LeadNotesModal
-            isOpen={isNotesModalOpen}
-            onClose={() => setIsNotesModalOpen(false)}
             lead={selectedLead}
           />
 
           <LeadCallModal
-            isOpen={isCallModalOpen}
-            onClose={() => setIsCallModalOpen(false)}
             lead={selectedLead}
           />
 
           <LeadViewModal
-            isOpen={isViewModalOpen}
-            onClose={() => setIsViewModalOpen(false)}
             lead={selectedLead}
             onEdit={() => {
               setIsViewModalOpen(false);

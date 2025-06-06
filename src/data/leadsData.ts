@@ -1,4 +1,8 @@
 
+// Export the lead data both as named export and default export
+export const leadsData = allLeads;
+export default allLeads;
+
 export const allLeads = [
   {
     id: 'LEAD001',
