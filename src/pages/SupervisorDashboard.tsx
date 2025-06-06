@@ -26,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
 import TeamSettingsModal from '@/components/team/TeamSettingsModal';
 import ViewDetailsModal from '@/components/team/ViewDetailsModal';
+import IndiaRegionMap from '@/components/supervisor/IndiaRegionMap';
 
 const SupervisorDashboard = () => {
   const { user } = useAuth();
@@ -382,26 +383,10 @@ const SupervisorDashboard = () => {
         ))}
       </div>
 
-      {/* Team Performance & Lead Allocation */}
+      {/* Regional Sales & Lead Allocation */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Team Performance Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Performance Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={teamPerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="target" fill="#e5e7eb" name="Target (₹L)" />
-                <Bar dataKey="achieved" fill="#14b8a6" name="Achieved (₹L)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {/* India Region Map */}
+        <IndiaRegionMap />
 
         {/* Unassigned Leads */}
         <Card>
