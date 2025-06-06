@@ -28,14 +28,12 @@ interface Lead {
 interface LeadsTableProps {
   leads: Lead[];
   userRole: string;
-  onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
   onLeadClick?: (lead: Lead) => void;
   onNotesClick?: (lead: Lead) => void;
   onCallClick?: (lead: Lead) => void;
-  onDeleteLead?: (id: string) => void;
 }
 
-const LeadsTable = ({ leads, userRole, onEditLead, onLeadClick, onNotesClick, onCallClick, onDeleteLead }: LeadsTableProps) => {
+const LeadsTable = ({ leads, userRole, onLeadClick, onNotesClick, onCallClick }: LeadsTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
@@ -119,11 +117,7 @@ const LeadsTable = ({ leads, userRole, onEditLead, onLeadClick, onNotesClick, on
             )}
             <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
             <TableCell>
-              <LeadActionsMenu 
-                lead={lead} 
-                onEditLead={onEditLead}
-                onDeleteLead={onDeleteLead}
-              />
+              <LeadActionsMenu lead={lead} />
             </TableCell>
           </TableRow>
         ))}

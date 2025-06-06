@@ -168,7 +168,6 @@ const LeadManagement = () => {
             onLeadClick={handleLeadClick}
             onNotesClick={handleNotesClick}
             onCallClick={handleCallClick}
-            onDeleteLead={handleDeleteLead}
           />
           
           <LeadsPagination
