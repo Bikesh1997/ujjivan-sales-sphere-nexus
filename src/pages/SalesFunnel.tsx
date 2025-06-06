@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,8 @@ import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import CallInProgressModal from '@/components/leads/CallInProgressModal';
+import LeadViewModal from '@/components/leads/LeadViewModal';
+import LeadsPagination from '@/components/leads/LeadsPagination';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
@@ -28,6 +31,10 @@ const SalesFunnel = () => {
   const [leadsData, setLeadsData] = useState(allLeads);
   const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<any>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const prospectsPerPage = 10;
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
@@ -61,6 +68,12 @@ const SalesFunnel = () => {
     businessName: businessNames[index % businessNames.length]
   }));
 
+  // Pagination calculations
+  const totalProspects = prospects.length;
+  const totalPages = Math.ceil(totalProspects / prospectsPerPage);
+  const startIndex = (currentPage - 1) * prospectsPerPage;
+  const paginatedProspects = prospects.slice(startIndex, startIndex + prospectsPerPage);
+
   const handleEditLead = (leadId: string, updatedData: Partial<typeof allLeads[0]>) => {
     setLeadsData(prevLeads => 
       prevLeads.map(lead => 
@@ -75,6 +88,24 @@ const SalesFunnel = () => {
     console.log('Calling prospect:', prospect);
     setSelectedProspect(prospect);
     setCallInProgressOpen(true);
+  };
+
+  const handleViewProspect = (prospect: any) => {
+    setSelectedLead(prospect.leadData);
+    setViewModalOpen(true);
+  };
+
+  const handleStageChange = (prospectId: string, newStage: string) => {
+    const statusMap: { [key: string]: string } = {
+      'Qualified': 'qualified',
+      'Proposal': 'proposal',
+      'Negotiation': 'negotiation'
+    };
+    
+    const newStatus = statusMap[newStage];
+    if (newStatus) {
+      handleEditLead(prospectId, { status: newStatus });
+    }
   };
 
   const getStageColor = (stage: string) => {
@@ -183,7 +214,7 @@ const SalesFunnel = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {prospects.map((prospect, index) => (
+                    {paginatedProspects.map((prospect, index) => (
                       <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4">
                           <div>
@@ -192,9 +223,19 @@ const SalesFunnel = () => {
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <Badge className={getStageColor(prospect.stage)}>
-                            {prospect.stage}
-                          </Badge>
+                          <Select 
+                            value={prospect.stage} 
+                            onValueChange={(value) => handleStageChange(prospect.leadData.id, value)}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Qualified">Qualified</SelectItem>
+                              <SelectItem value="Proposal">Proposal</SelectItem>
+                              <SelectItem value="Negotiation">Negotiation</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="py-3 px-4 font-medium text-gray-900">{prospect.value}</td>
                         <td className="py-3 px-4">
@@ -206,11 +247,12 @@ const SalesFunnel = () => {
                         <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
                         <td className="py-3 px-4">
                           <div className="flex space-x-1">
-                            <Button size="sm" variant="ghost">
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => handleViewProspect(prospect)}
+                            >
                               <Eye size={14} />
-                            </Button>
-                            <Button size="sm" variant="ghost">
-                              <Edit size={14} />
                             </Button>
                             <Button 
                               size="sm" 
@@ -227,6 +269,18 @@ const SalesFunnel = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              
+              {/* Pagination */}
+              <div className="mt-4">
+                <LeadsPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  startIndex={startIndex}
+                  leadsPerPage={prospectsPerPage}
+                  totalLeads={totalProspects}
+                  onPageChange={setCurrentPage}
+                />
               </div>
             </CardContent>
           </Card>
@@ -253,6 +307,15 @@ const SalesFunnel = () => {
           phoneNumber={selectedProspect.leadData.phone}
           isOpen={callInProgressOpen}
           onOpenChange={setCallInProgressOpen}
+        />
+      )}
+
+      {/* Lead View Modal */}
+      {selectedLead && (
+        <LeadViewModal 
+          lead={selectedLead}
+          isOpen={viewModalOpen}
+          onOpenChange={setViewModalOpen}
         />
       )}
     </div>

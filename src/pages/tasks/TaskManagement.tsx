@@ -2,24 +2,36 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, MapPin, Phone, Mail } from 'lucide-react';
-import NewCampaignModal from '@/components/campaigns/NewCampaignModal';
-import CampaignDetailsModal from '@/components/campaigns/CampaignDetailsModal';
-import TaskManagementAddModal from '@/components/tasks/TaskManagementAddModal';
+import { 
+  Users, 
+  Search,
+  Eye,
+  Edit,
+  Kanban,
+  Plus,
+  Filter
+} from 'lucide-react';
+import KanbanBoard from '@/components/tasks/KanbanBoard';
+import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
+import AddTaskModal from '@/components/tasks/AddTaskModal';
 import TaskFilter from '@/components/tasks/TaskFilter';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { allLeads } from '@/data/leadsData';
 
 const TaskManagement = () => {
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('tasks');
+  const { user } = useAuth();
   const [filters, setFilters] = useState({
     search: '',
-    type: 'all',
-    priority: 'all',
-    status: 'all'
+    type: '',
+    priority: '',
+    status: '',
+    date: new Date()
   });
 
+  const [activeTab, setActiveTab] = useState('tasks');
   const [tasks, setTasks] = useState([
     {
       id: '1',
@@ -249,7 +261,7 @@ const TaskManagement = () => {
                 <CardTitle>Tasks</CardTitle>
                 <div className="flex space-x-2">
                   <TaskFilter filters={filters} onFilterChange={setFilters} />
-                  <TaskManagementAddModal onAddTask={handleAddTask} />
+                  <AddTaskModal onAddTask={handleAddTask} />
                 </div>
               </div>
             </CardHeader>
