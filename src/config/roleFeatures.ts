@@ -1,4 +1,6 @@
-import { Role } from '@/contexts/AuthContext';
+
+// Define the Role type locally since it's not exported from AuthContext
+export type Role = 'sales_executive' | 'supervisor' | 'admin' | 'inbound_agent' | 'relationship_manager';
 
 interface NavItem {
   name: string;
@@ -10,6 +12,14 @@ interface RoleFeatures {
   name: string;
   navigation: NavItem[];
   permissions: string[];
+}
+
+export interface Feature {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  description: string;
 }
 
 // Define feature sets for each role
@@ -109,6 +119,23 @@ export const roleFeatures: Record<Role, RoleFeatures> = {
       'analyze_customer',
     ]
   }
+};
+
+// Export the missing functions
+export const getFeaturesForRole = (role: Role): Feature[] => {
+  const roleConfig = roleFeatures[role];
+  return roleConfig.navigation.map(nav => ({
+    id: nav.href,
+    name: nav.name,
+    path: nav.href,
+    icon: nav.icon,
+    description: `Access to ${nav.name}`
+  }));
+};
+
+export const hasFeatureAccess = (role: Role, featureId: string): boolean => {
+  const features = getFeaturesForRole(role);
+  return features.some(feature => feature.id === featureId);
 };
 
 // Hook to access role-based features
