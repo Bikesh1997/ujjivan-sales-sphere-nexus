@@ -45,42 +45,79 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px]">
-        <DialogHeader>
-          <DialogTitle className="text-center text-green-700">Call in Progress</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col items-center space-y-6 py-6">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-pulse">
-            <Phone size={32} className="text-green-600" />
-          </div>
-          
-          <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-900">{prospectName}</h3>
-            <p className="text-gray-600 text-sm">{businessName}</p>
-            <p className="text-gray-600 font-mono text-lg">{phoneNumber}</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-3xl font-mono text-gray-900">{formatDuration(callDuration)}</div>
-            <p className="text-sm text-gray-500">Call duration</p>
+      <DialogContent className="sm:max-w-[400px] p-0 bg-white">
+        {/* Header */}
+        <div className="bg-[#056262] text-white p-4 rounded-t-lg">
+          <DialogHeader>
+            <DialogTitle className="text-center text-white font-medium">Connected</DialogTitle>
+          </DialogHeader>
+        </div>
+
+        {/* Main Content */}
+        <div className="p-6 space-y-6">
+          {/* Call Status */}
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-[#056262] rounded-full flex items-center justify-center">
+                <Phone size={20} className="text-white" />
+              </div>
+              <span className="text-sm text-gray-600 mt-2">System</span>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full mb-2"></div>
+              <span className="text-sm font-medium text-gray-900">In Call</span>
+              <span className="text-xs text-gray-500">with {prospectName}</span>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-600 font-medium text-sm">
+                  {prospectName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                </span>
+              </div>
+              <span className="text-sm text-gray-600 mt-2">Customer</span>
+            </div>
           </div>
 
-          <div className="flex space-x-4">
-            <Button 
-              onClick={handleToggleRecording}
-              className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-6 py-2 rounded-full`}
-            >
-              {isRecording ? <MicOff size={20} className="mr-2" /> : <Mic size={20} className="mr-2" />}
-              {isRecording ? 'Stop Recording' : 'Start Recording'}
-            </Button>
+          {/* Contact Details */}
+          <div className="text-center space-y-1">
+            <h3 className="text-lg font-semibold text-gray-900">{prospectName}</h3>
+            <p className="text-gray-600 text-sm">{businessName}</p>
+            <p className="text-gray-600 text-sm">{phoneNumber}</p>
           </div>
-          
+
+          {/* Call Controls */}
+          <div className="flex justify-center space-x-4">
+            <button className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+              <MicOff size={20} className="text-gray-600" />
+            </button>
+            
+            <button 
+              onClick={handleToggleRecording}
+              className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+            >
+              {isRecording ? <div className="w-3 h-3 bg-white rounded-sm" /> : <div className="w-3 h-3 bg-white rounded-full" />}
+            </button>
+            
+            <button className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors">
+              <div className="w-3 h-3 bg-red-500 rounded-full" />
+            </button>
+          </div>
+
+          {/* Recording Status */}
+          {isRecording && (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-500">Recording in progress</span>
+            </div>
+          )}
+
+          {/* End Call Button */}
           <Button 
             onClick={handleEndCall}
-            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full"
-            size="lg"
+            className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-medium"
           >
-            <PhoneOff size={20} className="mr-2" />
             End Call
           </Button>
         </div>
