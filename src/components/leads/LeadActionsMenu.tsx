@@ -41,7 +41,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const randomBusinessName = businessNames[Math.floor(Math.random() * businessNames.length)];
 
   const handleViewCustomer = () => {
-    navigate('/customer');
+    navigate('/customers');
   };
 
   const handleEdit = () => {
