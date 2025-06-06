@@ -1,152 +1,174 @@
-
-// Define the Role type locally since it's not exported from AuthContext
-export type Role = 'sales_executive' | 'supervisor' | 'admin' | 'inbound_agent' | 'relationship_manager';
-
-interface NavItem {
-  name: string;
-  href: string;
-  icon: string;
-}
-
-interface RoleFeatures {
-  name: string;
-  navigation: NavItem[];
-  permissions: string[];
-}
-
+// Feature access configuration for different roles
 export interface Feature {
   id: string;
   name: string;
   path: string;
   icon: string;
+  roles: string[];
   description: string;
 }
 
-// Define feature sets for each role
-export const roleFeatures: Record<Role, RoleFeatures> = {
-  sales_executive: {
-    name: 'Sales Executive',
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Leads', href: '/leads', icon: 'ClipboardList' },
-      { name: 'Tasks', href: '/tasks', icon: 'Activity' },
-      { name: 'Customers', href: '/customers', icon: 'Users' },
-      { name: 'Geo Location', href: '/geo-location', icon: 'MapPin' },
-      { name: 'Sales Funnel', href: '/funnel', icon: 'BarChart3' },
-      { name: 'Team Performance', href: '/team-performance', icon: 'TrendingUp' },
-    ],
-    permissions: [
-      'view_dashboard',
-      'create_lead',
-      'edit_lead',
-      'delete_lead',
-      'view_customer',
-      'create_task',
-      'edit_task',
-      'delete_task',
-    ]
+export const FEATURES: Feature[] = [
+  // Sales Executive Features
+  {
+    id: 'dashboard',
+    name: 'My Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal performance dashboard'
   },
-  supervisor: {
-    name: 'Supervisor',
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Leads', href: '/leads', icon: 'ClipboardList' },
-      { name: 'Tasks', href: '/tasks', icon: 'Activity' },
-      { name: 'Customers', href: '/customers', icon: 'Users' },
-      { name: 'Geo Location', href: '/geo-location', icon: 'MapPin' },
-      { name: 'Sales Funnel', href: '/funnel', icon: 'BarChart3' },
-      { name: 'Team Performance', href: '/team-performance', icon: 'TrendingUp' },
-      { name: 'Territory Management', href: '/territory-management', icon: 'MapPin' },
-      { name: 'Reports', href: '/reports', icon: 'BarChart3' },
-    ],
-    permissions: [
-      'view_dashboard',
-      'create_lead',
-      'edit_lead',
-      'delete_lead',
-      'view_customer',
-      'create_task',
-      'edit_task',
-      'delete_task',
-      'assign_lead',
-      'view_team_performance',
-      'generate_reports',
-    ]
+  {
+    id: 'my_leads',
+    name: 'My Leads',
+    path: '/leads',
+    icon: 'UserPlus',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Manage assigned leads'
   },
-  admin: {
-    name: 'Administrator',
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'User Management', href: '/user-management', icon: 'Users' }
-    ],
-    permissions: [
-      'view_dashboard_admin',
-      'manage_users',
-      'view_all_reports',
-      'manage_rules',
-      'view_all_data',
-      'export_data',
-    ]
+  {
+    id: 'my_tasks',
+    name: 'My Tasks',
+    path: '/tasks',
+    icon: 'ClipboardList',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal task management'
   },
-  inbound_agent: {
-    name: 'Inbound Agent',
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Leads', href: '/leads', icon: 'ClipboardList' },
-      { name: 'Tasks', href: '/tasks', icon: 'Activity' },
-    ],
-    permissions: [
-      'view_dashboard',
-      'create_lead',
-      'edit_lead',
-      'view_customer',
-      'create_task',
-      'edit_task',
-    ]
+  {
+    id: 'customer_360',
+    name: 'Customer 360',
+    path: '/customers',
+    icon: 'Users',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Customer relationship management'
   },
-  relationship_manager: {
-    name: 'Relationship Manager',
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Portfolio', href: '/portfolio', icon: 'PieChart' },
-      { name: 'Risk Management', href: '/risk-management', icon: 'Shield' },
-      { name: 'Customer Analytics', href: '/customer-analytics', icon: 'BarChart3' },
-    ],
-    permissions: [
-      'view_dashboard',
-      'view_portfolio',
-      'assess_risk',
-      'analyze_customer',
-    ]
+  {
+    id: 'geo_location',
+    name: 'Geo Tracking',
+    path: '/geo-location',
+    icon: 'MapPin',
+    roles: ['sales_executive', 'relationship_manager'],
+    description: 'Location tracking and beat planning'
+  },
+  {
+    id: 'sales_funnel',
+    name: 'My Pipeline',
+    path: '/funnel',
+    icon: 'BarChart3',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal sales pipeline'
+  },
+
+  // Supervisor Features
+  {
+    id: 'supervisor_dashboard',
+    name: 'Team Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['supervisor'],
+    description: 'Team performance overview'
+  },
+  {
+    id: 'team_performance',
+    name: 'Performance Analytics',
+    path: '/team-performance',
+    icon: 'TrendingUp',
+    roles: ['supervisor'],
+    description: 'Team performance analytics'
+  },
+  {
+    id: 'territory_management',
+    name: 'Territory Management',
+    path: '/territory-management',
+    icon: 'MapPin',
+    roles: ['supervisor'],
+    description: 'Manage sales territories'
+  },
+  {
+    id: 'reports',
+    name: 'Reports & Analytics',
+    path: '/reports',
+    icon: 'BarChart3',
+    roles: ['supervisor'],
+    description: 'Generate team reports'
+  },
+  {
+    id: 'rule_management',
+    name: 'Rule Management',
+    path: '/rule-management',
+    icon: 'Shield',
+    roles: ['supervisor'],
+    description: 'Manage business rules and automation'
+  },
+  
+  // Executive Level Features
+  {
+    id: 'executive_dashboard',
+    name: 'Executive Dashboard',
+    path: '/executive-dashboard',
+    icon: 'TrendingUp',
+    roles: ['supervisor'],
+    description: 'High-level performance metrics'
+  },
+  {
+    id: 'customer_analytics',
+    name: 'Customer Analytics',
+    path: '/customer-analytics',
+    icon: 'Activity',
+    roles: ['supervisor'],
+    description: 'Customer behavior analysis'
+  },
+  {
+    id: 'kpa_management',
+    name: 'KPA Management',
+    path: '/kpa-management',
+    icon: 'Target',
+    roles: ['supervisor'],
+    description: 'Key performance area management'
+  },
+  {
+    id: 'portfolio_management',
+    name: 'Portfolio Management',
+    path: '/portfolio',
+    icon: 'PieChart',
+    roles: ['supervisor'],
+    description: 'Portfolio oversight'
+  },
+  {
+    id: 'risk_management',
+    name: 'Risk Management',
+    path: '/risk-management',
+    icon: 'Shield',
+    roles: ['supervisor'],
+    description: 'Risk assessment and management'
   }
+];
+
+// Get features for a specific role
+export const getFeaturesForRole = (role: string): Feature[] => {
+  return FEATURES.filter(feature => feature.roles.includes(role));
 };
 
-// Export the missing functions
-export const getFeaturesForRole = (role: Role): Feature[] => {
-  const roleConfig = roleFeatures[role];
-  return roleConfig.navigation.map(nav => ({
-    id: nav.href,
-    name: nav.name,
-    path: nav.href,
-    icon: nav.icon,
-    description: `Access to ${nav.name}`
-  }));
+// Check if a role has access to a feature
+export const hasFeatureAccess = (role: string, featureId: string): boolean => {
+  const feature = FEATURES.find(f => f.id === featureId);
+  return feature ? feature.roles.includes(role) : false;
 };
 
-export const hasFeatureAccess = (role: Role, featureId: string): boolean => {
-  const features = getFeaturesForRole(role);
-  return features.some(feature => feature.id === featureId);
-};
-
-// Hook to access role-based features
-export const useRoleFeatures = () => {
-  const getRoleFeatures = (role: Role) => {
-    return roleFeatures[role] || roleFeatures.sales_executive;
+// Get icon component mapping
+export const getIconName = (iconName: string) => {
+  const iconMap: { [key: string]: string } = {
+    'Home': 'Home',
+    'UserPlus': 'UserPlus',
+    'ClipboardList': 'ClipboardList',
+    'Users': 'Users',
+    'MapPin': 'MapPin',
+    'BarChart3': 'BarChart3',
+    'TrendingUp': 'TrendingUp',
+    'Activity': 'Activity',
+    'Target': 'Target',
+    'PieChart': 'PieChart',
+    'Shield': 'Shield'
   };
-
-  const getNavigationItems = (role: Role = 'sales_executive') => {
-    return roleFeatures[role]?.navigation || roleFeatures.sales_executive.navigation;
-  };
-
-  return { getRoleFeatures, getNavigationItems };
+  return iconMap[iconName] || 'Home';
 };

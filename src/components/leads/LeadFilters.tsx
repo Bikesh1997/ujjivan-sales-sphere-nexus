@@ -15,7 +15,6 @@ interface LeadFiltersProps {
     dateRange: string;
   };
   onFiltersChange: (filters: any) => void;
-  onClearFilters?: () => void; // Make this optional
 }
 
 const LeadFilters = ({
@@ -23,7 +22,6 @@ const LeadFilters = ({
   onSearchChange,
   filters,
   onFiltersChange,
-  onClearFilters,
 }: LeadFiltersProps) => {
   return (
     <div className="space-y-4">
@@ -39,7 +37,7 @@ const LeadFilters = ({
         </div>
         <Select value={filters.status} onValueChange={(value) => onFiltersChange({ ...filters, status: value })}>
           <SelectTrigger className="w-32">
-            <SelectValue placeholder="Status" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
@@ -50,13 +48,6 @@ const LeadFilters = ({
             <SelectItem value="lost">Lost</SelectItem>
           </SelectContent>
         </Select>
-        
-        {/* Clear filters button if provided */}
-        {onClearFilters && filters.status !== 'all' && (
-          <Button variant="outline" size="icon" onClick={onClearFilters}>
-            <X size={16} />
-          </Button>
-        )}
       </div>
     </div>
   );

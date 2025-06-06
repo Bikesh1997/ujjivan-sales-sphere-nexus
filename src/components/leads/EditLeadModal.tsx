@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -25,10 +26,10 @@ interface EditLeadModalProps {
   lead: Lead;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdateLead: (updatedLead: any) => void;
+  onEditLead: (leadId: string, updatedData: Partial<Lead>) => void;
 }
 
-const EditLeadModal = ({ lead, isOpen, onOpenChange, onUpdateLead }: EditLeadModalProps) => {
+const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModalProps) => {
   const [formData, setFormData] = useState({
     name: lead.name,
     contact: lead.contact,
@@ -58,7 +59,7 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onUpdateLead }: EditLeadMod
     e.preventDefault();
     console.log('Updating lead:', lead.id, formData);
     
-    onUpdateLead({ ...lead, ...formData });
+    onEditLead(lead.id, formData);
     
     toast({
       title: "Lead Updated",

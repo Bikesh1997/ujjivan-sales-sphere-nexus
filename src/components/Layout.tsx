@@ -83,14 +83,6 @@ const Layout = ({ children }: LayoutProps) => {
     }
   };
 
-  const getPortalTitle = () => {
-    if (user?.role === 'admin') return 'Admin Portal';
-    if (user?.role === 'supervisor') return 'Supervisor Portal';
-    if (user?.role === 'inbound_agent') return 'Inbound Agent Portal';
-    if (user?.role === 'relationship_manager') return 'Relationship Manager Portal';
-    return 'Sales Portal';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation - Full Width */}
@@ -172,7 +164,10 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {getPortalTitle()}
+                {user?.role === 'supervisor' ? 'Supervisor Portal' : 
+                 user?.role === 'inbound_agent' ? 'Inbound Agent Portal' :
+                 user?.role === 'relationship_manager' ? 'Relationship Manager Portal' :
+                 'Sales Portal'}
               </div>
             </div>
             <nav className="px-3 space-y-1">
