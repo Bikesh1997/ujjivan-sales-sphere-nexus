@@ -1,493 +1,146 @@
 
-export const allLeads = [
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  status: string;
+  source: string;
+  value: string;
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  priority: string;
+  starred?: boolean;
+}
+
+export const allLeads: Lead[] = [
   {
     id: 'LEAD001',
-    name: 'Acme Corp',
-    contact: 'Rajesh Kumar',
+    name: 'TechCorp Solutions',
+    contact: 'Ravi Kumar',
     phone: '+91 98765 43210',
-    email: 'rajesh@acmecorp.com',
+    email: 'ravi@techcorp.com',
     status: 'new',
     source: 'Website Forms',
-    value: '₹45L',
+    value: '₹25,00,000',
     assignedTo: 'Rahul Sharma',
     assignedToId: '1',
-    lastContact: '2 days ago',
-    priority: 'High'
+    lastContact: '2 hours ago',
+    priority: 'High',
+    starred: true
   },
   {
     id: 'LEAD002',
-    name: 'Tech Solutions Ltd',
-    contact: 'Priya Singh',
-    phone: '+91 87654 32109',
-    email: 'priya@techsolutions.com',
+    name: 'Sunrise Enterprises',
+    contact: 'Meera Patel',
+    phone: '+91 98765 43211',
+    email: 'meera@sunrise.com',
     status: 'qualified',
     source: 'WhatsApp Business',
-    value: '₹32L',
+    value: '₹15,00,000',
     assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '1 day ago',
-    priority: 'Medium'
+    assignedToId: '2',
+    lastContact: '4 hours ago',
+    priority: 'Medium',
+    starred: true
   },
   {
     id: 'LEAD003',
-    name: 'Global Enterprises',
-    contact: 'Amit Patel',
-    phone: '+91 76543 21098',
-    email: 'amit@globalent.com',
+    name: 'Green Valley Farms',
+    contact: 'Suresh Singh',
+    phone: '+91 98765 43212',
+    email: 'suresh@greenvalley.com',
     status: 'proposal',
     source: 'Call Center',
-    value: '₹28L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '3 days ago',
-    priority: 'High'
+    value: '₹30,00,000',
+    assignedTo: 'Vikash Kumar',
+    assignedToId: '3',
+    lastContact: '1 day ago',
+    priority: 'High',
+    starred: true
   },
   {
     id: 'LEAD004',
-    name: 'Future Innovations',
-    contact: 'Sneha Reddy',
-    phone: '+91 65432 10987',
-    email: 'sneha@futureinno.com',
-    status: 'negotiation',
+    name: 'Urban Developers',
+    contact: 'Priya Sharma',
+    phone: '+91 98765 43213',
+    email: 'priya@urban.com',
+    status: 'converted',
     source: 'Website Forms',
-    value: '₹52L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '1 day ago',
-    priority: 'High'
+    value: '₹50,00,000',
+    assignedTo: 'Priya Singh',
+    assignedToId: '4',
+    lastContact: '3 days ago',
+    priority: 'Low'
   },
   {
     id: 'LEAD005',
-    name: 'Smart Systems',
-    contact: 'Arjun Mehta',
-    phone: '+91 54321 09876',
-    email: 'arjun@smartsys.com',
-    status: 'converted',
-    source: 'WhatsApp Business',
-    value: '₹38L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '5 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD006',
-    name: 'Digital Dynamics',
-    contact: 'Kavya Sharma',
-    phone: '+91 43210 98765',
-    email: 'kavya@digitaldyn.com',
-    status: 'new',
-    source: 'Call Center',
-    value: '₹42L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '4 days ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD007',
-    name: 'Modern Tech',
-    contact: 'Ravi Kumar',
-    phone: '+91 32109 87654',
-    email: 'ravi@moderntech.com',
-    status: 'qualified',
-    source: 'Website Forms',
-    value: '₹35L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '2 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD008',
-    name: 'Business Solutions',
-    contact: 'Pooja Gupta',
-    phone: '+91 21098 76543',
-    email: 'pooja@bizsol.com',
-    status: 'proposal',
-    source: 'WhatsApp Business',
-    value: '₹29L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '1 week ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD009',
-    name: 'Innovation Hub',
-    contact: 'Suresh Patel',
-    phone: '+91 10987 65432',
-    email: 'suresh@innohub.com',
-    status: 'lost',
-    source: 'Call Center',
-    value: '₹25L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '2 weeks ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD010',
-    name: 'NextGen Solutions',
-    contact: 'Deepika Singh',
-    phone: '+91 09876 54321',
-    email: 'deepika@nextgen.com',
-    status: 'converted',
-    source: 'Website Forms',
-    value: '₹48L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '3 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD011',
-    name: 'Alpha Industries',
-    contact: 'Rohit Sharma',
-    phone: '+91 98765 12345',
-    email: 'rohit@alphaindustries.com',
-    status: 'new',
-    source: 'Call Center',
-    value: '₹22L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 day ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD012',
-    name: 'Beta Technologies',
-    contact: 'Meera Joshi',
-    phone: '+91 87654 23456',
-    email: 'meera@betatech.com',
-    status: 'qualified',
-    source: 'Website Forms',
-    value: '₹39L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '2 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD013',
-    name: 'Gamma Corporation',
-    contact: 'Vikash Kumar',
-    phone: '+91 76543 34567',
-    email: 'vikash@gammacorp.com',
-    status: 'proposal',
-    source: 'WhatsApp Business',
-    value: '₹31L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '4 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD014',
-    name: 'Delta Systems',
-    contact: 'Anita Rao',
-    phone: '+91 65432 45678',
-    email: 'anita@deltasys.com',
-    status: 'negotiation',
-    source: 'Call Center',
-    value: '₹44L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '1 day ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD015',
-    name: 'Epsilon Ventures',
-    contact: 'Kiran Reddy',
-    phone: '+91 54321 56789',
-    email: 'kiran@epsilonventures.com',
-    status: 'converted',
-    source: 'Website Forms',
-    value: '₹56L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 week ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD016',
-    name: 'Zeta Solutions',
-    contact: 'Sanjay Verma',
-    phone: '+91 43210 67890',
-    email: 'sanjay@zetasol.com',
+    name: 'Quick Transport',
+    contact: 'Amit Gupta',
+    phone: '+91 98765 43214',
+    email: 'amit@quicktransport.com',
     status: 'new',
     source: 'WhatsApp Business',
-    value: '₹27L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '3 days ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD017',
-    name: 'Theta Enterprises',
-    contact: 'Nisha Agarwal',
-    phone: '+91 32109 78901',
-    email: 'nisha@thetaent.com',
-    status: 'qualified',
-    source: 'Call Center',
-    value: '₹33L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '2 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD018',
-    name: 'Iota Technologies',
-    contact: 'Ashish Kumar',
-    phone: '+91 21098 89012',
-    email: 'ashish@iotatech.com',
-    status: 'proposal',
-    source: 'Website Forms',
-    value: '₹41L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '5 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD019',
-    name: 'Kappa Industries',
-    contact: 'Rina Malik',
-    phone: '+91 10987 90123',
-    email: 'rina@kappaindustries.com',
-    status: 'lost',
-    source: 'WhatsApp Business',
-    value: '₹19L',
+    value: '₹20,00,000',
     assignedTo: 'Rahul Sharma',
     assignedToId: '1',
-    lastContact: '3 weeks ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD020',
-    name: 'Lambda Corp',
-    contact: 'Manish Singh',
-    phone: '+91 09876 01234',
-    email: 'manish@lambdacorp.com',
-    status: 'converted',
-    source: 'Call Center',
-    value: '₹47L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '4 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD021',
-    name: 'Mu Dynamics',
-    contact: 'Priyanka Jain',
-    phone: '+91 98765 13579',
-    email: 'priyanka@mudynamics.com',
-    status: 'new',
-    source: 'Website Forms',
-    value: '₹36L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '1 day ago',
+    lastContact: '5 hours ago',
     priority: 'Medium'
   },
-  {
-    id: 'LEAD022',
-    name: 'Nu Systems',
-    contact: 'Gaurav Gupta',
-    phone: '+91 87654 24680',
-    email: 'gaurav@nusystems.com',
-    status: 'qualified',
-    source: 'WhatsApp Business',
-    value: '₹29L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '2 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD023',
-    name: 'Xi Technologies',
-    contact: 'Swati Sharma',
-    phone: '+91 76543 35791',
-    email: 'swati@xitech.com',
-    status: 'proposal',
-    source: 'Call Center',
-    value: '₹43L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '3 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD024',
-    name: 'Omicron Ventures',
-    contact: 'Rajiv Kapoor',
-    phone: '+91 65432 46802',
-    email: 'rajiv@omicronventures.com',
-    status: 'negotiation',
-    source: 'Website Forms',
-    value: '₹51L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '1 day ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD025',
-    name: 'Pi Solutions',
-    contact: 'Kavita Mehta',
-    phone: '+91 54321 57913',
-    email: 'kavita@pisolutions.com',
-    status: 'converted',
-    source: 'WhatsApp Business',
-    value: '₹34L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '6 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD026',
-    name: 'Rho Enterprises',
-    contact: 'Sunil Yadav',
-    phone: '+91 43210 68024',
-    email: 'sunil@rhoent.com',
-    status: 'new',
-    source: 'Call Center',
-    value: '₹26L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '2 days ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD027',
-    name: 'Sigma Corp',
-    contact: 'Neeta Joshi',
-    phone: '+91 32109 79135',
-    email: 'neeta@sigmacorp.com',
-    status: 'qualified',
-    source: 'Website Forms',
-    value: '₹37L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 day ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD028',
-    name: 'Tau Industries',
-    contact: 'Vishal Kumar',
-    phone: '+91 21098 80246',
-    email: 'vishal@tauindustries.com',
-    status: 'proposal',
-    source: 'WhatsApp Business',
-    value: '₹40L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '4 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD029',
-    name: 'Upsilon Technologies',
-    contact: 'Divya Agarwal',
-    phone: '+91 10987 91357',
-    email: 'divya@upsilontech.com',
-    status: 'lost',
-    source: 'Call Center',
-    value: '₹21L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '2 weeks ago',
-    priority: 'Low'
-  },
-  {
-    id: 'LEAD030',
-    name: 'Phi Dynamics',
-    contact: 'Arun Mishra',
-    phone: '+91 09876 02468',
-    email: 'arun@phidynamics.com',
-    status: 'converted',
-    source: 'Website Forms',
-    value: '₹49L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '3 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD031',
-    name: 'Chi Solutions',
-    contact: 'Sunita Singh',
-    phone: '+91 98765 14680',
-    email: 'sunita@chisolutions.com',
-    status: 'new',
-    source: 'WhatsApp Business',
-    value: '₹30L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '1 day ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD032',
-    name: 'Psi Enterprises',
-    contact: 'Ramesh Gupta',
-    phone: '+91 87654 25791',
-    email: 'ramesh@psient.com',
-    status: 'qualified',
-    source: 'Call Center',
-    value: '₹33L',
-    assignedTo: 'Anjali Patel',
-    assignedToId: '3',
-    lastContact: '2 days ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'LEAD033',
-    name: 'Omega Corp',
-    contact: 'Madhuri Reddy',
-    phone: '+91 76543 36802',
-    email: 'madhuri@omegacorp.com',
-    status: 'proposal',
-    source: 'Website Forms',
-    value: '₹46L',
-    assignedTo: 'Vikram Singh',
-    assignedToId: '4',
-    lastContact: '3 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD034',
-    name: 'Quantum Systems',
-    contact: 'Ajay Verma',
-    phone: '+91 65432 47913',
-    email: 'ajay@quantumsys.com',
-    status: 'negotiation',
-    source: 'WhatsApp Business',
-    value: '₹53L',
-    assignedTo: 'Neha Gupta',
-    assignedToId: '5',
-    lastContact: '1 day ago',
-    priority: 'High'
-  },
-  {
-    id: 'LEAD035',
-    name: 'Zenith Technologies',
-    contact: 'Rekha Jain',
-    phone: '+91 54321 58024',
-    email: 'rekha@zenithtech.com',
-    status: 'converted',
-    source: 'Call Center',
-    value: '₹41L',
-    assignedTo: 'Rahul Sharma',
-    assignedToId: '1',
-    lastContact: '5 days ago',
-    priority: 'Medium'
-  }
+  // Generate additional 95 leads to reach 100 total
+  ...Array.from({ length: 95 }, (_, index) => {
+    const leadNumber = (index + 6).toString().padStart(3, '0');
+    const companies = [
+      'Tech Innovations', 'Digital Solutions', 'Smart Systems', 'Future Corp', 'Alpha Industries',
+      'Beta Technologies', 'Gamma Enterprises', 'Delta Services', 'Epsilon Group', 'Zeta Corp',
+      'Theta Solutions', 'Lambda Tech', 'Sigma Industries', 'Omega Systems', 'Phoenix Corp',
+      'Aurora Tech', 'Nova Solutions', 'Stellar Systems', 'Cosmic Corp', 'Quantum Tech',
+      'Vector Solutions', 'Matrix Corp', 'Nexus Tech', 'Vertex Systems', 'Apex Corp',
+      'Prime Solutions', 'Elite Tech', 'Summit Corp', 'Peak Systems', 'Crown Tech'
+    ];
+    
+    const contacts = [
+      'Rajesh Kumar', 'Sunita Sharma', 'Arjun Patel', 'Kavya Singh', 'Rohit Gupta',
+      'Priyanka Yadav', 'Deepak Joshi', 'Neha Agarwal', 'Sanjay Verma', 'Pooja Mishra',
+      'Vinay Tiwari', 'Shweta Pandey', 'Manoj Dubey', 'Rekha Sinha', 'Ashok Rai',
+      'Geeta Nair', 'Sunil Jain', 'Madhuri Saxena', 'Ramesh Rao', 'Kiran Reddy'
+    ];
+    
+    const statuses = ['new', 'qualified', 'proposal', 'converted', 'lost'];
+    const sources = ['Website Forms', 'WhatsApp Business', 'Call Center'];
+    const priorities = ['High', 'Medium', 'Low'];
+    const assignees = [
+      { name: 'Rahul Sharma', id: '1' },
+      { name: 'Anjali Patel', id: '2' },
+      { name: 'Vikash Kumar', id: '3' },
+      { name: 'Priya Singh', id: '4' }
+    ];
+    
+    const company = companies[index % companies.length];
+    const contact = contacts[index % contacts.length];
+    const status = statuses[index % statuses.length];
+    const source = sources[index % sources.length];
+    const priority = priorities[index % priorities.length];
+    const assignee = assignees[index % assignees.length];
+    
+    const value = (Math.floor(Math.random() * 50) + 10) * 100000;
+    const lastContactOptions = ['1 hour ago', '3 hours ago', '1 day ago', '2 days ago', '1 week ago'];
+    
+    return {
+      id: `LEAD${leadNumber}`,
+      name: company,
+      contact: contact,
+      phone: `+91 ${Math.floor(Math.random() * 90000) + 10000} ${Math.floor(Math.random() * 90000) + 10000}`,
+      email: `${contact.toLowerCase().replace(' ', '.')}@${company.toLowerCase().replace(' ', '')}.com`,
+      status: status,
+      source: source,
+      value: `₹${(value / 100000).toFixed(0)},00,000`,
+      assignedTo: assignee.name,
+      assignedToId: assignee.id,
+      lastContact: lastContactOptions[index % lastContactOptions.length],
+      priority: priority
+    };
+  })
 ];

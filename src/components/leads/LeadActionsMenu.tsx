@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Phone, Mail } from 'lucide-react';
+import { Eye, Phone } from 'lucide-react';
 import LeadViewModal from './LeadViewModal';
 import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
@@ -42,13 +42,6 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
     setViewModalOpen(true);
   };
 
-  const handleEdit = () => {
-    console.log('Editing lead:', lead);
-    if (handleEditAttempt()) {
-      setEditModalOpen(true);
-    }
-  };
-
   const handleCall = () => {
     console.log('Calling lead:', lead.phone);
     setCallInProgressOpen(true);
@@ -66,24 +59,12 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
         </Button>
         <Button 
           size="sm" 
-          variant="ghost" 
-          onClick={handleEdit}
-          disabled={!canEdit}
-          className={!canEdit ? 'opacity-50 cursor-not-allowed' : ''}
-        >
-          <Edit size={14} />
-        </Button>
-        <Button 
-          size="sm" 
           variant="default" 
           onClick={handleCall}
           className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
         >
           <Phone size={14} className="mr-1" />
           Call
-        </Button>
-        <Button size="sm" variant="ghost" onClick={handleEmail}>
-          <Mail size={14} />
         </Button>
       </div>
 

@@ -9,6 +9,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import { Star } from 'lucide-react';
 import LeadActionsMenu from './LeadActionsMenu';
 
 interface Lead {
@@ -24,6 +25,7 @@ interface Lead {
   assignedToId: string;
   lastContact: string;
   priority: string;
+  starred?: boolean;
 }
 
 interface LeadsTableProps {
@@ -83,9 +85,16 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
         {leads.map((lead) => (
           <TableRow key={lead.id}>
             <TableCell>
-              <div>
-                <div className="font-medium text-gray-900">{lead.name}</div>
-                <div className="text-sm text-gray-500">{lead.id}</div>
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="font-medium text-gray-900 flex items-center gap-2">
+                    {lead.name}
+                    {lead.starred && (
+                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">{lead.id}</div>
+                </div>
               </div>
             </TableCell>
             <TableCell>
