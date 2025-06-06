@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -166,10 +165,10 @@ const LeadManagement = () => {
           <LeadsTable
             leads={currentLeads}
             userRole={user?.role || ''}
-            onEditLead={handleDeleteLead}
             onLeadClick={handleLeadClick}
             onNotesClick={handleNotesClick}
             onCallClick={handleCallClick}
+            onDeleteLead={handleDeleteLead}
           />
           
           <LeadsPagination
@@ -183,21 +182,23 @@ const LeadManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Let's update the AddLeadModal usage to match its interface */}
-      <AddLeadModal onAddLead={handleAddLead} />
+      {/* Modals */}
+      <AddLeadModal 
+        isOpen={isAddLeadModalOpen} 
+        onOpenChange={setIsAddLeadModalOpen}
+        onAddLead={handleAddLead} 
+      />
       
-      {/* Update EditLeadModal and LeadNotesModal with their proper interfaces */}
       {selectedLead && (
         <>
           <EditLeadModal 
             lead={selectedLead}
             isOpen={isEditLeadModalOpen}
             onOpenChange={setIsEditLeadModalOpen}
-            onEditLead={handleUpdateLead}
+            onUpdateLead={handleUpdateLead}
           />
           
           <LeadNotesModal 
-            lead={selectedLead}
             isOpen={isLeadNotesModalOpen}
             onOpenChange={setIsLeadNotesModalOpen}
           />
