@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,12 +13,20 @@ import {
   Edit,
   Kanban,
   Plus,
-  Filter
+  Filter,
+  Phone,
+  MapPin,
+  Mail,
+  Clock,
+  Calendar
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
 import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import TaskFilter from '@/components/tasks/TaskFilter';
+import NewCampaignModal from '@/components/campaigns/NewCampaignModal';
+import CampaignDetailsModal from '@/components/campaigns/CampaignDetailsModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
