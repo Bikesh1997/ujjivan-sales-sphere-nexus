@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import LeadViewModal from './LeadViewModal';
 import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
@@ -29,7 +28,6 @@ interface LeadActionsMenuProps {
 }
 
 const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
-  const navigate = useNavigate();
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -40,8 +38,8 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
   const randomBusinessName = businessNames[Math.floor(Math.random() * businessNames.length)];
 
-  const handleViewCustomer = () => {
-    navigate('/customers');
+  const handleViewLead = () => {
+    setViewModalOpen(true);
   };
 
   const handleEdit = () => {
@@ -62,7 +60,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
         <Button 
           size="sm" 
           variant="ghost" 
-          onClick={handleViewCustomer}
+          onClick={handleViewLead}
         >
           <Eye size={14} />
         </Button>
