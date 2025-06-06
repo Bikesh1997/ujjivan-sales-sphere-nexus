@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, X } from 'lucide-react';
 
-export interface LeadFiltersProps {
+interface LeadFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   filters: {
@@ -37,7 +37,7 @@ const LeadFilters = ({
         </div>
         <Select value={filters.status} onValueChange={(value) => onFiltersChange({ ...filters, status: value })}>
           <SelectTrigger className="w-32">
-            <SelectValue placeholder="Status" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>

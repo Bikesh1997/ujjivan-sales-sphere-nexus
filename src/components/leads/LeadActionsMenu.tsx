@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Phone, Mail } from 'lucide-react';
@@ -34,16 +33,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   
-  // Fix: Pass required arguments to useLeadActions
-  const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(
-    [lead], // Pass as an array
-    () => {}, // Empty function as setLeads
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined
-  );
+  const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(lead);
 
   // Random business names for the call modal
   const businessNames = ['TechCorp Solutions', 'Innovative Enterprises', 'Global Dynamics', 'Smart Systems', 'Digital Ventures', 'Future Industries'];
@@ -55,10 +45,9 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
     navigate(`/customer-360?customer=${customerKey}`);
   };
 
-  // Fix: Fix the handleEditAttempt function call
   const handleEdit = () => {
     console.log('Editing lead:', lead);
-    if (handleEditAttempt(lead)) {
+    if (handleEditAttempt()) {
       setEditModalOpen(true);
     }
   };
@@ -68,11 +57,6 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
     setCallInProgressOpen(true);
   };
 
-  // Fix: Fix the handleEmail function to properly handle the event
-  const handleEmailClick = () => {
-    handleEmail(lead);
-  };
-
   return (
     <>
       <div className="flex space-x-1">
@@ -80,8 +64,8 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
           size="sm" 
           variant="ghost" 
           onClick={handleEdit}
-          disabled={!canEdit(lead)}
-          className={!canEdit(lead) ? 'opacity-50 cursor-not-allowed' : ''}
+          disabled={!canEdit}
+          className={!canEdit ? 'opacity-50 cursor-not-allowed' : ''}
         >
           <Edit size={14} />
         </Button>
@@ -94,7 +78,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
           <Phone size={14} className="mr-1" />
           Call
         </Button>
-        <Button size="sm" variant="ghost" onClick={handleEmailClick}>
+        <Button size="sm" variant="ghost" onClick={handleEmail}>
           <Mail size={14} />
         </Button>
       </div>

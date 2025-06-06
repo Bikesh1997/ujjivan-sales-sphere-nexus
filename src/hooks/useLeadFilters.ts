@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Lead {
   id: string;
@@ -25,17 +25,13 @@ export const useLeadFilters = (leads: Lead[]) => {
 
   const filteredLeads = useMemo(() => {
     return leads.filter(lead => {
-      const matchesSearch = 
-        searchTerm === '' || 
-        lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.phone.includes(searchTerm);
-        
-      const matchesStatus = statusFilter === 'all' || lead.status.toLowerCase() === statusFilter.toLowerCase();
-      const matchesPriority = priorityFilter === 'all' || lead.priority.toLowerCase() === priorityFilter.toLowerCase();
-      const matchesSource = sourceFilter === 'all' || lead.source.toLowerCase() === sourceFilter.toLowerCase();
-      
+      const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           lead.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           lead.phone.includes(searchTerm);
+      const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
+      const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter;
+      const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
       return matchesSearch && matchesStatus && matchesPriority && matchesSource;
     });
   }, [leads, searchTerm, statusFilter, priorityFilter, sourceFilter]);

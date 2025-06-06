@@ -1,142 +1,127 @@
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Phone, Eye, Edit, MessageSquare } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import LeadActionsMenu from './LeadActionsMenu';
 
-export interface LeadsTableProps {
-  leads: any[];
-  onSelectLead: (leadId: string) => void;
-  onSelectAll: () => void;
-  onCallClick: (lead: any) => void;
-  onViewClick: (lead: any) => void;
-  onEditClick: (lead: any) => void;
-  onNotesClick: (lead: any) => void;
-  selectedLeads: string[];
+interface Lead {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  status: string;
+  source: string;
+  value: string;
+  assignedTo: string;
+  assignedToId: string;
+  lastContact: string;
+  priority: string;
 }
 
-const LeadsTable = ({
-  leads,
-  onSelectLead,
-  onSelectAll,
-  onCallClick,
-  onViewClick,
-  onEditClick,
-  onNotesClick,
-  selectedLeads
-}: LeadsTableProps) => {
-  const { user } = useAuth();
-  const allSelected = leads.length > 0 && selectedLeads.length === leads.length;
+interface LeadsTableProps {
+  leads: Lead[];
+  userRole: string;
+  onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
+}
 
-  const canEdit = (lead: any) => {
-    return user?.role === 'supervisor' || lead.assignedToId === user?.id;
+const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'new': return 'bg-blue-100 text-blue-800';
+      case 'qualified': return 'bg-yellow-100 text-yellow-800';
+      case 'proposal': return 'bg-orange-100 text-orange-800';
+      case 'converted': return 'bg-green-100 text-green-800';
+      case 'lost': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Medium': return 'bg-yellow-100 text-yellow-800';
+      case 'Low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getSourceColor = (source: string) => {
+    switch (source) {
+      case 'Website Forms': return 'bg-blue-100 text-blue-800';
+      case 'WhatsApp Business': return 'bg-green-100 text-green-800';
+      case 'Call Center': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
-    <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-10">
-              <Checkbox 
-                checked={allSelected} 
-                onCheckedChange={onSelectAll}
-                aria-label="Select all"
-              />
-            </TableHead>
-            <TableHead>Lead</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Value</TableHead>
-            <TableHead>Source</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Company</TableHead>
+          <TableHead>Contact</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Value</TableHead>
+          <TableHead>Priority</TableHead>
+          <TableHead>Source</TableHead>
+          {userRole === 'supervisor' && (
             <TableHead>Assigned To</TableHead>
-            <TableHead>Last Contact</TableHead>
-            <TableHead className="w-24">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leads.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={8} className="h-24 text-center">
-                No leads found.
-              </TableCell>
-            </TableRow>
-          ) : (
-            leads.map((lead) => (
-              <TableRow key={lead.id} className={selectedLeads.includes(lead.id) ? "bg-gray-50" : ""}>
-                <TableCell>
-                  <Checkbox 
-                    checked={selectedLeads.includes(lead.id)} 
-                    onCheckedChange={() => onSelectLead(lead.id)}
-                    aria-label={`Select ${lead.name}`}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{lead.name}</div>
-                    <div className="text-sm text-gray-500">{lead.contact}</div>
-                    <div className="text-xs text-gray-400">{lead.email}</div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className={`inline-flex px-2 py-1 rounded-full text-xs ${
-                    lead.status.toLowerCase() === 'new' ? 'bg-blue-100 text-blue-800' :
-                    lead.status.toLowerCase() === 'qualified' ? 'bg-yellow-100 text-yellow-800' :
-                    lead.status.toLowerCase() === 'proposal' ? 'bg-purple-100 text-purple-800' :
-                    lead.status.toLowerCase() === 'negotiation' ? 'bg-orange-100 text-orange-800' :
-                    lead.status.toLowerCase() === 'converted' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {lead.status}
-                  </div>
-                </TableCell>
-                <TableCell>{lead.value}</TableCell>
-                <TableCell>{lead.source}</TableCell>
-                <TableCell>{lead.assignedTo}</TableCell>
-                <TableCell>{lead.lastContact}</TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onCallClick(lead)}
-                      title="Call Lead"
-                    >
-                      <Phone size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onViewClick(lead)}
-                      title="View Details"
-                    >
-                      <Eye size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onEditClick(lead)}
-                      title="Edit Lead"
-                      disabled={!canEdit(lead)}
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onNotesClick(lead)}
-                      title="Lead Notes"
-                    >
-                      <MessageSquare size={16} />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))
           )}
-        </TableBody>
-      </Table>
-    </div>
+          <TableHead>Last Contact</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {leads.map((lead) => (
+          <TableRow key={lead.id}>
+            <TableCell>
+              <div>
+                <div className="font-medium text-gray-900">{lead.name}</div>
+                <div className="text-sm text-gray-500">{lead.id}</div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div>
+                <div className="font-medium text-gray-900">{lead.contact}</div>
+                <div className="text-sm text-gray-500">{lead.phone}</div>
+                <div className="text-sm text-gray-500">{lead.email}</div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge className={getStatusColor(lead.status)}>
+                {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+              </Badge>
+            </TableCell>
+            <TableCell className="font-medium text-gray-900">{lead.value}</TableCell>
+            <TableCell>
+              <Badge className={getPriorityColor(lead.priority)}>
+                {lead.priority}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge className={getSourceColor(lead.source)}>
+                {lead.source}
+              </Badge>
+            </TableCell>
+            {userRole === 'supervisor' && (
+              <TableCell className="text-sm text-gray-900">{lead.assignedTo}</TableCell>
+            )}
+            <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
+            <TableCell>
+              <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

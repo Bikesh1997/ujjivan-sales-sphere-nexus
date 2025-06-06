@@ -1,134 +1,120 @@
-
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLeadFilters } from '@/hooks/useLeadFilters';
-import { useLeadActions } from '@/hooks/useLeadActions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus, Search, Filter } from 'lucide-react';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus, Download } from 'lucide-react';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
 import LeadsTable from '@/components/leads/LeadsTable';
+import LeadsPagination from '@/components/leads/LeadsPagination';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import EditLeadModal from '@/components/leads/EditLeadModal';
 import LeadNotesModal from '@/components/leads/LeadNotesModal';
-import LeadCallModal from '@/components/leads/LeadCallModal';
-import LeadViewModal from '@/components/leads/LeadViewModal';
-import BulkLeadActions from '@/components/leads/BulkLeadActions';
-import { leadsData } from '@/data/leadsData';
-
-// Define the Lead interface to match what's expected
-interface Lead {
-  id: string;
-  name: string;
-  contact: string;
-  phone: string;
-  email: string;
-  status: string;
-  source: string;
-  value: string;
-  assignedTo: string;
-  assignedToId: string;
-  lastContact: string;
-  priority: string;
-}
+import { allLeads } from '@/data/leadsData';
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
 
 const LeadManagement = () => {
+  const { toast } = useToast();
   const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [leads, setLeads] = useState<Lead[]>(leadsData);
-  
-  // Modal states
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
-  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [leads, setLeads] = useState(allLeads);
+  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
+  const [isEditLeadModalOpen, setIsEditLeadModalOpen] = useState(false);
+  const [isLeadNotesModalOpen, setIsLeadNotesModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const leadsPerPage = 5;
 
-  // Custom hooks for lead filtering
-  const {
-    searchTerm: filterSearchTerm,
-    setSearchTerm: setFilterSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    priorityFilter,
-    setPriorityFilter,
-    sourceFilter,
-    setSourceFilter,
-    filteredLeads,
-    clearAllFilters
-  } = useLeadFilters(leads);
+  const [filters, setFilters] = useState({
+    status: '',
+    priority: '',
+    source: '',
+    assignedTo: '',
+    dateRange: '',
+  });
 
-  // Update search term in filters when it changes in the component
-  useEffect(() => {
-    setFilterSearchTerm(searchTerm);
-  }, [searchTerm, setFilterSearchTerm]);
-
-  // Custom hook for lead actions
-  const {
-    handleAddLead,
-    handleUpdateLead,
-    handleCallClick,
-    handleViewLead,
-    handleEditLead,
-    handleNotesClick
-  } = useLeadActions(
-    leads, 
-    setLeads, 
-    setSelectedLead, 
-    setIsCallModalOpen, 
-    setIsViewModalOpen, 
-    setIsEditModalOpen, 
-    setIsNotesModalOpen
-  );
-
-  const stats = {
-    total: filteredLeads.length,
-    new: filteredLeads.filter(lead => lead.status.toLowerCase() === 'new').length,
-    contacted: filteredLeads.filter(lead => lead.status.toLowerCase() === 'contacted').length,
-    qualified: filteredLeads.filter(lead => lead.status.toLowerCase() === 'qualified').length,
-    converted: filteredLeads.filter(lead => lead.status.toLowerCase() === 'converted').length
+  const handleAddLead = (newLead: any) => {
+    setLeads([...leads, { ...newLead, id: String(Date.now()) }]);
+    toast({
+      title: "Lead Added",
+      description: `${newLead.name} has been added to your leads.`,
+    });
   };
 
-  const handleSelectLead = (leadId: string) => {
-    setSelectedLeads(prev => 
-      prev.includes(leadId) 
-        ? prev.filter(id => id !== leadId)
-        : [...prev, leadId]
+  const handleEditLead = (lead: any) => {
+    setSelectedLead(lead);
+    setIsEditLeadModalOpen(true);
+  };
+
+  const handleUpdateLead = (updatedLead: any) => {
+    setLeads(
+      leads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead))
     );
+    setSelectedLead(null);
+    toast({
+      title: "Lead Updated",
+      description: `${updatedLead.name} has been updated successfully.`,
+    });
   };
 
-  const handleSelectAll = () => {
-    if (selectedLeads.length === filteredLeads.length) {
-      setSelectedLeads([]);
-    } else {
-      setSelectedLeads(filteredLeads.map(lead => lead.id));
+  const handleDeleteLead = (id: string) => {
+    setLeads(leads.filter((lead) => lead.id !== id));
+    toast({
+      title: "Lead Deleted",
+      description: "Lead has been deleted.",
+    });
+  };
+
+  const handleLeadClick = (lead: any) => {
+    setSelectedLead(lead);
+  };
+
+  const handleNotesClick = (lead: any) => {
+    setSelectedLead(lead);
+    setIsLeadNotesModalOpen(true);
+  };
+
+  const handleCallClick = (lead: any) => {
+    setSelectedLead(lead);
+    toast({
+      title: "Calling Lead",
+      description: `Calling ${lead.name}...`,
+    });
+  };
+
+  const handleBulkActions = () => {
+    toast({
+      title: "Bulk Actions",
+      description: "Initiating bulk actions...",
+    });
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      status: '',
+      priority: '',
+      source: '',
+      assignedTo: '',
+      dateRange: '',
+    });
+  };
+
+  const filteredLeads = leads.filter(lead => {
+    if (filters.status && lead.status !== filters.status) {
+      return false;
     }
-  };
+    if (filters.priority && lead.priority !== filters.priority) {
+      return false;
+    }
+    if (filters.source && lead.source !== filters.source) {
+      return false;
+    }
+    return true;
+  });
 
-  const handleBulkAction = (action: string) => {
-    console.log('Performing bulk action:', action, 'on leads:', selectedLeads);
-    // Implement bulk actions logic here
-    setSelectedLeads([]);
-  };
-
-  const filters = {
-    status: statusFilter,
-    source: sourceFilter,
-    priority: priorityFilter,
-    assignedTo: 'all',
-    dateRange: 'all'
-  };
-
-  const handleFiltersChange = (newFilters: any) => {
-    setStatusFilter(newFilters.status);
-    setSourceFilter(newFilters.source);
-    setPriorityFilter(newFilters.priority);
-  };
+  const totalPages = Math.ceil(filteredLeads.length / leadsPerPage);
+  const indexOfLastLead = currentPage * leadsPerPage;
+  const indexOfFirstLead = indexOfLastLead - leadsPerPage;
+  const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
 
   return (
     <div className="space-y-6">
@@ -141,116 +127,77 @@ const LeadManagement = () => {
         <div className="flex space-x-3">
           <Button 
             variant="outline" 
-            size="sm"
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={handleBulkActions}
           >
-            <Filter size={16} className="mr-2" />
-            Filters
+            <Download size={16} className="mr-2" />
+            Bulk Actions
           </Button>
-          <Button size="sm" onClick={() => setIsAddModalOpen(true)} className="bg-teal-600 hover:bg-teal-700">
+          <Button 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setIsAddLeadModalOpen(true)}
+          >
             <Plus size={16} className="mr-2" />
             Add Lead
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <LeadStatsCards stats={stats} />
+      {/* Lead Stats Cards */}
+      <LeadStatsCards leads={filteredLeads} userRole={user?.role} />
 
-      {/* Search and Filters */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-              <Input
-                placeholder="Search leads by name, email, or phone..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </CardHeader>
-        {showFilters && (
-          <CardContent className="pt-0">
-            <LeadFilters
-              searchTerm={filterSearchTerm}
-              onSearchChange={setFilterSearchTerm}
-              filters={filters}
-              onFiltersChange={handleFiltersChange}
-            />
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Bulk Actions */}
-      {selectedLeads.length > 0 && (
-        <BulkLeadActions
-          selectedLeads={selectedLeads}
-          onClearSelection={() => setSelectedLeads([])}
-          onBulkAction={handleBulkAction}
-        />
-      )}
+      {/* Lead Filters */}
+      <LeadFilters 
+        filters={filters}
+        onFiltersChange={setFilters}
+        onClearFilters={handleClearFilters}
+      />
 
       {/* Leads Table */}
       <Card>
-        <CardContent className="p-0">
+        <CardHeader>
+          <CardTitle>Leads</CardTitle>
+        </CardHeader>
+        <CardContent>
           <LeadsTable
-            leads={filteredLeads}
-            onSelectLead={handleSelectLead}
-            onSelectAll={handleSelectAll}
-            onCallClick={handleCallClick}
-            onViewClick={handleViewLead}
-            onEditClick={handleEditLead}
+            leads={currentLeads}
+            onEditLead={handleEditLead}
+            onDeleteLead={handleDeleteLead}
+            onLeadClick={handleLeadClick}
             onNotesClick={handleNotesClick}
-            selectedLeads={selectedLeads}
+            onCallClick={handleCallClick}
+          />
+          
+          <LeadsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            startIndex={indexOfFirstLead}
+            leadsPerPage={leadsPerPage}
+            totalLeads={filteredLeads.length}
           />
         </CardContent>
       </Card>
 
       {/* Modals */}
-      <AddLeadModal
-        isOpen={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
+      <AddLeadModal 
+        open={isAddLeadModalOpen}
+        onOpenChange={setIsAddLeadModalOpen}
         onAddLead={handleAddLead}
       />
-
+      
       {selectedLead && (
         <>
-          <EditLeadModal
-            isOpen={isEditModalOpen}
-            onOpenChange={setIsEditModalOpen}
+          <EditLeadModal 
+            open={isEditLeadModalOpen}
+            onOpenChange={setIsEditLeadModalOpen}
             lead={selectedLead}
-            onEditLead={handleUpdateLead}
+            onUpdateLead={handleUpdateLead}
           />
-
-          <LeadNotesModal
-            isOpen={isNotesModalOpen}
-            onOpenChange={setIsNotesModalOpen}
-            leadId={selectedLead.id}
-            leadName={selectedLead.name}
-          />
-
-          <LeadCallModal
-            isOpen={isCallModalOpen}
-            onOpenChange={setIsCallModalOpen}
-            leadName={selectedLead.name}
-            phoneNumber={selectedLead.phone}
-          />
-
-          <LeadViewModal
-            isOpen={isViewModalOpen}
-            onOpenChange={setIsViewModalOpen}
+          
+          <LeadNotesModal 
+            open={isLeadNotesModalOpen}
+            onOpenChange={setIsLeadNotesModalOpen}
             lead={selectedLead}
-            onEditRequest={() => {
-              setIsViewModalOpen(false);
-              setIsEditModalOpen(true);
-            }}
-            onCallRequest={() => {
-              setIsViewModalOpen(false);
-              setIsCallModalOpen(true);
-            }}
           />
         </>
       )}

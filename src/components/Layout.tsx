@@ -69,7 +69,6 @@ const Layout = ({ children }: LayoutProps) => {
       case 'supervisor': return 'Supervisor';
       case 'inbound_agent': return 'Inbound Contact Center Agent';
       case 'relationship_manager': return 'Relationship Manager';
-      case 'admin': return 'Administrator';
       default: return role;
     }
   };
@@ -80,18 +79,7 @@ const Layout = ({ children }: LayoutProps) => {
       case 'inbound': return 'Inbound';
       case 'field': return 'Field';
       case 'branch': return 'Branch';
-      case 'admin': return 'Administration';
       default: return '';
-    }
-  };
-
-  const getPortalName = (role?: string) => {
-    switch (role) {
-      case 'supervisor': return 'Supervisor Portal';
-      case 'inbound_agent': return 'Inbound Agent Portal';
-      case 'relationship_manager': return 'Relationship Manager Portal';
-      case 'admin': return 'Admin Portal';
-      default: return 'Sales Portal';
     }
   };
 
@@ -176,7 +164,10 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {getPortalName(user?.role)}
+                {user?.role === 'supervisor' ? 'Supervisor Portal' : 
+                 user?.role === 'inbound_agent' ? 'Inbound Agent Portal' :
+                 user?.role === 'relationship_manager' ? 'Relationship Manager Portal' :
+                 'Sales Portal'}
               </div>
             </div>
             <nav className="px-3 space-y-1">
