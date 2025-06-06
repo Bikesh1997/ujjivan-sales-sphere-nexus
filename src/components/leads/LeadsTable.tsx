@@ -82,8 +82,8 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {leads.map((lead) => (
-          <TableRow key={lead.id}>
+        {leads.map((lead, index) => (
+          <TableRow key={lead.id} className={index < 3 ? 'bg-yellow-50 border-yellow-200' : ''}>
             <TableCell>
               <div className="flex items-center gap-2">
                 <div>

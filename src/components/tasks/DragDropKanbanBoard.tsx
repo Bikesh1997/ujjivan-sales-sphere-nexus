@@ -1,13 +1,14 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Clock, User, Calendar, Edit, Timer } from 'lucide-react';
 import AddTaskModal from './AddTaskModal';
 import EditTaskModal from './EditTaskModal';
 import TaskTimeTracker from './TaskTimeTracker';
+import TaskFilter from './TaskFilter';
 
 interface Task {
   id: string;
@@ -71,8 +72,47 @@ const DragDropKanbanBoard = () => {
       leadId: '6',
       timeSpent: 240,
       estimatedTime: 180
-    }
+    },
+    // Adding 30 more tasks
+    ...Array.from({ length: 30 }, (_, index) => {
+      const taskId = (index + 5).toString();
+      const priorities = ['low', 'medium', 'high'] as const;
+      const statuses = ['todo', 'in_progress', 'review', 'completed'] as const;
+      const assignees = ['Rahul Sharma', 'Anjali Patel', 'Vikash Kumar', 'Priya Singh'];
+      
+      const companies = [
+        'Tech Innovations', 'Digital Solutions', 'Smart Systems', 'Future Corp', 'Alpha Industries',
+        'Beta Technologies', 'Gamma Enterprises', 'Delta Services', 'Epsilon Group', 'Zeta Corp',
+        'Theta Solutions', 'Lambda Tech', 'Sigma Industries', 'Omega Systems', 'Phoenix Corp'
+      ];
+      
+      const tasks = [
+        'Follow up call', 'Site visit', 'Document review', 'Proposal preparation', 'Contract negotiation',
+        'Client meeting', 'Product demo', 'Risk assessment', 'Credit analysis', 'Final approval'
+      ];
+      
+      return {
+        id: taskId,
+        title: `${tasks[index % tasks.length]} with ${companies[index % companies.length]}`,
+        description: `Handle ${tasks[index % tasks.length].toLowerCase()} for ${companies[index % companies.length]}`,
+        assignee: assignees[index % assignees.length],
+        priority: priorities[index % priorities.length],
+        dueDate: `2024-06-${(5 + (index % 25)).toString().padStart(2, '0')}`,
+        status: statuses[index % statuses.length],
+        leadId: (index + 7).toString(),
+        timeSpent: Math.floor(Math.random() * 120) + 30,
+        estimatedTime: Math.floor(Math.random() * 180) + 60
+      };
+    })
   ]);
+
+  const [filters, setFilters] = useState({
+    search: '',
+    type: 'all',
+    priority: 'all',
+    status: 'all',
+    date: new Date()
+  });
 
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -142,6 +182,15 @@ const DragDropKanbanBoard = () => {
     const mins = minutes % 60;
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
+
+  const filteredTasks = tasks.filter(task => {
+    const matchesSearch = task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+                         task.description.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesPriority = filters.priority === 'all' || task.priority === filters.priority;
+    const matchesStatus = filters.status === 'all' || task.status === filters.status;
+    
+    return matchesSearch && matchesPriority && matchesStatus;
+  });
 
   const TaskCard = ({ task }: { task: Task }) => {
     const timeProgress = task.estimatedTime ? Math.min((task.timeSpent || 0) / task.estimatedTime * 100, 100) : 0;
@@ -219,28 +268,32 @@ const DragDropKanbanBoard = () => {
         <h2 className="text-xl font-bold">Enhanced Task Management</h2>
       </div>
 
+      <TaskFilter filters={filters} onFilterChange={setFilters} />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {columns.map(column => (
           <div 
             key={column.id} 
-            className={`rounded-lg p-4 ${column.color} min-h-[500px]`}
+            className={`rounded-lg p-4 ${column.color} min-h-[600px]`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id as Task['status'])}
           >
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-gray-700">{column.title}</h3>
               <Badge variant="secondary" className="text-xs">
-                {tasks.filter(task => task.status === column.id).length}
+                {filteredTasks.filter(task => task.status === column.id).length}
               </Badge>
             </div>
             
-            <div className="space-y-2">
-              {tasks
-                .filter(task => task.status === column.id)
-                .map(task => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-            </div>
+            <ScrollArea className="h-[500px]">
+              <div className="space-y-2 pr-4">
+                {filteredTasks
+                  .filter(task => task.status === column.id)
+                  .map(task => (
+                    <TaskCard key={task.id} task={task} />
+                  ))}
+              </div>
+            </ScrollArea>
           </div>
         ))}
       </div>
