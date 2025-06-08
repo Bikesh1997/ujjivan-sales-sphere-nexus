@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,7 +17,6 @@ import TaskManagement from "./pages/tasks/TaskManagement";
 import GeoLocation from "./pages/GeoLocation";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import CustomerAnalytics from "./pages/CustomerAnalytics";
-import RiskManagement from "./pages/RiskManagement";
 import PortfolioManagement from "./pages/PortfolioManagement";
 import KPAManagement from "./pages/KPAManagement";
 import TeamPerformance from "./pages/TeamPerformance";
@@ -119,19 +119,14 @@ const App = () => (
                           <CustomerAnalytics />
                         </RoleBasedRoute>
                       } />
-                      <Route path="/kpa-management" element={
-                        <RoleBasedRoute featureId="kpa_management">
-                          <KPAManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/risk-management" element={
-                        <RoleBasedRoute featureId="risk_management">
-                          <RiskManagement />
-                        </RoleBasedRoute>
-                      } />
                       <Route path="/portfolio" element={
                         <RoleBasedRoute featureId="portfolio_management">
                           <PortfolioManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/kpa-management" element={
+                        <RoleBasedRoute featureId="kpa_management">
+                          <KPAManagement />
                         </RoleBasedRoute>
                       } />
                       <Route path="/team-performance" element={

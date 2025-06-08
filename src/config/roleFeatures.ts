@@ -70,6 +70,30 @@ export const FEATURES: Feature[] = [
     description: 'Team performance overview'
   },
   {
+    id: 'executive_dashboard',
+    name: 'Executive Dashboard',
+    path: '/executive-dashboard',
+    icon: 'TrendingUp',
+    roles: ['supervisor'],
+    description: 'High-level performance metrics'
+  },
+  {
+    id: 'customer_analytics',
+    name: 'Customer Analytics',
+    path: '/customer-analytics',
+    icon: 'Activity',
+    roles: ['supervisor'],
+    description: 'Customer behavior analysis'
+  },
+  {
+    id: 'portfolio_management',
+    name: 'Portfolio',
+    path: '/portfolio',
+    icon: 'PieChart',
+    roles: ['supervisor'],
+    description: 'Portfolio oversight and management'
+  },
+  {
     id: 'team_performance',
     name: 'Performance Analytics',
     path: '/team-performance',
@@ -101,24 +125,6 @@ export const FEATURES: Feature[] = [
     roles: ['supervisor'],
     description: 'Manage business rules and automation'
   },
-  
-  // Executive Level Features
-  {
-    id: 'executive_dashboard',
-    name: 'Executive Dashboard',
-    path: '/executive-dashboard',
-    icon: 'TrendingUp',
-    roles: ['supervisor'],
-    description: 'High-level performance metrics'
-  },
-  {
-    id: 'customer_analytics',
-    name: 'Customer Analytics',
-    path: '/customer-analytics',
-    icon: 'Activity',
-    roles: ['supervisor'],
-    description: 'Customer behavior analysis'
-  },
   {
     id: 'kpa_management',
     name: 'KPA Management',
@@ -126,22 +132,6 @@ export const FEATURES: Feature[] = [
     icon: 'Target',
     roles: ['supervisor'],
     description: 'Key performance area management'
-  },
-  {
-    id: 'portfolio_management',
-    name: 'Portfolio Management',
-    path: '/portfolio',
-    icon: 'PieChart',
-    roles: ['supervisor'],
-    description: 'Portfolio oversight'
-  },
-  {
-    id: 'risk_management',
-    name: 'Risk Management',
-    path: '/risk-management',
-    icon: 'Shield',
-    roles: ['supervisor'],
-    description: 'Risk assessment and management'
   }
 ];
 
