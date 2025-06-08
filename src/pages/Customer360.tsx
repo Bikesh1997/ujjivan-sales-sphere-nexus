@@ -20,7 +20,8 @@ import {
   Users,
   FileText,
   Bell,
-  Target
+  Target,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -29,7 +30,8 @@ import SetAlertModal from '@/components/alerts/SetAlertModal';
 import CallCustomerModal from '@/components/customers/CallCustomerModal';
 import CreateOfferModal from '@/components/customers/CreateOfferModal';
 import CrossSellSuggestions from '@/components/customers/CrossSellSuggestions';
-import EnhancedFamilyTree from '@/components/customers/EnhancedFamilyTree';
+import FamilyGroupTab from '@/components/customers/FamilyGroupTab';
+import ClientInteractionDetails from '@/components/customers/ClientInteractionDetails';
 import GoalBasedNudges from '@/components/customers/GoalBasedNudges';
 
 const Customer360 = () => {
@@ -426,12 +428,13 @@ const Customer360 = () => {
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="products" className="w-full">
-              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
+              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-8' : 'grid-cols-6'}`}>
                 <TabsTrigger value="products">Products</TabsTrigger>
                 <TabsTrigger value="interactions">Interactions</TabsTrigger>
-                <TabsTrigger value="family">Family Tree</TabsTrigger>
+                <TabsTrigger value="family">Family Group</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
+                <TabsTrigger value="client-details">Client Details</TabsTrigger>
                 {isNehaAccount && <TabsTrigger value="cross-sell">AI Cross-Sell</TabsTrigger>}
                 {isNehaAccount && <TabsTrigger value="goals">Goal Planning</TabsTrigger>}
               </TabsList>
@@ -496,43 +499,11 @@ const Customer360 = () => {
               </TabsContent>
 
               <TabsContent value="family" className="space-y-4">
-                {isNehaAccount ? (
-                  <EnhancedFamilyTree
-                    family={customer.family}
-                    onAddFamilyMember={handleAddFamilyMember}
-                    onContactMember={handleContactFamilyMember}
-                  />
-                ) : (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Relationships</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {customer.family.map((member, index) => (
-                        <Card key={index} className="border border-gray-200">
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-3">
-                              <Avatar className="h-12 w-12">
-                                <AvatarFallback className="bg-blue-100 text-blue-700">
-                                  {member.name.split(' ').map(n => n[0]).join('')}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <h4 className="font-medium text-gray-900">{member.name}</h4>
-                                <p className="text-sm text-gray-500">{member.relation}</p>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {member.products.map((product, idx) => (
-                                    <Badge key={idx} variant="secondary" className="text-xs">
-                                      {product}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <FamilyGroupTab
+                  family={customer.family}
+                  onAddFamilyMember={handleAddFamilyMember}
+                  onContactMember={handleContactFamilyMember}
+                />
               </TabsContent>
 
               <TabsContent value="opportunities" className="space-y-4">
@@ -581,6 +552,10 @@ const Customer360 = () => {
                     Create New Offer
                   </Button>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="client-details" className="space-y-4">
+                <ClientInteractionDetails customerName={customer.name} />
               </TabsContent>
 
               {/* Enhanced tabs only for Neha's account */}
