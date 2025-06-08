@@ -20,8 +20,7 @@ import {
   Users,
   FileText,
   Bell,
-  Target,
-  UserPlus
+  Target
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
@@ -427,11 +426,10 @@ const Customer360 = () => {
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="products" className="w-full">
-              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-8' : 'grid-cols-6'}`}>
+              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
                 <TabsTrigger value="products">Products</TabsTrigger>
                 <TabsTrigger value="interactions">Interactions</TabsTrigger>
                 <TabsTrigger value="family">Family Tree</TabsTrigger>
-                <TabsTrigger value="familygroup">Family Group</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
                 {isNehaAccount && <TabsTrigger value="cross-sell">AI Cross-Sell</TabsTrigger>}
@@ -535,110 +533,6 @@ const Customer360 = () => {
                     </div>
                   </div>
                 )}
-              </TabsContent>
-
-              <TabsContent value="familygroup" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Family Group Management</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {customer.family.map((member, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <Avatar className="h-12 w-12">
-                              <AvatarFallback className="bg-blue-100 text-blue-700">
-                                {member.name.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <h4 className="font-medium text-gray-900">{member.name}</h4>
-                              <p className="text-sm text-gray-500">{member.relation}</p>
-                              {member.relationshipValue && (
-                                <p className="text-xs text-teal-600 font-medium">Value: {member.relationshipValue}</p>
-                              )}
-                            </div>
-                          </div>
-                          <Badge variant={member.isCustomer ? "default" : "secondary"}>
-                            {member.isCustomer ? "Customer" : "Prospect"}
-                          </Badge>
-                        </div>
-                        
-                        <div className="space-y-2 text-sm">
-                          {member.phone && (
-                            <div className="flex items-center text-gray-600">
-                              <Phone size={12} className="mr-2" />
-                              {member.phone}
-                            </div>
-                          )}
-                          {member.email && (
-                            <div className="flex items-center text-gray-600">
-                              <Mail size={12} className="mr-2" />
-                              {member.email}
-                            </div>
-                          )}
-                          {member.age && (
-                            <p className="text-gray-600">Age: {member.age}</p>
-                          )}
-                        </div>
-
-                        <div className="mt-3">
-                          <p className="text-xs text-gray-500 mb-1">Products:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {member.products.map((product, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                {product}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        {member.opportunities && member.opportunities.length > 0 && (
-                          <div className="mt-3">
-                            <p className="text-xs text-gray-500 mb-1">Opportunities:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {member.opportunities.map((opp, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
-                                  {opp}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex space-x-2 mt-4">
-                          {member.isCustomer ? (
-                            <Button size="sm" variant="outline" className="text-xs">
-                              View Profile
-                            </Button>
-                          ) : (
-                            <Button size="sm" className="text-xs bg-teal-600 hover:bg-teal-700">
-                              Convert to Customer
-                            </Button>
-                          )}
-                          <Button size="sm" variant="outline" className="text-xs">
-                            <Phone size={12} className="mr-1" />
-                            Contact
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  
-                  {/* Add Family Member Card */}
-                  <Card className="border border-dashed border-gray-300 bg-gray-50">
-                    <CardContent className="p-4 flex flex-col items-center justify-center h-full min-h-[200px]">
-                      <UserPlus size={32} className="text-gray-400 mb-3" />
-                      <h4 className="font-medium text-gray-700 mb-2">Add Family Member</h4>
-                      <p className="text-sm text-gray-500 text-center mb-4">
-                        Expand the family network to identify more opportunities
-                      </p>
-                      <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-                        <UserPlus size={14} className="mr-2" />
-                        Add Member
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
               </TabsContent>
 
               <TabsContent value="opportunities" className="space-y-4">
