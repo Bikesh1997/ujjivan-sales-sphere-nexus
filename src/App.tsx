@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from '@/pages/Login';
+import LoginForm from '@/components/auth/LoginForm';
 import Dashboard from '@/pages/Dashboard';
 import LeadManagement from '@/pages/leads/LeadManagement';
 import SupervisorDashboard from '@/pages/SupervisorDashboard';
