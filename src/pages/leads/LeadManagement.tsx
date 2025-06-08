@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
@@ -12,7 +13,7 @@ import LeadViewModal from '@/components/leads/LeadViewModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import BulkLeadActions from '@/components/leads/BulkLeadActions';
 import LeadsPagination from '@/components/leads/LeadsPagination';
-import { Plus } from 'lucide-react';
+import { Plus, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Lead {
@@ -28,6 +29,10 @@ interface Lead {
   assignedToId: string;
   lastContact: string;
   priority: string;
+  documentReceived?: boolean;
+  underProcess?: boolean;
+  sanctioned?: boolean;
+  disbursed?: boolean;
 }
 
 const LeadManagement = () => {
@@ -54,8 +59,18 @@ const LeadManagement = () => {
   });
 
   useEffect(() => {
-    // Filter leads based on user role
+    // Filter leads based on user role and add new status fields
     let initialLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
+    
+    // Add random status for new fields to existing leads
+    initialLeads = initialLeads.map(lead => ({
+      ...lead,
+      documentReceived: Math.random() > 0.6,
+      underProcess: Math.random() > 0.7,
+      sanctioned: Math.random() > 0.8,
+      disbursed: Math.random() > 0.9
+    }));
+    
     setLeads(initialLeads);
     setFilteredLeads(initialLeads);
   }, [user]);
@@ -133,7 +148,11 @@ const LeadManagement = () => {
       assignedTo: user?.name || 'Unassigned',
       assignedToId: user?.id || '',
       lastContact: 'Just added',
-      priority: leadData.priority
+      priority: leadData.priority,
+      documentReceived: false,
+      underProcess: false,
+      sanctioned: false,
+      disbursed: false
     };
 
     setLeads([...leads, newLead]);
@@ -141,6 +160,19 @@ const LeadManagement = () => {
     toast({
       title: "Lead Added",
       description: "New lead has been successfully added to your pipeline.",
+    });
+  };
+
+  const handleDisbursedClick = (leadId: string) => {
+    const updatedLeads = leads.map(lead => 
+      lead.id === leadId ? { ...lead, disbursed: !lead.disbursed } : lead
+    );
+    setLeads(updatedLeads);
+    
+    const lead = leads.find(l => l.id === leadId);
+    toast({
+      title: "Disbursement Status Updated",
+      description: `${lead?.name} has been ${lead?.disbursed ? 'marked as not disbursed' : 'marked as disbursed'}.`,
     });
   };
 
@@ -200,11 +232,109 @@ const LeadManagement = () => {
           <CardTitle>Leads ({filteredLeads.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <LeadsTable
-            leads={currentLeads}
-            userRole={user?.role || 'agent'}
-            onEditLead={handleEditLead}
-          />
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-3">Lead</th>
+                  <th className="text-left p-3">Contact</th>
+                  <th className="text-left p-3">Status</th>
+                  <th className="text-left p-3">Priority</th>
+                  <th className="text-left p-3">Value</th>
+                  <th className="text-left p-3">Doc Received</th>
+                  <th className="text-left p-3">Under Process</th>
+                  <th className="text-left p-3">Sanctioned</th>
+                  <th className="text-left p-3">Disbursed</th>
+                  <th className="text-left p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentLeads.map((lead) => (
+                  <tr key={lead.id} className="border-b hover:bg-gray-50">
+                    <td className="p-3">
+                      <div>
+                        <p className="font-medium">{lead.name}</p>
+                        <p className="text-sm text-gray-500">{lead.source}</p>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <div>
+                        <p className="font-medium">{lead.contact}</p>
+                        <p className="text-sm text-gray-500">{lead.phone}</p>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <Badge variant="outline" className="capitalize">
+                        {lead.status}
+                      </Badge>
+                    </td>
+                    <td className="p-3">
+                      <Badge 
+                        variant="outline" 
+                        className={
+                          lead.priority === 'High' ? 'bg-red-100 text-red-800' :
+                          lead.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }
+                      >
+                        {lead.priority}
+                      </Badge>
+                    </td>
+                    <td className="p-3 font-medium">{lead.value}</td>
+                    <td className="p-3">
+                      <Badge variant={lead.documentReceived ? "default" : "secondary"}>
+                        {lead.documentReceived ? 'Yes' : 'No'}
+                      </Badge>
+                    </td>
+                    <td className="p-3">
+                      <Badge variant={lead.underProcess ? "default" : "secondary"}>
+                        {lead.underProcess ? 'Yes' : 'No'}
+                      </Badge>
+                    </td>
+                    <td className="p-3">
+                      <Badge variant={lead.sanctioned ? "default" : "secondary"}>
+                        {lead.sanctioned ? 'Yes' : 'No'}
+                      </Badge>
+                    </td>
+                    <td className="p-3">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDisbursedClick(lead.id)}
+                        className={`p-2 ${lead.disbursed ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-600'}`}
+                      >
+                        <CreditCard size={16} />
+                      </Button>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setIsViewModalOpen(true);
+                          }}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 
