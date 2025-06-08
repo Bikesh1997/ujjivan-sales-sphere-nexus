@@ -1,4 +1,3 @@
-
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -68,22 +67,6 @@ export const FEATURES: Feature[] = [
     icon: 'Home',
     roles: ['supervisor'],
     description: 'Team performance overview'
-  },
-  {
-    id: 'executive_dashboard',
-    name: 'Executive Dashboard',
-    path: '/executive-dashboard',
-    icon: 'TrendingUp',
-    roles: ['supervisor'],
-    description: 'High-level performance metrics'
-  },
-  {
-    id: 'customer_analytics',
-    name: 'Customer Analytics',
-    path: '/customer-analytics',
-    icon: 'Activity',
-    roles: ['supervisor'],
-    description: 'Customer behavior analysis'
   },
   {
     id: 'portfolio_management',

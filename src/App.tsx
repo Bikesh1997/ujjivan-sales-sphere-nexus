@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -109,16 +108,6 @@ const App = () => (
                       } />
                       
                       {/* Supervisor Only Features */}
-                      <Route path="/executive-dashboard" element={
-                        <RoleBasedRoute featureId="executive_dashboard">
-                          <ExecutiveDashboard />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/customer-analytics" element={
-                        <RoleBasedRoute featureId="customer_analytics">
-                          <CustomerAnalytics />
-                        </RoleBasedRoute>
-                      } />
                       <Route path="/portfolio" element={
                         <RoleBasedRoute featureId="portfolio_management">
                           <PortfolioManagement />
