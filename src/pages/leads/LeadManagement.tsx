@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ import LeadViewModal from '@/components/leads/LeadViewModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import BulkLeadActions from '@/components/leads/BulkLeadActions';
 import LeadsPagination from '@/components/leads/LeadsPagination';
-import { Plus, CreditCard } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Lead {
@@ -163,16 +164,16 @@ const LeadManagement = () => {
     });
   };
 
-  const handleDisbursedClick = (leadId: string) => {
+  const handleStatusUpdate = (leadId: string, field: string, value: boolean) => {
     const updatedLeads = leads.map(lead => 
-      lead.id === leadId ? { ...lead, disbursed: !lead.disbursed } : lead
+      lead.id === leadId ? { ...lead, [field]: value } : lead
     );
     setLeads(updatedLeads);
     
     const lead = leads.find(l => l.id === leadId);
     toast({
-      title: "Disbursement Status Updated",
-      description: `${lead?.name} has been ${lead?.disbursed ? 'marked as not disbursed' : 'marked as disbursed'}.`,
+      title: "Status Updated",
+      description: `${lead?.name} ${field} has been ${value ? 'marked as complete' : 'marked as incomplete'}.`,
     });
   };
 
@@ -241,10 +242,6 @@ const LeadManagement = () => {
                   <th className="text-left p-3">Status</th>
                   <th className="text-left p-3">Priority</th>
                   <th className="text-left p-3">Value</th>
-                  <th className="text-left p-3">Doc Received</th>
-                  <th className="text-left p-3">Under Process</th>
-                  <th className="text-left p-3">Sanctioned</th>
-                  <th className="text-left p-3">Disbursed</th>
                   <th className="text-left p-3">Actions</th>
                 </tr>
               </thead>
@@ -264,9 +261,37 @@ const LeadManagement = () => {
                       </div>
                     </td>
                     <td className="p-3">
-                      <Badge variant="outline" className="capitalize">
-                        {lead.status}
-                      </Badge>
+                      <div className="space-y-1">
+                        <Badge variant="outline" className="capitalize">
+                          {lead.status}
+                        </Badge>
+                        <div className="text-xs space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">Doc:</span>
+                            <Badge variant={lead.documentReceived ? "default" : "secondary"} className="text-xs">
+                              {lead.documentReceived ? 'Received' : 'Pending'}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">Process:</span>
+                            <Badge variant={lead.underProcess ? "default" : "secondary"} className="text-xs">
+                              {lead.underProcess ? 'Active' : 'Inactive'}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">Approved:</span>
+                            <Badge variant={lead.sanctioned ? "default" : "secondary"} className="text-xs">
+                              {lead.sanctioned ? 'Yes' : 'No'}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">Disbursed:</span>
+                            <Badge variant={lead.disbursed ? "default" : "secondary"} className="text-xs">
+                              {lead.disbursed ? 'Yes' : 'No'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3">
                       <Badge 
@@ -281,31 +306,6 @@ const LeadManagement = () => {
                       </Badge>
                     </td>
                     <td className="p-3 font-medium">{lead.value}</td>
-                    <td className="p-3">
-                      <Badge variant={lead.documentReceived ? "default" : "secondary"}>
-                        {lead.documentReceived ? 'Yes' : 'No'}
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <Badge variant={lead.underProcess ? "default" : "secondary"}>
-                        {lead.underProcess ? 'Yes' : 'No'}
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <Badge variant={lead.sanctioned ? "default" : "secondary"}>
-                        {lead.sanctioned ? 'Yes' : 'No'}
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDisbursedClick(lead.id)}
-                        className={`p-2 ${lead.disbursed ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-600'}`}
-                      >
-                        <CreditCard size={16} />
-                      </Button>
-                    </td>
                     <td className="p-3">
                       <div className="flex space-x-2">
                         <Button
@@ -327,6 +327,14 @@ const LeadManagement = () => {
                           }}
                         >
                           Edit
+                        </Button>
+                        <Button
+                          variant={lead.disbursed ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleStatusUpdate(lead.id, 'disbursed', !lead.disbursed)}
+                          className={lead.disbursed ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                        >
+                          {lead.disbursed ? 'Disbursed' : 'Disburse'}
                         </Button>
                       </div>
                     </td>
