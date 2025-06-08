@@ -46,6 +46,10 @@ const LeadFilters = ({
             <SelectItem value="proposal">Proposal</SelectItem>
             <SelectItem value="converted">Converted</SelectItem>
             <SelectItem value="lost">Lost</SelectItem>
+            <SelectItem value="document received">Document Received</SelectItem>
+            <SelectItem value="under process">Under Process</SelectItem>
+            <SelectItem value="sanctioned/approved">Sanctioned/Approved</SelectItem>
+            <SelectItem value="disbursed">Disbursed</SelectItem>
           </SelectContent>
         </Select>
       </div>
