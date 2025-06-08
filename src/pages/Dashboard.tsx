@@ -32,6 +32,9 @@ const Dashboard = () => {
     return sum + value;
   }, 0);
 
+  // Monthly target for salesperson
+  const monthlyTarget = 25; // Target number of conversions per month
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -55,7 +58,7 @@ const Dashboard = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -84,6 +87,31 @@ const Dashboard = () => {
                 </p>
               </div>
               <CheckCircle size={48} className="text-green-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Monthly Target</p>
+                <p className="text-2xl font-bold text-gray-900">{monthlyTarget}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {convertedLeads >= monthlyTarget ? (
+                    <>
+                      <ArrowUpRight size={14} className="inline-block mr-1" />
+                      Target achieved!
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={14} className="inline-block mr-1" />
+                      {monthlyTarget - convertedLeads} more needed
+                    </>
+                  )}
+                </p>
+              </div>
+              <Target size={48} className="text-purple-500 opacity-50" />
             </div>
           </CardContent>
         </Card>

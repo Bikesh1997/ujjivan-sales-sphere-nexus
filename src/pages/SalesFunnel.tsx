@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,10 +43,9 @@ const SalesFunnel = () => {
 
   const funnelData = [
     { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
-    { stage: 'Qualified', count: userLeads.filter(l => l.status === 'qualified').length, value: '₹38L', conversion: 71 },
-    { stage: 'Proposal', count: userLeads.filter(l => l.status === 'proposal').length, value: '₹28L', conversion: 38 },
-    { stage: 'Negotiation', count: userLeads.filter(l => l.status === 'negotiation').length, value: '₹22L', conversion: 27 },
-    { stage: 'Closed Won', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
+    { stage: 'Logging', count: userLeads.filter(l => l.status === 'qualified').length, value: '₹38L', conversion: 71 },
+    { stage: 'Approved Mentioned', count: userLeads.filter(l => l.status === 'proposal').length, value: '₹28L', conversion: 38 },
+    { stage: 'Approved Disbursed/Account Open', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
   ];
 
   // Extended real names and business names for 40+ prospects
@@ -74,7 +72,7 @@ const SalesFunnel = () => {
   ];
 
   // Create extended prospects list with 40+ entries
-  const allProspects = userLeads.filter(lead => ['qualified', 'proposal', 'negotiation'].includes(lead.status));
+  const allProspects = userLeads.filter(lead => ['qualified', 'proposal'].includes(lead.status));
   const extendedProspects = [];
 
   // Add original prospects
@@ -96,7 +94,7 @@ const SalesFunnel = () => {
 
   // Add 40 more prospects
   for (let i = 0; i < 40; i++) {
-    const statusOptions = ['qualified', 'proposal', 'negotiation'];
+    const statusOptions = ['qualified', 'proposal'];
     const status = statusOptions[i % statusOptions.length];
     const value = `₹${Math.floor(Math.random() * 50) + 10}L`;
     
@@ -156,9 +154,8 @@ const SalesFunnel = () => {
 
   const handleStageChange = (prospectId: string, newStage: string) => {
     const statusMap: { [key: string]: string } = {
-      'Qualified': 'qualified',
-      'Proposal': 'proposal',
-      'Negotiation': 'negotiation'
+      'Logging': 'qualified',
+      'Approved Mentioned': 'proposal'
     };
     
     const newStatus = statusMap[newStage];
@@ -170,10 +167,9 @@ const SalesFunnel = () => {
   const getStageColor = (stage: string) => {
     switch (stage) {
       case 'Leads': return 'bg-gray-100 text-gray-800';
-      case 'Qualified': return 'bg-blue-100 text-blue-800';
-      case 'Proposal': return 'bg-yellow-100 text-yellow-800';
-      case 'Negotiation': return 'bg-orange-100 text-orange-800';
-      case 'Closed Won': return 'bg-green-100 text-green-800';
+      case 'Logging': return 'bg-blue-100 text-blue-800';
+      case 'Approved Mentioned': return 'bg-yellow-100 text-yellow-800';
+      case 'Approved Disbursed/Account Open': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -209,7 +205,7 @@ const SalesFunnel = () => {
 
         <TabsContent value="pipeline" className="space-y-6">
           {/* Pipeline Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {funnelData.map((stage, index) => (
               <Card key={stage.stage} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
@@ -250,9 +246,8 @@ const SalesFunnel = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Stages</SelectItem>
-                      <SelectItem value="qualified">Qualified</SelectItem>
-                      <SelectItem value="proposal">Proposal</SelectItem>
-                      <SelectItem value="negotiation">Negotiation</SelectItem>
+                      <SelectItem value="qualified">Logging</SelectItem>
+                      <SelectItem value="proposal">Approved Mentioned</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -286,13 +281,12 @@ const SalesFunnel = () => {
                             value={prospect.stage} 
                             onValueChange={(value) => handleStageChange(prospect.leadData.id, value)}
                           >
-                            <SelectTrigger className="w-32">
+                            <SelectTrigger className="w-40">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Qualified">Qualified</SelectItem>
-                              <SelectItem value="Proposal">Proposal</SelectItem>
-                              <SelectItem value="Negotiation">Negotiation</SelectItem>
+                              <SelectItem value="Logging">Logging</SelectItem>
+                              <SelectItem value="Approved Mentioned">Approved Mentioned</SelectItem>
                             </SelectContent>
                           </Select>
                         </td>
