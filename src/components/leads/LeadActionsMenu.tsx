@@ -1,11 +1,12 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Phone } from 'lucide-react';
+import { Eye, Phone, CheckCircle } from 'lucide-react';
 import LeadViewModal from './LeadViewModal';
 import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
 import { useLeadActions } from '@/hooks/useLeadActions';
+import { useToast } from '@/hooks/use-toast';
 
 interface Lead {
   id: string;
@@ -31,6 +32,7 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [callInProgressOpen, setCallInProgressOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const { toast } = useToast();
   
   const { handleEmail, canEdit, handleEditAttempt } = useLeadActions(lead);
 
@@ -45,6 +47,16 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
   const handleCall = () => {
     console.log('Calling lead:', lead.phone);
     setCallInProgressOpen(true);
+  };
+
+  const handleDisbursed = () => {
+    if (onEditLead) {
+      onEditLead(lead.id, { status: 'disbursed' });
+      toast({
+        title: "Lead Disbursed",
+        description: `${lead.name} has been marked as disbursed.`,
+      });
+    }
   };
 
   return (
@@ -65,6 +77,16 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
         >
           <Phone size={14} className="mr-1" />
           Call
+        </Button>
+        <Button 
+          size="sm" 
+          variant="default" 
+          onClick={handleDisbursed}
+          className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+          disabled={lead.status === 'disbursed'}
+        >
+          <CheckCircle size={14} className="mr-1" />
+          Disburse
         </Button>
       </div>
 

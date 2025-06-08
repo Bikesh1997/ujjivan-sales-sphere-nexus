@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -42,6 +41,10 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
       case 'proposal': return 'bg-orange-100 text-orange-800';
       case 'converted': return 'bg-green-100 text-green-800';
       case 'lost': return 'bg-red-100 text-red-800';
+      case 'document received': return 'bg-purple-100 text-purple-800';
+      case 'under process': return 'bg-indigo-100 text-indigo-800';
+      case 'sanctioned/approved': return 'bg-teal-100 text-teal-800';
+      case 'disbursed': return 'bg-emerald-100 text-emerald-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
