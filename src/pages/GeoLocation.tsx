@@ -2,10 +2,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Shield, Activity } from 'lucide-react';
+import { MapPin, Shield, Activity, Users, Route, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import GeoLocationTracker from '@/components/geo/GeoLocationTracker';
 import GeoFenceManager from '@/components/geo/GeoFenceManager';
+import LiveTeamMap from '@/components/supervisor/LiveTeamMap';
+import RouteReview from '@/components/supervisor/RouteReview';
+import GeoAlerts from '@/components/supervisor/GeoAlerts';
 
 const GeoLocation = () => {
   const { user } = useAuth();
@@ -32,16 +35,34 @@ const GeoLocation = () => {
 
       {/* Main Content */}
       <Tabs defaultValue="tracking" className="w-full">
-        <TabsList className={`grid w-full ${user?.role === 'supervisor' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        <TabsList className={`grid w-full ${
+          user?.role === 'supervisor' 
+            ? 'grid-cols-5' 
+            : 'grid-cols-2'
+        }`}>
           <TabsTrigger value="tracking" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
             Location Tracking
           </TabsTrigger>
           {user?.role === 'supervisor' && (
-            <TabsTrigger value="geofencing" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Geo-Fencing
-            </TabsTrigger>
+            <>
+              <TabsTrigger value="live-monitoring" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Live Team Monitor
+              </TabsTrigger>
+              <TabsTrigger value="route-review" className="flex items-center gap-2">
+                <Route className="h-4 w-4" />
+                Route Review
+              </TabsTrigger>
+              <TabsTrigger value="geo-alerts" className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                Geo Alerts
+              </TabsTrigger>
+              <TabsTrigger value="geofencing" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Geo-Fencing
+              </TabsTrigger>
+            </>
           )}
           <TabsTrigger value="activities" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -92,9 +113,23 @@ const GeoLocation = () => {
         </TabsContent>
 
         {user?.role === 'supervisor' && (
-          <TabsContent value="geofencing" className="space-y-6">
-            <GeoFenceManager />
-          </TabsContent>
+          <>
+            <TabsContent value="live-monitoring" className="space-y-6">
+              <LiveTeamMap />
+            </TabsContent>
+
+            <TabsContent value="route-review" className="space-y-6">
+              <RouteReview />
+            </TabsContent>
+
+            <TabsContent value="geo-alerts" className="space-y-6">
+              <GeoAlerts />
+            </TabsContent>
+
+            <TabsContent value="geofencing" className="space-y-6">
+              <GeoFenceManager />
+            </TabsContent>
+          </>
         )}
 
         <TabsContent value="activities" className="space-y-6">
