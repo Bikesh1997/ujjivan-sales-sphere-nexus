@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, X } from 'lucide-react';
+import { Target } from 'lucide-react';
 
 interface KRASetupModalProps {
   open: boolean;
@@ -182,7 +182,7 @@ const KRASetupModal = ({ open, onOpenChange, selectedRole, onAddKRA }: KRASetupM
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="red-threshold">Red Zone (< %)</Label>
+                  <Label htmlFor="red-threshold">Red Zone (&lt; %)</Label>
                   <Input
                     id="red-threshold"
                     type="number"
@@ -196,7 +196,7 @@ const KRASetupModal = ({ open, onOpenChange, selectedRole, onAddKRA }: KRASetupM
                 </div>
 
                 <div>
-                  <Label htmlFor="amber-threshold">Amber Zone (< %)</Label>
+                  <Label htmlFor="amber-threshold">Amber Zone (&lt; %)</Label>
                   <Input
                     id="amber-threshold"
                     type="number"
