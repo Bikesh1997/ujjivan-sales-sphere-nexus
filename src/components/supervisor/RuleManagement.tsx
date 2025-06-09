@@ -477,7 +477,7 @@ const RuleManagement = () => {
                   </TableCell>
                 </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </Table>
         </CardContent>
       </Card>
