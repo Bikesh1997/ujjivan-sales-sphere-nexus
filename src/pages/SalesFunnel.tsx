@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,45 +72,63 @@ const SalesFunnel = () => {
     'Elite Technologies', 'Zenith Ventures', 'Nova Industries', 'Catalyst Corp'
   ];
 
-  // Create extended prospects list with 40+ entries
-  const allProspects = userLeads.filter(lead => ['qualified', 'proposal'].includes(lead.status));
+  // Create extended prospects list with 40+ entries including new stages
+  const allProspects = userLeads.filter(lead => ['new', 'qualified', 'proposal', 'under_process'].includes(lead.status));
   const extendedProspects = [];
 
   // Add original prospects
   allProspects.forEach((lead, index) => {
+    const stageName = lead.status === 'new' ? 'New' :
+                     lead.status === 'qualified' ? 'Qualified' :
+                     lead.status === 'proposal' ? 'Proposal' :
+                     lead.status === 'under_process' ? 'Under Process' : 'New';
+    
     extendedProspects.push({
       id: lead.id,
       name: realNames[index % realNames.length],
       company: lead.name,
-      stage: lead.status.charAt(0).toUpperCase() + lead.status.slice(1),
+      stage: stageName,
       value: lead.value,
-      probability: lead.status === 'qualified' ? 65 : lead.status === 'proposal' ? 75 : 85,
+      probability: lead.status === 'new' ? 25 :
+                  lead.status === 'qualified' ? 65 : 
+                  lead.status === 'proposal' ? 75 : 
+                  lead.status === 'under_process' ? 85 : 25,
       lastContact: lead.lastContact,
-      nextAction: lead.status === 'qualified' ? 'Proposal presentation' : 
-                  lead.status === 'proposal' ? 'Follow-up call' : 'Contract review',
+      nextAction: lead.status === 'new' ? 'Initial contact' :
+                  lead.status === 'qualified' ? 'Proposal presentation' : 
+                  lead.status === 'proposal' ? 'Follow-up call' : 
+                  lead.status === 'under_process' ? 'Process verification' : 'Initial contact',
       leadData: lead,
       businessName: businessNames[index % businessNames.length]
     });
   });
 
-  // Add 40 more prospects
+  // Add 40 more prospects with new stages
   for (let i = 0; i < 40; i++) {
-    const statusOptions = ['qualified', 'proposal'];
+    const statusOptions = ['new', 'qualified', 'proposal', 'under_process'];
     const status = statusOptions[i % statusOptions.length];
     const value = `₹${Math.floor(Math.random() * 50) + 10}L`;
+    
+    const stageName = status === 'new' ? 'New' :
+                     status === 'qualified' ? 'Qualified' :
+                     status === 'proposal' ? 'Proposal' :
+                     status === 'under_process' ? 'Under Process' : 'New';
     
     extendedProspects.push({
       id: `ext-${i + 1}`,
       name: realNames[(allProspects.length + i) % realNames.length],
       company: businessNames[(allProspects.length + i) % businessNames.length],
-      stage: status.charAt(0).toUpperCase() + status.slice(1),
+      stage: stageName,
       value: value,
-      probability: status === 'qualified' ? Math.floor(Math.random() * 20) + 55 : 
-                   status === 'proposal' ? Math.floor(Math.random() * 20) + 65 : 
-                   Math.floor(Math.random() * 20) + 75,
+      probability: status === 'new' ? Math.floor(Math.random() * 20) + 15 :
+                  status === 'qualified' ? Math.floor(Math.random() * 20) + 55 : 
+                  status === 'proposal' ? Math.floor(Math.random() * 20) + 65 : 
+                  status === 'under_process' ? Math.floor(Math.random() * 20) + 75 : 25,
       lastContact: ['2 days ago', '1 week ago', '3 days ago', '5 days ago'][i % 4],
-      nextAction: status === 'qualified' ? 'Proposal presentation' : 
-                  status === 'proposal' ? 'Follow-up call' : 'Contract review',
+      nextAction: status === 'new' ? 'Initial contact' :
+                  status === 'qualified' ? 'Proposal presentation' : 
+                  status === 'proposal' ? 'Follow-up call' : 
+                  status === 'under_process' ? 'Process verification' : 'Initial contact',
       leadData: {
         id: `ext-${i + 1}`,
         name: businessNames[(allProspects.length + i) % businessNames.length],
@@ -154,8 +173,10 @@ const SalesFunnel = () => {
 
   const handleStageChange = (prospectId: string, newStage: string) => {
     const statusMap: { [key: string]: string } = {
-      'Logging': 'qualified',
-      'Approved Mentioned': 'proposal'
+      'New': 'new',
+      'Qualified': 'qualified',
+      'Proposal': 'proposal',
+      'Under Process': 'under_process'
     };
     
     const newStatus = statusMap[newStage];
@@ -246,8 +267,10 @@ const SalesFunnel = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Stages</SelectItem>
-                      <SelectItem value="qualified">Logging</SelectItem>
-                      <SelectItem value="proposal">Approved Mentioned</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="qualified">Qualified</SelectItem>
+                      <SelectItem value="proposal">Proposal</SelectItem>
+                      <SelectItem value="under_process">Under Process</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -285,8 +308,10 @@ const SalesFunnel = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Logging">Logging</SelectItem>
-                              <SelectItem value="Approved Mentioned">Approved Mentioned</SelectItem>
+                              <SelectItem value="New">New</SelectItem>
+                              <SelectItem value="Qualified">Qualified</SelectItem>
+                              <SelectItem value="Proposal">Proposal</SelectItem>
+                              <SelectItem value="Under Process">Under Process</SelectItem>
                             </SelectContent>
                           </Select>
                         </td>
