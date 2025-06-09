@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -289,9 +288,16 @@ const PlanMyDay = () => {
                 <Navigation className="h-4 w-4 mr-2" />
                 Start Navigation
               </Button>
-              <Button variant="outline" className="flex-1">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => {
+                  // Navigate to plan-my-day route
+                  window.location.href = '/plan-my-day';
+                }}
+              >
                 <Route className="h-4 w-4 mr-2" />
-                Recalculate Route
+                Plan Route
               </Button>
             </div>
           </CardContent>

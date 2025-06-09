@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -53,12 +52,14 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
       type: 'Call',
       status: 'positive',
       date: '2025-06-06',
-      summary: 'Follow-up call about policy renewal. Customer was initially concerned about the premium increase but agreed to renew after explaining enhanced benefits and loyalty discount.',
+      summary: 'Follow-up call about investment products. Customer showed interest in mutual funds and requested a detailed presentation for next week.',
       conversation: [
-        { time: '00:03', speaker: 'Agent', message: 'Hello, this is Bharti AXA. How can I assist you today?' },
-        { time: '00:10', speaker: 'Customer', message: 'Hi, I received a reminder about my policy renewal but I\'m not sure if I want to continue.' },
-        { time: '00:18', speaker: 'Agent', message: 'I understand your concern. May I know what\'s making you hesitant about renewing your policy?' },
-        { time: '00:26', speaker: 'Customer', message: 'Well, the premium seems higher than what I was paying last year, and I\'m wondering if there are any other options.' }
+        { time: '00:03', speaker: 'Agent', message: 'Hello, this is your financial advisor. How can I assist you today?' },
+        { time: '00:10', speaker: 'Customer', message: 'Hi, I received information about investment options and I\'m interested to know more.' },
+        { time: '00:18', speaker: 'Agent', message: 'Great! I can help you understand our investment products. What are your investment goals?' },
+        { time: '00:26', speaker: 'Customer', message: 'I\'m looking for long-term wealth creation and want to start with mutual funds.' },
+        { time: '00:35', speaker: 'Agent', message: 'Perfect! Let me explain our SIP options and portfolio strategies.' },
+        { time: '00:42', speaker: 'Customer', message: 'That sounds good. Can you schedule a detailed meeting for next week?' }
       ]
     },
     {
@@ -66,28 +67,128 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
       type: 'Meeting',
       status: 'positive', 
       date: '2025-04-20',
-      summary: 'Productive meeting with Ayaan Singh. Customer agreed to renew policy.',
+      summary: 'Productive meeting with customer. Discussed investment portfolio and financial planning strategies.',
+      conversation: []
+    },
+    {
+      id: '3',
+      type: 'Email',
+      status: 'neutral',
+      date: '2025-04-15',
+      summary: 'Sent product brochure and investment guide. Customer acknowledged receipt but no immediate response on next steps.',
       conversation: []
     }
   ];
 
+  const followUpActions = [
+    {
+      id: '1',
+      type: 'Call',
+      scheduledDate: '2025-06-10',
+      description: 'Follow-up call to discuss mutual fund investment details',
+      priority: 'High',
+      status: 'Pending'
+    },
+    {
+      id: '2',
+      type: 'Meeting',
+      scheduledDate: '2025-06-12',
+      description: 'Portfolio review meeting with investment advisor',
+      priority: 'High',
+      status: 'Scheduled'
+    },
+    {
+      id: '3',
+      type: 'Email',
+      scheduledDate: '2025-06-08',
+      description: 'Send detailed investment brochure and SIP calculator',
+      priority: 'Medium',
+      status: 'Completed'
+    }
+  ];
+
+  const guidedScripts = [
+    {
+      id: '1',
+      title: 'Investment Product Introduction',
+      category: 'Sales',
+      content: `Hi [Customer Name], 
+
+I hope you're doing well. I'm calling to discuss some exciting investment opportunities that align with your financial goals.
+
+Key Points to Cover:
+1. Understand current financial situation
+2. Explain SIP benefits and compound growth
+3. Discuss risk tolerance and investment horizon
+4. Present suitable mutual fund options
+5. Schedule follow-up meeting for detailed proposal
+
+Remember to:
+- Listen actively to customer needs
+- Provide clear examples and calculations
+- Address any concerns about market volatility
+- Emphasize long-term wealth creation benefits`
+    },
+    {
+      id: '2',
+      title: 'Follow-up Call Script',
+      category: 'Follow-up',
+      content: `Hello [Customer Name],
+
+Thank you for your time during our last conversation about investment options.
+
+Purpose of today's call:
+1. Address any questions from our previous discussion
+2. Present customized investment proposal
+3. Explain next steps for account opening
+4. Schedule documentation appointment
+
+Key Benefits to Reinforce:
+- Tax savings under 80C
+- Professional fund management
+- Diversified portfolio
+- Flexible investment amounts`
+    },
+    {
+      id: '3',
+      title: 'Objection Handling Guide',
+      category: 'Support',
+      content: `Common Objections and Responses:
+
+"Market is too volatile"
+→ Explain SIP reduces volatility through rupee cost averaging
+→ Show historical long-term returns data
+→ Emphasize disciplined investing approach
+
+"I don't have enough money to invest"
+→ Highlight minimum SIP amounts (₹500/month)
+→ Explain how small amounts grow significantly over time
+→ Use SIP calculator for demonstration
+
+"I need time to think"
+→ Acknowledge their caution as wise
+→ Offer to send educational material
+→ Schedule follow-up call in 2-3 days`
+    }
+  ];
+
   const analysisReport = {
-    sentiment: 'Initially hesitant, then positive',
-    customerConcerns: 'The customer began with clear price concerns but shifted to a more positive outlook once value was explained.',
-    decisionDrivers: 'Price-to-value ratio. The customer was primarily concerned with premium increases but was receptive when additional benefits were explained.',
-    renewalLikelihood: 'High (85%)',
-    renewalDetails: 'The customer verbally committed to renewal after understanding the enhanced coverage benefits.',
-    priceSensitivity: 'High',
-    priceSensitivityDetails: 'The customer\'s initial hesitation was directly related to premium increases, indicating strong price sensitivity.',
-    valueRecognition: 'Strong',
-    valueRecognitionDetails: 'Despite price concerns, the customer responded well to explanations about additional coverage'
+    sentiment: 'Positive and interested',
+    customerConcerns: 'The customer showed genuine interest in investment products with focus on long-term wealth creation.',
+    decisionDrivers: 'Investment returns and tax benefits. The customer is primarily motivated by financial growth and tax optimization.',
+    conversionLikelihood: 'High (80%)',
+    conversionDetails: 'Customer expressed clear intent to start SIP investments and requested detailed meeting.',
+    riskTolerance: 'Moderate',
+    riskToleranceDetails: 'Customer prefers balanced approach with moderate risk for better returns over long term.',
+    investmentReadiness: 'High',
+    investmentReadinessDetails: 'Customer has stable income and is ready to commit to systematic investment planning.'
   };
 
   const templates = [
-    'Renewal Reminder Call',
-    'Quote Email', 
-    'Meeting Request',
-    'Follow-up Call'
+    'Investment Product Pitch',
+    'SIP Benefits Email', 
+    'Portfolio Review Meeting',
+    'Follow-up Investment Call'
   ];
 
   const handleLogCommunication = () => {
@@ -193,8 +294,10 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
                           <div className="flex items-center gap-2">
                             {comm.type === 'Call' ? (
                               <Phone size={16} className="text-blue-600" />
-                            ) : (
+                            ) : comm.type === 'Meeting' ? (
                               <Calendar size={16} className="text-green-600" />
+                            ) : (
+                              <Mail size={16} className="text-purple-600" />
                             )}
                             <span className="font-medium">{comm.type}</span>
                             <Badge 
@@ -207,33 +310,35 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
                           <span className="text-sm text-gray-500">{comm.date}</span>
                         </div>
                         
-                        {comm.type === 'Call' && (
-                          <Button 
-                            variant="link" 
-                            className="p-0 h-auto text-blue-600 mb-2"
-                            onClick={() => {/* View call details */}}
-                          >
-                            View call details →
-                          </Button>
-                        )}
+                        {comm.conversation.length > 0 && (
+                          <>
+                            <Button 
+                              variant="link" 
+                              className="p-0 h-auto text-blue-600 mb-2"
+                              onClick={() => {/* View call details */}}
+                            >
+                              View call details →
+                            </Button>
 
-                        <div className="bg-gray-50 rounded p-3 mb-3">
-                          <h4 className="font-medium text-sm mb-2">Conversation</h4>
-                          <div className="space-y-2 max-h-32 overflow-y-auto">
-                            {comm.conversation.map((msg, idx) => (
-                              <div key={idx} className="text-xs">
-                                <span className="text-gray-500">{msg.time}</span>
-                                <div className={`p-2 rounded mt-1 ${
-                                  msg.speaker === 'Agent' 
-                                    ? 'bg-blue-50 text-blue-900 ml-4' 
-                                    : 'bg-white border mr-4'
-                                }`}>
-                                  <strong>{msg.speaker}:</strong> {msg.message}
-                                </div>
+                            <div className="bg-gray-50 rounded p-3 mb-3">
+                              <h4 className="font-medium text-sm mb-2">Conversation</h4>
+                              <div className="space-y-2 max-h-32 overflow-y-auto">
+                                {comm.conversation.map((msg, idx) => (
+                                  <div key={idx} className="text-xs">
+                                    <span className="text-gray-500">{msg.time}</span>
+                                    <div className={`p-2 rounded mt-1 ${
+                                      msg.speaker === 'Agent' 
+                                        ? 'bg-blue-50 text-blue-900 ml-4' 
+                                        : 'bg-white border mr-4'
+                                    }`}>
+                                      <strong>{msg.speaker}:</strong> {msg.message}
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                            </div>
+                          </>
+                        )}
 
                         <div className="bg-blue-50 rounded p-3">
                           <h4 className="font-medium text-sm mb-1">Summary</h4>
@@ -265,7 +370,42 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
                     <CardTitle>Follow-up Actions</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">No follow-up actions scheduled.</p>
+                    <div className="space-y-4">
+                      {followUpActions.map((action) => (
+                        <div key={action.id} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              {action.type === 'Call' ? (
+                                <Phone size={16} className="text-blue-600" />
+                              ) : action.type === 'Meeting' ? (
+                                <Calendar size={16} className="text-green-600" />
+                              ) : (
+                                <Mail size={16} className="text-purple-600" />
+                              )}
+                              <span className="font-medium">{action.type}</span>
+                              <Badge 
+                                variant="outline" 
+                                className={
+                                  action.priority === 'High' ? 'text-red-700 border-red-200' :
+                                  action.priority === 'Medium' ? 'text-yellow-700 border-yellow-200' :
+                                  'text-green-700 border-green-200'
+                                }
+                              >
+                                {action.priority}
+                              </Badge>
+                            </div>
+                            <Badge 
+                              variant={action.status === 'Completed' ? 'default' : 'secondary'}
+                              className={action.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}
+                            >
+                              {action.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-1">{action.description}</p>
+                          <p className="text-xs text-gray-500">Scheduled: {action.scheduledDate}</p>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -276,7 +416,27 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
                     <CardTitle>Guided Scripts</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">No guided scripts available.</p>
+                    <div className="space-y-4">
+                      {guidedScripts.map((script) => (
+                        <div key={script.id} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium">{script.title}</h4>
+                            <Badge variant="outline">{script.category}</Badge>
+                          </div>
+                          <div className="bg-gray-50 rounded p-3">
+                            <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
+                              {script.content}
+                            </pre>
+                          </div>
+                          <div className="mt-3 flex justify-end">
+                            <Button size="sm" variant="outline">
+                              <FileText size={14} className="mr-1" />
+                              Copy Script
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -388,21 +548,21 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
                     </div>
 
                     <div>
-                      <strong>Renewal Likelihood:</strong> {analysisReport.renewalLikelihood}
+                      <strong>Conversion Likelihood:</strong> {analysisReport.conversionLikelihood}
                       <br />
-                      {analysisReport.renewalDetails}
+                      {analysisReport.conversionDetails}
                     </div>
 
                     <div>
-                      <strong>Price Sensitivity:</strong> {analysisReport.priceSensitivity}
+                      <strong>Risk Tolerance:</strong> {analysisReport.riskTolerance}
                       <br />
-                      {analysisReport.priceSensitivityDetails}
+                      {analysisReport.riskToleranceDetails}
                     </div>
 
                     <div>
-                      <strong>Value Recognition:</strong> {analysisReport.valueRecognition}
+                      <strong>Investment Readiness:</strong> {analysisReport.investmentReadiness}
                       <br />
-                      {analysisReport.valueRecognitionDetails}
+                      {analysisReport.investmentReadinessDetails}
                     </div>
                   </div>
                 </div>
