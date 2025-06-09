@@ -38,7 +38,10 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
     status: lead.status,
     source: lead.source,
     value: lead.value,
-    priority: lead.priority
+    priority: lead.priority,
+    assignedTo: lead.assignedTo,
+    assignedToId: lead.assignedToId,
+    lastContact: lead.lastContact
   });
   const { toast } = useToast();
 
@@ -51,7 +54,10 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
       status: lead.status,
       source: lead.source,
       value: lead.value,
-      priority: lead.priority
+      priority: lead.priority,
+      assignedTo: lead.assignedTo,
+      assignedToId: lead.assignedToId,
+      lastContact: lead.lastContact
     });
   }, [lead]);
 
@@ -68,9 +74,27 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
     onOpenChange(false);
   };
 
+  const handleAssigneeChange = (value: string) => {
+    const assigneeMap: { [key: string]: { name: string; id: string } } = {
+      'Rahul Sharma': { name: 'Rahul Sharma', id: '1' },
+      'Anjali Patel': { name: 'Anjali Patel', id: '2' },
+      'Vikash Kumar': { name: 'Vikash Kumar', id: '3' },
+      'Priya Singh': { name: 'Priya Singh', id: '4' }
+    };
+
+    const assignee = assigneeMap[value];
+    if (assignee) {
+      setFormData({ 
+        ...formData, 
+        assignedTo: assignee.name,
+        assignedToId: assignee.id
+      });
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Lead - {lead.name}</DialogTitle>
         </DialogHeader>
@@ -138,6 +162,9 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
                 <SelectValue placeholder="Select source" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="Website Forms">Website Forms</SelectItem>
+                <SelectItem value="WhatsApp Business">WhatsApp Business</SelectItem>
+                <SelectItem value="Call Center">Call Center</SelectItem>
                 <SelectItem value="Website">Website</SelectItem>
                 <SelectItem value="Referral">Referral</SelectItem>
                 <SelectItem value="Cold Call">Cold Call</SelectItem>
@@ -165,6 +192,40 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
                 <SelectItem value="High">High</SelectItem>
                 <SelectItem value="Medium">Medium</SelectItem>
                 <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="assignedTo">Assigned To</Label>
+            <Select value={formData.assignedTo} onValueChange={handleAssigneeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select assignee" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Rahul Sharma">Rahul Sharma</SelectItem>
+                <SelectItem value="Anjali Patel">Anjali Patel</SelectItem>
+                <SelectItem value="Vikash Kumar">Vikash Kumar</SelectItem>
+                <SelectItem value="Priya Singh">Priya Singh</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastContact">Last Contact</Label>
+            <Select value={formData.lastContact} onValueChange={(value) => setFormData({ ...formData, lastContact: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select last contact time" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Just now">Just now</SelectItem>
+                <SelectItem value="1 hour ago">1 hour ago</SelectItem>
+                <SelectItem value="2 hours ago">2 hours ago</SelectItem>
+                <SelectItem value="3 hours ago">3 hours ago</SelectItem>
+                <SelectItem value="4 hours ago">4 hours ago</SelectItem>
+                <SelectItem value="5 hours ago">5 hours ago</SelectItem>
+                <SelectItem value="1 day ago">1 day ago</SelectItem>
+                <SelectItem value="2 days ago">2 days ago</SelectItem>
+                <SelectItem value="3 days ago">3 days ago</SelectItem>
+                <SelectItem value="1 week ago">1 week ago</SelectItem>
               </SelectContent>
             </Select>
           </div>
