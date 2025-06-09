@@ -66,7 +66,7 @@ const SmartNudges = () => {
         type: 'cross-sell',
         priority: 'Medium',
         actionLabel: 'View Customers',
-        navigationPath: '/leads',
+        navigationPath: '/customers',
         count: 3,
         value: '₹12L'
       }
