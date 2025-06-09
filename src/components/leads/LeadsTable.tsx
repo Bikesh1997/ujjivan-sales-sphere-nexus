@@ -97,6 +97,16 @@ const LeadsTable = ({
     navigate(`/leads/${leadId}`);
   };
 
+  const handleBulkAction = (action: string, data?: any) => {
+    console.log('Bulk action:', action, data);
+    // Handle bulk actions here
+  };
+
+  const handleClearSelection = () => {
+    // Clear all selections
+    selectedLeads.forEach(leadId => onLeadSelect(leadId));
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -106,7 +116,8 @@ const LeadsTable = ({
             {selectedLeads.length > 0 && (
               <BulkLeadActions 
                 selectedLeads={selectedLeads}
-                onLeadUpdate={onLeadUpdate}
+                onBulkAction={handleBulkAction}
+                onClearSelection={handleClearSelection}
               />
             )}
             <div className="relative w-80">
@@ -199,8 +210,7 @@ const LeadsTable = ({
                     </Button>
                     <LeadActionsMenu 
                       lead={lead}
-                      onUpdate={onLeadUpdate}
-                      onDelete={onLeadDelete}
+                      onEditLead={onLeadUpdate}
                     />
                   </div>
                 </TableCell>
