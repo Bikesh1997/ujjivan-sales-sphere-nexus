@@ -16,7 +16,8 @@ import {
   User,
   Building,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 
 interface Lead {
@@ -46,7 +47,7 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
   const [communicationNotes, setCommunicationNotes] = useState('');
   const [outcome, setOutcome] = useState('Neutral');
 
-  const communicationHistory = [
+  const [communicationHistory, setCommunicationHistory] = useState([
     {
       id: '1',
       type: 'Call',
@@ -78,7 +79,7 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
       summary: 'Sent product brochure and investment guide. Customer acknowledged receipt but no immediate response on next steps.',
       conversation: []
     }
-  ];
+  ]);
 
   const followUpActions = [
     {
@@ -192,12 +193,25 @@ Key Benefits to Reinforce:
   ];
 
   const handleLogCommunication = () => {
-    console.log('Logging communication:', {
+    if (!communicationNotes.trim()) return;
+
+    const newCommunication = {
+      id: Date.now().toString(),
       type: communicationType,
-      notes: communicationNotes,
-      outcome: outcome
-    });
+      status: outcome.toLowerCase(),
+      date: new Date().toISOString().split('T')[0],
+      summary: communicationNotes,
+      conversation: []
+    };
+
+    setCommunicationHistory(prev => [newCommunication, ...prev]);
     setCommunicationNotes('');
+    console.log('Communication logged:', newCommunication);
+  };
+
+  const handleAddFollowUp = () => {
+    console.log('Adding new follow-up action');
+    // Here you would typically open a modal or form to add a new follow-up
   };
 
   const handleAnalyzeCall = () => {
@@ -367,7 +381,17 @@ Key Benefits to Reinforce:
               <TabsContent value="followups" className="mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Follow-up Actions</CardTitle>
+                    <CardTitle className="flex items-center justify-between">
+                      Follow-up Actions
+                      <Button 
+                        size="sm" 
+                        onClick={handleAddFollowUp}
+                        className="flex items-center gap-2 bg-[#056262] hover:bg-[#045050]"
+                      >
+                        <Plus size={16} />
+                        Add Follow-up
+                      </Button>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
