@@ -96,17 +96,6 @@ const Layout = ({ children }: LayoutProps) => {
     { value: 'central', label: 'Central' }
   ];
 
-  // Supervisor functionalities
-  const supervisorFunctionalities = [
-    'Team Dashboard',
-    'Portfolio',
-    'Performance Analytics',
-    'Territory Management',
-    'Reports & Analytics',
-    'Rule Management',
-    'KPA Management'
-  ];
-
   const isActive = (path: string) => location.pathname === path;
 
   const getRoleDisplay = (role: string) => {
@@ -209,22 +198,10 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </nav>
 
-      {/* Supervisor Portal Functionalities Bar */}
+      {/* Supervisor Portal Filters Bar */}
       {user?.role === 'supervisor' && (
         <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-3">
-            <div className="flex flex-wrap gap-2">
-              {supervisorFunctionalities.map((functionality) => (
-                <Button
-                  key={functionality}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                >
-                  {functionality}
-                </Button>
-              ))}
-            </div>
+          <div className="flex items-center justify-end py-3">
             <div className="flex gap-3">
               <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                 <SelectTrigger className="w-[140px]">
