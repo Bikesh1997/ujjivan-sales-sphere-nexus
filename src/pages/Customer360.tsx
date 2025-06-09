@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,10 +8,6 @@ import LeadsPagination from '@/components/leads/LeadsPagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Route,
-  MapPin
-} from 'lucide-react';
 
 const Customer360 = () => {
   const { user } = useAuth();
@@ -293,43 +290,6 @@ const Customer360 = () => {
   // Check if current user is Neha Gupta (Relationship Manager)
   const isNehaAccount = user?.id === '5' && user?.name === 'Neha Gupta';
 
-  // Check if current user should see Smart Beat Plan Route - only for Anjali and Neha
-  const shouldShowBeatPlan = user?.name === 'Anjali Patel' || user?.name === 'Neha Gupta';
-
-  // Beat plan route data
-  const beatPlanLocations = [
-    {
-      id: '1',
-      area: 'Bandra West',
-      prospects: 5,
-      distance: '2.3 km',
-      priority: 'High'
-    },
-    {
-      id: '2',
-      area: 'Andheri East',
-      prospects: 3,
-      distance: '4.1 km',
-      priority: 'Medium'
-    },
-    {
-      id: '3',
-      area: 'Powai',
-      prospects: 7,
-      distance: '6.8 km',
-      priority: 'High'
-    }
-  ];
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'High': return 'bg-red-100 text-red-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   // Update selected customer when URL parameter changes
   useEffect(() => {
     if (urlCustomer && customerData[urlCustomer]) {
@@ -353,45 +313,6 @@ const Customer360 = () => {
           </p>
         </div>
       </div>
-
-      {/* Smart Beat Plan Route - Only for Anjali and Neha */}
-      {shouldShowBeatPlan && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Route size={18} className="mr-2" />
-              Smart Beat Plan Route
-              <Badge className="ml-2 bg-green-100 text-green-800">
-                Optimized
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {beatPlanLocations.map((location) => (
-                <div key={location.id} className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h4 className="font-medium">{location.area}</h4>
-                      <p className="text-sm text-gray-600">{location.prospects} prospects</p>
-                    </div>
-                    <div className="text-right">
-                      <Badge className={getPriorityColor(location.priority)}>
-                        {location.priority}
-                      </Badge>
-                      <p className="text-xs text-gray-500 mt-1">{location.distance}</p>
-                    </div>
-                  </div>
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                    <MapPin size={12} className="mr-1" />
-                    Navigate
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Customer Table */}
       <CustomerTable 
