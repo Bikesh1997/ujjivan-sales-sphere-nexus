@@ -15,12 +15,12 @@ const LeadManagement = () => {
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
   const [leads, setLeads] = useState(allLeads);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const leadsPerPage = 10;
   const { user } = useAuth();
   
   const {
-    searchTerm,
-    setSearchTerm,
     statusFilter,
     setStatusFilter,
     filteredLeads,
@@ -50,10 +50,26 @@ const LeadManagement = () => {
     setLeads([...leads, newLead]);
   };
 
-  const handleEditLead = (leadId: string, updatedData: any) => {
+  const handleLeadUpdate = (leadId: string, updatedData: any) => {
     setLeads(leads.map(lead => 
       lead.id === leadId ? { ...lead, ...updatedData } : lead
     ));
+  };
+
+  const handleLeadDelete = (leadId: string) => {
+    setLeads(leads.filter(lead => lead.id !== leadId));
+  };
+
+  const handleLeadSelect = (leadId: string) => {
+    setSelectedLeads(prev => 
+      prev.includes(leadId) 
+        ? prev.filter(id => id !== leadId)
+        : [...prev, leadId]
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedLeads(checked ? paginatedLeads.map(lead => lead.id) : []);
   };
 
   const filters = {
@@ -102,8 +118,13 @@ const LeadManagement = () => {
           
           <LeadsTable 
             leads={paginatedLeads}
-            userRole={user?.role || 'agent'}
-            onEditLead={handleEditLead}
+            selectedLeads={selectedLeads}
+            onLeadSelect={handleLeadSelect}
+            onSelectAll={handleSelectAll}
+            onLeadUpdate={handleLeadUpdate}
+            onLeadDelete={handleLeadDelete}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
           />
 
           <LeadsPagination
