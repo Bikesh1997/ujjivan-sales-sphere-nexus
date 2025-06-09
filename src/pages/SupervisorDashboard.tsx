@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -409,13 +408,12 @@ const SupervisorDashboard = () => {
         />
       )}
 
-      {/* Tabs */}
+      {/* Tabs - Removed quick-actions tab */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="team-performance">Team Performance</TabsTrigger>
           <TabsTrigger value="incentive-management">Incentive Management</TabsTrigger>
-          <TabsTrigger value="quick-actions">Quick Actions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -439,14 +437,6 @@ const SupervisorDashboard = () => {
           <SupervisorIncentiveManagement 
             incentiveData={incentiveData}
             onSimulateKRACompletion={simulateKRACompletion}
-          />
-        </TabsContent>
-
-        <TabsContent value="quick-actions" className="space-y-6">
-          <SupervisorQuickActions 
-            onGenerateReports={handleGenerateReports}
-            onScheduleReview={handleScheduleReview}
-            onSetTargets={handleSetTargets}
           />
         </TabsContent>
       </Tabs>
