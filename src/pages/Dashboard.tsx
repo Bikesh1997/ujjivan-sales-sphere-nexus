@@ -1,3 +1,4 @@
+
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import {
   ArrowDownRight
 } from 'lucide-react';
 import SmartNudges from '@/components/dashboard/SmartNudges';
+import ProjectionSection from '@/components/dashboard/ProjectionSection';
 import { allLeads } from '@/data/leadsData';
 
 const Dashboard = () => {
@@ -51,9 +53,9 @@ const Dashboard = () => {
           <p className="text-gray-600">Here's your sales performance overview</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handlePlanRoute}>
             <Calendar size={16} className="mr-2" />
-            Today's Plan
+            Plan Route
           </Button>
           <Link to="/leads">
             <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
@@ -155,6 +157,15 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Projection Section */}
+      <ProjectionSection 
+        currentPerformance={{
+          convertedLeads,
+          totalRevenue,
+          monthlyTarget
+        }}
+      />
 
       {/* Smart Nudges */}
       <SmartNudges />
