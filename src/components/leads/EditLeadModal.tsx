@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -150,6 +149,10 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
                 <SelectItem value="new">New</SelectItem>
                 <SelectItem value="qualified">Qualified</SelectItem>
                 <SelectItem value="proposal">Proposal</SelectItem>
+                <SelectItem value="document_received">Document Received</SelectItem>
+                <SelectItem value="under_process">Under Process</SelectItem>
+                <SelectItem value="section_approved">Section/Approved</SelectItem>
+                <SelectItem value="disbursed">Disbursed</SelectItem>
                 <SelectItem value="converted">Converted</SelectItem>
                 <SelectItem value="lost">Lost</SelectItem>
               </SelectContent>
