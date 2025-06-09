@@ -1,3 +1,4 @@
+
 import {
   Home,
   UserPlus,
@@ -29,6 +30,14 @@ export interface RoleFeatures {
   supervisor: RoleFeaturesConfig;
   inbound_agent: RoleFeaturesConfig;
   relationship_manager: RoleFeaturesConfig;
+}
+
+export interface Feature {
+  id: string;
+  name: string;
+  path: string;
+  icon: string;
+  description: string;
 }
 
 const roleFeatures: RoleFeatures = {
@@ -147,4 +156,20 @@ export const getRoleFeatures = (role: string) => {
 
 export const getNavigationItems = (role: string) => {
   return getRoleFeatures(role).navigation;
+};
+
+export const getFeaturesForRole = (role: string): Feature[] => {
+  const roleConfig = getRoleFeatures(role);
+  return roleConfig.navigation.map(item => ({
+    id: item.href.replace('/', '') || 'dashboard',
+    name: item.name,
+    path: item.href,
+    icon: item.icon,
+    description: `Access to ${item.name}`
+  }));
+};
+
+export const hasFeatureAccess = (role: string, featureId: string): boolean => {
+  const features = getFeaturesForRole(role);
+  return features.some(feature => feature.id === featureId || feature.path === `/${featureId}`);
 };

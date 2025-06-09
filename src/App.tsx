@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
-import LoginForm from '@/pages/Login';
+import LoginForm from '@/components/auth/LoginForm';
 import Dashboard from '@/pages/Dashboard';
-import LeadManagement from '@/pages/LeadManagement';
+import LeadManagement from '@/pages/leads/LeadManagement';
 import Customer360 from '@/pages/Customer360';
 import Tasks from '@/pages/Tasks';
 import Reports from '@/pages/Reports';
