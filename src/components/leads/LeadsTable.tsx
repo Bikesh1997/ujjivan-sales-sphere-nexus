@@ -1,24 +1,15 @@
-
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
 import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from '@/components/ui/table';
-import { Search, Phone, Mail, MapPin, Eye, User } from 'lucide-react';
+import { Star } from 'lucide-react';
 import LeadActionsMenu from './LeadActionsMenu';
-import BulkLeadActions from './BulkLeadActions';
-import LeadViewModal from './LeadViewModal';
-import { useNavigate } from 'react-router-dom';
 
 interface Lead {
   id: string;
@@ -33,47 +24,27 @@ interface Lead {
   assignedToId: string;
   lastContact: string;
   priority: string;
+  starred?: boolean;
 }
 
 interface LeadsTableProps {
   leads: Lead[];
-  selectedLeads: string[];
-  onLeadSelect: (leadId: string) => void;
-  onSelectAll: (checked: boolean) => void;
-  onLeadUpdate: (leadId: string, updates: Partial<Lead>) => void;
-  onLeadDelete: (leadId: string) => void;
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  userRole: string;
+  onEditLead?: (leadId: string, updatedData: Partial<Lead>) => void;
 }
 
-const LeadsTable = ({ 
-  leads, 
-  selectedLeads, 
-  onLeadSelect, 
-  onSelectAll, 
-  onLeadUpdate, 
-  onLeadDelete,
-  searchTerm,
-  onSearchChange
-}: LeadsTableProps) => {
-  const navigate = useNavigate();
-  const [viewModalLead, setViewModalLead] = useState<Lead | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.phone.includes(searchTerm)
-  );
-
+const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
-      case 'qualified': return 'bg-green-100 text-green-800';
-      case 'proposal': return 'bg-yellow-100 text-yellow-800';
-      case 'converted': return 'bg-purple-100 text-purple-800';
+      case 'qualified': return 'bg-yellow-100 text-yellow-800';
+      case 'proposal': return 'bg-orange-100 text-orange-800';
+      case 'converted': return 'bg-green-100 text-green-800';
       case 'lost': return 'bg-red-100 text-red-800';
+      case 'document received': return 'bg-purple-100 text-purple-800';
+      case 'under process': return 'bg-indigo-100 text-indigo-800';
+      case 'sanctioned/approved': return 'bg-teal-100 text-teal-800';
+      case 'disbursed': return 'bg-emerald-100 text-emerald-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -87,145 +58,82 @@ const LeadsTable = ({
     }
   };
 
-  const handleViewLead = (lead: Lead, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setViewModalLead(lead);
-    setIsViewModalOpen(true);
-  };
-
-  const handleRowClick = (leadId: string) => {
-    navigate(`/leads/${leadId}`);
-  };
-
-  const handleBulkAction = (action: string, data?: any) => {
-    console.log('Bulk action:', action, 'Data:', data, 'Selected leads:', selectedLeads);
-    // Handle bulk actions here
-  };
-
-  const handleClearSelection = () => {
-    // Clear all selected leads
-    selectedLeads.forEach(leadId => onLeadSelect(leadId));
+  const getSourceColor = (source: string) => {
+    switch (source) {
+      case 'Website Forms': return 'bg-blue-100 text-blue-800';
+      case 'WhatsApp Business': return 'bg-green-100 text-green-800';
+      case 'Call Center': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>Leads ({filteredLeads.length})</CardTitle>
-          <div className="flex items-center space-x-4">
-            {selectedLeads.length > 0 && (
-              <BulkLeadActions 
-                selectedLeads={selectedLeads}
-                onBulkAction={handleBulkAction}
-                onClearSelection={handleClearSelection}
-              />
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Company</TableHead>
+          <TableHead>Contact</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Value</TableHead>
+          <TableHead>Priority</TableHead>
+          <TableHead>Source</TableHead>
+          {userRole === 'supervisor' && (
+            <TableHead>Assigned To</TableHead>
+          )}
+          <TableHead>Last Contact</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {leads.map((lead, index) => (
+          <TableRow key={lead.id} className={index < 3 ? 'bg-yellow-50 border-yellow-200' : ''}>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="font-medium text-gray-900 flex items-center gap-2">
+                    {lead.name}
+                    {lead.starred && (
+                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">{lead.id}</div>
+                </div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div>
+                <div className="font-medium text-gray-900">{lead.contact}</div>
+                <div className="text-sm text-gray-500">{lead.phone}</div>
+                <div className="text-sm text-gray-500">{lead.email}</div>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge className={getStatusColor(lead.status)}>
+                {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+              </Badge>
+            </TableCell>
+            <TableCell className="font-medium text-gray-900">{lead.value}</TableCell>
+            <TableCell>
+              <Badge className={getPriorityColor(lead.priority)}>
+                {lead.priority}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge className={getSourceColor(lead.source)}>
+                {lead.source}
+              </Badge>
+            </TableCell>
+            {userRole === 'supervisor' && (
+              <TableCell className="text-sm text-gray-900">{lead.assignedTo}</TableCell>
             )}
-            <div className="relative w-80">
-              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <Checkbox
-                  checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0}
-                  onCheckedChange={onSelectAll}
-                />
-              </TableHead>
-              <TableHead>Lead</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Source</TableHead>
-              <TableHead>Value</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Assigned To</TableHead>
-              <TableHead>Last Contact</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredLeads.map((lead) => (
-              <TableRow 
-                key={lead.id}
-                className="cursor-pointer hover:bg-gray-50"
-                onClick={() => handleRowClick(lead.id)}
-              >
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <Checkbox
-                    checked={selectedLeads.includes(lead.id)}
-                    onCheckedChange={() => onLeadSelect(lead.id)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="text-xs">
-                        {lead.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{lead.name}</div>
-                      <div className="text-sm text-gray-500">{lead.contact}</div>
-                      <div className="text-xs text-gray-400">{lead.email}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(lead.status)}>
-                    {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm text-gray-600">{lead.source}</TableCell>
-                <TableCell className="font-medium text-teal-600">{lead.value}</TableCell>
-                <TableCell>
-                  <Badge className={getPriorityColor(lead.priority)}>
-                    {lead.priority}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <User size={14} className="text-gray-400" />
-                    <span className="text-sm">{lead.assignedTo}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={(e) => handleViewLead(lead, e)}
-                    >
-                      <Eye size={14} className="mr-1" />
-                      View
-                    </Button>
-                    <LeadActionsMenu 
-                      lead={lead}
-                      onEditLead={onLeadUpdate}
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <LeadViewModal
-          lead={viewModalLead}
-          isOpen={isViewModalOpen}
-          onOpenChange={setIsViewModalOpen}
-        />
-      </CardContent>
-    </Card>
+            <TableCell className="text-sm text-gray-600">{lead.lastContact}</TableCell>
+            <TableCell>
+              <LeadActionsMenu lead={lead} onEditLead={onEditLead} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 
