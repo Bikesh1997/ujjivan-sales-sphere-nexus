@@ -22,6 +22,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import CustomerDetailsModal from './CustomerDetailsModal';
 
 interface Customer {
   key: string;
@@ -36,6 +37,10 @@ interface Customer {
   joinDate: string;
   lastInteraction: string;
   riskScore: string;
+  products?: any[];
+  interactions?: any[];
+  family?: any[];
+  opportunities?: any[];
 }
 
 interface CustomerTableProps {
@@ -48,6 +53,8 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalCustomer, setModalCustomer] = useState<Customer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const customersPerPage = 5;
 
   const filteredCustomers = customers.filter(customer =>
@@ -82,8 +89,8 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
 
   const handleViewCustomer = (customer: Customer, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate('/customers');
-    onCustomerSelect(customer.key);
+    setModalCustomer(customer);
+    setIsModalOpen(true);
   };
 
   const handlePageChange = (page: number) => {
@@ -238,6 +245,13 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
           </Pagination>
         </div>
       )}
+
+      {/* Customer Details Modal */}
+      <CustomerDetailsModal
+        customer={modalCustomer}
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
     </div>
   );
 };
