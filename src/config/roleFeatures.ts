@@ -1,175 +1,148 @@
-
-import {
-  Home,
-  UserPlus,
-  ClipboardList,
-  Users,
-  MapPin,
-  BarChart3,
-  TrendingUp,
-  Activity,
-  Target,
-  PieChart,
-  Shield
-} from 'lucide-react';
-
-interface NavItem {
-  name: string;
-  href: string;
-  icon: string;
-}
-
-interface RoleFeaturesConfig {
-  features: string[];
-  permissions: string[];
-  navigation: NavItem[];
-}
-
-export interface RoleFeatures {
-  sales_executive: RoleFeaturesConfig;
-  supervisor: RoleFeaturesConfig;
-  inbound_agent: RoleFeaturesConfig;
-  relationship_manager: RoleFeaturesConfig;
-}
-
+// Feature access configuration for different roles
 export interface Feature {
   id: string;
   name: string;
   path: string;
   icon: string;
+  roles: string[];
   description: string;
 }
 
-const roleFeatures: RoleFeatures = {
-  sales_executive: {
-    features: [
-      'dashboard',
-      'leads',
-      'customers',
-      'tasks',
-      'reports',
-      'plan_my_day'
-    ],
-    permissions: [
-      'view_own_leads',
-      'edit_own_leads',
-      'view_customers',
-      'create_tasks',
-      'view_reports'
-    ],
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Lead Management', href: '/leads', icon: 'UserPlus' },
-      { name: 'Customer 360', href: '/customers', icon: 'Users' },
-      { name: 'Plan My Day', href: '/plan-my-day', icon: 'MapPin' },
-      { name: 'Tasks', href: '/tasks', icon: 'ClipboardList' },
-      { name: 'Reports', href: '/reports', icon: 'BarChart3' }
-    ]
+export const FEATURES: Feature[] = [
+  // Sales Executive Features
+  {
+    id: 'dashboard',
+    name: 'My Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal performance dashboard'
   },
-  supervisor: {
-    features: [
-      'dashboard',
-      'leads',
-      'customers',
-      'tasks',
-      'reports',
-      'team_management',
-      'performance_analytics',
-      'territory_management',
-      'plan_my_day'
-    ],
-    permissions: [
-      'view_all_leads',
-      'edit_all_leads',
-      'view_customers',
-      'manage_team',
-      'view_analytics',
-      'create_tasks',
-      'view_reports',
-      'manage_territory'
-    ],
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Lead Management', href: '/leads', icon: 'UserPlus' },
-      { name: 'Customer 360', href: '/customers', icon: 'Users' },
-      { name: 'Plan My Day', href: '/plan-my-day', icon: 'MapPin' },
-      { name: 'Tasks', href: '/tasks', icon: 'ClipboardList' },
-      { name: 'Team Management', href: '/team', icon: 'Users' },
-      { name: 'Territory Management', href: '/territory', icon: 'MapPin' },
-      { name: 'Analytics', href: '/analytics', icon: 'TrendingUp' },
-      { name: 'Reports', href: '/reports', icon: 'BarChart3' }
-    ]
+  {
+    id: 'my_leads',
+    name: 'My Leads',
+    path: '/leads',
+    icon: 'UserPlus',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Manage assigned leads'
   },
-  inbound_agent: {
-    features: [
-      'dashboard',
-      'leads',
-      'customers',
-      'tasks'
-    ],
-    permissions: [
-      'view_assigned_leads',
-      'edit_assigned_leads',
-      'view_customers',
-      'create_tasks'
-    ],
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Lead Management', href: '/leads', icon: 'UserPlus' },
-      { name: 'Customer 360', href: '/customers', icon: 'Users' },
-      { name: 'Tasks', href: '/tasks', icon: 'ClipboardList' }
-    ]
+  {
+    id: 'my_tasks',
+    name: 'My Tasks',
+    path: '/tasks',
+    icon: 'ClipboardList',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal task management'
   },
-  relationship_manager: {
-    features: [
-      'dashboard',
-      'customers',
-      'portfolio_management',
-      'risk_management',
-      'tasks',
-      'reports',
-      'plan_my_day'
-    ],
-    permissions: [
-      'view_portfolio',
-      'manage_portfolio',
-      'view_customers',
-      'manage_risk',
-      'create_tasks',
-      'view_reports'
-    ],
-    navigation: [
-      { name: 'Dashboard', href: '/', icon: 'Home' },
-      { name: 'Customer 360', href: '/customers', icon: 'Users' },
-      { name: 'Plan My Day', href: '/plan-my-day', icon: 'MapPin' },
-      { name: 'Portfolio Management', href: '/portfolio', icon: 'PieChart' },
-      { name: 'Risk Management', href: '/risk', icon: 'Shield' },
-      { name: 'Tasks', href: '/tasks', icon: 'ClipboardList' },
-      { name: 'Reports', href: '/reports', icon: 'BarChart3' }
-    ]
+  {
+    id: 'customer_360',
+    name: 'Customer 360',
+    path: '/customers',
+    icon: 'Users',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Customer relationship management'
+  },
+  {
+    id: 'geo_location',
+    name: 'Geo Tracking',
+    path: '/geo-location',
+    icon: 'MapPin',
+    roles: ['sales_executive', 'relationship_manager', 'supervisor'],
+    description: 'Location tracking, beat planning, and team monitoring'
+  },
+  {
+    id: 'sales_funnel',
+    name: 'My Pipeline',
+    path: '/funnel',
+    icon: 'BarChart3',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
+    description: 'Personal sales pipeline'
+  },
+
+  // Supervisor Features
+  {
+    id: 'supervisor_dashboard',
+    name: 'Team Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['supervisor'],
+    description: 'Team performance overview'
+  },
+  {
+    id: 'portfolio_management',
+    name: 'Portfolio',
+    path: '/portfolio',
+    icon: 'PieChart',
+    roles: ['supervisor'],
+    description: 'Portfolio oversight and management'
+  },
+  {
+    id: 'team_performance',
+    name: 'Performance Analytics',
+    path: '/team-performance',
+    icon: 'TrendingUp',
+    roles: ['supervisor'],
+    description: 'Team performance analytics'
+  },
+  {
+    id: 'territory_management',
+    name: 'Territory Management',
+    path: '/territory-management',
+    icon: 'MapPin',
+    roles: ['supervisor'],
+    description: 'Manage sales territories'
+  },
+  {
+    id: 'reports',
+    name: 'Reports & Analytics',
+    path: '/reports',
+    icon: 'BarChart3',
+    roles: ['supervisor'],
+    description: 'Generate team reports'
+  },
+  {
+    id: 'rule_management',
+    name: 'Rule Management',
+    path: '/rule-management',
+    icon: 'Shield',
+    roles: ['supervisor'],
+    description: 'Manage business rules and automation'
+  },
+  {
+    id: 'kpa_management',
+    name: 'KPA Management',
+    path: '/kpa-management',
+    icon: 'Target',
+    roles: ['supervisor'],
+    description: 'Key performance area management'
   }
-};
+];
 
-export const getRoleFeatures = (role: string) => {
-  return roleFeatures[role as keyof RoleFeatures] || roleFeatures.sales_executive;
-};
-
-export const getNavigationItems = (role: string) => {
-  return getRoleFeatures(role).navigation;
-};
-
+// Get features for a specific role
 export const getFeaturesForRole = (role: string): Feature[] => {
-  const roleConfig = getRoleFeatures(role);
-  return roleConfig.navigation.map(item => ({
-    id: item.href.replace('/', '') || 'dashboard',
-    name: item.name,
-    path: item.href,
-    icon: item.icon,
-    description: `Access to ${item.name}`
-  }));
+  return FEATURES.filter(feature => feature.roles.includes(role));
 };
 
+// Check if a role has access to a feature
 export const hasFeatureAccess = (role: string, featureId: string): boolean => {
-  const features = getFeaturesForRole(role);
-  return features.some(feature => feature.id === featureId || feature.path === `/${featureId}`);
+  const feature = FEATURES.find(f => f.id === featureId);
+  return feature ? feature.roles.includes(role) : false;
+};
+
+// Get icon component mapping
+export const getIconName = (iconName: string) => {
+  const iconMap: { [key: string]: string } = {
+    'Home': 'Home',
+    'UserPlus': 'UserPlus',
+    'ClipboardList': 'ClipboardList',
+    'Users': 'Users',
+    'MapPin': 'MapPin',
+    'BarChart3': 'BarChart3',
+    'TrendingUp': 'TrendingUp',
+    'Activity': 'Activity',
+    'Target': 'Target',
+    'PieChart': 'PieChart',
+    'Shield': 'Shield'
+  };
+  return iconMap[iconName] || 'Home';
 };

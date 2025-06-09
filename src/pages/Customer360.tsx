@@ -1,413 +1,416 @@
-import { useState, useEffect, useCallback } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { 
-  MoreVertical, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Edit, 
-  ArrowRight,
-  IndianRupee,
-  MessageSquare,
-  PhoneCall
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from "@/components/ui/progress"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import CallInProgressModal from '@/components/leads/CallInProgressModal';
-
-// Mock components for Cross-Sell Suggestions and Goal-Based Nudges
-const CrossSellSuggestions = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Cross-Sell Suggestions</CardTitle>
-      <CardDescription>Opportunities to expand customer relationships</CardDescription>
-    </CardHeader>
-    <CardContent>
-      {/* Mock data */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span>Loan Refinance</span>
-          <Badge className="bg-green-100 text-green-800">High Potential</Badge>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Insurance Products</span>
-          <Badge className="bg-yellow-100 text-yellow-800">Medium Potential</Badge>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const GoalBasedNudges = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Goal-Based Nudges</CardTitle>
-      <CardDescription>AI-driven insights to achieve targets</CardDescription>
-    </CardHeader>
-    <CardContent>
-      {/* Mock data */}
-      <div className="space-y-4">
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Monthly Target</span>
-            <span className="text-sm text-gray-600">₹45K/₹50K</span>
-          </div>
-          <Progress value={90} className="h-2" />
-          <p className="text-xs text-gray-600 mt-1">₹5K remaining for monthly bonus</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-interface Customer {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  accountType: string;
-  relationshipValue: number;
-  lastActivity: string;
-  status: 'active' | 'inactive' | 'dormant';
-  avatar?: string;
-}
-
-const CustomerTable = ({ 
-  customers, 
-  onViewDetails,
-  onCallCustomer,
-  onCreateOffer
-}: {
-  customers: Customer[];
-  onViewDetails: (customer: Customer) => void;
-  onCallCustomer: (customer: Customer) => void;
-  onCreateOffer: (customer: Customer) => void;
-}) => {
-  return (
-    <Table>
-      <TableCaption>A list of your customers.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Name</TableHead>
-          <TableHead>Account Type</TableHead>
-          <TableHead>Relationship Value</TableHead>
-          <TableHead>Last Activity</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers.map((customer) => (
-          <TableRow key={customer.id}>
-            <TableCell className="font-medium">
-              <div className="flex items-center space-x-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback>{customer.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <span>{customer.name}</span>
-              </div>
-            </TableCell>
-            <TableCell>{customer.accountType}</TableCell>
-            <TableCell><IndianRupee size={14} className="mr-1 inline-block" />{customer.relationshipValue.toLocaleString()}</TableCell>
-            <TableCell>{customer.lastActivity}</TableCell>
-            <TableCell>
-              <Badge 
-                variant="secondary"
-                className={customer.status === 'active' ? 'bg-green-100 text-green-800' : customer.status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}
-              >
-                {customer.status}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-right">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onViewDetails(customer)}>
-                    View Details
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onCallCustomer(customer)}>
-                    Call Customer
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onCreateOffer(customer)}>
-                    Create Offer
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Edit
-                    <Edit className="ml-2 h-4 w-4" />
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
+import { allLeads } from '@/data/leadsData';
+import CustomerTable from '@/components/customers/CustomerTable';
+import LeadsPagination from '@/components/leads/LeadsPagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Route,
+  MapPin
+} from 'lucide-react';
 
 const Customer360 = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [callModalOpen, setCallModalOpen] = useState(false);
-  const [callPopupOpen, setCallPopupOpen] = useState(false);
-  const { toast } = useToast();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const urlCustomer = searchParams.get('customer');
+  
+  const [selectedCustomer, setSelectedCustomer] = useState(urlCustomer || 'priya-sharma');
+  const [currentPage, setCurrentPage] = useState(1);
+  const leadsPerPage = 5;
 
-  useEffect(() => {
-    // Mock customer data
-    const mockCustomers: Customer[] = [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '+91 9876543210',
-        address: '123 Main St, Mumbai',
-        accountType: 'Savings',
-        relationshipValue: 50000,
-        lastActivity: '2 days ago',
-        status: 'active',
-        avatar: 'https://avatar.vercel.sh/u/4'
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-        phone: '+91 8765432109',
-        address: '456 Park Ave, Delhi',
-        accountType: 'Current',
-        relationshipValue: 75000,
-        lastActivity: '1 week ago',
-        status: 'active',
-        avatar: 'https://avatar.vercel.sh/u/5'
-      },
-      {
-        id: 3,
-        name: 'David Lee',
-        email: 'david.lee@example.com',
-        phone: '+91 7654321098',
-        address: '789 Church Rd, Kolkata',
-        accountType: 'Savings',
-        relationshipValue: 30000,
-        lastActivity: '3 weeks ago',
-        status: 'inactive',
-        avatar: 'https://avatar.vercel.sh/u/6'
-      },
-      {
-        id: 4,
-        name: 'Priya Sharma',
-        email: 'priya.sharma@example.com',
-        phone: '+91 6543210987',
-        address: '101 MG Road, Bangalore',
-        accountType: 'Fixed Deposit',
-        relationshipValue: 120000,
-        lastActivity: '1 month ago',
-        status: 'dormant',
-        avatar: 'https://avatar.vercel.sh/u/7'
-      },
+  // Generate additional random leads
+  const generateRandomLeads = () => {
+    const companies = [
+      'Tech Innovations', 'Digital Solutions', 'Smart Systems', 'Future Corp', 'DataFlow Inc',
+      'CloudTech Ltd', 'NextGen Software', 'AI Dynamics', 'Cyber Solutions', 'InfoTech Pro',
+      'WebFlow Agency', 'CodeCraft Studios', 'TechPrime Ltd', 'Digital Edge', 'Innovation Hub',
+      'SmartBiz Corp', 'TechVision Inc', 'DataCore Systems', 'CloudFirst Ltd', 'DevTech Solutions',
+      'ByteCode Corp', 'TechMaster Inc', 'Digital World', 'CyberEdge Ltd', 'InfoSys Pro',
+      'WebTech Innovations', 'CodeSphere Inc', 'TechFlow Ltd', 'Digital Craft', 'SmartCode Corp',
+      'TechAdvance Inc', 'DataStream Ltd', 'CloudCore Systems', 'DevFlow Corp', 'ByteStream Inc',
+      'TechNova Ltd', 'Digital Hub', 'CyberFlow Corp', 'InfoFlow Inc', 'WebCore Systems',
+      'CodeFlow Ltd', 'TechSphere Corp', 'Digital Stream', 'SmartFlow Inc', 'TechCore Systems',
+      'DataEdge Ltd', 'CloudStream Corp', 'DevCore Inc', 'ByteFlow Systems', 'TechStream Ltd'
     ];
-    setCustomers(mockCustomers);
-  }, []);
+    
+    const contacts = [
+      'Amit Sharma', 'Priya Singh', 'Rohit Kumar', 'Sneha Patel', 'Vikash Gupta',
+      'Neha Agarwal', 'Suresh Reddy', 'Kavita Joshi', 'Manoj Yadav', 'Pooja Verma',
+      'Rajesh Mishra', 'Sunita Devi', 'Arjun Singh', 'Meera Nair', 'Kiran Jain',
+      'Sanjay Tiwari', 'Rekha Sharma', 'Deepak Rao', 'Gita Kumari', 'Ravi Chandra',
+      'Seema Gupta', 'Anil Pandey', 'Shweta Roy', 'Harish Sinha', 'Divya Malhotra',
+      'Yogesh Kapoor', 'Ritu Bansal', 'Nikhil Saxena', 'Swati Chopra', 'Manish Agarwal',
+      'Anita Joshi', 'Sunil Varma', 'Nisha Goel', 'Rahul Khanna', 'Preeti Sood',
+      'Ashok Mittal', 'Sonia Gupta', 'Vivek Sharma', 'Jyoti Rana', 'Gaurav Singh',
+      'Mamta Devi', 'Sachin Tomar', 'Bharti Jain', 'Pankaj Gupta', 'Rashmi Verma',
+      'Dinesh Kumar', 'Asha Rani', 'Puneet Aggarwal', 'Shilpa Sethi', 'Mohit Garg'
+    ];
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.phone.includes(searchTerm)
-  );
+    const sources = ['Website Forms', 'WhatsApp Business', 'Call Center', 'Social Media', 'Referral'];
+    const statuses = ['new', 'qualified', 'proposal', 'converted'];
+    const priorities = ['High', 'Medium', 'Low'];
 
-  const handleViewDetails = (customer: Customer) => {
-    setSelectedCustomer(customer);
-    setIsDetailsOpen(true);
+    const newLeads = [];
+    for (let i = 0; i < 50; i++) {
+      const leadId = `L${String(allLeads.length + i + 1).padStart(3, '0')}`;
+      const company = companies[Math.floor(Math.random() * companies.length)];
+      const contact = contacts[Math.floor(Math.random() * contacts.length)];
+      const phone = `+91 ${Math.floor(90000 + Math.random() * 10000)} ${Math.floor(10000 + Math.random() * 90000)}`;
+      const email = `${contact.toLowerCase().replace(' ', '.')}@${company.toLowerCase().replace(' ', '')}.com`;
+      const source = sources[Math.floor(Math.random() * sources.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      const value = `₹${Math.floor(5 + Math.random() * 45)}L`;
+
+      newLeads.push({
+        id: leadId,
+        name: company,
+        contact: contact,
+        phone: phone,
+        email: email,
+        status: status,
+        source: source,
+        value: value,
+        assignedTo: user?.name || 'Current User',
+        assignedToId: user?.id || 'current',
+        lastContact: `${Math.floor(1 + Math.random() * 10)} days ago`,
+        priority: priority
+      });
+    }
+    return newLeads;
   };
 
-  const handleCloseDetails = () => {
-    setIsDetailsOpen(false);
+  // Combine original leads with new random leads
+  const allLeadsWithRandom = [...allLeads, ...generateRandomLeads()];
+
+  // Create customer data from leads
+  const createCustomerFromLead = (lead: any) => {
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
+    return {
+      key: customerKey,
+      name: lead.contact,
+      id: lead.id,
+      segment: lead.priority === 'High' ? 'Premium' : lead.priority === 'Medium' ? 'Gold' : 'Silver',
+      relationshipValue: lead.priority === 'High' ? 'High' : 'Medium',
+      totalRelationship: lead.value,
+      phone: lead.phone,
+      email: lead.email,
+      address: 'Address not available',
+      joinDate: '01 Jan 2024',
+      lastContact: lead.lastContact,
+      lastInteraction: lead.lastContact,
+      riskScore: 'Low',
+      products: [
+        { type: 'Savings Account', balance: '₹1.5L', status: 'Active' },
+      ],
+      interactions: [
+        { date: '25 May 2024', type: 'Call', purpose: 'Lead Follow-up', outcome: 'Interested' },
+      ],
+      family: [],
+      opportunities: [
+        { product: 'Personal Loan', priority: 'Medium', reason: 'New customer opportunity', potential: '₹5L' },
+      ]
+    };
   };
 
-  const handleCallCustomer = (customer: Customer) => {
-    setSelectedCustomer(customer);
-    setCallPopupOpen(true);
+  // Enhanced customer data with additional family members for Neha's account + leads
+  const staticCustomerData = {
+    'priya-sharma': {
+      name: 'Priya Sharma',
+      id: 'CUST001234',
+      segment: 'Premium',
+      relationshipValue: 'High',
+      totalRelationship: '₹15.2L',
+      phone: '+91 98765 43210',
+      email: 'priya.sharma@email.com',
+      address: 'Bandra West, Mumbai 400050',
+      joinDate: '15 Mar 2019',
+      lastInteraction: '2 days ago',
+      riskScore: 'Low',
+      products: [
+        { type: 'Savings Account', balance: '₹2.5L', status: 'Active' },
+        { type: 'Fixed Deposit', amount: '₹8L', maturity: '15 Dec 2024' },
+        { type: 'Home Loan', outstanding: '₹45L', emi: '₹42,000' },
+        { type: 'Credit Card', limit: '₹3L', utilization: '35%' },
+      ],
+      interactions: [
+        { date: '25 May 2024', type: 'Call', purpose: 'FD Renewal Discussion', outcome: 'Interested' },
+        { date: '20 May 2024', type: 'Branch Visit', purpose: 'Loan Documentation', outcome: 'Completed' },
+        { date: '15 May 2024', type: 'Email', purpose: 'Insurance Product Offer', outcome: 'No Response' },
+        { date: '10 May 2024', type: 'SMS', purpose: 'Payment Reminder', outcome: 'Paid' },
+      ],
+      family: [
+        { 
+          name: 'Rajesh Sharma', 
+          relation: 'Spouse', 
+          age: 45,
+          products: ['Savings Account', 'SIP'], 
+          relationshipValue: '₹8.5L',
+          isCustomer: true,
+          phone: '+91 98765 43211',
+          email: 'rajesh.sharma@email.com',
+          opportunities: ['Life Insurance', 'Personal Loan']
+        },
+        { 
+          name: 'Arjun Sharma', 
+          relation: 'Son', 
+          age: 16,
+          products: ['Student Account'],
+          relationshipValue: '₹25K',
+          isCustomer: true,
+          opportunities: ['Education Loan', 'Study Abroad Loan']
+        },
+        { 
+          name: 'Meera Sharma', 
+          relation: 'Mother-in-law', 
+          age: 68,
+          products: [],
+          isCustomer: false,
+          phone: '+91 98765 43214',
+          opportunities: ['Senior Citizen FD', 'Health Insurance', 'Pension Plan']
+        }
+      ],
+      opportunities: [
+        { product: 'Personal Loan', priority: 'High', reason: 'Good credit history & salary increment', potential: '₹8L' },
+        { product: 'Life Insurance', priority: 'Medium', reason: 'Family protection needs', potential: '₹50L cover' },
+        { product: 'Mutual Funds', priority: 'Low', reason: 'Investment diversification', potential: '₹2L SIP' },
+      ]
+    },
+    'rajesh-kumar': {
+      name: 'Rajesh Kumar',
+      id: 'CUST001235',
+      segment: 'Gold',
+      relationshipValue: 'Medium',
+      totalRelationship: '₹8.5L',
+      phone: '+91 98765 43211',
+      email: 'rajesh.kumar@email.com',
+      address: 'Koramangala, Bangalore 560034',
+      joinDate: '22 Jul 2020',
+      lastInteraction: '1 week ago',
+      riskScore: 'Medium',
+      products: [
+        { type: 'Savings Account', balance: '₹1.2L', status: 'Active' },
+        { type: 'Personal Loan', outstanding: '₹3.5L', emi: '₹15,000' },
+        { type: 'Credit Card', limit: '₹2L', utilization: '45%' },
+      ],
+      interactions: [
+        { date: '18 May 2024', type: 'Call', purpose: 'Loan EMI Discussion', outcome: 'Completed' },
+        { date: '10 May 2024', type: 'Email', purpose: 'Investment Product Offer', outcome: 'Interested' },
+      ],
+      family: [
+        { name: 'Sunita Kumar', relation: 'Spouse', products: ['Savings Account'] },
+      ],
+      opportunities: [
+        { product: 'Fixed Deposit', priority: 'High', reason: 'Surplus liquidity', potential: '₹5L' },
+        { product: 'Health Insurance', priority: 'Medium', reason: 'Family health coverage', potential: '₹10L cover' },
+      ]
+    },
+    'anita-patel': {
+      name: 'Anita Patel',
+      id: 'CUST001236',
+      segment: 'Silver',
+      relationshipValue: 'Medium',
+      totalRelationship: '₹4.8L',
+      phone: '+91 98765 43212',
+      email: 'anita.patel@email.com',
+      address: 'Satellite, Ahmedabad 380015',
+      joinDate: '05 Jan 2022',
+      lastInteraction: '3 days ago',
+      riskScore: 'Low',
+      products: [
+        { type: 'Savings Account', balance: '₹85K', status: 'Active' },
+        { type: 'SIP', amount: '₹2K/month', status: 'Active' },
+      ],
+      interactions: [
+        { date: '22 May 2024', type: 'Branch Visit', purpose: 'Account Opening', outcome: 'Completed' },
+        { date: '15 May 2024', type: 'Call', purpose: 'Product Information', outcome: 'Interested' },
+      ],
+      family: [],
+      opportunities: [
+        { product: 'Credit Card', priority: 'High', reason: 'Good salary and credit score', potential: '₹1.5L limit' },
+        { product: 'Term Insurance', priority: 'Medium', reason: 'Young professional protection', potential: '₹25L cover' },
+      ]
+    },
+    'vikram-singh': {
+      name: 'Vikram Singh',
+      id: 'CUST001237',
+      segment: 'Premium',
+      relationshipValue: 'High',
+      totalRelationship: '₹22.3L',
+      phone: '+91 98765 43213',
+      email: 'vikram.singh@email.com',
+      address: 'Vasant Kunj, New Delhi 110070',
+      joinDate: '10 Nov 2018',
+      lastInteraction: '5 days ago',
+      riskScore: 'Low',
+      products: [
+        { type: 'Savings Account', balance: '₹5.2L', status: 'Active' },
+        { type: 'Fixed Deposit', amount: '₹12L', maturity: '20 Jan 2025' },
+        { type: 'Home Loan', outstanding: '₹65L', emi: '₹58,000' },
+        { type: 'Credit Card', limit: '₹5L', utilization: '25%' },
+        { type: 'SIP', amount: '₹10K/month', status: 'Active' },
+      ],
+      interactions: [
+        { date: '20 May 2024', type: 'Call', purpose: 'Investment Review', outcome: 'Scheduled Meeting' },
+        { date: '12 May 2024', type: 'Email', purpose: 'Premium Banking Offer', outcome: 'Interested' },
+      ],
+      family: [
+        { name: 'Meera Singh', relation: 'Spouse', products: ['Savings Account', 'SIP', 'Term Insurance'] },
+        { name: 'Kavya Singh', relation: 'Daughter', products: ['Minor Savings Account'] },
+      ],
+      opportunities: [
+        { product: 'Business Loan', priority: 'High', reason: 'Expanding business operations', potential: '₹15L' },
+        { product: 'Child Education Plan', priority: 'Medium', reason: 'Daughter\'s education planning', potential: '₹20L' },
+      ]
+    }
   };
 
-  const handleStartCall = () => {
-    setCallPopupOpen(false);
-    setCallModalOpen(true);
+  // Combine static customer data with leads data
+  const customerData = { ...staticCustomerData };
+  
+  // Add customers from leads - ensure all leads are included
+  allLeadsWithRandom.forEach(lead => {
+    const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
+    if (!customerData[customerKey]) {
+      customerData[customerKey] = createCustomerFromLead(lead);
+    }
+  });
+
+  const customers = Object.entries(customerData).map(([key, data]) => ({
+    key,
+    ...data
+  }));
+
+  // Pagination logic
+  const totalCustomers = customers.length;
+  const totalPages = Math.ceil(totalCustomers / leadsPerPage);
+  const startIndex = (currentPage - 1) * leadsPerPage;
+  const paginatedCustomers = customers.slice(startIndex, startIndex + leadsPerPage);
+
+  // Check if current user is Neha Gupta (Relationship Manager)
+  const isNehaAccount = user?.id === '5' && user?.name === 'Neha Gupta';
+
+  // Check if current user should see Smart Beat Plan Route - only for Anjali and Neha
+  const shouldShowBeatPlan = user?.name === 'Anjali Patel' || user?.name === 'Neha Gupta';
+
+  // Beat plan route data
+  const beatPlanLocations = [
+    {
+      id: '1',
+      area: 'Bandra West',
+      prospects: 5,
+      distance: '2.3 km',
+      priority: 'High'
+    },
+    {
+      id: '2',
+      area: 'Andheri East',
+      prospects: 3,
+      distance: '4.1 km',
+      priority: 'Medium'
+    },
+    {
+      id: '3',
+      area: 'Powai',
+      prospects: 7,
+      distance: '6.8 km',
+      priority: 'High'
+    }
+  ];
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Medium': return 'bg-yellow-100 text-yellow-800';
+      case 'Low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const handleCreateOffer = (customer: Customer) => {
-    toast({
-      title: "Offer Created!",
-      description: `A new offer has been created for ${customer.name}.`,
-    })
-  };
+  // Update selected customer when URL parameter changes
+  useEffect(() => {
+    if (urlCustomer && customerData[urlCustomer]) {
+      setSelectedCustomer(urlCustomer);
+    }
+  }, [urlCustomer]);
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Customer 360</h1>
-        <p className="text-gray-600">Comprehensive view of your customer relationships</p>
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <Input
-          type="text"
-          placeholder="Search customers..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Button>
-          Add Customer
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Customer Table */}
-        <div className="lg:col-span-3">
-          <CustomerTable 
-            customers={filteredCustomers}
-            onViewDetails={handleViewDetails}
-            onCallCustomer={handleCallCustomer}
-            onCreateOffer={handleCreateOffer}
-          />
-        </div>
-
-        {/* Right Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
-          {/* Cross-Sell Suggestions */}
-          <CrossSellSuggestions />
-
-          {/* Goal-Based Nudges */}
-          <GoalBasedNudges />
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isNehaAccount ? 'Advanced Customer 360° View' : 'Customer 360° View'}
+          </h1>
+          <p className="text-gray-600">
+            {isNehaAccount ? 
+              'Comprehensive relationship management with AI-powered insights' : 
+              'Comprehensive customer relationship overview'
+            }
+          </p>
         </div>
       </div>
 
-      {/* Customer Details Modal */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Customer Details</DialogTitle>
-          </DialogHeader>
-          {selectedCustomer && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <Avatar className="h-16 w-16 mx-auto">
-                  <AvatarFallback>{selectedCustomer.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <h3 className="text-lg font-semibold">{selectedCustomer.name}</h3>
-                <p className="text-gray-600">{selectedCustomer.email}</p>
-                <p className="text-gray-600">{selectedCustomer.phone}</p>
-                <p className="text-gray-600">{selectedCustomer.address}</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Account Type</Label>
-                  <p className="font-medium">{selectedCustomer.accountType}</p>
+      {/* Smart Beat Plan Route - Only for Anjali and Neha */}
+      {shouldShowBeatPlan && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Route size={18} className="mr-2" />
+              Smart Beat Plan Route
+              <Badge className="ml-2 bg-green-100 text-green-800">
+                Optimized
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {beatPlanLocations.map((location) => (
+                <div key={location.id} className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium">{location.area}</h4>
+                      <p className="text-sm text-gray-600">{location.prospects} prospects</p>
+                    </div>
+                    <div className="text-right">
+                      <Badge className={getPriorityColor(location.priority)}>
+                        {location.priority}
+                      </Badge>
+                      <p className="text-xs text-gray-500 mt-1">{location.distance}</p>
+                    </div>
+                  </div>
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <MapPin size={12} className="mr-1" />
+                    Navigate
+                  </Button>
                 </div>
-                <div>
-                  <Label>Relationship Value</Label>
-                  <p className="font-medium"><IndianRupee size={14} className="mr-1 inline-block" />{selectedCustomer.relationshipValue.toLocaleString()}</p>
-                </div>
-                <div>
-                  <Label>Last Activity</Label>
-                  <p className="font-medium">{selectedCustomer.lastActivity}</p>
-                </div>
-                <div>
-                  <Label>Status</Label>
-                  <Badge 
-                    variant="secondary"
-                    className={selectedCustomer.status === 'active' ? 'bg-green-100 text-green-800' : selectedCustomer.status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}
-                  >
-                    {selectedCustomer.status}
-                  </Badge>
-                </div>
-              </div>
-              <Button className="w-full" onClick={handleCloseDetails}>Close</Button>
+              ))}
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Call Popup Modal */}
-      <Dialog open={callPopupOpen} onOpenChange={setCallPopupOpen}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle>Initiate Call</DialogTitle>
-          </DialogHeader>
-          {selectedCustomer && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold">{selectedCustomer.name}</h3>
-                <p className="text-gray-600">{selectedCustomer.email}</p>
-                <p className="text-gray-600 font-mono">{selectedCustomer.phone}</p>
-              </div>
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={handleStartCall}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  <PhoneCall size={16} className="mr-2" />
-                  Start Call
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setCallPopupOpen(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Call In Progress Modal */}
-      {selectedCustomer && (
-        <CallInProgressModal
-          isOpen={callModalOpen}
-          onOpenChange={setCallModalOpen}
-          prospectName={selectedCustomer.name}
-          businessName={selectedCustomer.email}
-          phoneNumber={selectedCustomer.phone}
-        />
+          </CardContent>
+        </Card>
       )}
+
+      {/* Customer Table */}
+      <CustomerTable 
+        customers={paginatedCustomers}
+        selectedCustomer={selectedCustomer}
+        onCustomerSelect={setSelectedCustomer}
+      />
+      
+      {/* Pagination */}
+      <div className="mt-4">
+        <LeadsPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startIndex={startIndex}
+          leadsPerPage={leadsPerPage}
+          totalLeads={totalCustomers}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
   );
 };
