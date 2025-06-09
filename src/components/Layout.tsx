@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -93,7 +92,7 @@ const Layout = ({ children }: LayoutProps) => {
       {/* Top Navigation - Full Width */}
       <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex h-16">
             <div className="flex items-center">
               <Button
                 variant="ghost"
@@ -103,16 +102,14 @@ const Layout = ({ children }: LayoutProps) => {
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
-              <div className="flex items-start">
-                <img 
-                  src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
-                  alt="Ujjivan Small Finance Bank" 
-                  className="h-10 w-auto object-contain"
-                />
-              </div>
+              <img 
+                src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
+                alt="Ujjivan Small Finance Bank" 
+                className="h-10 w-auto object-contain"
+              />
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 ml-auto">
               <div className="text-sm text-gray-600">
                 Branch: {user?.branch}
               </div>
