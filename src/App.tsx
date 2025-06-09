@@ -12,7 +12,6 @@ import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
 import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
-import LeadDetail from "./pages/leads/LeadDetail";
 import Tasks from "./pages/Tasks";
 import TaskManagement from "./pages/tasks/TaskManagement";
 import GeoLocation from "./pages/GeoLocation";
@@ -91,11 +90,6 @@ const App = () => (
                       <Route path="/leads" element={
                         <RoleBasedRoute featureId="my_leads">
                           <LeadManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/leads/:id" element={
-                        <RoleBasedRoute featureId="my_leads">
-                          <LeadDetail />
                         </RoleBasedRoute>
                       } />
                       <Route path="/tasks" element={
