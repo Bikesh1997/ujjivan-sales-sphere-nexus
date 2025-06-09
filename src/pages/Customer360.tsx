@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import CustomerTable from '@/components/customers/CustomerTable';
@@ -313,30 +311,23 @@ const Customer360 = () => {
       </div>
 
       {/* Customer Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer List</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CustomerTable 
-            customers={paginatedCustomers}
-            selectedCustomer={selectedCustomer}
-            onCustomerSelect={setSelectedCustomer}
-          />
-          
-          {/* Pagination */}
-          <div className="mt-4">
-            <LeadsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              startIndex={startIndex}
-              leadsPerPage={leadsPerPage}
-              totalLeads={totalCustomers}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <CustomerTable 
+        customers={paginatedCustomers}
+        selectedCustomer={selectedCustomer}
+        onCustomerSelect={setSelectedCustomer}
+      />
+      
+      {/* Pagination */}
+      <div className="mt-4">
+        <LeadsPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startIndex={startIndex}
+          leadsPerPage={leadsPerPage}
+          totalLeads={totalCustomers}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
   );
 };
