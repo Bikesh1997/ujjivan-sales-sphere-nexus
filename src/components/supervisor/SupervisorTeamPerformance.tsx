@@ -163,17 +163,15 @@ const SupervisorTeamPerformance = ({
           </div>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={teamPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 120 }}>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={teamPerformanceData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="name" 
-                label={{ value: 'Product Categories', position: 'insideBottom', offset: -10 }}
+                label={{ value: 'Product Categories', position: 'insideBottom', offset: -5 }}
                 angle={-45}
-                textAnchor="start"
-                height={120}
-                interval={0}
-                tick={{ fontSize: 12 }}
+                textAnchor="end"
+                height={80}
               />
               <YAxis 
                 label={{ value: 'Revenue (₹L)', angle: -90, position: 'insideLeft' }}
