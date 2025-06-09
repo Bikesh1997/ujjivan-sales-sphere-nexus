@@ -5,14 +5,12 @@ import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
 import LeadsTable from '@/components/leads/LeadsTable';
 import LeadsPagination from '@/components/leads/LeadsPagination';
-import AddLeadModal from '@/components/leads/AddLeadModal';
 import { useLeadFilters } from '@/hooks/useLeadFilters';
 import KRAPerformanceSection from '@/components/leads/KRAPerformanceSection';
 import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 
 const LeadManagement = () => {
-  const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
   const [leads, setLeads] = useState(allLeads);
   const [currentPage, setCurrentPage] = useState(1);
   const leadsPerPage = 10;
@@ -31,24 +29,6 @@ const LeadManagement = () => {
   const totalPages = Math.ceil(filteredLeads.length / leadsPerPage);
   const startIndex = (currentPage - 1) * leadsPerPage;
   const paginatedLeads = filteredLeads.slice(startIndex, startIndex + leadsPerPage);
-
-  const handleAddLead = (leadData: any) => {
-    const newLead = {
-      id: `LEAD${String(leads.length + 1).padStart(3, '0')}`,
-      name: leadData.companyName,
-      contact: leadData.contactName,
-      phone: leadData.phone,
-      email: leadData.email,
-      status: 'new',
-      source: leadData.source,
-      value: leadData.value,
-      assignedTo: user?.name || 'Current User',
-      assignedToId: user?.id || 'current',
-      lastContact: 'Just now',
-      priority: leadData.priority
-    };
-    setLeads([...leads, newLead]);
-  };
 
   const handleEditLead = (leadId: string, updatedData: any) => {
     setLeads(leads.map(lead => 
@@ -113,12 +93,6 @@ const LeadManagement = () => {
             leadsPerPage={leadsPerPage}
             totalLeads={filteredLeads.length}
             onPageChange={handlePageChange}
-          />
-          
-          <AddLeadModal 
-            open={isAddLeadModalOpen}
-            onOpenChange={setIsAddLeadModalOpen}
-            onAddLead={handleAddLead}
           />
         </TabsContent>
 

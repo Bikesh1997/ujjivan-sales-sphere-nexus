@@ -18,7 +18,10 @@ import {
   MapPin,
   Mail,
   Clock,
-  Calendar
+  Calendar,
+  TrendingUp,
+  UserCheck,
+  Sun
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import KanbanBoard from '@/components/tasks/KanbanBoard';
@@ -135,6 +138,25 @@ const TaskManagement = () => {
 
   const [campaigns, setCampaigns] = useState(campaignsData);
 
+  // Smart Nudges data
+  const smartNudges = [
+    {
+      icon: <TrendingUp size={20} className="text-blue-600" />,
+      text: "80% of your recent FD closures came from customers aged 45–60. Prioritize this age group today for higher conversion.",
+      bgColor: "bg-blue-50 border-blue-200"
+    },
+    {
+      icon: <UserCheck size={20} className="text-green-600" />,
+      text: "You have 5 inactive SHG customers within 2 km of your current location. Plan a quick visit to revive engagement.",
+      bgColor: "bg-green-50 border-green-200"
+    },
+    {
+      icon: <Sun size={20} className="text-orange-600" />,
+      text: "Morning visits to Bandra yield 30% more conversions—consider rescheduling your visits before noon.",
+      bgColor: "bg-orange-50 border-orange-200"
+    }
+  ];
+
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
                          task.customer.toLowerCase().includes(filters.search.toLowerCase());
@@ -221,6 +243,28 @@ const TaskManagement = () => {
           <p className="text-gray-600">Manage daily tasks and marketing campaigns</p>
         </div>
       </div>
+
+      {/* Smart Nudges & Insights */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <TrendingUp size={18} className="mr-2" />
+            Smart Nudges & Insights
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {smartNudges.map((nudge, index) => (
+              <div key={index} className={`p-3 border rounded-lg ${nudge.bgColor}`}>
+                <div className="flex items-start space-x-3">
+                  {nudge.icon}
+                  <p className="text-sm text-gray-700">{nudge.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
