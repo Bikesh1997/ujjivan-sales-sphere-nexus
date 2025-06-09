@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
@@ -68,16 +68,6 @@ const LeadManagement = () => {
     filteredLeads,
     clearAllFilters
   } = useLeadFilters(leads);
-
-  // Check for random leads from dashboard navigation
-  useEffect(() => {
-    const randomLeads = localStorage.getItem('newRandomLeads');
-    if (randomLeads) {
-      const parsedLeads = JSON.parse(randomLeads);
-      setLeads(prevLeads => [...prevLeads, ...parsedLeads]);
-      localStorage.removeItem('newRandomLeads');
-    }
-  }, []);
 
   const handleAddLead = (leadData: any) => {
     const newLead = {

@@ -27,13 +27,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import CustomerTable from '@/components/customers/CustomerTable';
 import SetAlertModal from '@/components/alerts/SetAlertModal';
-import LeadCallModal from '@/components/leads/LeadCallModal';
+import CallCustomerModal from '@/components/customers/CallCustomerModal';
 import CreateOfferModal from '@/components/customers/CreateOfferModal';
 import CrossSellSuggestions from '@/components/customers/CrossSellSuggestions';
 import FamilyGroupTab from '@/components/customers/FamilyGroupTab';
 import ClientInteractionDetails from '@/components/customers/ClientInteractionDetails';
 import GoalBasedNudges from '@/components/customers/GoalBasedNudges';
-import LeadsPagination from '@/components/leads/LeadsPagination';
 
 const Customer360 = () => {
   const { user } = useAuth();
@@ -42,45 +41,9 @@ const Customer360 = () => {
   
   const [selectedCustomer, setSelectedCustomer] = useState(urlCustomer || 'priya-sharma');
   const [setAlertModalOpen, setSetAlertModalOpen] = useState(false);
-  const [leadCallModalOpen, setLeadCallModalOpen] = useState(false);
+  const [callCustomerModalOpen, setCallCustomerModalOpen] = useState(false);
   const [createOfferModalOpen, setCreateOfferModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [enhancedLeads, setEnhancedLeads] = useState(allLeads);
-
-  const leadsPerPage = 10;
-  const totalPages = Math.ceil(enhancedLeads.length / leadsPerPage);
-  const startIndex = (currentPage - 1) * leadsPerPage;
-  const currentLeads = enhancedLeads.slice(startIndex, startIndex + leadsPerPage);
-
-  // Generate 50 additional random leads on component mount
-  useEffect(() => {
-    const generateRandomLeads = (count: number) => {
-      const companies = ['TechStart Solutions', 'Global Dynamics', 'Innovation Labs', 'Future Corp', 'NextGen Systems', 'Smart Industries', 'Digital Ventures', 'Prime Solutions', 'Elite Enterprises', 'Metro Business', 'Sunrise Corp', 'Alpha Industries', 'Beta Systems', 'Gamma Tech', 'Delta Solutions'];
-      const contacts = ['Rajesh Kumar', 'Priya Singh', 'Amit Sharma', 'Neha Patel', 'Vikash Gupta', 'Sunita Rao', 'Manoj Verma', 'Kavita Joshi', 'Rohit Agarwal', 'Deepika Mehta', 'Sanjay Yadav', 'Pooja Reddy', 'Kiran Nair', 'Divya Iyer', 'Arun Pillai'];
-      const sources = ['Website Forms', 'WhatsApp Business', 'Call Center', 'Social Media', 'Referral', 'Email Campaign'];
-      const priorities = ['High', 'Medium', 'Low'];
-      const statuses = ['new', 'qualified', 'proposal'];
-
-      return Array.from({ length: count }, (_, index) => ({
-        id: `CR${String(Date.now() + index).slice(-6)}`,
-        name: companies[Math.floor(Math.random() * companies.length)],
-        contact: contacts[Math.floor(Math.random() * contacts.length)],
-        phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-        email: `contact${index + 1}@company.com`,
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        source: sources[Math.floor(Math.random() * sources.length)],
-        value: `₹${Math.floor(Math.random() * 30) + 5}L`,
-        assignedTo: user?.name || 'Current User',
-        assignedToId: user?.id || 'current',
-        lastContact: 'Just now',
-        priority: priorities[Math.floor(Math.random() * priorities.length)]
-      }));
-    };
-
-    const newLeads = generateRandomLeads(50);
-    setEnhancedLeads(prevLeads => [...prevLeads, ...newLeads]);
-  }, [user]);
 
   // Create customer data from leads
   const createCustomerFromLead = (lead: any) => {
@@ -267,8 +230,8 @@ const Customer360 = () => {
   // Combine static customer data with leads data
   const customerData = { ...staticCustomerData };
   
-  // Add customers from enhanced leads - ensure all leads are included
-  enhancedLeads.forEach(lead => {
+  // Add customers from leads - ensure all leads are included
+  allLeads.forEach(lead => {
     const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
     if (!customerData[customerKey]) {
       customerData[customerKey] = createCustomerFromLead(lead);
@@ -330,30 +293,6 @@ const Customer360 = () => {
     console.log('Create goal plan for:', goalId);
   };
 
-  const handleCallCustomer = () => {
-    setLeadCallModalOpen(true);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  // Convert customer to lead format for the call modal
-  const customerAsLead = customer ? {
-    id: customer.id,
-    name: customer.name,
-    contact: customer.name,
-    phone: customer.phone,
-    email: customer.email,
-    status: 'existing',
-    source: 'Customer Database',
-    value: customer.totalRelationship,
-    assignedTo: user?.name || 'Current User',
-    assignedToId: user?.id || 'current',
-    lastContact: customer.lastInteraction,
-    priority: customer.relationshipValue === 'High' ? 'High' : 'Medium'
-  } : null;
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -381,7 +320,7 @@ const Customer360 = () => {
           <Button 
             size="sm" 
             className="bg-teal-600 hover:bg-teal-700"
-            onClick={handleCallCustomer}
+            onClick={() => setCallCustomerModalOpen(true)}
           >
             <Phone size={16} className="mr-2" />
             Call Customer
@@ -397,18 +336,6 @@ const Customer360 = () => {
             selectedCustomer={selectedCustomer}
             onCustomerSelect={setSelectedCustomer}
           />
-          
-          {/* Pagination */}
-          <div className="mt-4">
-            <LeadsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              startIndex={startIndex}
-              leadsPerPage={leadsPerPage}
-              totalLeads={enhancedLeads.length}
-              onPageChange={handlePageChange}
-            />
-          </div>
         </div>
 
         {/* Customer Details */}
@@ -501,8 +428,9 @@ const Customer360 = () => {
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="products" className="w-full">
-              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
+              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-8' : 'grid-cols-6'}`}>
                 <TabsTrigger value="products">Products</TabsTrigger>
+                <TabsTrigger value="interactions">Interactions</TabsTrigger>
                 <TabsTrigger value="family">Family Group</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
@@ -534,6 +462,35 @@ const Customer360 = () => {
                           {product.maturity && <p>Maturity: <span className="font-medium">{product.maturity}</span></p>}
                           {product.emi && <p>EMI: <span className="font-medium">{product.emi}</span></p>}
                           {product.utilization && <p>Utilization: <span className="font-medium">{product.utilization}</span></p>}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="interactions" className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Interaction History</h3>
+                <div className="space-y-3">
+                  {customer.interactions.map((interaction, index) => (
+                    <Card key={index} className="border border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+                              {interaction.type === 'Call' && <Phone size={14} className="text-teal-600" />}
+                              {interaction.type === 'Email' && <Mail size={14} className="text-teal-600" />}
+                              {interaction.type === 'Branch Visit' && <MapPin size={14} className="text-teal-600" />}
+                              {interaction.type === 'SMS' && <FileText size={14} className="text-teal-600" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{interaction.purpose}</p>
+                              <p className="text-sm text-gray-500">{interaction.date} • {interaction.type}</p>
+                            </div>
+                          </div>
+                          <Badge className={getStatusColor(interaction.outcome)}>
+                            {interaction.outcome}
+                          </Badge>
                         </div>
                       </CardContent>
                     </Card>
@@ -628,21 +585,24 @@ const Customer360 = () => {
 
       {/* Modals */}
       <SetAlertModal
-        customerName={customer?.name || ''}
+        customerName={customer.name}
         isOpen={setAlertModalOpen}
         onOpenChange={setSetAlertModalOpen}
       />
       
-      {customerAsLead && (
-        <LeadCallModal
-          lead={customerAsLead}
-          isOpen={leadCallModalOpen}
-          onOpenChange={setLeadCallModalOpen}
-        />
-      )}
+      <CallCustomerModal
+        customer={{
+          name: customer.name,
+          phone: customer.phone,
+          lastInteraction: customer.lastInteraction,
+          relationshipValue: customer.relationshipValue
+        }}
+        isOpen={callCustomerModalOpen}
+        onOpenChange={setCallCustomerModalOpen}
+      />
       
       <CreateOfferModal
-        customerName={customer?.name || ''}
+        customerName={customer.name}
         productSuggestion={selectedOpportunity}
         isOpen={createOfferModalOpen}
         onOpenChange={setCreateOfferModalOpen}

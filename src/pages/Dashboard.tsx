@@ -18,11 +18,9 @@ import {
 } from 'lucide-react';
 import SmartNudges from '@/components/dashboard/SmartNudges';
 import { allLeads } from '@/data/leadsData';
-import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   // Calculate metrics based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
@@ -36,36 +34,6 @@ const Dashboard = () => {
 
   // Monthly target for salesperson
   const monthlyTarget = 25; // Target number of conversions per month
-
-  const handleStartCalling = () => {
-    // Generate 50 random leads and store them
-    const randomLeads = generateRandomLeads(50);
-    localStorage.setItem('newRandomLeads', JSON.stringify(randomLeads));
-    navigate('/leads');
-  };
-
-  const generateRandomLeads = (count: number) => {
-    const companies = ['TechStart Solutions', 'Global Dynamics', 'Innovation Labs', 'Future Corp', 'NextGen Systems', 'Smart Industries', 'Digital Ventures', 'Prime Solutions', 'Elite Enterprises', 'Metro Business'];
-    const contacts = ['Rajesh Kumar', 'Priya Singh', 'Amit Sharma', 'Neha Patel', 'Vikash Gupta', 'Sunita Rao', 'Manoj Verma', 'Kavita Joshi', 'Rohit Agarwal', 'Deepika Mehta'];
-    const sources = ['Website Forms', 'WhatsApp Business', 'Call Center', 'Social Media', 'Referral', 'Email Campaign'];
-    const priorities = ['High', 'Medium', 'Low'];
-    const statuses = ['new', 'qualified', 'proposal'];
-
-    return Array.from({ length: count }, (_, index) => ({
-      id: `LR${String(Date.now() + index).slice(-6)}`,
-      name: companies[Math.floor(Math.random() * companies.length)],
-      contact: contacts[Math.floor(Math.random() * contacts.length)],
-      phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-      email: `contact${index + 1}@company.com`,
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      source: sources[Math.floor(Math.random() * sources.length)],
-      value: `₹${Math.floor(Math.random() * 30) + 5}L`,
-      assignedTo: user?.name || 'Current User',
-      assignedToId: user?.id || 'current',
-      lastContact: 'Just now',
-      priority: priorities[Math.floor(Math.random() * priorities.length)]
-    }));
-  };
 
   return (
     <div className="space-y-6">
@@ -82,7 +50,7 @@ const Dashboard = () => {
             <Calendar size={16} className="mr-2" />
             Today's Plan
           </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={handleStartCalling}>
+          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
             <Phone size={16} className="mr-2" />
             Start Calling
           </Button>
