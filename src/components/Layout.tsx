@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SupportModal from '@/components/support/SupportModal';
 
 interface LayoutProps {
@@ -42,6 +42,11 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState('this-month');
+  const [selectedFSO, setSelectedFSO] = useState('all-fsos');
+  const [selectedRegion, setSelectedRegion] = useState('all-regions');
+  const [selectedProduct, setSelectedProduct] = useState('all-products');
+  const [selectedCampaign, setSelectedCampaign] = useState('all-campaigns');
   const location = useLocation();
   const { user, logout, switchRole } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
@@ -66,6 +71,52 @@ const Layout = ({ children }: LayoutProps) => {
     icon: iconMap[item.icon as keyof typeof iconMap] || Home
   }));
 
+  // Reports & Analytics filter options
+  const periods = [
+    { value: 'this-month', label: 'This Month' },
+    { value: 'last-month', label: 'Last Month' },
+    { value: 'last-3-months', label: 'Last 3 Months' },
+    { value: 'last-6-months', label: 'Last 6 Months' },
+    { value: 'this-year', label: 'This Year' }
+  ];
+
+  const fsos = [
+    { value: 'all-fsos', label: 'All FSOs' },
+    { value: 'fso-north', label: 'FSO North' },
+    { value: 'fso-south', label: 'FSO South' },
+    { value: 'fso-east', label: 'FSO East' },
+    { value: 'fso-west', label: 'FSO West' }
+  ];
+
+  const regions = [
+    { value: 'all-regions', label: 'All Regions' },
+    { value: 'north', label: 'North' },
+    { value: 'south', label: 'South' },
+    { value: 'east', label: 'East' },
+    { value: 'west', label: 'West' },
+    { value: 'central', label: 'Central' }
+  ];
+
+  const products = [
+    { value: 'all-products', label: 'All Products' },
+    { value: 'savings-account', label: 'Savings Account' },
+    { value: 'current-account', label: 'Current Account' },
+    { value: 'deposits', label: 'Deposits' },
+    { value: 'home-loans', label: 'Home Loans' },
+    { value: 'two-wheeler-loan', label: 'Two Wheeler Loan' },
+    { value: 'msme-loan', label: 'MSME Loan' },
+    { value: 'gold-loan', label: 'Gold Loan' },
+    { value: 'insurance', label: 'Insurance' }
+  ];
+
+  const campaigns = [
+    { value: 'all-campaigns', label: 'All Campaigns' },
+    { value: 'savings-drive', label: 'Savings Drive' },
+    { value: 'loan-fest', label: 'Loan Fest' },
+    { value: 'digital-banking', label: 'Digital Banking' },
+    { value: 'insurance-boost', label: 'Insurance Boost' }
+  ];
+
   const isActive = (path: string) => location.pathname === path;
 
   const getRoleDisplay = (role: string) => {
@@ -86,6 +137,16 @@ const Layout = ({ children }: LayoutProps) => {
       case 'branch': return 'Branch';
       default: return '';
     }
+  };
+
+  const handleApplyFilters = () => {
+    console.log('Applying filters:', {
+      period: selectedPeriod,
+      fso: selectedFSO,
+      region: selectedRegion,
+      product: selectedProduct,
+      campaign: selectedCampaign
+    });
   };
 
   return (
@@ -167,6 +228,91 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </div>
       </nav>
+
+      {/* Supervisor Portal Reports & Analytics Filters Bar */}
+      {user?.role === 'supervisor' && (
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-3">
+            <div className="text-sm font-medium text-gray-700">
+              Reports & Analytics
+            </div>
+            <div className="flex gap-3 items-center">
+              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Period" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {periods.map((period) => (
+                    <SelectItem key={period.value} value={period.value}>
+                      {period.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedFSO} onValueChange={setSelectedFSO}>
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue placeholder="FSO" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {fsos.map((fso) => (
+                    <SelectItem key={fso.value} value={fso.value}>
+                      {fso.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Region" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {regions.map((region) => (
+                    <SelectItem key={region.value} value={region.value}>
+                      {region.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="Product" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {products.map((product) => (
+                    <SelectItem key={product.value} value={product.value}>
+                      {product.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="Campaign" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {campaigns.map((campaign) => (
+                    <SelectItem key={campaign.value} value={campaign.value}>
+                      {campaign.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Button 
+                onClick={handleApplyFilters}
+                className="bg-teal-600 hover:bg-teal-700"
+                size="sm"
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex">
         {/* Sidebar */}
