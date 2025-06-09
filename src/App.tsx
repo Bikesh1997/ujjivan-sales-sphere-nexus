@@ -13,7 +13,6 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
 import TeamManagement from '@/pages/TeamManagement';
 import TerritoryManagement from '@/pages/TerritoryManagement';
-import AnalyticsDashboard from '@/pages/AnalyticsDashboard';
 import PortfolioManagement from '@/pages/PortfolioManagement';
 import RiskManagement from '@/pages/RiskManagement';
 import PlanMyDay from '@/pages/PlanMyDay';
@@ -81,13 +80,6 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <TerritoryManagement />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/analytics" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <AnalyticsDashboard />
                   </Layout>
                 </ProtectedRoute>
               } />
