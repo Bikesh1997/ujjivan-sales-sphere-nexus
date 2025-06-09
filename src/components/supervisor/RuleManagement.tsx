@@ -36,7 +36,7 @@ interface Rule {
   value: string;
   priority: 'P1' | 'P2' | 'P3';
   region: string;
-  agentName: string;
+  team: string;
   meetingType: string;
   productType: string;
   isActive: boolean;
@@ -47,51 +47,91 @@ const RuleManagement = () => {
   const { toast } = useToast();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<Rule | null>(null);
-  const [rules, setRules] = useState<Rule[]>([
-    {
-      id: '1',
-      channel: 'Website Forms',
-      value: '50L',
-      priority: 'P1',
-      region: 'Mumbai',
-      agentName: 'Vikram',
-      meetingType: 'In Person',
-      productType: 'MSME Loan',
-      isActive: true,
-      createdDate: '2024-01-15'
-    },
-    {
-      id: '2',
-      channel: 'WhatsApp Business',
-      value: '25L',
-      priority: 'P2',
-      region: 'Pune',
-      agentName: 'Rahul',
-      meetingType: 'Virtual',
-      productType: 'Personal Loan',
-      isActive: true,
-      createdDate: '2024-01-20'
-    },
-    {
-      id: '3',
-      channel: 'Call Center',
-      value: '100L',
-      priority: 'P1',
-      region: 'Delhi',
-      agentName: 'Anjali',
-      meetingType: 'In Person',
-      productType: 'Business Loan',
-      isActive: false,
-      createdDate: '2024-01-25'
+
+  // Generate 50 random rules
+  const generateRandomRules = (): Rule[] => {
+    const channels = [
+      'Website Forms',
+      'Missed Call Numbers / IVR',
+      'Mobile App',
+      'WhatsApp Business',
+      'SMS Campaign Responses',
+      'Email',
+      'Google/Facebook Ads',
+      'Call Center / Inbound Telephony',
+      'Marketplace Integrations'
+    ];
+
+    const teams = [
+      'Sales Executive',
+      'Inbound Contact Center Agent',
+      'Relationship Manager',
+      'Supervisor'
+    ];
+
+    const productTypes = [
+      'Personal Loan',
+      'MSME Loan',
+      'Business Loan',
+      'Home Loan',
+      'Car Loan',
+      'Savings Account',
+      'Current Account',
+      'Fixed Deposit',
+      'Recurring Deposit',
+      'Credit Card',
+      'Insurance Products'
+    ];
+
+    const regions = [
+      'Mumbai',
+      'Pune',
+      'Delhi',
+      'Bangalore',
+      'Chennai',
+      'Hyderabad',
+      'Kolkata',
+      'Ahmedabad'
+    ];
+
+    const meetingTypes = [
+      'In Person',
+      'Virtual',
+      'Phone Call',
+      'Email Follow-up'
+    ];
+
+    const priorities: ('P1' | 'P2' | 'P3')[] = ['P1', 'P2', 'P3'];
+
+    const rules: Rule[] = [];
+    for (let i = 1; i <= 50; i++) {
+      const randomValue = Math.floor(Math.random() * 200) + 10; // Random value between 10-210
+      const randomDate = new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+      
+      rules.push({
+        id: i.toString(),
+        channel: channels[Math.floor(Math.random() * channels.length)],
+        value: `${randomValue}L`,
+        priority: priorities[Math.floor(Math.random() * priorities.length)],
+        region: regions[Math.floor(Math.random() * regions.length)],
+        team: teams[Math.floor(Math.random() * teams.length)],
+        meetingType: meetingTypes[Math.floor(Math.random() * meetingTypes.length)],
+        productType: productTypes[Math.floor(Math.random() * productTypes.length)],
+        isActive: Math.random() > 0.2, // 80% chance of being active
+        createdDate: randomDate.toISOString().split('T')[0]
+      });
     }
-  ]);
+    return rules;
+  };
+
+  const [rules, setRules] = useState<Rule[]>(generateRandomRules());
 
   const [formData, setFormData] = useState({
     channel: '',
     value: '',
     priority: 'P1' as 'P1' | 'P2' | 'P3',
     region: '',
-    agentName: '',
+    team: '',
     meetingType: '',
     productType: ''
   });
@@ -133,13 +173,11 @@ const RuleManagement = () => {
     'Ahmedabad'
   ];
 
-  const agentNames = [
-    'Vikram',
-    'Rahul',
-    'Anjali',
-    'Priya',
-    'Suresh',
-    'Kavita'
+  const teams = [
+    'Sales Executive',
+    'Inbound Contact Center Agent',
+    'Relationship Manager',
+    'Supervisor'
   ];
 
   const meetingTypes = [
@@ -155,7 +193,7 @@ const RuleManagement = () => {
       value: '',
       priority: 'P1',
       region: '',
-      agentName: '',
+      team: '',
       meetingType: '',
       productType: ''
     });
@@ -164,7 +202,7 @@ const RuleManagement = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.channel || !formData.value || !formData.region || !formData.agentName || !formData.meetingType || !formData.productType) {
+    if (!formData.channel || !formData.value || !formData.region || !formData.team || !formData.meetingType || !formData.productType) {
       toast({
         title: "Validation Error",
         description: "All fields are required",
@@ -188,7 +226,7 @@ const RuleManagement = () => {
     } else {
       // Create new rule
       const newRule: Rule = {
-        id: Date.now().toString(),
+        id: (Date.now()).toString(),
         ...formData,
         isActive: true,
         createdDate: new Date().toISOString().split('T')[0]
@@ -211,7 +249,7 @@ const RuleManagement = () => {
       value: rule.value,
       priority: rule.priority,
       region: rule.region,
-      agentName: rule.agentName,
+      team: rule.team,
       meetingType: rule.meetingType,
       productType: rule.productType
     });
@@ -315,14 +353,14 @@ const RuleManagement = () => {
               </div>
 
               <div>
-                <Label htmlFor="agentName">Agent Name</Label>
-                <Select value={formData.agentName} onValueChange={(value) => setFormData({...formData, agentName: value})}>
+                <Label htmlFor="team">Team</Label>
+                <Select value={formData.team} onValueChange={(value) => setFormData({...formData, team: value})}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select agent" />
+                    <SelectValue placeholder="Select team" />
                   </SelectTrigger>
                   <SelectContent>
-                    {agentNames.map(agent => (
-                      <SelectItem key={agent} value={agent}>{agent}</SelectItem>
+                    {teams.map(team => (
+                      <SelectItem key={team} value={team}>{team}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -389,7 +427,7 @@ const RuleManagement = () => {
                 <TableHead>Value</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Region</TableHead>
-                <TableHead>Agent Name</TableHead>
+                <TableHead>Team</TableHead>
                 <TableHead>Meeting Type</TableHead>
                 <TableHead>Product Type</TableHead>
                 <TableHead>Status</TableHead>
@@ -407,7 +445,7 @@ const RuleManagement = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{rule.region}</TableCell>
-                  <TableCell>{rule.agentName}</TableCell>
+                  <TableCell>{rule.team}</TableCell>
                   <TableCell>{rule.meetingType}</TableCell>
                   <TableCell>{rule.productType}</TableCell>
                   <TableCell>
@@ -439,7 +477,7 @@ const RuleManagement = () => {
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
+            </tbody>
           </Table>
         </CardContent>
       </Card>
