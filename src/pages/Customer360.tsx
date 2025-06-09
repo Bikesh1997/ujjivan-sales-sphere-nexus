@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -419,248 +418,243 @@ const Customer360 = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Customer Table */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer List</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CustomerTable 
-                customers={paginatedCustomers}
-                selectedCustomer={selectedCustomer}
-                onCustomerSelect={setSelectedCustomer}
-              />
-              
-              {/* Pagination */}
-              <div className="mt-4">
-                <LeadsPagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  startIndex={startIndex}
-                  leadsPerPage={leadsPerPage}
-                  totalLeads={totalCustomers}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Customer Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CustomerTable 
+            customers={paginatedCustomers}
+            selectedCustomer={selectedCustomer}
+            onCustomerSelect={setSelectedCustomer}
+          />
+          
+          {/* Pagination */}
+          <div className="mt-4">
+            <LeadsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              startIndex={startIndex}
+              leadsPerPage={leadsPerPage}
+              totalLeads={totalCustomers}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Customer Details */}
-        <div className="lg:col-span-1">
-          {customer && (
-            <div className="space-y-6">
-              {/* Customer Summary */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-center">
-                    <Avatar className="h-20 w-20 mx-auto mb-4">
-                      <AvatarFallback className="text-xl bg-teal-100 text-teal-700">
-                        {customer.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <h3 className="font-semibold text-lg text-gray-900">{customer.name}</h3>
-                    <p className="text-sm text-gray-500 mb-3">{customer.id}</p>
-                    <Badge className="bg-purple-100 text-purple-800 mb-4">{customer.segment}</Badge>
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center text-gray-600">
-                        <Phone size={14} className="mr-2" />
-                        {customer.phone}
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Mail size={14} className="mr-2" />
-                        {customer.email}
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <MapPin size={14} className="mr-2" />
-                        {customer.address}
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Calendar size={14} className="mr-2" />
-                        Customer since {customer.joinDate}
-                      </div>
+      {/* Customer Details */}
+      {customer && (
+        <div className="space-y-6">
+          {/* Customer Summary and Key Metrics */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Customer Summary */}
+            <Card className="lg:col-span-1">
+              <CardContent className="p-6">
+                <div className="text-center">
+                  <Avatar className="h-20 w-20 mx-auto mb-4">
+                    <AvatarFallback className="text-xl bg-teal-100 text-teal-700">
+                      {customer.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="font-semibold text-lg text-gray-900">{customer.name}</h3>
+                  <p className="text-sm text-gray-500 mb-3">{customer.id}</p>
+                  <Badge className="bg-purple-100 text-purple-800 mb-4">{customer.segment}</Badge>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center text-gray-600">
+                      <Phone size={14} className="mr-2" />
+                      {customer.phone}
                     </div>
+                    <div className="flex items-center text-gray-600">
+                      <Mail size={14} className="mr-2" />
+                      {customer.email}
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <MapPin size={14} className="mr-2" />
+                      {customer.address}
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Calendar size={14} className="mr-2" />
+                      Customer since {customer.joinDate}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Key Metrics */}
+            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Relationship Value</p>
+                      <p className="text-xl font-bold text-gray-900">{customer.totalRelationship}</p>
+                      <Badge className="bg-green-100 text-green-800 mt-1">{customer.relationshipValue}</Badge>
+                    </div>
+                    <TrendingUp size={24} className="text-teal-600" />
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Key Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">Relationship Value</p>
-                        <p className="text-xl font-bold text-gray-900">{customer.totalRelationship}</p>
-                        <Badge className="bg-green-100 text-green-800 mt-1">{customer.relationshipValue}</Badge>
-                      </div>
-                      <TrendingUp size={24} className="text-teal-600" />
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Risk Score</p>
+                      <p className="text-xl font-bold text-gray-900">{customer.riskScore}</p>
+                      <p className="text-xs text-gray-500 mt-1">Last updated: 3 days ago</p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <Heart size={24} className="text-green-600" />
+                  </div>
+                </CardContent>
+              </Card>
 
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">Risk Score</p>
-                        <p className="text-xl font-bold text-gray-900">{customer.riskScore}</p>
-                        <p className="text-xs text-gray-500 mt-1">Last updated: 3 days ago</p>
-                      </div>
-                      <Heart size={24} className="text-green-600" />
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Last Interaction</p>
+                      <p className="text-xl font-bold text-gray-900">{customer.lastInteraction}</p>
+                      <p className="text-xs text-gray-500 mt-1">Recent activity</p>
                     </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">Last Interaction</p>
-                        <p className="text-xl font-bold text-gray-900">{customer.lastInteraction}</p>
-                        <p className="text-xs text-gray-500 mt-1">Recent activity</p>
-                      </div>
-                      <Calendar size={24} className="text-orange-600" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    <Calendar size={24} className="text-orange-600" />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* Detailed Information Tabs */}
-      {customer && (
-        <Card>
-          <CardContent className="p-6">
-            <Tabs defaultValue="products" className="w-full">
-              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
-                <TabsTrigger value="products">Products</TabsTrigger>
-                <TabsTrigger value="family">Family Group</TabsTrigger>
-                <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
-                <TabsTrigger value="offers">Offers</TabsTrigger>
-                <TabsTrigger value="client-details">Client Details</TabsTrigger>
-                {isNehaAccount && <TabsTrigger value="cross-sell">AI Cross-Sell</TabsTrigger>}
-                {isNehaAccount && <TabsTrigger value="goals">Goal Planning</TabsTrigger>}
-              </TabsList>
+          {/* Detailed Information Tabs */}
+          <Card>
+            <CardContent className="p-6">
+              <Tabs defaultValue="products" className="w-full">
+                <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
+                  <TabsTrigger value="products">Products</TabsTrigger>
+                  <TabsTrigger value="family">Family Group</TabsTrigger>
+                  <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
+                  <TabsTrigger value="offers">Offers</TabsTrigger>
+                  <TabsTrigger value="client-details">Client Details</TabsTrigger>
+                  {isNehaAccount && <TabsTrigger value="cross-sell">AI Cross-Sell</TabsTrigger>}
+                  {isNehaAccount && <TabsTrigger value="goals">Goal Planning</TabsTrigger>}
+                </TabsList>
 
-              <TabsContent value="products" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Holdings</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {customer.products.map((product, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center">
-                            <CreditCard size={16} className="mr-2 text-teal-600" />
-                            <h4 className="font-medium text-gray-900">{product.type}</h4>
+                <TabsContent value="products" className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Holdings</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {customer.products.map((product, index) => (
+                      <Card key={index} className="border border-gray-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <CreditCard size={16} className="mr-2 text-teal-600" />
+                              <h4 className="font-medium text-gray-900">{product.type}</h4>
+                            </div>
+                            <Badge className={getStatusColor(product.status || 'Active')}>
+                              {product.status || 'Active'}
+                            </Badge>
                           </div>
-                          <Badge className={getStatusColor(product.status || 'Active')}>
-                            {product.status || 'Active'}
-                          </Badge>
-                        </div>
-                        <div className="space-y-1 text-sm text-gray-600">
-                          {product.balance && <p>Balance: <span className="font-medium">{product.balance}</span></p>}
-                          {product.amount && <p>Amount: <span className="font-medium">{product.amount}</span></p>}
-                          {product.outstanding && <p>Outstanding: <span className="font-medium">{product.outstanding}</span></p>}
-                          {product.limit && <p>Limit: <span className="font-medium">{product.limit}</span></p>}
-                          {product.maturity && <p>Maturity: <span className="font-medium">{product.maturity}</span></p>}
-                          {product.emi && <p>EMI: <span className="font-medium">{product.emi}</span></p>}
-                          {product.utilization && <p>Utilization: <span className="font-medium">{product.utilization}</span></p>}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
+                          <div className="space-y-1 text-sm text-gray-600">
+                            {product.balance && <p>Balance: <span className="font-medium">{product.balance}</span></p>}
+                            {product.amount && <p>Amount: <span className="font-medium">{product.amount}</span></p>}
+                            {product.outstanding && <p>Outstanding: <span className="font-medium">{product.outstanding}</span></p>}
+                            {product.limit && <p>Limit: <span className="font-medium">{product.limit}</span></p>}
+                            {product.maturity && <p>Maturity: <span className="font-medium">{product.maturity}</span></p>}
+                            {product.emi && <p>EMI: <span className="font-medium">{product.emi}</span></p>}
+                            {product.utilization && <p>Utilization: <span className="font-medium">{product.utilization}</span></p>}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
 
-              <TabsContent value="family" className="space-y-4">
-                <FamilyGroupTab
-                  family={customer.family}
-                  onAddFamilyMember={handleAddFamilyMember}
-                  onContactMember={handleContactFamilyMember}
-                />
-              </TabsContent>
+                <TabsContent value="family" className="space-y-4">
+                  <FamilyGroupTab
+                    family={customer.family}
+                    onAddFamilyMember={handleAddFamilyMember}
+                    onContactMember={handleContactFamilyMember}
+                  />
+                </TabsContent>
 
-              <TabsContent value="opportunities" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Cross-sell & Up-sell Opportunities</h3>
-                <div className="space-y-3">
-                  {customer.opportunities.map((opportunity, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Target size={20} className="text-teal-600" />
-                            <div>
-                              <h4 className="font-medium text-gray-900">{opportunity.product}</h4>
-                              <p className="text-sm text-gray-600">{opportunity.reason}</p>
-                              <p className="text-sm font-medium text-teal-600 mt-1">Potential: {opportunity.potential}</p>
+                <TabsContent value="opportunities" className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Cross-sell & Up-sell Opportunities</h3>
+                  <div className="space-y-3">
+                    {customer.opportunities.map((opportunity, index) => (
+                      <Card key={index} className="border border-gray-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <Target size={20} className="text-teal-600" />
+                              <div>
+                                <h4 className="font-medium text-gray-900">{opportunity.product}</h4>
+                                <p className="text-sm text-gray-600">{opportunity.reason}</p>
+                                <p className="text-sm font-medium text-teal-600 mt-1">Potential: {opportunity.potential}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <Badge className={getPriorityColor(opportunity.priority)}>
+                                {opportunity.priority}
+                              </Badge>
+                              <Button 
+                                size="sm" 
+                                className="mt-2 ml-2 bg-teal-600 hover:bg-teal-700"
+                                onClick={() => handleCreateOffer(opportunity.product)}
+                              >
+                                Create Offer
+                              </Button>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <Badge className={getPriorityColor(opportunity.priority)}>
-                              {opportunity.priority}
-                            </Badge>
-                            <Button 
-                              size="sm" 
-                              className="mt-2 ml-2 bg-teal-600 hover:bg-teal-700"
-                              onClick={() => handleCreateOffer(opportunity.product)}
-                            >
-                              Create Offer
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
 
-              <TabsContent value="offers" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Offers & Campaigns</h3>
-                <div className="text-center py-8">
-                  <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500">No active offers for this customer</p>
-                  <Button 
-                    className="mt-4 bg-teal-600 hover:bg-teal-700"
-                    onClick={() => handleCreateOffer()}
-                  >
-                    Create New Offer
-                  </Button>
-                </div>
-              </TabsContent>
+                <TabsContent value="offers" className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Offers & Campaigns</h3>
+                  <div className="text-center py-8">
+                    <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">No active offers for this customer</p>
+                    <Button 
+                      className="mt-4 bg-teal-600 hover:bg-teal-700"
+                      onClick={() => handleCreateOffer()}
+                    >
+                      Create New Offer
+                    </Button>
+                  </div>
+                </TabsContent>
 
-              <TabsContent value="client-details" className="space-y-4">
-                <ClientInteractionDetails customerName={customer.name} />
-              </TabsContent>
+                <TabsContent value="client-details" className="space-y-4">
+                  <ClientInteractionDetails customerName={customer.name} />
+                </TabsContent>
 
-              {/* Enhanced tabs only for Neha's account */}
-              {isNehaAccount && (
-                <>
-                  <TabsContent value="cross-sell" className="space-y-4">
-                    <CrossSellSuggestions
-                      customerName={customer.name}
-                      segment={customer.segment}
-                      relationshipValue={customer.relationshipValue}
-                      onCreateOffer={handleCreateOffer}
-                    />
-                  </TabsContent>
+                {/* Enhanced tabs only for Neha's account */}
+                {isNehaAccount && (
+                  <>
+                    <TabsContent value="cross-sell" className="space-y-4">
+                      <CrossSellSuggestions
+                        customerName={customer.name}
+                        segment={customer.segment}
+                        relationshipValue={customer.relationshipValue}
+                        onCreateOffer={handleCreateOffer}
+                      />
+                    </TabsContent>
 
-                  <TabsContent value="goals" className="space-y-4">
-                    <GoalBasedNudges
-                      customerName={customer.name}
-                      onCreatePlan={handleCreateGoalPlan}
-                    />
-                  </TabsContent>
-                </>
-              )}
-            </Tabs>
-          </CardContent>
-        </Card>
+                    <TabsContent value="goals" className="space-y-4">
+                      <GoalBasedNudges
+                        customerName={customer.name}
+                        onCreatePlan={handleCreateGoalPlan}
+                      />
+                    </TabsContent>
+                  </>
+                )}
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Modals */}
