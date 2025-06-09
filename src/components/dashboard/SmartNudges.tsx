@@ -82,7 +82,7 @@ const SmartNudges = () => {
         type: 'route',
         priority: 'Medium',
         actionLabel: 'Plan Route',
-        navigationPath: '/geo-location',
+        navigationPath: '/plan-my-day',
         count: overdueLeads.length + 3
       });
     }
@@ -126,7 +126,7 @@ const SmartNudges = () => {
       case 'route':
         toast({
           title: "Route Planner",
-          description: "Opening geo-location for route planning...",
+          description: "Opening route planning for optimal customer visits...",
         });
         break;
       case 'follow-up':

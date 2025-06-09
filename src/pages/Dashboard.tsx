@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -158,6 +157,9 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Smart Nudges - moved before projections */}
+      <SmartNudges />
+
       {/* Projection Section */}
       <ProjectionSection 
         currentPerformance={{
@@ -166,9 +168,6 @@ const Dashboard = () => {
           monthlyTarget
         }}
       />
-
-      {/* Smart Nudges */}
-      <SmartNudges />
     </div>
   );
 };
