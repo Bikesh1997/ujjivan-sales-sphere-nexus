@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,12 +28,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { allLeads } from '@/data/leadsData';
 import CustomerTable from '@/components/customers/CustomerTable';
 import SetAlertModal from '@/components/alerts/SetAlertModal';
-import CallCustomerModal from '@/components/customers/CallCustomerModal';
+import LeadCallModal from '@/components/leads/LeadCallModal';
 import CreateOfferModal from '@/components/customers/CreateOfferModal';
 import CrossSellSuggestions from '@/components/customers/CrossSellSuggestions';
 import FamilyGroupTab from '@/components/customers/FamilyGroupTab';
 import ClientInteractionDetails from '@/components/customers/ClientInteractionDetails';
 import GoalBasedNudges from '@/components/customers/GoalBasedNudges';
+import LeadsPagination from '@/components/leads/LeadsPagination';
 
 const Customer360 = () => {
   const { user } = useAuth();
@@ -44,6 +46,73 @@ const Customer360 = () => {
   const [callCustomerModalOpen, setCallCustomerModalOpen] = useState(false);
   const [createOfferModalOpen, setCreateOfferModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const leadsPerPage = 5;
+
+  // Generate additional random leads
+  const generateRandomLeads = () => {
+    const companies = [
+      'Tech Innovations', 'Digital Solutions', 'Smart Systems', 'Future Corp', 'DataFlow Inc',
+      'CloudTech Ltd', 'NextGen Software', 'AI Dynamics', 'Cyber Solutions', 'InfoTech Pro',
+      'WebFlow Agency', 'CodeCraft Studios', 'TechPrime Ltd', 'Digital Edge', 'Innovation Hub',
+      'SmartBiz Corp', 'TechVision Inc', 'DataCore Systems', 'CloudFirst Ltd', 'DevTech Solutions',
+      'ByteCode Corp', 'TechMaster Inc', 'Digital World', 'CyberEdge Ltd', 'InfoSys Pro',
+      'WebTech Innovations', 'CodeSphere Inc', 'TechFlow Ltd', 'Digital Craft', 'SmartCode Corp',
+      'TechAdvance Inc', 'DataStream Ltd', 'CloudCore Systems', 'DevFlow Corp', 'ByteStream Inc',
+      'TechNova Ltd', 'Digital Hub', 'CyberFlow Corp', 'InfoFlow Inc', 'WebCore Systems',
+      'CodeFlow Ltd', 'TechSphere Corp', 'Digital Stream', 'SmartFlow Inc', 'TechCore Systems',
+      'DataEdge Ltd', 'CloudStream Corp', 'DevCore Inc', 'ByteFlow Systems', 'TechStream Ltd'
+    ];
+    
+    const contacts = [
+      'Amit Sharma', 'Priya Singh', 'Rohit Kumar', 'Sneha Patel', 'Vikash Gupta',
+      'Neha Agarwal', 'Suresh Reddy', 'Kavita Joshi', 'Manoj Yadav', 'Pooja Verma',
+      'Rajesh Mishra', 'Sunita Devi', 'Arjun Singh', 'Meera Nair', 'Kiran Jain',
+      'Sanjay Tiwari', 'Rekha Sharma', 'Deepak Rao', 'Gita Kumari', 'Ravi Chandra',
+      'Seema Gupta', 'Anil Pandey', 'Shweta Roy', 'Harish Sinha', 'Divya Malhotra',
+      'Yogesh Kapoor', 'Ritu Bansal', 'Nikhil Saxena', 'Swati Chopra', 'Manish Agarwal',
+      'Anita Joshi', 'Sunil Varma', 'Nisha Goel', 'Rahul Khanna', 'Preeti Sood',
+      'Ashok Mittal', 'Sonia Gupta', 'Vivek Sharma', 'Jyoti Rana', 'Gaurav Singh',
+      'Mamta Devi', 'Sachin Tomar', 'Bharti Jain', 'Pankaj Gupta', 'Rashmi Verma',
+      'Dinesh Kumar', 'Asha Rani', 'Puneet Aggarwal', 'Shilpa Sethi', 'Mohit Garg'
+    ];
+
+    const sources = ['Website Forms', 'WhatsApp Business', 'Call Center', 'Social Media', 'Referral'];
+    const statuses = ['new', 'qualified', 'proposal', 'converted'];
+    const priorities = ['High', 'Medium', 'Low'];
+
+    const newLeads = [];
+    for (let i = 0; i < 50; i++) {
+      const leadId = `L${String(allLeads.length + i + 1).padStart(3, '0')}`;
+      const company = companies[Math.floor(Math.random() * companies.length)];
+      const contact = contacts[Math.floor(Math.random() * contacts.length)];
+      const phone = `+91 ${Math.floor(90000 + Math.random() * 10000)} ${Math.floor(10000 + Math.random() * 90000)}`;
+      const email = `${contact.toLowerCase().replace(' ', '.')}@${company.toLowerCase().replace(' ', '')}.com`;
+      const source = sources[Math.floor(Math.random() * sources.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const priority = priorities[Math.floor(Math.random() * priorities.length)];
+      const value = `₹${Math.floor(5 + Math.random() * 45)}L`;
+
+      newLeads.push({
+        id: leadId,
+        name: company,
+        contact: contact,
+        phone: phone,
+        email: email,
+        status: status,
+        source: source,
+        value: value,
+        assignedTo: user?.name || 'Current User',
+        assignedToId: user?.id || 'current',
+        lastContact: `${Math.floor(1 + Math.random() * 10)} days ago`,
+        priority: priority
+      });
+    }
+    return newLeads;
+  };
+
+  // Combine original leads with new random leads
+  const allLeadsWithRandom = [...allLeads, ...generateRandomLeads()];
 
   // Create customer data from leads
   const createCustomerFromLead = (lead: any) => {
@@ -231,7 +300,7 @@ const Customer360 = () => {
   const customerData = { ...staticCustomerData };
   
   // Add customers from leads - ensure all leads are included
-  allLeads.forEach(lead => {
+  allLeadsWithRandom.forEach(lead => {
     const customerKey = lead.contact.toLowerCase().replace(/\s+/g, '-');
     if (!customerData[customerKey]) {
       customerData[customerKey] = createCustomerFromLead(lead);
@@ -242,6 +311,12 @@ const Customer360 = () => {
     key,
     ...data
   }));
+
+  // Pagination logic
+  const totalCustomers = customers.length;
+  const totalPages = Math.ceil(totalCustomers / leadsPerPage);
+  const startIndex = (currentPage - 1) * leadsPerPage;
+  const paginatedCustomers = customers.slice(startIndex, startIndex + leadsPerPage);
 
   const customer = customerData[selectedCustomer];
 
@@ -254,6 +329,22 @@ const Customer360 = () => {
       setSelectedCustomer(urlCustomer);
     }
   }, [urlCustomer]);
+
+  // Convert customer to lead format for the call modal
+  const customerAsLead = customer ? {
+    id: customer.id,
+    name: customer.name,
+    contact: customer.name,
+    phone: customer.phone,
+    email: customer.email,
+    status: 'qualified',
+    source: 'Existing Customer',
+    value: customer.totalRelationship,
+    assignedTo: user?.name || 'Current User',
+    assignedToId: user?.id || 'current',
+    lastContact: customer.lastInteraction,
+    priority: customer.relationshipValue === 'High' ? 'High' : 'Medium'
+  } : null;
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -331,11 +422,30 @@ const Customer360 = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Customer Table */}
         <div className="lg:col-span-1">
-          <CustomerTable 
-            customers={customers}
-            selectedCustomer={selectedCustomer}
-            onCustomerSelect={setSelectedCustomer}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer List</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CustomerTable 
+                customers={paginatedCustomers}
+                selectedCustomer={selectedCustomer}
+                onCustomerSelect={setSelectedCustomer}
+              />
+              
+              {/* Pagination */}
+              <div className="mt-4">
+                <LeadsPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  startIndex={startIndex}
+                  leadsPerPage={leadsPerPage}
+                  totalLeads={totalCustomers}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Customer Details */}
@@ -428,9 +538,8 @@ const Customer360 = () => {
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="products" className="w-full">
-              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-8' : 'grid-cols-6'}`}>
+              <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-7' : 'grid-cols-5'}`}>
                 <TabsTrigger value="products">Products</TabsTrigger>
-                <TabsTrigger value="interactions">Interactions</TabsTrigger>
                 <TabsTrigger value="family">Family Group</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
@@ -462,35 +571,6 @@ const Customer360 = () => {
                           {product.maturity && <p>Maturity: <span className="font-medium">{product.maturity}</span></p>}
                           {product.emi && <p>EMI: <span className="font-medium">{product.emi}</span></p>}
                           {product.utilization && <p>Utilization: <span className="font-medium">{product.utilization}</span></p>}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="interactions" className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Interaction History</h3>
-                <div className="space-y-3">
-                  {customer.interactions.map((interaction, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                              {interaction.type === 'Call' && <Phone size={14} className="text-teal-600" />}
-                              {interaction.type === 'Email' && <Mail size={14} className="text-teal-600" />}
-                              {interaction.type === 'Branch Visit' && <MapPin size={14} className="text-teal-600" />}
-                              {interaction.type === 'SMS' && <FileText size={14} className="text-teal-600" />}
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900">{interaction.purpose}</p>
-                              <p className="text-sm text-gray-500">{interaction.date} • {interaction.type}</p>
-                            </div>
-                          </div>
-                          <Badge className={getStatusColor(interaction.outcome)}>
-                            {interaction.outcome}
-                          </Badge>
                         </div>
                       </CardContent>
                     </Card>
@@ -585,24 +665,21 @@ const Customer360 = () => {
 
       {/* Modals */}
       <SetAlertModal
-        customerName={customer.name}
+        customerName={customer?.name || ''}
         isOpen={setAlertModalOpen}
         onOpenChange={setSetAlertModalOpen}
       />
       
-      <CallCustomerModal
-        customer={{
-          name: customer.name,
-          phone: customer.phone,
-          lastInteraction: customer.lastInteraction,
-          relationshipValue: customer.relationshipValue
-        }}
-        isOpen={callCustomerModalOpen}
-        onOpenChange={setCallCustomerModalOpen}
-      />
+      {customerAsLead && (
+        <LeadCallModal
+          lead={customerAsLead}
+          isOpen={callCustomerModalOpen}
+          onOpenChange={setCallCustomerModalOpen}
+        />
+      )}
       
       <CreateOfferModal
-        customerName={customer.name}
+        customerName={customer?.name || ''}
         productSuggestion={selectedOpportunity}
         isOpen={createOfferModalOpen}
         onOpenChange={setCreateOfferModalOpen}
