@@ -76,6 +76,7 @@ const KanbanBoard = () => {
 
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
 
   const columns = [
     { id: 'todo', title: 'To Do', color: 'bg-gray-50' },
@@ -105,6 +106,7 @@ const KanbanBoard = () => {
       id: (tasks.length + 1).toString()
     };
     setTasks(prev => [...prev, newTask]);
+    setAddTaskModalOpen(false);
   };
 
   const handleEditTask = (taskId: string, updatedData: Partial<Task>) => {
@@ -200,6 +202,13 @@ const KanbanBoard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">Enhanced Task Management</h2>
+        <Button 
+          onClick={() => setAddTaskModalOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus size={16} className="mr-2" />
+          Add New Task
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -222,6 +231,13 @@ const KanbanBoard = () => {
           </div>
         ))}
       </div>
+
+      {/* Add Task Modal */}
+      <AddTaskModal 
+        isOpen={addTaskModalOpen}
+        onOpenChange={setAddTaskModalOpen}
+        onAddTask={handleAddTask}
+      />
 
       {editingTask && (
         <EditTaskModal

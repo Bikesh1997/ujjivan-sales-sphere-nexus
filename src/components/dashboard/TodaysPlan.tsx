@@ -8,6 +8,7 @@ import { Calendar, Clock, Phone, MapPin, UserCheck, CheckCircle, Plus, Timer, Be
 import { useToast } from '@/hooks/use-toast';
 import AddTaskForm from './AddTaskForm';
 import TaskTimeTracker from '../tasks/TaskTimeTracker';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Task {
   id: string;
@@ -25,6 +26,7 @@ interface Task {
 }
 
 const TodaysPlan = () => {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: '1',
@@ -86,17 +88,18 @@ const TodaysPlan = () => {
       estimatedDuration: 20,
       reminderSet: true
     },
-    {
+    // Only show Route Planning for non-inbound agents
+    ...(user?.role !== 'inbound_agent' ? [{
       id: '6',
       title: 'Route Planning - Bandra Area',
-      type: 'task',
+      type: 'task' as const,
       time: '9:00 AM',
-      priority: 'Medium',
+      priority: 'Medium' as const,
       completed: true,
       description: 'Plan optimal route for 4 client visits in Bandra area',
       estimatedDuration: 30,
       actualDuration: 35
-    }
+    }] : [])
   ]);
 
   const [isOpen, setIsOpen] = useState(false);

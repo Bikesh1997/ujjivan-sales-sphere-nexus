@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Phone, PhoneOff, Mic, MicOff } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, Calendar } from 'lucide-react';
 
 interface CallInProgressModalProps {
   isOpen: boolean;
@@ -51,9 +51,26 @@ const CallInProgressModal = ({ isOpen, onOpenChange, prospectName, businessName,
     console.log(`Microphone ${!isMuted ? 'muted' : 'unmuted'}`);
   };
 
+  const handlePendingFollowUp = () => {
+    console.log('Pending follow-up calls button clicked');
+    // Add functionality for pending follow-up calls
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px] p-0 bg-white">
+        {/* Pending Follow-up Calls Button */}
+        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
+          <Button 
+            onClick={handlePendingFollowUp}
+            className="text-white px-4 py-2 rounded-lg font-medium shadow-lg"
+            style={{ backgroundColor: '#056262' }}
+          >
+            <Calendar size={16} className="mr-2" />
+            Pending follow-up calls
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="bg-[#056262] text-white p-4 rounded-t-lg">
           <DialogHeader>
