@@ -43,10 +43,10 @@ const SalesFunnel = () => {
   const isDragDropEnabled = user?.name === 'Vikram Singh' || user?.name === 'Rahul Sharma' || user?.name === 'Neha Gupta';
 
   const funnelData = [
-    { stage: 'Leads', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
-    { stage: 'Logging', count: userLeads.filter(l => l.status === 'qualified').length, value: '₹38L', conversion: 71 },
-    { stage: 'Approved Mentioned', count: userLeads.filter(l => l.status === 'proposal').length, value: '₹28L', conversion: 38 },
-    { stage: 'Approved Disbursed/Account Open', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
+    { stage: 'New', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
+    { stage: 'Qualified', count: userLeads.filter(l => l.status === 'qualified').length, value: '₹38L', conversion: 71 },
+    { stage: 'Proposal', count: userLeads.filter(l => l.status === 'proposal').length, value: '₹28L', conversion: 38 },
+    { stage: 'Under Process', count: userLeads.filter(l => l.status === 'converted').length, value: '₹18L', conversion: 21 },
   ];
 
   // Extended real names and business names for 40+ prospects
@@ -142,13 +142,24 @@ const SalesFunnel = () => {
     });
   }
 
-  const prospects = extendedProspects;
+  // Filter prospects based on selected stage
+  const filteredProspects = selectedStage === 'all' 
+    ? extendedProspects 
+    : extendedProspects.filter(prospect => {
+        const stageMap: { [key: string]: string } = {
+          'new': 'New',
+          'qualified': 'Qualified',
+          'proposal': 'Proposal',
+          'under_process': 'Under Process'
+        };
+        return prospect.stage === stageMap[selectedStage];
+      });
 
   // Pagination calculations
-  const totalProspects = prospects.length;
+  const totalProspects = filteredProspects.length;
   const totalPages = Math.ceil(totalProspects / prospectsPerPage);
   const startIndex = (currentPage - 1) * prospectsPerPage;
-  const paginatedProspects = prospects.slice(startIndex, startIndex + prospectsPerPage);
+  const paginatedProspects = filteredProspects.slice(startIndex, startIndex + prospectsPerPage);
 
   const handleEditLead = (leadId: string, updatedData: Partial<typeof allLeads[0]>) => {
     setLeadsData(prevLeads => 
@@ -187,10 +198,10 @@ const SalesFunnel = () => {
 
   const getStageColor = (stage: string) => {
     switch (stage) {
-      case 'Leads': return 'bg-gray-100 text-gray-800';
-      case 'Logging': return 'bg-blue-100 text-blue-800';
-      case 'Approved Mentioned': return 'bg-yellow-100 text-yellow-800';
-      case 'Approved Disbursed/Account Open': return 'bg-green-100 text-green-800';
+      case 'New': return 'bg-gray-100 text-gray-800';
+      case 'Qualified': return 'bg-blue-100 text-blue-800';
+      case 'Proposal': return 'bg-yellow-100 text-yellow-800';
+      case 'Under Process': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -207,7 +218,6 @@ const SalesFunnel = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Sales Pipeline</h1>
-          <p className="text-gray-600">Track your sales pipeline and manage tasks efficiently</p>
         </div>
       </div>
 
