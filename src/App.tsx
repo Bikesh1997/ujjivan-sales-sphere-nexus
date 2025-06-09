@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +15,7 @@ import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
 import Tasks from "./pages/Tasks";
 import TaskManagement from "./pages/tasks/TaskManagement";
-import GeoLocation from "./pages/GeoLocation";
+import PlanMyDay from "./pages/PlanMyDay";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import CustomerAnalytics from "./pages/CustomerAnalytics";
 import PortfolioManagement from "./pages/PortfolioManagement";
@@ -107,9 +108,9 @@ const App = () => (
                           <Customer360 />
                         </RoleBasedRoute>
                       } />
-                      <Route path="/geo-location" element={
-                        <RoleBasedRoute featureId="geo_location">
-                          <GeoLocation />
+                      <Route path="/plan-my-day" element={
+                        <RoleBasedRoute featureId="plan_my_day">
+                          <PlanMyDay />
                         </RoleBasedRoute>
                       } />
                       

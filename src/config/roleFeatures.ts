@@ -1,3 +1,4 @@
+
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -43,12 +44,12 @@ export const FEATURES: Feature[] = [
     description: 'Customer relationship management'
   },
   {
-    id: 'geo_location',
-    name: 'Geo Tracking',
-    path: '/geo-location',
+    id: 'plan_my_day',
+    name: 'Plan My Day',
+    path: '/plan-my-day',
     icon: 'MapPin',
-    roles: ['sales_executive', 'relationship_manager', 'supervisor'],
-    description: 'Location tracking, beat planning, and team monitoring'
+    roles: ['sales_executive', 'relationship_manager'],
+    description: 'Route planning and daily visit optimization'
   },
   {
     id: 'sales_funnel',
