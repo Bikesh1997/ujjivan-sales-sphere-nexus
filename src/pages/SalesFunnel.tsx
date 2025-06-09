@@ -5,19 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Users, 
   Search,
   Eye,
   Edit,
   ArrowRight,
-  Kanban,
   Phone
 } from 'lucide-react';
-import KanbanBoard from '@/components/tasks/KanbanBoard';
-import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
-import AddTaskModal from '@/components/tasks/AddTaskModal';
 import LeadActionsMenu from '@/components/leads/LeadActionsMenu';
 import CallInProgressModal from '@/components/leads/CallInProgressModal';
 import LeadViewModal from '@/components/leads/LeadViewModal';
@@ -38,9 +33,6 @@ const SalesFunnel = () => {
 
   // Filter leads based on user role
   const userLeads = user?.role === 'supervisor' ? leadsData : leadsData.filter(lead => lead.assignedToId === user?.id);
-
-  // Check if current user has drag and drop enabled (Vikram Singh, Rahul Sharma, Neha Gupta)
-  const isDragDropEnabled = user?.name === 'Vikram Singh' || user?.name === 'Rahul Sharma' || user?.name === 'Neha Gupta';
 
   const funnelData = [
     { stage: 'New', count: userLeads.filter(l => l.status === 'new').length, value: '₹48L', conversion: 100 },
@@ -221,171 +213,143 @@ const SalesFunnel = () => {
         </div>
       </div>
 
-      {/* Tabs for different views */}
-      <Tabs defaultValue="pipeline" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pipeline" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Sales Pipeline
-          </TabsTrigger>
-          <TabsTrigger value="tasks" className="flex items-center gap-2">
-            <Kanban className="h-4 w-4" />
-            Task Board
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="pipeline" className="space-y-6">
-          {/* Pipeline Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {funnelData.map((stage, index) => (
-              <Card key={stage.stage} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-gray-700">{stage.stage}</h3>
-                    <Badge variant="secondary" className="text-xs">
-                      {stage.conversion}%
-                    </Badge>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{stage.count}</div>
-                  <div className="text-sm text-teal-600 font-medium">{stage.value}</div>
-                  {index < funnelData.length - 1 && (
-                    <div className="flex justify-center mt-3">
-                      <ArrowRight size={16} className="text-gray-400" />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Prospects Table */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Active Prospects ({totalProspects} total)</CardTitle>
-                <div className="flex space-x-2">
-                  <div className="relative">
-                    <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                      placeholder="Search prospects..."
-                      className="pl-10 w-64"
-                    />
-                  </div>
-                  <Select value={selectedStage} onValueChange={setSelectedStage}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Stages</SelectItem>
-                      <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="qualified">Qualified</SelectItem>
-                      <SelectItem value="proposal">Proposal</SelectItem>
-                      <SelectItem value="under_process">Under Process</SelectItem>
-                    </SelectContent>
-                  </Select>
+      {/* Pipeline Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {funnelData.map((stage, index) => (
+          <Card key={stage.stage} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium text-gray-700">{stage.stage}</h3>
+                <Badge variant="secondary" className="text-xs">
+                  {stage.conversion}%
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold text-gray-900 mb-1">{stage.count}</div>
+              <div className="text-sm text-teal-600 font-medium">{stage.value}</div>
+              {index < funnelData.length - 1 && (
+                <div className="flex justify-center mt-3">
+                  <ArrowRight size={16} className="text-gray-400" />
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Prospect</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Stage</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Probability</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Last Contact</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Next Action</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedProspects.map((prospect, index) => (
-                      <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4">
-                          <div>
-                            <div className="font-medium text-gray-900">{prospect.name}</div>
-                            <div className="text-sm text-gray-500">{prospect.company}</div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Select 
-                            value={prospect.stage} 
-                            onValueChange={(value) => handleStageChange(prospect.leadData.id, value)}
-                          >
-                            <SelectTrigger className="w-40">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="New">New</SelectItem>
-                              <SelectItem value="Qualified">Qualified</SelectItem>
-                              <SelectItem value="Proposal">Proposal</SelectItem>
-                              <SelectItem value="Under Process">Under Process</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="py-3 px-4 font-medium text-gray-900">{prospect.value}</td>
-                        <td className="py-3 px-4">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getProbabilityColor(prospect.probability)}`}>
-                            {prospect.probability}%
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
-                        <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex space-x-1">
-                            <Button 
-                              size="sm" 
-                              variant="ghost"
-                              onClick={() => handleViewProspect(prospect)}
-                            >
-                              <Eye size={14} />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="default" 
-                              onClick={() => handleCall(prospect)}
-                              className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
-                            >
-                              <Phone size={14} className="mr-1" />
-                              Call
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              
-              {/* Pagination */}
-              <div className="mt-4">
-                <LeadsPagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  startIndex={startIndex}
-                  leadsPerPage={prospectsPerPage}
-                  totalLeads={totalProspects}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
+              )}
             </CardContent>
           </Card>
-        </TabsContent>
+        ))}
+      </div>
 
-        <TabsContent value="tasks">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Task Management</h2>
-              <AddTaskModal onAddTask={(task) => {
-                console.log('New task added:', task);
-              }} />
+      {/* Prospects Table */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Active Prospects ({totalProspects} total)</CardTitle>
+            <div className="flex space-x-2">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
+                  placeholder="Search prospects..."
+                  className="pl-10 w-64"
+                />
+              </div>
+              <Select value={selectedStage} onValueChange={setSelectedStage}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Stages</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="qualified">Qualified</SelectItem>
+                  <SelectItem value="proposal">Proposal</SelectItem>
+                  <SelectItem value="under_process">Under Process</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            {isDragDropEnabled ? <DragDropKanbanBoard /> : <KanbanBoard />}
           </div>
-        </TabsContent>
-      </Tabs>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Prospect</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Stage</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Value</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Probability</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Last Contact</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Next Action</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedProspects.map((prospect, index) => (
+                  <tr key={prospect.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      <div>
+                        <div className="font-medium text-gray-900">{prospect.name}</div>
+                        <div className="text-sm text-gray-500">{prospect.company}</div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Select 
+                        value={prospect.stage} 
+                        onValueChange={(value) => handleStageChange(prospect.leadData.id, value)}
+                      >
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="New">New</SelectItem>
+                          <SelectItem value="Qualified">Qualified</SelectItem>
+                          <SelectItem value="Proposal">Proposal</SelectItem>
+                          <SelectItem value="Under Process">Under Process</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="py-3 px-4 font-medium text-gray-900">{prospect.value}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getProbabilityColor(prospect.probability)}`}>
+                        {prospect.probability}%
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-600">{prospect.lastContact}</td>
+                    <td className="py-3 px-4 text-sm text-gray-900">{prospect.nextAction}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex space-x-1">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleViewProspect(prospect)}
+                        >
+                          <Eye size={14} />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="default" 
+                          onClick={() => handleCall(prospect)}
+                          className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                        >
+                          <Phone size={14} className="mr-1" />
+                          Call
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Pagination */}
+          <div className="mt-4">
+            <LeadsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              startIndex={startIndex}
+              leadsPerPage={prospectsPerPage}
+              totalLeads={totalProspects}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Call In Progress Modal */}
       {selectedProspect && (

@@ -67,8 +67,8 @@ const TodaysPlan = () => {
     }
   };
 
-  // Check if user should see Smart Beat Plan Route - hide for Inbound Contact Center Agents
-  const shouldShowBeatPlan = user?.role !== 'inbound_agent' || user?.name !== 'Vikram Singh';
+  // Check if user should see Smart Beat Plan Route - hide for Inbound Contact Center Agents and Vikram Singh
+  const shouldShowBeatPlan = user?.role !== 'inbound_agent' && user?.name !== 'Vikram Singh';
 
   return (
     <div className="space-y-6">
@@ -192,7 +192,7 @@ const TodaysPlan = () => {
           </CardContent>
         </Card>
 
-        {/* Smart Beat Plan Route - Only show for non-Inbound Contact Center Agents */}
+        {/* Smart Beat Plan Route - Only show for non-Inbound Contact Center Agents and non-Vikram Singh */}
         {shouldShowBeatPlan && (
           <Card>
             <CardHeader>
