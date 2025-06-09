@@ -4,60 +4,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LeadStatsCards from '@/components/leads/LeadStatsCards';
 import LeadFilters from '@/components/leads/LeadFilters';
 import LeadsTable from '@/components/leads/LeadsTable';
+import LeadsPagination from '@/components/leads/LeadsPagination';
 import AddLeadModal from '@/components/leads/AddLeadModal';
 import { useLeadFilters } from '@/hooks/useLeadFilters';
 import KRAPerformanceSection from '@/components/leads/KRAPerformanceSection';
 import { useAuth } from '@/contexts/AuthContext';
-
-// Sample leads data
-const sampleLeads = [
-  {
-    id: 'L001',
-    name: 'TechCorp Solutions',
-    contact: 'John Smith',
-    phone: '+91 98765 43210',
-    email: 'john@techcorp.com',
-    status: 'qualified',
-    source: 'Website Forms',
-    value: '₹15L',
-    assignedTo: 'Ravi Kumar',
-    assignedToId: 'user1',
-    lastContact: '2 days ago',
-    priority: 'High'
-  },
-  {
-    id: 'L002',
-    name: 'Global Enterprises',
-    contact: 'Sarah Johnson',
-    phone: '+91 98765 43211',
-    email: 'sarah@global.com',
-    status: 'new',
-    source: 'WhatsApp Business',
-    value: '₹8L',
-    assignedTo: 'Priya Sharma',
-    assignedToId: 'user2',
-    lastContact: '1 day ago',
-    priority: 'Medium'
-  },
-  {
-    id: 'L003',
-    name: 'Innovation Inc',
-    contact: 'Mike Wilson',
-    phone: '+91 98765 43212',
-    email: 'mike@innovation.com',
-    status: 'converted',
-    source: 'Call Center',
-    value: '₹25L',
-    assignedTo: 'Anita Patel',
-    assignedToId: 'user3',
-    lastContact: '5 days ago',
-    priority: 'High'
-  }
-];
+import { allLeads } from '@/data/leadsData';
 
 const LeadManagement = () => {
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
-  const [leads, setLeads] = useState(sampleLeads);
+  const [leads, setLeads] = useState(allLeads);
+  const [currentPage, setCurrentPage] = useState(1);
+  const leadsPerPage = 10;
   const { user } = useAuth();
   
   const {
@@ -69,9 +27,14 @@ const LeadManagement = () => {
     clearAllFilters
   } = useLeadFilters(leads);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredLeads.length / leadsPerPage);
+  const startIndex = (currentPage - 1) * leadsPerPage;
+  const paginatedLeads = filteredLeads.slice(startIndex, startIndex + leadsPerPage);
+
   const handleAddLead = (leadData: any) => {
     const newLead = {
-      id: `L${String(leads.length + 1).padStart(3, '0')}`,
+      id: `LEAD${String(leads.length + 1).padStart(3, '0')}`,
       name: leadData.companyName,
       contact: leadData.contactName,
       phone: leadData.phone,
@@ -105,6 +68,11 @@ const LeadManagement = () => {
     if (newFilters.status !== statusFilter) {
       setStatusFilter(newFilters.status);
     }
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -133,9 +101,18 @@ const LeadManagement = () => {
           />
           
           <LeadsTable 
-            leads={filteredLeads}
+            leads={paginatedLeads}
             userRole={user?.role || 'agent'}
             onEditLead={handleEditLead}
+          />
+
+          <LeadsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            startIndex={startIndex}
+            leadsPerPage={leadsPerPage}
+            totalLeads={filteredLeads.length}
+            onPageChange={handlePageChange}
           />
           
           <AddLeadModal 
