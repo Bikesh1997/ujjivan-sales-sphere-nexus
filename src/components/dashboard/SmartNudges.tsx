@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,7 +67,7 @@ const SmartNudges = () => {
         type: 'cross-sell',
         priority: 'Medium',
         actionLabel: 'View Customers',
-        navigationPath: '/leads',
+        navigationPath: '/customers',
         count: 3,
         value: '₹12L'
       }
@@ -137,7 +138,7 @@ const SmartNudges = () => {
       case 'cross-sell':
         toast({
           title: "Cross-Sell Opportunities",
-          description: "Opening customer list for insurance products...",
+          description: "Opening customer list for cross-sell opportunities...",
         });
         break;
     }
