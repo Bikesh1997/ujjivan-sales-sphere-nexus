@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { 
   Phone, 
   Mail, 
@@ -43,9 +44,16 @@ interface LeadViewModalProps {
 
 const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showAddFollowUp, setShowAddFollowUp] = useState(false);
   const [communicationType, setCommunicationType] = useState('Call');
   const [communicationNotes, setCommunicationNotes] = useState('');
   const [outcome, setOutcome] = useState('Neutral');
+
+  // Follow-up form state
+  const [followUpType, setFollowUpType] = useState('Call');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [followUpDescription, setFollowUpDescription] = useState('');
+  const [followUpPriority, setFollowUpPriority] = useState('Medium');
 
   const [communicationHistory, setCommunicationHistory] = useState([
     {
@@ -210,16 +218,30 @@ Key Benefits to Reinforce:
   };
 
   const handleAddFollowUp = () => {
+    setShowAddFollowUp(true);
+  };
+
+  const handleSaveFollowUp = () => {
+    if (!followUpDescription.trim() || !followUpDate) return;
+
     const newFollowUp = {
       id: Date.now().toString(),
-      type: 'Call',
-      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Tomorrow
-      description: 'New follow-up action',
-      priority: 'Medium',
+      type: followUpType,
+      scheduledDate: followUpDate,
+      description: followUpDescription,
+      priority: followUpPriority,
       status: 'Pending'
     };
 
     setFollowUpActions(prev => [newFollowUp, ...prev]);
+    
+    // Reset form
+    setFollowUpType('Call');
+    setFollowUpDate('');
+    setFollowUpDescription('');
+    setFollowUpPriority('Medium');
+    setShowAddFollowUp(false);
+    
     console.log('Follow-up action added:', newFollowUp);
   };
 
@@ -606,6 +628,82 @@ Key Benefits to Reinforce:
                 >
                   Close
                 </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Add Follow-up Modal */}
+        {showAddFollowUp && (
+          <Dialog open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Follow-up Action</DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <Select value={followUpType} onValueChange={setFollowUpType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Call">Call</SelectItem>
+                      <SelectItem value="Email">Email</SelectItem>
+                      <SelectItem value="Meeting">Meeting</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Scheduled Date</label>
+                  <Input
+                    type="date"
+                    value={followUpDate}
+                    onChange={(e) => setFollowUpDate(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea
+                    placeholder="Enter follow-up description..."
+                    value={followUpDescription}
+                    onChange={(e) => setFollowUpDescription(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Priority</label>
+                  <Select value={followUpPriority} onValueChange={setFollowUpPriority}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex space-x-2">
+                  <Button 
+                    onClick={handleSaveFollowUp}
+                    className="flex-1 bg-[#056262] hover:bg-[#045050]"
+                  >
+                    Save Follow-up
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowAddFollowUp(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
