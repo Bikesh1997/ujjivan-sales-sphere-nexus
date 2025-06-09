@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,10 +62,10 @@ const RuleManagement = () => {
     ];
 
     const teams = [
-      'Sales Executive',
-      'Inbound Contact Center Agent',
+      'Field Reps',
+      'Inbound Sales',
       'Relationship Manager',
-      'Supervisor'
+      'Sales Team'
     ];
 
     const productTypes = [
@@ -174,10 +173,10 @@ const RuleManagement = () => {
   ];
 
   const teams = [
-    'Sales Executive',
-    'Inbound Contact Center Agent',
+    'Field Reps',
+    'Inbound Sales',
     'Relationship Manager',
-    'Supervisor'
+    'Sales Team'
   ];
 
   const meetingTypes = [
