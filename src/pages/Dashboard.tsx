@@ -1,9 +1,8 @@
-
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, 
   Users, 
@@ -22,6 +21,7 @@ import { allLeads } from '@/data/leadsData';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Calculate metrics based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
@@ -35,6 +35,10 @@ const Dashboard = () => {
 
   // Monthly target for salesperson
   const monthlyTarget = 25; // Target number of conversions per month
+
+  const handlePlanRoute = () => {
+    navigate('/plan-my-day');
+  };
 
   return (
     <div className="space-y-6">
