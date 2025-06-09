@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Phone, CheckCircle } from 'lucide-react';
+import { Eye, Phone, Edit } from 'lucide-react';
 import LeadViewModal from './LeadViewModal';
 import CallInProgressModal from './CallInProgressModal';
 import EditLeadModal from './EditLeadModal';
@@ -49,13 +49,9 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
     setCallInProgressOpen(true);
   };
 
-  const handleDisbursed = () => {
-    if (onEditLead) {
-      onEditLead(lead.id, { status: 'disbursed' });
-      toast({
-        title: "Lead Disbursed",
-        description: `${lead.name} has been marked as disbursed.`,
-      });
+  const handleEdit = () => {
+    if (handleEditAttempt()) {
+      setEditModalOpen(true);
     }
   };
 
@@ -81,12 +77,11 @@ const LeadActionsMenu = ({ lead, onEditLead }: LeadActionsMenuProps) => {
         <Button 
           size="sm" 
           variant="default" 
-          onClick={handleDisbursed}
+          onClick={handleEdit}
           className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
-          disabled={lead.status === 'disbursed'}
         >
-          <CheckCircle size={14} className="mr-1" />
-          Disburse
+          <Edit size={14} className="mr-1" />
+          Edit
         </Button>
       </div>
 
