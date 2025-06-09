@@ -38,6 +38,8 @@ const queryClient = new QueryClient({
   },
 });
 
+const basename = import.meta.env.VITE_BASE_PATH || '/';
+
 const DashboardRouter = () => {
   const { user } = useAuth();
   
@@ -73,7 +75,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename={basename}>
             <Routes>
               <Route path="/login" element={<div>Login Page</div>} />
               <Route path="/*" element={
