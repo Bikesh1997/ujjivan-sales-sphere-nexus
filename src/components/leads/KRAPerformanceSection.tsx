@@ -1,10 +1,9 @@
-
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, TrendingDown, Target, IndianRupee, AlertTriangle, Lightbulb } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, AlertTriangle, Lightbulb } from 'lucide-react';
 
 const KRAPerformanceSection = () => {
   // Sample data for different time periods
@@ -79,7 +78,7 @@ const KRAPerformanceSection = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-gray-900">KRA & Performance</h2>
-          <p className="text-sm text-gray-600">Track your performance against targets and earnings</p>
+          <p className="text-sm text-gray-600">Track your performance against targets</p>
         </div>
       </div>
 
@@ -234,51 +233,6 @@ const KRAPerformanceSection = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Earnings Simulator */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IndianRupee className="h-5 w-5 text-green-600" />
-            Earnings Simulator
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Current Month</p>
-              <p className="text-2xl font-bold text-blue-700">₹{earningsData.currentMonthly.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">{currentPerformance.overall}% of target</p>
-            </div>
-            
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Projected</p>
-              <p className="text-2xl font-bold text-green-700">₹{earningsData.projectedMonthly.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">Based on current trend</p>
-            </div>
-            
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Target Potential</p>
-              <p className="text-2xl font-bold text-purple-700">₹{earningsData.targetMonthly.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">100% target achievement</p>
-            </div>
-          </div>
-          
-          <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-yellow-600" />
-              <span className="font-medium text-yellow-800">Earnings Boost Opportunity</span>
-            </div>
-            <p className="text-sm text-yellow-700">
-              Reach {earningsData.bonusThreshold}% performance to unlock bonus tier. 
-              Potential additional earnings: ₹{((earningsData.targetMonthly - earningsData.projectedMonthly) * earningsData.incentiveRate * 10).toLocaleString()}
-            </p>
-            <Button size="sm" className="mt-2" variant="outline">
-              View Action Plan
-            </Button>
           </div>
         </CardContent>
       </Card>
