@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SupportModal from '@/components/support/SupportModal';
 
 interface LayoutProps {
@@ -42,6 +43,8 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState('savings-account');
   const location = useLocation();
   const { user, logout, switchRole } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
@@ -65,6 +68,44 @@ const Layout = ({ children }: LayoutProps) => {
     ...item,
     icon: iconMap[item.icon as keyof typeof iconMap] || Home
   }));
+
+  // Banking products
+  const bankingProducts = [
+    { value: 'savings-account', label: 'Savings Account' },
+    { value: 'current-account', label: 'Current Account' },
+    { value: 'deposits', label: 'Deposits' },
+    { value: 'home-loans', label: 'Home Loans' },
+    { value: 'two-wheeler-loan', label: 'Two Wheeler Loan' },
+    { value: 'msme-loan', label: 'MSME Loan' },
+    { value: 'video-banking', label: 'Video Banking' },
+    { value: 'gold-loan', label: 'Gold Loan' },
+    { value: 'agri-loans', label: 'Agri. Loans' },
+    { value: 'micro-loan', label: 'Micro Loan' },
+    { value: 'insurance', label: 'Insurance' },
+    { value: 'retail-forex', label: 'Retail Forex & Trade' },
+    { value: 'sampoorna-family', label: 'Sampoorna Family Banking' },
+    { value: 'life-event-banking', label: 'Life Event Based Banking Services' }
+  ];
+
+  const regions = [
+    { value: 'all', label: 'All Regions' },
+    { value: 'north', label: 'North' },
+    { value: 'south', label: 'South' },
+    { value: 'east', label: 'East' },
+    { value: 'west', label: 'West' },
+    { value: 'central', label: 'Central' }
+  ];
+
+  // Supervisor functionalities
+  const supervisorFunctionalities = [
+    'Team Dashboard',
+    'Portfolio',
+    'Performance Analytics',
+    'Territory Management',
+    'Reports & Analytics',
+    'Rule Management',
+    'KPA Management'
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -167,6 +208,52 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </div>
       </nav>
+
+      {/* Supervisor Portal Functionalities Bar */}
+      {user?.role === 'supervisor' && (
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-3">
+            <div className="flex flex-wrap gap-2">
+              {supervisorFunctionalities.map((functionality) => (
+                <Button
+                  key={functionality}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  {functionality}
+                </Button>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Select Region" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {regions.map((region) => (
+                    <SelectItem key={region.value} value={region.value}>
+                      {region.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Product" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {bankingProducts.map((product) => (
+                    <SelectItem key={product.value} value={product.value}>
+                      {product.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex">
         {/* Sidebar */}
