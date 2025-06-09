@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -8,7 +9,6 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Star } from 'lucide-react';
 import LeadActionsMenu from './LeadActionsMenu';
 
 interface Lead {
@@ -86,15 +86,12 @@ const LeadsTable = ({ leads, userRole, onEditLead }: LeadsTableProps) => {
       </TableHeader>
       <TableBody>
         {leads.map((lead, index) => (
-          <TableRow key={lead.id} className={index < 3 ? 'bg-yellow-50 border-yellow-200' : ''}>
+          <TableRow key={lead.id}>
             <TableCell>
               <div className="flex items-center gap-2">
                 <div>
-                  <div className="font-medium text-gray-900 flex items-center gap-2">
+                  <div className="font-medium text-gray-900">
                     {lead.name}
-                    {lead.starred && (
-                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                    )}
                   </div>
                   <div className="text-sm text-gray-500">{lead.id}</div>
                 </div>
