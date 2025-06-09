@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
@@ -13,16 +12,8 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details including new roles
+// Enhanced user data with more details including new roles - Removed Rahul's account
 const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'sales@bank.com',
-    name: 'Rahul Sharma',
-    role: 'sales_executive',
-    department: 'field',
-    branch: 'Mumbai Central'
-  },
   {
     id: '2',
     email: 'supervisor@bank.com',
