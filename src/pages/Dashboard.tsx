@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 import { 
   TrendingUp, 
   Users, 
@@ -50,10 +51,12 @@ const Dashboard = () => {
             <Calendar size={16} className="mr-2" />
             Today's Plan
           </Button>
-          <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-            <Phone size={16} className="mr-2" />
-            Start Calling
-          </Button>
+          <Link to="/leads">
+            <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+              <Phone size={16} className="mr-2" />
+              Start Calling
+            </Button>
+          </Link>
         </div>
       </div>
 

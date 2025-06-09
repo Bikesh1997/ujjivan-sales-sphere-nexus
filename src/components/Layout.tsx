@@ -18,7 +18,10 @@ import {
   Activity,
   Target,
   PieChart,
-  Shield
+  Shield,
+  Settings,
+  HelpCircle,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -30,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import SupportModal from '@/components/support/SupportModal';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,6 +41,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
   const location = useLocation();
   const { user, logout, switchRole } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
@@ -130,14 +135,21 @@ const Layout = ({ children }: LayoutProps) => {
                     <ChevronDown size={16} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white z-50">
                   <div className="px-2 py-2">
                     <p className="text-sm font-medium">{user?.name}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings size={16} className="mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSupportModalOpen(true)}>
+                    <HelpCircle size={16} className="mr-2" />
+                    Support & Helpdesk
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
@@ -208,6 +220,12 @@ const Layout = ({ children }: LayoutProps) => {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      {/* Support Modal */}
+      <SupportModal 
+        isOpen={supportModalOpen} 
+        onClose={() => setSupportModalOpen(false)} 
+      />
     </div>
   );
 };
