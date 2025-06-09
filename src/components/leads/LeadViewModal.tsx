@@ -81,7 +81,7 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
     }
   ]);
 
-  const followUpActions = [
+  const [followUpActions, setFollowUpActions] = useState([
     {
       id: '1',
       type: 'Call',
@@ -106,7 +106,7 @@ const LeadViewModal = ({ lead, isOpen, onOpenChange }: LeadViewModalProps) => {
       priority: 'Medium',
       status: 'Completed'
     }
-  ];
+  ]);
 
   const guidedScripts = [
     {
@@ -210,8 +210,17 @@ Key Benefits to Reinforce:
   };
 
   const handleAddFollowUp = () => {
-    console.log('Adding new follow-up action');
-    // Here you would typically open a modal or form to add a new follow-up
+    const newFollowUp = {
+      id: Date.now().toString(),
+      type: 'Call',
+      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Tomorrow
+      description: 'New follow-up action',
+      priority: 'Medium',
+      status: 'Pending'
+    };
+
+    setFollowUpActions(prev => [newFollowUp, ...prev]);
+    console.log('Follow-up action added:', newFollowUp);
   };
 
   const handleAnalyzeCall = () => {
