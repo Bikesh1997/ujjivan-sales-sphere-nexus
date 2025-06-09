@@ -68,7 +68,7 @@ const LeadDetail = () => {
     }
   };
 
-  const handleEditLead = (updatedData: any) => {
+  const handleEditLead = (leadId: string, updatedData: any) => {
     setLead({ ...lead, ...updatedData });
   };
 
@@ -211,8 +211,8 @@ const LeadDetail = () => {
       <EditLeadModal
         lead={lead}
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleEditLead}
+        onOpenChange={setIsEditModalOpen}
+        onEditLead={handleEditLead}
       />
     </div>
   );
