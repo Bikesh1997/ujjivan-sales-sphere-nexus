@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -169,9 +168,6 @@ const SupervisorTeamPerformance = ({
               <XAxis 
                 dataKey="name" 
                 label={{ value: 'Product Categories', position: 'insideBottom', offset: -5 }}
-                angle={-45}
-                textAnchor="end"
-                height={80}
               />
               <YAxis 
                 label={{ value: 'Revenue (₹L)', angle: -90, position: 'insideLeft' }}
