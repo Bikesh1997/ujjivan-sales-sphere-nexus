@@ -28,6 +28,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import LeadsPagination from '@/components/leads/LeadsPagination';
 
 interface Rule {
   id: string;
@@ -46,6 +47,8 @@ const RuleManagement = () => {
   const { toast } = useToast();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<Rule | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rulesPerPage = 10;
 
   // Generate 50 random rules
   const generateRandomRules = (): Rule[] => {
@@ -124,6 +127,17 @@ const RuleManagement = () => {
   };
 
   const [rules, setRules] = useState<Rule[]>(generateRandomRules());
+
+  // Calculate pagination
+  const totalRules = rules.length;
+  const totalPages = Math.ceil(totalRules / rulesPerPage);
+  const startIndex = (currentPage - 1) * rulesPerPage;
+  const endIndex = startIndex + rulesPerPage;
+  const currentRules = rules.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const [formData, setFormData] = useState({
     channel: '',
@@ -434,7 +448,7 @@ const RuleManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rules.map((rule) => (
+              {currentRules.map((rule) => (
                 <TableRow key={rule.id}>
                   <TableCell className="font-medium">{rule.channel}</TableCell>
                   <TableCell>{rule.value}</TableCell>
@@ -478,6 +492,17 @@ const RuleManagement = () => {
               ))}
             </TableBody>
           </Table>
+          
+          <div className="mt-6">
+            <LeadsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              startIndex={startIndex}
+              leadsPerPage={rulesPerPage}
+              totalLeads={totalRules}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
