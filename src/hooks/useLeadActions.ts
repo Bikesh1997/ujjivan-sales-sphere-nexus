@@ -30,13 +30,18 @@ export const useLeadActions = (lead: Lead) => {
     window.open(`mailto:${lead.email}?subject=Follow-up for ${lead.name}`);
   };
 
-  const canEdit = user?.role === 'supervisor' || lead.assignedToId === user?.id;
+  // Updated permission logic: Allow supervisors and sales executives to edit leads
+  const canEdit = user?.role === 'supervisor' || 
+                  user?.role === 'sales_executive' || 
+                  user?.role === 'inbound_agent' || 
+                  user?.role === 'relationship_manager' || 
+                  lead.assignedToId === user?.id;
 
   const handleEditAttempt = () => {
     if (!canEdit) {
       toast({
         title: "Access Denied",
-        description: "You can only edit leads assigned to you.",
+        description: "You don't have permission to edit this lead.",
         variant: "destructive",
       });
       return false;
