@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,47 +60,40 @@ const SupervisorTeamPerformance = ({
 
   // Generate performance data based on selected product and region
   const getPerformanceData = () => {
-    // Product-specific categories for x-axis
-    const productCategories = {
-      'savings-account': ['New Accounts', 'Account Upgrades', 'Digital Onboarding', 'Branch Visits'],
-      'current-account': ['SME Accounts', 'Corporate Accounts', 'Startup Accounts', 'Freelancer Accounts'],
-      'deposits': ['Fixed Deposits', 'Recurring Deposits', 'Senior Citizen FD', 'Tax Saver FD'],
-      'home-loans': ['First Home', 'Home Extension', 'Plot Purchase', 'Construction Loan'],
-      'two-wheeler-loan': ['New Vehicle', 'Used Vehicle', 'Electric Vehicle', 'Commercial 2W'],
-      'msme-loan': ['Working Capital', 'Term Loan', 'Equipment Finance', 'Cash Credit'],
-      'video-banking': ['Account Opening', 'Loan Processing', 'Investment Advisory', 'Customer Support'],
-      'gold-loan': ['Jewelry Loan', 'Gold Coin Loan', 'Digital Gold', 'Gold Investment'],
-      'agri-loans': ['Crop Loan', 'Equipment Loan', 'Livestock Loan', 'Irrigation Loan'],
-      'micro-loan': ['Personal Loan', 'Business Loan', 'Education Loan', 'Medical Loan'],
-      'insurance': ['Life Insurance', 'Health Insurance', 'Vehicle Insurance', 'Property Insurance'],
-      'retail-forex': ['Travel Card', 'Forex Exchange', 'Trade Finance', 'Remittances'],
-      'sampoorna-family': ['Family Savings', 'Child Education', 'Retirement Planning', 'Emergency Fund'],
-      'life-event-banking': ['Marriage Finance', 'Education Loan', 'Home Purchase', 'Retirement Planning']
-    };
+    const baseData = teamMembers.map(member => ({
+      name: member.name.split(' ')[0],
+      target: member.target,
+      achieved: member.revenue,
+      conversion: Math.round((member.revenue / member.target) * 100)
+    }));
 
-    const categories = productCategories[selectedProduct] || ['Category 1', 'Category 2', 'Category 3', 'Category 4'];
-    
-    // Generate realistic data for each category
-    return categories.map((category, index) => {
-      const baseTarget = 50 + (index * 15);
-      const baseAchieved = baseTarget * (0.7 + Math.random() * 0.4);
-      
-      // Adjust based on region
-      let regionMultiplier = 1;
-      switch (selectedRegion) {
-        case 'north': regionMultiplier = 1.2; break;
-        case 'south': regionMultiplier = 1.1; break;
-        case 'west': regionMultiplier = 1.3; break;
-        case 'east': regionMultiplier = 0.9; break;
-        case 'central': regionMultiplier = 1.0; break;
-        default: regionMultiplier = 1;
+    // Adjust data based on selected product (simulate different performance for different products)
+    return baseData.map(member => {
+      let multiplier = 1;
+      switch (selectedProduct) {
+        case 'home-loans':
+          multiplier = 1.2;
+          break;
+        case 'gold-loan':
+          multiplier = 0.8;
+          break;
+        case 'msme-loan':
+          multiplier = 1.5;
+          break;
+        case 'insurance':
+          multiplier = 0.9;
+          break;
+        case 'micro-loan':
+          multiplier = 1.1;
+          break;
+        default:
+          multiplier = 1;
       }
 
       return {
-        name: category,
-        target: Math.round(baseTarget * regionMultiplier),
-        achieved: Math.round(baseAchieved * regionMultiplier),
-        conversion: Math.round((baseAchieved / baseTarget) * 100)
+        ...member,
+        target: Math.round(member.target * multiplier),
+        achieved: Math.round(member.achieved * multiplier)
       };
     });
   };
@@ -167,7 +161,7 @@ const SupervisorTeamPerformance = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="name" 
-                label={{ value: 'Product Categories', position: 'insideBottom', offset: -5 }}
+                label={{ value: 'Team Members', position: 'insideBottom', offset: -5 }}
               />
               <YAxis 
                 label={{ value: 'Revenue (₹L)', angle: -90, position: 'insideLeft' }}
