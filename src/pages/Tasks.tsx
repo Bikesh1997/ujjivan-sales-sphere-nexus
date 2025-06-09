@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   MapPin, 
   Clock, 
@@ -20,13 +20,19 @@ import {
   IndianRupee,
   Award,
   Navigation,
-  User
+  User,
+  PhoneCall
 } from 'lucide-react';
 import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
+import CallInProgressModal from '@/components/leads/CallInProgressModal';
 import { useToast } from '@/hooks/use-toast';
 
 const Tasks = () => {
   const { toast } = useToast();
+  
+  const [callPopupOpen, setCallPopupOpen] = useState(false);
+  const [callModalOpen, setCallModalOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
   
   const [todaysTasks, setTodaysTasks] = useState([
     {
@@ -109,7 +115,8 @@ const Tasks = () => {
       value: '₹2,50,000',
       lastContact: '3 days ago',
       riskLevel: 'High',
-      nudge: 'Call this lead now to prevent drop-off'
+      nudge: 'Call this lead now to prevent drop-off',
+      phone: '+91 98765 43210'
     },
     {
       id: '2',
@@ -118,7 +125,8 @@ const Tasks = () => {
       value: '₹1,80,000',
       lastContact: '1 day ago',
       riskLevel: 'Medium',
-      nudge: 'Schedule visit within 24 hours'
+      nudge: 'Schedule visit within 24 hours',
+      phone: '+91 98765 43211'
     },
     {
       id: '3',
@@ -127,7 +135,8 @@ const Tasks = () => {
       value: '₹3,20,000',
       lastContact: '5 days ago',
       riskLevel: 'Critical',
-      nudge: 'Immediate action required - high value lead'
+      nudge: 'Immediate action required - high value lead',
+      phone: '+91 98765 43212'
     }
   ];
 
@@ -196,6 +205,16 @@ const Tasks = () => {
     });
   };
 
+  const handleCallNow = (contact: any) => {
+    setSelectedContact(contact);
+    setCallPopupOpen(true);
+  };
+
+  const handleStartCall = () => {
+    setCallPopupOpen(false);
+    setCallModalOpen(true);
+  };
+
   const getTaskIcon = (type: string) => {
     switch (type) {
       case 'visit': return <MapPin size={16} className="text-blue-600" />;
@@ -234,8 +253,8 @@ const Tasks = () => {
         </div>
       </div>
 
-      {/* Top Row - Today's Tasks and Beat Plan */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Top Row - Today's Tasks only */}
+      <div className="grid grid-cols-1 gap-6">
         {/* Today's Tasks */}
         <Card>
           <CardHeader>
@@ -284,63 +303,11 @@ const Tasks = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* Smart Beat Plan Route */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Route className="mr-2 h-5 w-5" />
-              Smart Beat Plan Route
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center p-2 bg-blue-50 rounded-lg">
-                <Navigation className="mr-2 h-4 w-4 text-blue-600" />
-                <span className="text-sm text-blue-800">Optimized route saves 45 minutes today</span>
-              </div>
-              {beatPlanRoute.map((customer, index) => (
-                <div key={customer.id} className="p-3 border rounded-lg">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="text-xs">#{index + 1}</Badge>
-                        <h4 className="font-medium text-sm">{customer.customerName}</h4>
-                        <Badge className={`text-xs ${getPriorityColor(customer.priority)}`}>
-                          {customer.priority}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">{customer.purpose}</p>
-                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                        <span className="flex items-center">
-                          <Clock size={12} className="mr-1" />
-                          ETA: {customer.eta}
-                        </span>
-                        <span className="flex items-center">
-                          <MapPin size={12} className="mr-1" />
-                          {customer.address}
-                        </span>
-                      </div>
-                    </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleCall(customer.phone, customer.customerName)}
-                    >
-                      <Phone size={12} className="mr-1" />
-                      Call
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Middle Row - Pending Follow-ups and Incentive Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pending Follow-ups */}
+        {/* Pending Follow-ups - removed background colors */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -351,7 +318,7 @@ const Tasks = () => {
           <CardContent>
             <div className="space-y-3">
               {pendingFollowups.map((followup) => (
-                <div key={followup.id} className={`p-3 border rounded-lg ${getRiskColor(followup.riskLevel)}`}>
+                <div key={followup.id} className="p-3 border rounded-lg">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
@@ -370,6 +337,7 @@ const Tasks = () => {
                     <Button 
                       size="sm" 
                       className="bg-orange-600 hover:bg-orange-700"
+                      onClick={() => handleCallNow(followup)}
                     >
                       <Phone size={12} className="mr-1" />
                       Call Now
@@ -481,6 +449,50 @@ const Tasks = () => {
           <DragDropKanbanBoard />
         </CardContent>
       </Card>
+
+      {/* Call Popup Modal */}
+      <Dialog open={callPopupOpen} onOpenChange={setCallPopupOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Initiate Call</DialogTitle>
+          </DialogHeader>
+          {selectedContact && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold">{selectedContact.leadName}</h3>
+                <p className="text-gray-600 font-mono">{selectedContact.phone}</p>
+              </div>
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={handleStartCall}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <PhoneCall size={16} className="mr-2" />
+                  Start Call
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setCallPopupOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Call In Progress Modal */}
+      {selectedContact && (
+        <CallInProgressModal
+          isOpen={callModalOpen}
+          onOpenChange={setCallModalOpen}
+          prospectName={selectedContact.leadName}
+          businessName=""
+          phoneNumber={selectedContact.phone}
+        />
+      )}
     </div>
   );
 };
