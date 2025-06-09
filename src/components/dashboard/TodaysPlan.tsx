@@ -1,161 +1,61 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Calendar, Clock, Phone, MapPin, UserCheck, CheckCircle, Plus, Timer, Bell } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import AddTaskForm from './AddTaskForm';
-import TaskTimeTracker from '../tasks/TaskTimeTracker';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { 
+  Phone, 
+  MapPin, 
+  Calendar, 
+  CheckCircle, 
+  Clock, 
+  Target,
+  Route,
+  PhoneCall,
+  MessageSquare
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface Task {
-  id: string;
-  title: string;
-  type: 'call' | 'visit' | 'meeting' | 'task';
-  time: string;
-  priority: 'High' | 'Medium' | 'Low';
-  completed: boolean;
-  location?: string;
-  contact?: string;
-  description?: string;
-  estimatedDuration?: number; // in minutes
-  actualDuration?: number; // in minutes
-  reminderSet?: boolean;
-}
+import CallInProgressModal from '@/components/leads/CallInProgressModal';
 
 const TodaysPlan = () => {
   const { user } = useAuth();
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: '1',
-      title: 'Follow up with Mrs. Priya Sharma',
-      type: 'call',
-      time: '10:00 AM',
-      priority: 'High',
-      completed: false,
-      contact: '+91 98765 43210',
-      description: 'Discuss FD renewal options and new investment products',
-      estimatedDuration: 30,
-      actualDuration: 25,
-      reminderSet: true
-    },
-    {
-      id: '2',
-      title: 'Visit Rajesh Enterprises',
-      type: 'visit',
-      time: '2:00 PM',
-      priority: 'Medium',
-      completed: false,
-      location: 'Bandra West, Mumbai',
-      description: 'Present business loan proposal and collect documents',
-      estimatedDuration: 90,
-      reminderSet: true
-    },
-    {
-      id: '3',
-      title: 'Submit loan documentation',
-      type: 'task',
-      time: '4:00 PM',
-      priority: 'High',
-      completed: true,
-      description: 'Complete and submit loan files for 3 pending applications',
-      estimatedDuration: 60,
-      actualDuration: 45
-    },
-    {
-      id: '4',
-      title: 'Present insurance products to ABC Ltd',
-      type: 'meeting',
-      time: '5:30 PM',
-      priority: 'Low',
-      completed: false,
-      location: 'Client Office, Andheri',
-      description: 'Group insurance presentation for 200+ employees',
-      estimatedDuration: 120,
-      reminderSet: false
-    },
-    {
-      id: '5',
-      title: 'Call Dr. Rajiv Khanna - Pharma Industries',
-      type: 'call',
-      time: '11:30 AM',
-      priority: 'High',
-      completed: false,
-      contact: '+91 87654 23456',
-      description: 'Follow up on ₹38L business loan proposal',
-      estimatedDuration: 20,
-      reminderSet: true
-    },
-    // Only show Route Planning for non-inbound agents
-    ...(user?.role !== 'inbound_agent' ? [{
-      id: '6',
-      title: 'Route Planning - Bandra Area',
-      type: 'task' as const,
-      time: '9:00 AM',
-      priority: 'Medium' as const,
-      completed: true,
-      description: 'Plan optimal route for 4 client visits in Bandra area',
-      estimatedDuration: 30,
-      actualDuration: 35
-    }] : [])
-  ]);
+  const [callModalOpen, setCallModalOpen] = useState(false);
+  const [callPopupOpen, setCallPopupOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const { toast } = useToast();
+  // Mock data for today's activities
+  const pendingFollowUps = [
+    { id: 1, name: 'Rajesh Kumar', business: 'Tech Solutions Pvt Ltd', phone: '+91 98765 43210', time: '10:30 AM', priority: 'High' },
+    { id: 2, name: 'Priya Sharma', business: 'Digital Marketing Co', phone: '+91 87654 32109', time: '2:15 PM', priority: 'Medium' },
+    { id: 3, name: 'Amit Patel', business: 'Construction Corp', phone: '+91 76543 21098', time: '4:00 PM', priority: 'High' }
+  ];
 
-  const toggleTask = (taskId: string) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
-    
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-      toast({
-        title: task.completed ? "Task Unmarked" : "Task Completed!",
-        description: task.completed ? "Task moved back to pending" : "Great job completing this task!",
-      });
-    }
+  const scheduledMeetings = [
+    { id: 1, client: 'Mumbai Industries', time: '11:00 AM', location: 'Bandra Office', type: 'Site Visit' },
+    { id: 2, client: 'Global Exports', time: '3:30 PM', location: 'Video Call', type: 'Proposal Discussion' }
+  ];
+
+  const todaysTasks = [
+    { id: 1, task: 'Prepare loan documentation for Tech Solutions', deadline: '5:00 PM', status: 'pending' },
+    { id: 2, task: 'Follow up on credit verification', deadline: '6:00 PM', status: 'pending' },
+    { id: 3, task: 'Submit quarterly report', deadline: '7:00 PM', status: 'completed' }
+  ];
+
+  const beatPlanLocations = [
+    { id: 1, area: 'Bandra West', prospects: 5, distance: '2.3 km', priority: 'High' },
+    { id: 2, area: 'Andheri East', prospects: 3, distance: '4.1 km', priority: 'Medium' },
+    { id: 3, area: 'Powai', prospects: 7, distance: '6.8 km', priority: 'High' }
+  ];
+
+  const handleCallNow = (contact: any) => {
+    setSelectedContact(contact);
+    setCallPopupOpen(true);
   };
 
-  const addTask = (newTask: Omit<Task, 'id' | 'completed'>) => {
-    const task: Task = {
-      ...newTask,
-      id: Date.now().toString(),
-      completed: false
-    };
-    
-    setTasks(prev => [...prev, task]);
-    setShowAddForm(false);
-    
-    toast({
-      title: "Task Added!",
-      description: `"${task.title}" has been added to your plan.`,
-    });
-  };
-
-  const toggleReminder = (taskId: string) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, reminderSet: !task.reminderSet } : task
-    ));
-    
-    const task = tasks.find(t => t.id === taskId);
-    toast({
-      title: task?.reminderSet ? "Reminder Removed" : "Reminder Set",
-      description: task?.reminderSet ? "Reminder has been removed" : "You'll be notified 15 minutes before this task",
-    });
-  };
-
-  const getTaskIcon = (type: string) => {
-    switch (type) {
-      case 'call': return <Phone size={16} className="text-green-600" />;
-      case 'visit': return <MapPin size={16} className="text-blue-600" />;
-      case 'meeting': return <UserCheck size={16} className="text-purple-600" />;
-      case 'task': return <CheckCircle size={16} className="text-orange-600" />;
-      default: return <Clock size={16} />;
-    }
+  const handleStartCall = () => {
+    setCallPopupOpen(false);
+    setCallModalOpen(true);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -167,205 +67,216 @@ const TodaysPlan = () => {
     }
   };
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-  };
-
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const totalTasks = tasks.length;
-  const completionRate = Math.round((completedTasks / totalTasks) * 100);
-  const totalEstimatedTime = tasks.reduce((sum, task) => sum + (task.estimatedDuration || 0), 0);
-  const totalActualTime = tasks.reduce((sum, task) => sum + (task.actualDuration || 0), 0);
-
-  // Sort tasks by time for better organization
-  const sortedTasks = [...tasks].sort((a, b) => {
-    const timeA = new Date(`1970-01-01 ${a.time}`).getTime();
-    const timeB = new Date(`1970-01-01 ${b.time}`).getTime();
-    return timeA - timeB;
-  });
+  // Check if user should see Smart Beat Plan Route
+  const shouldShowBeatPlan = user?.role !== 'agent' || user?.name !== 'Vikram Singh';
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Calendar size={16} className="mr-2" />
-          Today's Plan
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Calendar size={20} className="mr-2" />
-              Enhanced Daily Action Plan
-            </div>
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-blue-100 text-blue-800">
-                {completedTasks}/{totalTasks} completed ({completionRate}%)
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pending Follow-ups */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Phone size={18} className="mr-2" />
+              Pending Follow-ups
+              <Badge className="ml-2 bg-red-100 text-red-800">
+                {pendingFollowUps.length}
               </Badge>
-              <Badge className="bg-purple-100 text-purple-800">
-                <Timer size={12} className="mr-1" />
-                {formatDuration(totalEstimatedTime)} planned
-              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {pendingFollowUps.map((contact) => (
+                <div key={contact.id} className="border rounded-lg p-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium">{contact.name}</h4>
+                      <p className="text-sm text-gray-600">{contact.business}</p>
+                      <p className="text-xs text-gray-500">{contact.phone}</p>
+                    </div>
+                    <div className="text-right">
+                      <Badge className={getPriorityColor(contact.priority)}>
+                        {contact.priority}
+                      </Badge>
+                      <p className="text-xs text-gray-500 mt-1">{contact.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      size="sm" 
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleCallNow(contact)}
+                    >
+                      <Phone size={12} className="mr-1" />
+                      Call Now
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      <MessageSquare size={12} className="mr-1" />
+                      Message
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          {/* Enhanced Progress Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-r from-blue-50 to-teal-50">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium text-gray-900">Task Progress</h3>
-                    <p className="text-2xl font-bold text-teal-600">{completionRate}%</p>
+          </CardContent>
+        </Card>
+
+        {/* Scheduled Meetings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calendar size={18} className="mr-2" />
+              Scheduled Meetings
+              <Badge className="ml-2 bg-blue-100 text-blue-800">
+                {scheduledMeetings.length}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {scheduledMeetings.map((meeting) => (
+                <div key={meeting.id} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium">{meeting.client}</h4>
+                      <p className="text-sm text-gray-600">{meeting.type}</p>
+                    </div>
+                    <span className="text-sm font-medium text-blue-700">{meeting.time}</span>
                   </div>
-                  <CheckCircle className="h-8 w-8 text-teal-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium text-gray-900">Time Planned</h3>
-                    <p className="text-2xl font-bold text-purple-600">{formatDuration(totalEstimatedTime)}</p>
+                  <div className="flex items-center text-xs text-gray-600">
+                    <MapPin size={10} className="mr-1" />
+                    {meeting.location}
                   </div>
-                  <Timer className="h-8 w-8 text-purple-600" />
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-            <Card className="bg-gradient-to-r from-green-50 to-emerald-50">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium text-gray-900">Reminders Set</h3>
-                    <p className="text-2xl font-bold text-green-600">{tasks.filter(t => t.reminderSet).length}</p>
-                  </div>
-                  <Bell className="h-8 w-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Add Task Form */}
-          {showAddForm && (
-            <AddTaskForm 
-              onAddTask={addTask}
-              onCancel={() => setShowAddForm(false)}
-            />
-          )}
-
-          {/* Enhanced Tasks List */}
-          <div className="space-y-3">
-            {sortedTasks.map((task) => (
-              <Card 
-                key={task.id} 
-                className={`${task.completed ? 'bg-gray-50 opacity-75' : 'bg-white'} hover:shadow-md transition-shadow`}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      checked={task.completed}
-                      onCheckedChange={() => toggleTask(task.id)}
-                      className="mt-1"
-                    />
+        {/* Today's Tasks */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CheckCircle size={18} className="mr-2" />
+              Today's Tasks
+              <Badge className="ml-2 bg-orange-100 text-orange-800">
+                {todaysTasks.filter(task => task.status === 'pending').length} Pending
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {todaysTasks.map((task) => (
+                <div key={task.id} className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                  <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                            {task.title}
-                          </h4>
-                          {task.description && (
-                            <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                          )}
-                          
-                          <div className="flex items-center space-x-4 mt-2">
-                            <span className="text-sm text-gray-500 flex items-center">
-                              <Clock size={12} className="mr-1" />
-                              {task.time}
-                            </span>
-                            {task.contact && (
-                              <span className="text-sm text-gray-500 flex items-center">
-                                <Phone size={12} className="mr-1" />
-                                {task.contact}
-                              </span>
-                            )}
-                            {task.location && (
-                              <span className="text-sm text-gray-500 flex items-center">
-                                <MapPin size={12} className="mr-1" />
-                                {task.location}
-                              </span>
-                            )}
-                            {task.estimatedDuration && (
-                              <span className="text-sm text-gray-500 flex items-center">
-                                <Timer size={12} className="mr-1" />
-                                Est: {formatDuration(task.estimatedDuration)}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Time tracking info */}
-                          {task.actualDuration && (
-                            <div className="mt-2 text-xs text-gray-500">
-                              Actual time: {formatDuration(task.actualDuration)}
-                              {task.estimatedDuration && (
-                                <span className={task.actualDuration > task.estimatedDuration ? 'text-red-600 ml-2' : 'text-green-600 ml-2'}>
-                                  ({task.actualDuration > task.estimatedDuration ? '+' : ''}{task.actualDuration - task.estimatedDuration}m vs estimate)
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center space-x-2 ml-4">
-                          {getTaskIcon(task.type)}
-                          <Badge className={getPriorityColor(task.priority)}>
-                            {task.priority}
-                          </Badge>
-                          <Button
-                            size="sm"
-                            variant={task.reminderSet ? "default" : "outline"}
-                            onClick={() => toggleReminder(task.id)}
-                            className="h-6 px-2"
-                          >
-                            <Bell size={12} className={task.reminderSet ? "text-white" : "text-gray-500"} />
-                          </Button>
-                        </div>
+                      <h4 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                        {task.task}
+                      </h4>
+                      <div className="flex items-center text-xs text-gray-600 mt-1">
+                        <Clock size={10} className="mr-1" />
+                        Due: {task.deadline}
                       </div>
-
-                      {/* Time Tracker Integration */}
-                      {!task.completed && (
-                        <div className="mt-3 pt-2 border-t">
-                          <TaskTimeTracker taskId={task.id} taskTitle={task.title} />
-                        </div>
+                    </div>
+                    <div className="flex items-center">
+                      {task.status === 'completed' ? (
+                        <CheckCircle size={16} className="text-green-600" />
+                      ) : (
+                        <Clock size={16} className="text-orange-600" />
                       )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Add New Task Button */}
-          {!showAddForm && (
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => setShowAddForm(true)}
-            >
-              <Plus size={16} className="mr-2" />
-              Add New Task
-            </Button>
+        {/* Smart Beat Plan Route - Only show for non-Inbound Contact Center Agents */}
+        {shouldShowBeatPlan && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Route size={18} className="mr-2" />
+                Smart Beat Plan Route
+                <Badge className="ml-2 bg-green-100 text-green-800">
+                  Optimized
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {beatPlanLocations.map((location) => (
+                  <div key={location.id} className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-medium">{location.area}</h4>
+                        <p className="text-sm text-gray-600">{location.prospects} prospects</p>
+                      </div>
+                      <div className="text-right">
+                        <Badge className={getPriorityColor(location.priority)}>
+                          {location.priority}
+                        </Badge>
+                        <p className="text-xs text-gray-500 mt-1">{location.distance}</p>
+                      </div>
+                    </div>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                      <MapPin size={12} className="mr-1" />
+                      Navigate
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Call Popup Modal */}
+      <Dialog open={callPopupOpen} onOpenChange={setCallPopupOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Initiate Call</DialogTitle>
+          </DialogHeader>
+          {selectedContact && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold">{selectedContact.name}</h3>
+                <p className="text-gray-600">{selectedContact.business}</p>
+                <p className="text-gray-600 font-mono">{selectedContact.phone}</p>
+              </div>
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={handleStartCall}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <PhoneCall size={16} className="mr-2" />
+                  Start Call
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setCallPopupOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
           )}
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* Call In Progress Modal */}
+      {selectedContact && (
+        <CallInProgressModal
+          isOpen={callModalOpen}
+          onOpenChange={setCallModalOpen}
+          prospectName={selectedContact.name}
+          businessName={selectedContact.business}
+          phoneNumber={selectedContact.phone}
+        />
+      )}
+    </div>
   );
 };
 

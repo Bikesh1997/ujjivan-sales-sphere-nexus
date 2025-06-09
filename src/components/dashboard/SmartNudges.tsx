@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,13 +51,13 @@ const SmartNudges = () => {
       {
         id: '4',
         title: 'Follow-up Required',
-        description: `${overdueLeads.length} leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
+        description: `3 leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.slice(0, 3).reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
         type: 'follow-up',
         priority: 'High',
         actionLabel: 'View Overdue',
         navigationPath: '/tasks',
-        count: overdueLeads.length,
-        value: `₹${Math.round(overdueLeads.reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`
+        count: 3,
+        value: `₹${Math.round(overdueLeads.slice(0, 3).reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`
       },
       {
         id: '5',
