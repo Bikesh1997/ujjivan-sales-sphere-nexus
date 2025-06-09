@@ -22,7 +22,13 @@ import {
   Heart,
   Target,
   FileText,
-  Bell
+  Bell,
+  Shield,
+  Activity,
+  Clock,
+  DollarSign,
+  PieChart,
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import FamilyGroupTab from './FamilyGroupTab';
@@ -46,10 +52,10 @@ interface Customer {
   joinDate: string;
   lastInteraction: string;
   riskScore: string;
-  products: any[];
-  interactions: any[];
-  family: any[];
-  opportunities: any[];
+  products?: any[];
+  interactions?: any[];
+  family?: any[];
+  opportunities?: any[];
 }
 
 interface CustomerDetailsModalProps {
@@ -187,11 +193,11 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
                 </CardContent>
               </Card>
 
-              {/* Key Metrics */}
+              {/* Enhanced Key Metrics */}
               <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <div>
                         <p className="text-sm text-gray-600">Relationship Value</p>
                         <p className="text-xl font-bold text-gray-900">{customer.totalRelationship}</p>
@@ -199,31 +205,85 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
                       </div>
                       <TrendingUp size={24} className="text-teal-600" />
                     </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">Risk Score</p>
-                        <p className="text-xl font-bold text-gray-900">{customer.riskScore}</p>
-                        <p className="text-xs text-gray-500 mt-1">Last updated: 3 days ago</p>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Portfolio Growth:</span>
+                        <span className="font-medium text-green-600">+12.5%</span>
                       </div>
-                      <Heart size={24} className="text-green-600" />
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Annual Revenue:</span>
+                        <span className="font-medium">₹2.8L</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Lifetime Value:</span>
+                        <span className="font-medium">₹45.2L</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Products Count:</span>
+                        <span className="font-medium">{customer.products?.length || 0}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="text-sm text-gray-600">Risk Score</p>
+                        <p className="text-xl font-bold text-gray-900">{customer.riskScore}</p>
+                        <p className="text-xs text-gray-500 mt-1">Credit Assessment</p>
+                      </div>
+                      <Shield size={24} className="text-green-600" />
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Credit Score:</span>
+                        <span className="font-medium text-green-600">785</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Payment History:</span>
+                        <span className="font-medium text-green-600">Excellent</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Debt-to-Income:</span>
+                        <span className="font-medium">28%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Risk Trend:</span>
+                        <span className="font-medium text-green-600">Improving</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
                       <div>
                         <p className="text-sm text-gray-600">Last Interaction</p>
                         <p className="text-xl font-bold text-gray-900">{customer.lastInteraction}</p>
-                        <p className="text-xs text-gray-500 mt-1">Recent activity</p>
+                        <p className="text-xs text-gray-500 mt-1">Recent Activity</p>
                       </div>
-                      <Calendar size={24} className="text-orange-600" />
+                      <Activity size={24} className="text-orange-600" />
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Channel:</span>
+                        <span className="font-medium">Phone Call</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Purpose:</span>
+                        <span className="font-medium">FD Renewal</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Outcome:</span>
+                        <span className="font-medium text-green-600">Interested</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Next Follow-up:</span>
+                        <span className="font-medium">In 3 days</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -247,7 +307,7 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
                   <TabsContent value="products" className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Holdings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {customer.products.map((product, index) => (
+                      {customer.products?.map((product, index) => (
                         <Card key={index} className="border border-gray-200">
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-2">
@@ -276,7 +336,7 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
 
                   <TabsContent value="family" className="space-y-4">
                     <FamilyGroupTab
-                      family={customer.family}
+                      family={customer.family || []}
                       onAddFamilyMember={handleAddFamilyMember}
                       onContactMember={handleContactFamilyMember}
                     />
@@ -285,7 +345,7 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
                   <TabsContent value="opportunities" className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Cross-sell & Up-sell Opportunities</h3>
                     <div className="space-y-3">
-                      {customer.opportunities.map((opportunity, index) => (
+                      {customer.opportunities?.map((opportunity, index) => (
                         <Card key={index} className="border border-gray-200">
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between">
