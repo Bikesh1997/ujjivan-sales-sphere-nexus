@@ -47,6 +47,13 @@ const DashboardRouter = () => {
     return <SupervisorDashboard />;
   }
   
+  if (user?.role === 'admin') {
+    return <div className="text-center p-8">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <p className="text-gray-600">Welcome to the Administrative Portal</p>
+    </div>;
+  }
+  
   return <Dashboard />;
 };
 
@@ -148,6 +155,38 @@ const App = () => (
                         </RoleBasedRoute>
                       } />
                       
+                      {/* Admin Only Features */}
+                      <Route path="/user-management" element={
+                        <RoleBasedRoute featureId="user_management">
+                          <UserManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/cross-sell-rules" element={
+                        <RoleBasedRoute featureId="cross_sell_rules">
+                          <CrossSellRules />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/offer-management" element={
+                        <RoleBasedRoute featureId="offer_management">
+                          <OfferManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/event-management" element={
+                        <RoleBasedRoute featureId="event_management">
+                          <EventManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/kra-management" element={
+                        <RoleBasedRoute featureId="kra_management_admin">
+                          <KRAManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/geo-hierarchy" element={
+                        <RoleBasedRoute featureId="geo_hierarchy">
+                          <GeoHierarchy />
+                        </RoleBasedRoute>
+                      } />
+                      
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Layout>
@@ -160,5 +199,12 @@ const App = () => (
     </QueryClientProvider>
   </ErrorBoundary>
 );
+
+// Add the required imports for new pages
+import UserManagement from "./pages/UserManagement";
+import CrossSellRules from "./pages/CrossSellRules";
+import OfferManagement from "./pages/OfferManagement";
+import EventManagement from "./pages/EventManagement";
+import GeoHierarchy from "./pages/GeoHierarchy";
 
 export default App;

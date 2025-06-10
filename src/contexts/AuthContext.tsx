@@ -12,8 +12,16 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details including new roles - Removed Rahul's account
+// Enhanced user data with more details including new roles - Added Admin account
 const MOCK_USERS: User[] = [
+  {
+    id: '1',
+    email: 'admin@bank.com',
+    name: 'System Administrator',
+    role: 'admin',
+    branch: 'Head Office',
+    permissions: ['user_management', 'cross_sell_rules', 'offer_management', 'event_management', 'kra_management', 'geo_hierarchy']
+  },
   {
     id: '2',
     email: 'supervisor@bank.com',
@@ -186,3 +194,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthProvider;
