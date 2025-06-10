@@ -1,19 +1,27 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
-  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
+  switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => void;
+  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details including new roles - Removed Rahul's account
+// Enhanced user data with more details including new roles - Added admin account
 const MOCK_USERS: User[] = [
+  {
+    id: '1',
+    email: 'admin@bank.com',
+    name: 'System Administrator',
+    role: 'admin',
+    branch: 'Head Office'
+  },
   {
     id: '2',
     email: 'supervisor@bank.com',
