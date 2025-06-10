@@ -182,7 +182,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Button>
               <div className="flex items-start">
                 <img 
-                  src="/lovable-uploads/a55745b5-41db-412f-a400-41d9f5de5277.png" 
+                  src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
                   alt="Ujjivan Small Finance Bank" 
                   className="h-10 w-auto object-contain"
                 />
