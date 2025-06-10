@@ -54,12 +54,12 @@ const PortfolioManagement = () => {
   ];
 
   const productPortfolio = [
-    { product: 'Personal Loans', outstanding: 998, percentage: 35.1, yield: 19.5, count: 45200 },
-    { product: 'Home Loans', outstanding: 796, percentage: 28.0, yield: 9.2, count: 12800 },
-    { product: 'Business Loans', outstanding: 512, percentage: 18.0, yield: 16.8, count: 28500 },
-    { product: 'Vehicle Loans', outstanding: 312, percentage: 11.0, yield: 13.5, count: 18200 },
-    { product: 'Gold Loans', outstanding: 142, percentage: 5.0, yield: 14.2, count: 15600 },
-    { product: 'Others', outstanding: 87, percentage: 2.9, yield: 15.8, count: 5547 },
+    { product: 'Home Loans', outstanding: 996, percentage: 35.0, yield: 9.2, count: 12800 },
+    { product: 'Two Wheeler Loan', outstanding: 798, percentage: 28.1, yield: 15.8, count: 45200 },
+    { product: 'MSME Loan', outstanding: 512, percentage: 18.0, yield: 16.8, count: 28500 },
+    { product: 'Gold Loan', outstanding: 312, percentage: 11.0, yield: 14.2, count: 18200 },
+    { product: 'Micro Loan', outstanding: 142, percentage: 5.0, yield: 18.5, count: 15600 },
+    { product: 'Agri. Loans', outstanding: 87, percentage: 2.9, yield: 13.8, count: 5547 },
   ];
 
   const portfolioTrends = [
@@ -137,11 +137,11 @@ const PortfolioManagement = () => {
   ];
 
   const productMixData = [
-    { name: 'Personal Loans', value: 35, color: '#14b8a6' },
-    { name: 'Home Loans', value: 28, color: '#3b82f6' },
-    { name: 'Business Loans', value: 18, color: '#f59e0b' },
-    { name: 'Credit Cards', value: 12, color: '#ef4444' },
-    { name: 'Others', value: 7, color: '#8b5cf6' },
+    { name: 'Home Loans', value: 35, color: '#14b8a6' },
+    { name: 'Two Wheeler Loan', value: 28, color: '#3b82f6' },
+    { name: 'MSME Loan', value: 18, color: '#f59e0b' },
+    { name: 'Gold Loan', value: 11, color: '#ef4444' },
+    { name: 'Others', value: 8, color: '#8b5cf6' },
   ];
 
   const riskMetrics = [
