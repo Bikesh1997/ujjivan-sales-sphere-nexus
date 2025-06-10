@@ -25,6 +25,12 @@ import TerritoryManagement from "./pages/TerritoryManagement";
 import Reports from "./pages/Reports";
 import RuleManagement from "./pages/RuleManagement";
 import NotFound from "./pages/NotFound";
+import UserManagement from "./pages/admin/UserManagement";
+import CrossSellingRules from "./pages/admin/CrossSellingRules";
+import OfferManagementRule from "./pages/admin/OfferManagementRule";
+import EventManagement from "./pages/admin/EventManagement";
+import KRAManagement from "./pages/admin/KRAManagement";
+import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
@@ -145,6 +151,38 @@ const App = () => (
                       <Route path="/rule-management" element={
                         <RoleBasedRoute featureId="rule_management">
                           <RuleManagement />
+                        </RoleBasedRoute>
+                      } />
+                      
+                      {/* Admin Only Features */}
+                      <Route path="/user-management" element={
+                        <RoleBasedRoute featureId="user_management">
+                          <UserManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/cross-selling-rules" element={
+                        <RoleBasedRoute featureId="cross_selling_rules">
+                          <CrossSellingRules />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/offer-management-rule" element={
+                        <RoleBasedRoute featureId="offer_management_rule">
+                          <OfferManagementRule />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/event-management" element={
+                        <RoleBasedRoute featureId="event_management">
+                          <EventManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/kra-management" element={
+                        <RoleBasedRoute featureId="kra_management">
+                          <KRAManagement />
+                        </RoleBasedRoute>
+                      } />
+                      <Route path="/geo-hierarchy-management" element={
+                        <RoleBasedRoute featureId="geo_hierarchy_management">
+                          <GeoHierarchyManagement />
                         </RoleBasedRoute>
                       } />
                       
