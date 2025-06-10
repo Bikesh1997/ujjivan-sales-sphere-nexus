@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +26,14 @@ import RuleManagement from "./pages/RuleManagement";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
+
+// Add the required imports for new pages
+import UserManagement from "./pages/UserManagement";
+import CrossSellRules from "./pages/CrossSellRules";
+import OfferManagement from "./pages/OfferManagement";
+import EventManagement from "./pages/EventManagement";
+import GeoHierarchy from "./pages/GeoHierarchy";
+import KRAManagement from "./pages/KRAManagement";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -199,12 +206,5 @@ const App = () => (
     </QueryClientProvider>
   </ErrorBoundary>
 );
-
-// Add the required imports for new pages
-import UserManagement from "./pages/UserManagement";
-import CrossSellRules from "./pages/CrossSellRules";
-import OfferManagement from "./pages/OfferManagement";
-import EventManagement from "./pages/EventManagement";
-import GeoHierarchy from "./pages/GeoHierarchy";
 
 export default App;
