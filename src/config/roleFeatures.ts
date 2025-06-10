@@ -1,4 +1,3 @@
-
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -118,15 +117,7 @@ export const FEATURES: Feature[] = [
     description: 'Key performance area management'
   },
 
-  // Admin Features
-  {
-    id: 'admin_dashboard',
-    name: 'Admin Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['admin'],
-    description: 'System administration dashboard'
-  },
+  // Admin Features - removed admin_dashboard
   {
     id: 'user_management',
     name: 'User Management',
