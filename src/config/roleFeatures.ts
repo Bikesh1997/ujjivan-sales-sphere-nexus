@@ -116,6 +116,64 @@ export const FEATURES: Feature[] = [
     icon: 'Target',
     roles: ['supervisor'],
     description: 'Key performance area management'
+  },
+
+  // Admin Features
+  {
+    id: 'admin_dashboard',
+    name: 'Admin Dashboard',
+    path: '/',
+    icon: 'Home',
+    roles: ['admin'],
+    description: 'System administration dashboard'
+  },
+  {
+    id: 'user_management',
+    name: 'User Management',
+    path: '/user-management',
+    icon: 'Users',
+    roles: ['admin'],
+    description: 'Manage system users and roles'
+  },
+  {
+    id: 'cross_selling_rules',
+    name: 'Cross Selling Rules',
+    path: '/cross-selling-rules',
+    icon: 'Settings',
+    roles: ['admin'],
+    description: 'Configure cross-selling automation rules'
+  },
+  {
+    id: 'offer_management_rule',
+    name: 'Offer Management Rule',
+    path: '/offer-management-rule',
+    icon: 'Tag',
+    roles: ['admin'],
+    description: 'Manage product offers and pricing rules'
+  },
+  {
+    id: 'event_management',
+    name: 'Event Management',
+    path: '/event-management',
+    icon: 'Calendar',
+    roles: ['admin'],
+    description: 'Manage system events and triggers'
+  },
+  {
+    id: 'kra_management',
+    name: 'KRA Management',
+    path: '/kra-management',
+    icon: 'Target',
+    roles: ['admin'],
+    description: 'Configure key result areas'
+  },
+  {
+    id: 'geo_hierarchy_management',
+    name: 'Geo Hierarchy Management',
+    path: '/geo-hierarchy-management',
+    icon: 'MapPin',
+    roles: ['admin'],
+    description: 'Manage geographical hierarchy structure'
   }
 ];
 
@@ -143,7 +201,10 @@ export const getIconName = (iconName: string) => {
     'Activity': 'Activity',
     'Target': 'Target',
     'PieChart': 'PieChart',
-    'Shield': 'Shield'
+    'Shield': 'Shield',
+    'Settings': 'Settings',
+    'Tag': 'Tag',
+    'Calendar': 'Calendar'
   };
   return iconMap[iconName] || 'Home';
 };

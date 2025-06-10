@@ -21,7 +21,9 @@ import {
   Shield,
   Settings,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Tag,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -66,7 +68,10 @@ const Layout = ({ children }: LayoutProps) => {
     Activity: Activity,
     Target: Target,
     PieChart: PieChart,
-    Shield: Shield
+    Shield: Shield,
+    Settings: Settings,
+    Tag: Tag,
+    Calendar: Calendar
   };
 
   const navigationItems = getNavigationItems().map(item => ({
@@ -128,6 +133,7 @@ const Layout = ({ children }: LayoutProps) => {
       case 'supervisor': return 'Supervisor';
       case 'inbound_agent': return 'Inbound Contact Center Agent';
       case 'relationship_manager': return 'Relationship Manager';
+      case 'admin': return 'System Administrator';
       default: return role;
     }
   };
@@ -222,12 +228,16 @@ const Layout = ({ children }: LayoutProps) => {
                     Support & Helpdesk
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
-                  >
-                    Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
+                  {user?.role !== 'admin' && (
+                    <>
+                      <DropdownMenuItem 
+                        onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
+                      >
+                        Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={logout} className="text-red-600">
                     <LogOut size={16} className="mr-2" />
                     Logout
@@ -332,7 +342,8 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="h-full overflow-y-auto pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'supervisor' ? 'Supervisor Portal' : 
+                {user?.role === 'admin' ? 'Admin Portal' :
+                 user?.role === 'supervisor' ? 'Supervisor Portal' : 
                  user?.role === 'inbound_agent' ? 'Inbound Agent Portal' :
                  user?.role === 'relationship_manager' ? 'Relationship Manager Portal' :
                  'Sales Portal'}
