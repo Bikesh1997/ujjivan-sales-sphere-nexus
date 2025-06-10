@@ -1,28 +1,19 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   logout: () => void;
-  switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => void;
-  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => void;
+  switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
+  updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details including new roles and admin user
+// Enhanced user data with more details including new roles - Removed Rahul's account
 const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'admin@bank.com',
-    name: 'System Administrator',
-    role: 'admin',
-    branch: 'Head Office',
-    avatar: undefined
-  },
   {
     id: '2',
     email: 'supervisor@bank.com',
@@ -132,7 +123,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('sessionExpiry');
   }, []);
 
-  const switchRole = React.useCallback((role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
+  const switchRole = React.useCallback((role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
     if (user) {
       const updatedUser = { ...user, role };
       setUser(updatedUser);
@@ -140,8 +131,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [user]);
 
-  const updateUserRole = React.useCallback((userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
-    if (user?.role === 'supervisor' || user?.role === 'admin') {
+  const updateUserRole = React.useCallback((userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
+    if (user?.role === 'supervisor') {
       const targetUser = MOCK_USERS.find(u => u.id === userId);
       if (targetUser) {
         targetUser.role = newRole;

@@ -116,64 +116,6 @@ export const FEATURES: Feature[] = [
     icon: 'Target',
     roles: ['supervisor'],
     description: 'Key performance area management'
-  },
-
-  // Admin Features
-  {
-    id: 'admin_dashboard',
-    name: 'Admin Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['admin'],
-    description: 'System administration dashboard'
-  },
-  {
-    id: 'user_management',
-    name: 'User Management',
-    path: '/user-management',
-    icon: 'Users',
-    roles: ['admin'],
-    description: 'Manage system users and roles'
-  },
-  {
-    id: 'cross_sell_rules',
-    name: 'Cross-Sell Rules',
-    path: '/cross-sell-rules',
-    icon: 'Shield',
-    roles: ['admin'],
-    description: 'Configure cross-selling rules and automation'
-  },
-  {
-    id: 'offer_management',
-    name: 'Offer Management',
-    path: '/offer-management',
-    icon: 'Target',
-    roles: ['admin'],
-    description: 'Manage offers and promotional campaigns'
-  },
-  {
-    id: 'event_management',
-    name: 'Event Management',
-    path: '/event-management',
-    icon: 'Activity',
-    roles: ['admin'],
-    description: 'System event and activity management'
-  },
-  {
-    id: 'kra_management',
-    name: 'KRA Management',
-    path: '/kra-management',
-    icon: 'BarChart3',
-    roles: ['admin'],
-    description: 'Key result area configuration'
-  },
-  {
-    id: 'geo_hierarchy',
-    name: 'Geo Hierarchy',
-    path: '/geo-hierarchy',
-    icon: 'MapPin',
-    roles: ['admin'],
-    description: 'Geographic hierarchy management'
   }
 ];
 
