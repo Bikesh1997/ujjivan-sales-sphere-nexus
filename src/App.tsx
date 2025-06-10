@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "./components/Layout";
+import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
@@ -83,7 +84,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter basename={basename}>
             <Routes>
-              <Route path="/login" element={<div>Login Page</div>} />
+              <Route path="/login" element={<LoginForm />} />
               <Route path="/*" element={
                 <ProtectedRoute>
                   <Layout>
