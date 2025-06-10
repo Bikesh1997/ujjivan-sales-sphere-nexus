@@ -97,17 +97,17 @@ const LoginForm = () => {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-6 sm:space-y-8">
           <div>
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-4 sm:mb-6">
               <img 
                 src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
                 alt="Ujjivan Small Finance Bank" 
-                className="h-16 w-auto object-contain"
+                className="h-12 sm:h-16 w-auto object-contain"
               />
             </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
               Reset Password
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
@@ -116,8 +116,8 @@ const LoginForm = () => {
           </div>
           
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <KeyRound size={20} />
                 Password Reset
               </CardTitle>
@@ -133,6 +133,7 @@ const LoginForm = () => {
                     onChange={(e) => setResetEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
+                    className="mt-1"
                   />
                 </div>
 
@@ -142,7 +143,7 @@ const LoginForm = () => {
                   </Alert>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button 
                     type="submit" 
                     className="flex-1 bg-teal-600 hover:bg-teal-700"
@@ -161,6 +162,7 @@ const LoginForm = () => {
                     type="button" 
                     variant="outline"
                     onClick={() => setShowForgotPassword(false)}
+                    className="sm:w-auto"
                   >
                     Back to Login
                   </Button>
@@ -174,17 +176,17 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div>
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4 sm:mb-6">
             <img 
               src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
               alt="Ujjivan Small Finance Bank" 
-              className="h-16 w-auto object-contain"
+              className="h-12 sm:h-16 w-auto object-contain"
             />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
             Sign in to Banking CRM
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -193,7 +195,7 @@ const LoginForm = () => {
         </div>
         
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle>Login</CardTitle>
           </CardHeader>
           <CardContent>
@@ -208,12 +210,13 @@ const LoginForm = () => {
                   placeholder="Enter your email"
                   required
                   disabled={isLoading}
+                  className="mt-1"
                 />
               </div>
               
               <div>
                 <Label htmlFor="password">Password</Label>
-                <div className="relative">
+                <div className="relative mt-1">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -222,6 +225,7 @@ const LoginForm = () => {
                     placeholder="Enter your password"
                     required
                     disabled={isLoading}
+                    className="pr-10"
                   />
                   <Button
                     type="button"
@@ -267,50 +271,54 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-2 sm:space-y-3">
               <div className="text-center text-sm text-gray-600 mb-3">
                 Demo Accounts:
               </div>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('admin')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Admin Demo
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('sales2')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Sales Executive Demo (Anjali)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('inbound')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Inbound Contact Center Agent Demo (Vikram)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('relationship')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Relationship Manager Demo (Neha)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('supervisor')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Supervisor Demo
-              </Button>
+              
+              <div className="grid grid-cols-1 gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => fillDemoCredentials('admin')}
+                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  disabled={isLoading}
+                >
+                  Admin Demo
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => fillDemoCredentials('sales2')}
+                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  disabled={isLoading}
+                >
+                  Sales Executive Demo (Anjali)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => fillDemoCredentials('inbound')}
+                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  disabled={isLoading}
+                >
+                  Inbound Contact Center Agent Demo (Vikram)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => fillDemoCredentials('relationship')}
+                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  disabled={isLoading}
+                >
+                  Relationship Manager Demo (Neha)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => fillDemoCredentials('supervisor')}
+                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  disabled={isLoading}
+                >
+                  Supervisor Demo
+                </Button>
+              </div>
+              
               <div className="text-center text-xs text-gray-500 mt-2">
                 Password: password123
               </div>

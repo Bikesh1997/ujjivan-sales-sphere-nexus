@@ -169,53 +169,57 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation - Full Width */}
       <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+        <div className="w-full px-2 sm:px-4 lg:px-8">
+          <div className="flex justify-between h-14 sm:h-16">
             <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden mr-2"
+                className="lg:hidden mr-1 sm:mr-2 p-1 sm:p-2"
               >
-                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
               </Button>
               <div className="flex items-start">
                 <img 
                   src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
                   alt="Ujjivan Small Finance Bank" 
-                  className="h-10 w-auto object-contain"
+                  className="h-8 sm:h-10 w-auto object-contain"
                 />
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
+            <div className="flex items-center space-x-1 sm:space-x-4">
+              <div className="text-xs sm:text-sm text-gray-600 hidden sm:block">
                 Branch: {user?.branch}
               </div>
               
               {/* Role Badge */}
-              <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+              <Badge variant="secondary" className="bg-teal-100 text-teal-800 text-xs hidden sm:inline-flex">
                 {getRoleDisplay(user?.role || '')}
                 {user?.department && ` - ${getDepartmentDisplay(user.department)}`}
               </Badge>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-teal-100 text-teal-700">
+                  <Button variant="ghost" className="flex items-center space-x-1 sm:space-x-2 p-1 sm:p-2">
+                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                      <AvatarFallback className="bg-teal-100 text-teal-700 text-xs">
                         {user?.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden md:block">{user?.name}</span>
-                    <ChevronDown size={16} />
+                    <span className="hidden md:block text-sm">{user?.name}</span>
+                    <ChevronDown size={14} className="sm:size-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-white z-50">
                   <div className="px-2 py-2">
                     <p className="text-sm font-medium">{user?.name}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs text-gray-500 sm:hidden">Branch: {user?.branch}</p>
+                    <Badge variant="secondary" className="bg-teal-100 text-teal-800 text-xs mt-1 sm:hidden">
+                      {getRoleDisplay(user?.role || '')}
+                    </Badge>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
@@ -251,14 +255,14 @@ const Layout = ({ children }: LayoutProps) => {
 
       {/* Supervisor Portal Reports & Analytics Filters Bar */}
       {user?.role === 'supervisor' && (
-        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-3">
-            <div className="text-sm font-medium text-gray-700">
+        <div className="bg-white border-b border-gray-200 px-2 sm:px-4 lg:px-8 overflow-x-auto">
+          <div className="flex items-center justify-between py-2 sm:py-3 min-w-fit">
+            <div className="text-xs sm:text-sm font-medium text-gray-700 mr-2">
               Reports & Analytics
             </div>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-1 sm:gap-3 items-center min-w-fit">
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="Period" />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -271,7 +275,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Select>
               
               <Select value={selectedFSO} onValueChange={setSelectedFSO}>
-                <SelectTrigger className="w-[100px]">
+                <SelectTrigger className="w-[80px] sm:w-[100px] h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="FSO" />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -284,7 +288,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Select>
               
               <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="Region" />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -297,7 +301,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Select>
               
               <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="w-[130px]">
+                <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="Product" />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -310,7 +314,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Select>
               
               <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-                <SelectTrigger className="w-[130px]">
+                <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="Campaign" />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -324,7 +328,7 @@ const Layout = ({ children }: LayoutProps) => {
               
               <Button 
                 onClick={handleApplyFilters}
-                className="bg-teal-600 hover:bg-teal-700"
+                className="bg-teal-600 hover:bg-teal-700 h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
                 size="sm"
               >
                 Apply
@@ -339,7 +343,7 @@ const Layout = ({ children }: LayoutProps) => {
         <div className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg border-r border-gray-200 transition-transform duration-300 ease-in-out`}>
-          <div className="h-full overflow-y-auto pt-6">
+          <div className="h-full overflow-y-auto pt-4 sm:pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                 {user?.role === 'admin' ? 'Admin Portal' :
@@ -363,8 +367,8 @@ const Layout = ({ children }: LayoutProps) => {
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
                   >
-                    <Icon size={18} className="mr-3" />
-                    {item.name}
+                    <Icon size={18} className="mr-3 flex-shrink-0" />
+                    <span className="truncate">{item.name}</span>
                   </Link>
                 );
               })}
@@ -373,8 +377,8 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 lg:ml-0">
-          <main className="p-6">
+        <div className="flex-1 lg:ml-0 min-w-0">
+          <main className="p-2 sm:p-4 lg:p-6">
             {children}
           </main>
         </div>
