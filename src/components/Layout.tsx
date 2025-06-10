@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,6 +35,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SupportModal from '@/components/support/SupportModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -50,6 +52,7 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const { user, logout, switchRole } = useAuth();
   const { getNavigationItems } = useRoleFeatures();
+  const { toast } = useToast();
 
   // Icon mapping
   const iconMap = {
@@ -140,12 +143,19 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const handleApplyFilters = () => {
-    console.log('Applying filters:', {
+    const filters = {
       period: selectedPeriod,
       fso: selectedFSO,
       region: selectedRegion,
       product: selectedProduct,
       campaign: selectedCampaign
+    };
+    
+    console.log('Applying filters:', filters);
+    
+    toast({
+      title: "Filters Applied",
+      description: `Reports updated with selected filters: ${periods.find(p => p.value === selectedPeriod)?.label}, ${fsos.find(f => f.value === selectedFSO)?.label}, ${regions.find(r => r.value === selectedRegion)?.label}, ${products.find(p => p.value === selectedProduct)?.label}, ${campaigns.find(c => c.value === selectedCampaign)?.label}`,
     });
   };
 
