@@ -97,17 +97,17 @@ const LoginForm = () => {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-6 sm:space-y-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 px-4">
+        <div className="max-w-sm w-full space-y-4">
           <div>
-            <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="flex justify-center mb-4">
               <img 
                 src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
                 alt="Ujjivan Small Finance Bank" 
-                className="h-12 sm:h-16 w-auto object-contain"
+                className="h-10 md:h-12 w-auto object-contain"
               />
             </div>
-            <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-4 text-center text-xl md:text-2xl font-extrabold text-gray-900">
               Reset Password
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
@@ -117,15 +117,15 @@ const LoginForm = () => {
           
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <KeyRound size={20} />
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <KeyRound size={18} />
                 Password Reset
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div>
-                  <Label htmlFor="resetEmail">Email Address</Label>
+                  <Label htmlFor="resetEmail" className="text-sm">Email Address</Label>
                   <Input
                     id="resetEmail"
                     type="email"
@@ -133,20 +133,20 @@ const LoginForm = () => {
                     onChange={(e) => setResetEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
-                    className="mt-1"
+                    className="mt-1 h-12"
                   />
                 </div>
 
                 {resetMessage && (
                   <Alert>
-                    <AlertDescription>{resetMessage}</AlertDescription>
+                    <AlertDescription className="text-sm">{resetMessage}</AlertDescription>
                   </Alert>
                 )}
 
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col gap-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    className="h-12 bg-teal-600 hover:bg-teal-700"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -162,7 +162,7 @@ const LoginForm = () => {
                     type="button" 
                     variant="outline"
                     onClick={() => setShowForgotPassword(false)}
-                    className="sm:w-auto"
+                    className="h-12"
                   >
                     Back to Login
                   </Button>
@@ -176,17 +176,17 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 px-4">
+      <div className="max-w-sm w-full space-y-4">
         <div>
-          <div className="flex justify-center mb-4 sm:mb-6">
+          <div className="flex justify-center mb-4">
             <img 
               src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
               alt="Ujjivan Small Finance Bank" 
-              className="h-12 sm:h-16 w-auto object-contain"
+              className="h-10 md:h-12 w-auto object-contain"
             />
           </div>
-          <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-4 text-center text-xl md:text-2xl font-extrabold text-gray-900">
             Sign in to Banking CRM
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -196,12 +196,12 @@ const LoginForm = () => {
         
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle>Login</CardTitle>
+            <CardTitle className="text-base md:text-lg">Login</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -210,12 +210,12 @@ const LoginForm = () => {
                   placeholder="Enter your email"
                   required
                   disabled={isLoading}
-                  className="mt-1"
+                  className="mt-1 h-12"
                 />
               </div>
               
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm">Password</Label>
                 <div className="relative mt-1">
                   <Input
                     id="password"
@@ -225,7 +225,7 @@ const LoginForm = () => {
                     placeholder="Enter your password"
                     required
                     disabled={isLoading}
-                    className="pr-10"
+                    className="pr-12 h-12"
                   />
                   <Button
                     type="button"
@@ -242,13 +242,13 @@ const LoginForm = () => {
 
               {error && (
                 <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription className="text-sm">{error}</AlertDescription>
                 </Alert>
               )}
 
               <Button 
                 type="submit" 
-                className="w-full bg-teal-600 hover:bg-teal-700"
+                className="w-full h-12 bg-teal-600 hover:bg-teal-700"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -271,7 +271,7 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            <div className="mt-6 space-y-2 sm:space-y-3">
+            <div className="mt-6 space-y-3">
               <div className="text-center text-sm text-gray-600 mb-3">
                 Demo Accounts:
               </div>
@@ -280,7 +280,7 @@ const LoginForm = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => fillDemoCredentials('admin')}
-                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  className="w-full text-xs h-10"
                   disabled={isLoading}
                 >
                   Admin Demo
@@ -288,7 +288,7 @@ const LoginForm = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => fillDemoCredentials('sales2')}
-                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  className="w-full text-xs h-10"
                   disabled={isLoading}
                 >
                   Sales Executive Demo (Anjali)
@@ -296,15 +296,15 @@ const LoginForm = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => fillDemoCredentials('inbound')}
-                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  className="w-full text-xs h-10"
                   disabled={isLoading}
                 >
-                  Inbound Contact Center Agent Demo (Vikram)
+                  Inbound Agent Demo (Vikram)
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => fillDemoCredentials('relationship')}
-                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  className="w-full text-xs h-10"
                   disabled={isLoading}
                 >
                   Relationship Manager Demo (Neha)
@@ -312,7 +312,7 @@ const LoginForm = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => fillDemoCredentials('supervisor')}
-                  className="w-full text-xs sm:text-sm h-8 sm:h-10"
+                  className="w-full text-xs h-10"
                   disabled={isLoading}
                 >
                   Supervisor Demo
