@@ -1,95 +1,93 @@
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Target, CheckCircle, Route } from 'lucide-react';
-import MobileCustomerCard from '@/components/mobile/MobileCustomerCard';
-import MobileMapView from '@/components/mobile/MobileMapView';
-import MobileStatsCards from '@/components/mobile/MobileStatsCards';
+import { sampleVisits, CustomerVisit } from '@/data/sampleVisitsData';
 import DesktopStatsOverview from '@/components/desktop/DesktopStatsOverview';
 import DesktopRouteMap from '@/components/desktop/DesktopRouteMap';
 import DesktopCustomerVisitsList from '@/components/desktop/DesktopCustomerVisitsList';
-import { CustomerVisit, sampleVisits } from '@/data/sampleVisitsData';
+import MobileStatsCards from '@/components/mobile/MobileStatsCards';
+import MobileMapView from '@/components/mobile/MobileMapView';
+import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 const PlanMyDay = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedVisit, setSelectedVisit] = useState<string | null>(null);
   const [visits, setVisits] = useState<CustomerVisit[]>(sampleVisits);
+  const [selectedVisit, setSelectedVisit] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isMobile, setIsMobile] = useState(false);
 
   // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
+
     return () => clearInterval(timer);
   }, []);
 
-  const handleStatusChange = (visitId: string, newStatus: CustomerVisit['status']) => {
-    setVisits(prev => prev.map(visit => 
-      visit.id === visitId ? { ...visit, status: newStatus } : visit
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Calculate statistics
+  const totalVisits = visits.length;
+  const completedVisits = visits.filter(visit => visit.status === 'completed').length;
+  const totalDistance = visits.reduce((acc, visit) => acc + parseFloat(visit.distance), 0);
+  const estimatedTotalTime = visits.reduce((acc, visit) => acc + visit.estimatedDuration, 0);
+  const progressPercentage = (completedVisits / totalVisits) * 100;
+
+  const handleStatusChange = (visitId: string, status: CustomerVisit['status']) => {
+    setVisits(visits.map(visit => 
+      visit.id === visitId ? { ...visit, status } : visit
     ));
     
     const visit = visits.find(v => v.id === visitId);
-    if (visit) {
-      toast({
-        title: "Visit Status Updated",
-        description: `${visit.name} marked as ${newStatus.replace('_', ' ')}`,
-      });
-    }
+    toast({
+      title: "Visit Status Updated",
+      description: `${visit?.name}'s visit has been marked as ${status.replace('_', ' ')}`,
+    });
   };
 
   const handleCall = (visit: CustomerVisit) => {
     toast({
       title: "Calling Customer",
-      description: `Initiating call to ${visit.name}`,
+      description: `Initiating call to ${visit.name} at ${visit.phone}`,
     });
   };
 
   const handleNavigate = (visit: CustomerVisit) => {
     toast({
       title: "Navigation Started",
-      description: `Navigating to ${visit.name}'s location`,
-    });
-  };
-
-  const handleOptimizeRoute = () => {
-    toast({
-      title: "Route Optimized",
-      description: "Route has been recalculated for maximum efficiency.",
+      description: `Starting navigation to ${visit.name}'s location`,
     });
   };
 
   const handleStartNavigation = () => {
     toast({
-      title: "Navigation Started",
-      description: "Starting navigation to your first destination.",
+      title: "Route Navigation",
+      description: "Starting optimized route navigation for all visits",
     });
   };
 
-  // Calculate stats
-  const completedVisits = visits.filter(v => v.status === 'completed').length;
-  const totalVisits = visits.length;
-  const totalDistance = visits.reduce((sum, visit) => sum + parseFloat(visit.distance), 0);
-  const estimatedTotalTime = visits.reduce((sum, visit) => sum + visit.estimatedDuration, 0);
-  const progressPercentage = (completedVisits / totalVisits) * 100;
+  const handleOptimizeRoute = () => {
+    toast({
+      title: "Route Optimization",
+      description: "AI is optimizing your route for maximum efficiency",
+    });
+  };
 
   if (isMobile) {
     return (
-      <div className="space-y-4 pb-6">
-        {/* Mobile Header */}
-        <div className="sticky top-0 bg-white z-10 pb-2 border-b">
-          <h1 className="text-xl font-bold text-gray-900">Plan My Day</h1>
-          <p className="text-sm text-gray-600">
-            {currentTime.toLocaleDateString()}
-          </p>
-        </div>
-
-        {/* Mobile Stats */}
+      <div className="space-y-4 p-4">
         <MobileStatsCards
           totalVisits={totalVisits}
           completedVisits={completedVisits}
@@ -97,59 +95,53 @@ const PlanMyDay = () => {
           estimatedTime={estimatedTotalTime}
           currentTime={currentTime}
         />
-
-        {/* Mobile Map */}
+        
         <MobileMapView
           visits={visits}
           onOptimizeRoute={handleOptimizeRoute}
           onStartNavigation={handleStartNavigation}
         />
 
-        {/* Mobile Customer List */}
+        {/* Mobile Visits List */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold">Today's Visits</h2>
           {visits.map((visit) => (
-            <MobileCustomerCard
-              key={visit.id}
-              visit={visit}
-              onStatusChange={handleStatusChange}
-              onCall={handleCall}
-              onNavigate={handleNavigate}
-              isSelected={selectedVisit === visit.id}
-              onClick={() => setSelectedVisit(visit.id === selectedVisit ? null : visit.id)}
-            />
+            <Card key={visit.id}>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-medium">{visit.name}</h3>
+                  <span className="text-xs text-gray-500">{visit.eta}</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">{visit.purpose}</p>
+                <p className="text-xs text-gray-500 mb-3">{visit.address}</p>
+                <div className="flex gap-2">
+                  {visit.status === 'pending' && (
+                    <>
+                      <button 
+                        className="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm"
+                        onClick={() => handleStatusChange(visit.id, 'in_progress')}
+                      >
+                        Start
+                      </button>
+                      <button 
+                        className="px-3 py-2 border rounded text-sm"
+                        onClick={() => handleCall(visit)}
+                      >
+                        Call
+                      </button>
+                    </>
+                  )}
+                  {visit.status === 'in_progress' && (
+                    <button 
+                      className="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm"
+                      onClick={() => handleStatusChange(visit.id, 'completed')}
+                    >
+                      Complete
+                    </button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           ))}
-        </div>
-
-        {/* Mobile Quick Actions */}
-        <div className="fixed bottom-4 left-4 right-4 bg-white border rounded-lg shadow-lg p-3">
-          <div className="grid grid-cols-2 gap-2">
-            <Button 
-              className="bg-green-600 hover:bg-green-700"
-              onClick={() => {
-                const pendingVisits = visits.filter(v => v.status === 'pending');
-                if (pendingVisits.length > 0) {
-                  handleStatusChange(pendingVisits[0].id, 'in_progress');
-                } else {
-                  toast({
-                    title: "All Visits Completed",
-                    description: "Great job! You've completed all visits for today.",
-                  });
-                }
-              }}
-            >
-              <Target className="h-4 w-4 mr-2" />
-              Next Visit
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={handleOptimizeRoute}
-            >
-              <Route className="h-4 w-4 mr-2" />
-              Optimize
-            </Button>
-          </div>
         </div>
       </div>
     );
@@ -180,49 +172,6 @@ const PlanMyDay = () => {
           onCall={handleCall}
           onNavigate={handleNavigate}
         />
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex space-x-4">
-        <Button 
-          className="bg-green-600 hover:bg-green-700"
-          onClick={() => {
-            const pendingVisits = visits.filter(v => v.status === 'pending');
-            if (pendingVisits.length > 0) {
-              handleStatusChange(pendingVisits[0].id, 'in_progress');
-            } else {
-              toast({
-                title: "All Visits Completed",
-                description: "Great job! You've completed all visits for today.",
-              });
-            }
-          }}
-        >
-          <Target className="h-4 w-4 mr-2" />
-          Start Next Visit
-        </Button>
-        
-        <Button 
-          variant="outline"
-          onClick={() => {
-            toast({
-              title: "Day Completed",
-              description: "All visits have been marked as completed. Great work!",
-            });
-            setVisits(prev => prev.map(visit => ({ ...visit, status: 'completed' as const })));
-          }}
-        >
-          <CheckCircle className="h-4 w-4 mr-2" />
-          Mark Day Complete
-        </Button>
-        
-        <Button 
-          variant="outline"
-          onClick={handleOptimizeRoute}
-        >
-          <Route className="h-4 w-4 mr-2" />
-          Optimize Route
-        </Button>
       </div>
     </div>
   );
