@@ -1,3 +1,4 @@
+
 // Feature access configuration for different roles
 export interface Feature {
   id: string;
@@ -115,64 +116,6 @@ export const FEATURES: Feature[] = [
     icon: 'Target',
     roles: ['supervisor'],
     description: 'Key performance area management'
-  },
-
-  // Admin Features
-  {
-    id: 'admin_dashboard',
-    name: 'Admin Dashboard',
-    path: '/',
-    icon: 'Home',
-    roles: ['admin'],
-    description: 'Administrative overview and system management'
-  },
-  {
-    id: 'user_management',
-    name: 'User Management',
-    path: '/user-management',
-    icon: 'Users',
-    roles: ['admin'],
-    description: 'Manage users, roles, and permissions'
-  },
-  {
-    id: 'cross_sell_rules',
-    name: 'Cross-Sell Rules',
-    path: '/cross-sell-rules',
-    icon: 'Target',
-    roles: ['admin'],
-    description: 'Configure cross-selling automation rules'
-  },
-  {
-    id: 'offer_management',
-    name: 'Offer Management',
-    path: '/offer-management',
-    icon: 'Shield',
-    roles: ['admin'],
-    description: 'Create and manage customer offers'
-  },
-  {
-    id: 'event_management',
-    name: 'Event Management',
-    path: '/event-management',
-    icon: 'Activity',
-    roles: ['admin'],
-    description: 'Configure automated events and triggers'
-  },
-  {
-    id: 'kra_management_admin',
-    name: 'KRA Management',
-    path: '/kra-management',
-    icon: 'Target',
-    roles: ['admin'],
-    description: 'Define and manage Key Result Areas'
-  },
-  {
-    id: 'geo_hierarchy',
-    name: 'Geo Hierarchy',
-    path: '/geo-hierarchy',
-    icon: 'MapPin',
-    roles: ['admin'],
-    description: 'Manage geographic zones and territories'
   }
 ];
 

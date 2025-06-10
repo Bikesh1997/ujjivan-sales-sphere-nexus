@@ -1,12 +1,12 @@
+
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin';
+  role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager';
   department?: 'inbound' | 'field' | 'branch';
   branch: string;
   avatar?: string;
-  permissions?: string[];
 }
 
 export interface AuthState {
