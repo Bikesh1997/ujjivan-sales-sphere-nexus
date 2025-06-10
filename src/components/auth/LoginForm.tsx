@@ -60,8 +60,9 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const fillDemoCredentials = (userType: 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
+  const fillDemoCredentials = (userType: 'admin' | 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
     const credentials = {
+      admin: { email: 'admin@bank.com', password: 'password123' },
       sales2: { email: 'sales2@bank.com', password: 'password123' },
       supervisor: { email: 'supervisor@bank.com', password: 'password123' },
       inbound: { email: 'inbound@bank.com', password: 'password123' },
@@ -237,6 +238,22 @@ const LoginForm = () => {
               </div>
               <Button 
                 variant="outline" 
+                onClick={() => fillDemoCredentials('admin')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Admin Demo
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => fillDemoCredentials('supervisor')}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Supervisor Demo
+              </Button>
+              <Button 
+                variant="outline" 
                 onClick={() => fillDemoCredentials('sales2')}
                 className="w-full"
                 disabled={isLoading}
@@ -258,14 +275,6 @@ const LoginForm = () => {
                 disabled={isLoading}
               >
                 Relationship Manager Demo (Neha)
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => fillDemoCredentials('supervisor')}
-                className="w-full"
-                disabled={isLoading}
-              >
-                Supervisor Demo
               </Button>
               <div className="text-center text-xs text-gray-500 mt-2">
                 Password: password123
