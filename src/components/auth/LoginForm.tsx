@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -17,23 +17,35 @@ const LoginForm = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
-  const { login, resetPassword } = useAuth();
+  const { login, resetPassword, isAuthenticated, user } = useAuth();
+
+  // Debug logging for authentication state
+  React.useEffect(() => {
+    console.log('LoginForm: Auth state - isAuthenticated:', isAuthenticated, 'user:', user?.email);
+  }, [isAuthenticated, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('LoginForm: Form submitted with email:', email);
     setError('');
     setIsLoading(true);
 
     if (!email || !password) {
+      console.log('LoginForm: Validation failed - missing fields');
       setError('Please fill in all fields');
       setIsLoading(false);
       return;
     }
 
+    console.log('LoginForm: Attempting login...');
     const success = await login({ email, password });
+    console.log('LoginForm: Login result:', success);
     
     if (!success) {
+      console.log('LoginForm: Login failed, showing error');
       setError('Invalid email or password. Please try again.');
+    } else {
+      console.log('LoginForm: Login successful');
     }
     
     setIsLoading(false);
@@ -62,6 +74,7 @@ const LoginForm = () => {
   };
 
   const fillDemoCredentials = (userType: 'admin' | 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
+    console.log('LoginForm: Filling demo credentials for:', userType);
     const credentials = {
       admin: { email: 'admin@bank.com', password: 'password123' },
       sales2: { email: 'sales2@bank.com', password: 'password123' },
@@ -74,6 +87,12 @@ const LoginForm = () => {
     setPassword(credentials[userType].password);
     setError('');
   };
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    console.log('LoginForm: User already authenticated, redirecting to dashboard');
+    return <Navigate to="/dashboard" replace />;
+  }
 
   if (showForgotPassword) {
     return (
