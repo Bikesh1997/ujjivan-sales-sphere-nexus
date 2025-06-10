@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -71,7 +70,7 @@ const SupervisorDashboard = () => {
     { name: 'Average Deal Size', value: 185000, target: 150000, trend: 'up' },
     { name: 'Customer Satisfaction', value: 4.6, target: 4.5, trend: 'stable' },
     { name: 'Lead Response Time', value: 2.3, target: 3.0, trend: 'up' }
-  ];
+  ]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
