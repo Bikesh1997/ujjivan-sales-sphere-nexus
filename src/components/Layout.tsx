@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -182,7 +181,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Button>
               <div className="flex items-start">
                 <img 
-                  src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
+                  src="/lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
                   alt="Ujjivan Small Finance Bank" 
                   className="h-8 sm:h-10 w-auto object-contain"
                 />

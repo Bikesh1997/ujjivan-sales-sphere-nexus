@@ -88,7 +88,7 @@ const LoginForm = () => {
         <div>
           <div className="flex justify-center mb-4">
             <img 
-              src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
+              src="/lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
               alt="Ujjivan Small Finance Bank" 
               className="h-10 md:h-12 w-auto object-contain"
             />
