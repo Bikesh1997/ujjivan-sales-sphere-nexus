@@ -1,268 +1,173 @@
-
-import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Calendar, 
-  CheckCircle, 
-  Users, 
   TrendingUp, 
-  Target,
+  Users, 
+  Target, 
+  IndianRupee,
+  Calendar,
   Phone,
-  MapPin,
   Clock,
-  DollarSign
+  CheckCircle,
+  Award,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-
-interface DashboardStats {
-  leadsToday: number;
-  callsCompleted: number;
-  visitsScheduled: number;
-  targetProgress: number;
-  revenue: number;
-  conversionRate: number;
-}
-
-interface RecentActivity {
-  id: string;
-  type: 'call' | 'visit' | 'lead' | 'task';
-  title: string;
-  time: string;
-  status: 'completed' | 'pending' | 'in_progress';
-}
+import SmartNudges from '@/components/dashboard/SmartNudges';
+import ProjectionSection from '@/components/dashboard/ProjectionSection';
+import { allLeads } from '@/data/leadsData';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const [stats, setStats] = useState<DashboardStats>({
-    leadsToday: 12,
-    callsCompleted: 8,
-    visitsScheduled: 5,
-    targetProgress: 68,
-    revenue: 145000,
-    conversionRate: 24
-  });
+  const navigate = useNavigate();
 
-  const [recentActivities] = useState<RecentActivity[]>([
-    {
-      id: '1',
-      type: 'call',
-      title: 'Called Priya Sharma - Home Loan Discussion',
-      time: '2 hours ago',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      type: 'visit',
-      title: 'Visit scheduled with Rajesh Kumar',
-      time: '3 hours ago',
-      status: 'pending'
-    },
-    {
-      id: '3',
-      type: 'lead',
-      title: 'New lead: Anita Patel - Investment Advisory',
-      time: '4 hours ago',
-      status: 'in_progress'
-    }
-  ]);
+  // Calculate metrics based on user role
+  const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
+  const totalLeads = userLeads.length;
+  const convertedLeads = userLeads.filter(lead => lead.status === 'converted').length;
+  const openLeads = userLeads.filter(lead => lead.status !== 'converted').length;
+  const totalRevenue = userLeads.reduce((sum, lead) => {
+    const value = parseFloat(lead.value.replace('₹', '').replace('L', ''));
+    return sum + value;
+  }, 0);
 
-  const quickActions = [
-    { name: 'Add New Lead', href: '/leads', icon: Users, color: 'bg-blue-500' },
-    { name: 'Schedule Visit', href: '/plan-my-day', icon: Calendar, color: 'bg-green-500' },
-    { name: 'Make Call', href: '/customers', icon: Phone, color: 'bg-purple-500' },
-    { name: 'View Tasks', href: '/tasks', icon: CheckCircle, color: 'bg-orange-500' }
-  ];
+  // Monthly target for salesperson
+  const monthlyTarget = 25; // Target number of conversions per month
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const handleQuickAction = (action: string) => {
-    toast({
-      title: "Action Initiated",
-      description: `${action} has been initiated`,
-    });
+  const handlePlanRoute = () => {
+    navigate('/plan-my-day');
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
-      {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Welcome back, {user?.name}!
+          <h1 className="text-2xl font-bold text-gray-900">
+            Welcome back, {user?.name.split(' ')[0]}!
           </h1>
-          <p className="text-gray-600 mt-1">
-            {new Date().toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </p>
+          <p className="text-gray-600">Here's your sales performance overview</p>
         </div>
-        <Badge className="bg-teal-100 text-teal-800">
-          {user?.role === 'sales_executive' ? 'Sales Executive' : 'Supervisor'}
-        </Badge>
+        <div className="flex space-x-3">
+          <Button variant="outline" size="sm" onClick={handlePlanRoute}>
+            <Calendar size={16} className="mr-2" />
+            Plan Route
+          </Button>
+          <Link to="/leads">
+            <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+              <Phone size={16} className="mr-2" />
+              Start Calling
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* Key Performance Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Leads Today</p>
-                <p className="text-2xl font-bold">{stats.leadsToday}</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{totalLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +12% from last month
+                </p>
               </div>
+              <Users size={48} className="text-blue-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <Phone className="h-8 w-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Calls Done</p>
-                <p className="text-2xl font-bold">{stats.callsCompleted}</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Converted Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{convertedLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +8% from last month
+                </p>
               </div>
+              <CheckCircle size={48} className="text-green-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <MapPin className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Visits</p>
-                <p className="text-2xl font-bold">{stats.visitsScheduled}</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Monthly Target</p>
+                <p className="text-2xl font-bold text-gray-900">{monthlyTarget}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {convertedLeads >= monthlyTarget ? (
+                    <>
+                      <ArrowUpRight size={14} className="inline-block mr-1" />
+                      Target achieved!
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={14} className="inline-block mr-1" />
+                      {monthlyTarget - convertedLeads} more needed
+                    </>
+                  )}
+                </p>
               </div>
+              <Target size={48} className="text-purple-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <DollarSign className="h-8 w-8 text-orange-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Revenue</p>
-                <p className="text-2xl font-bold">₹{(stats.revenue / 1000).toFixed(0)}K</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Open Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{openLeads}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowDownRight size={14} className="inline-block mr-1" />
+                  -3% from last month
+                </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Target Progress & Conversion Rate */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Target className="h-5 w-5 mr-2" />
-              Monthly Target Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between text-sm">
-                <span>Target Achievement</span>
-                <span>{stats.targetProgress}%</span>
-              </div>
-              <Progress value={stats.targetProgress} className="h-3" />
-              <p className="text-sm text-gray-600">
-                Keep going! You're on track to exceed your monthly target.
-              </p>
+              <Clock size={48} className="text-orange-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <TrendingUp className="h-5 w-5 mr-2" />
-              Performance Metrics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Conversion Rate</span>
-                <span className="text-2xl font-bold text-green-600">{stats.conversionRate}%</span>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">₹{Math.round(totalRevenue)}L</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <ArrowUpRight size={14} className="inline-block mr-1" />
+                  +15% from last month
+                </p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Avg Deal Size</span>
-                <span className="text-lg font-semibold">₹{(stats.revenue / stats.leadsToday / 1000).toFixed(0)}K</span>
-              </div>
+              <IndianRupee size={48} className="text-teal-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <Button
-                  key={action.name}
-                  variant="outline"
-                  className="h-auto p-4 flex-col space-y-2"
-                  onClick={() => handleQuickAction(action.name)}
-                >
-                  <div className={`${action.color} p-2 rounded-lg`}>
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">{action.name}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Smart Nudges - moved before projections */}
+      <SmartNudges />
 
-      {/* Recent Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
-            Recent Activities
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex-1">
-                  <p className="font-medium text-sm">{activity.title}</p>
-                  <p className="text-xs text-gray-500">{activity.time}</p>
-                </div>
-                <Badge className={getStatusColor(activity.status)}>
-                  {activity.status.replace('_', ' ')}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Projection Section */}
+      <ProjectionSection 
+        currentPerformance={{
+          convertedLeads,
+          totalRevenue,
+          monthlyTarget
+        }}
+      />
     </div>
   );
 };

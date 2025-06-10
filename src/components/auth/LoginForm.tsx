@@ -10,8 +10,6 @@ import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 
 const LoginForm = () => {
-  console.log('LoginForm: Component is rendering');
-  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -177,8 +175,6 @@ const LoginForm = () => {
     );
   }
 
-  console.log('LoginForm: Rendering main login form');
-  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-6 sm:space-y-8">

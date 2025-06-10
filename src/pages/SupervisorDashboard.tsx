@@ -1,316 +1,445 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Users, 
-  TrendingUp, 
-  Target, 
-  Award,
-  MapPin,
-  Calendar,
-  Activity,
-  BarChart3
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { UserPlus, Settings } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { allLeads } from '@/data/leadsData';
 import { useToast } from '@/hooks/use-toast';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  target: number;
-  achieved: number;
-  status: 'active' | 'on_leave' | 'inactive';
-  location: string;
-}
-
-interface KPI {
-  name: string;
-  value: number;
-  target: number;
-  trend: 'up' | 'down' | 'stable';
-}
+import AddTeamMemberModal from '@/components/team/AddTeamMemberModal';
+import TeamSettingsModal from '@/components/team/TeamSettingsModal';
+import ViewDetailsModal from '@/components/team/ViewDetailsModal';
+import SupervisorKPICards from '@/components/supervisor/SupervisorKPICards';
+import SupervisorQuickActions from '@/components/supervisor/SupervisorQuickActions';
+import SupervisorOverview from '@/components/supervisor/SupervisorOverview';
+import SupervisorTeamPerformance from '@/components/supervisor/SupervisorTeamPerformance';
+import SupervisorIncentiveManagement from '@/components/supervisor/SupervisorIncentiveManagement';
 
 const SupervisorDashboard = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
-  
-  const [teamMembers] = useState<TeamMember[]>([
-    {
-      id: '1',
-      name: 'Priya Sharma',
+  const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [isTeamSettingsModalOpen, setIsTeamSettingsModalOpen] = useState(false);
+  const [isViewDetailsModalOpen, setIsViewDetailsModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [assignedLeads, setAssignedLeads] = useState<string[]>([]);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+
+  // Team data with proper structure for ViewDetailsModal
+  const [teamMembers, setTeamMembers] = useState([
+    { 
+      id: '1', 
+      name: 'Rahul Sharma', 
+      email: 'rahul.sharma@company.com',
       role: 'Sales Executive',
-      target: 50,
-      achieved: 38,
+      department: 'Sales',
       status: 'active',
-      location: 'Bandra Branch'
+      joinDate: '2023-01-15',
+      performance: 92,
+      targets: { monthly: 15, achieved: 12.5 },
+      lastActive: '2 hours ago',
+      leads: 25, 
+      converted: 8, 
+      revenue: 12.5, 
+      target: 15,
+      lastActivity: '2 hours ago',
+      capacity: 30
     },
-    {
-      id: '2',
-      name: 'Rajesh Kumar',
+    { 
+      id: '3', 
+      name: 'Anjali Patel', 
+      email: 'anjali.patel@company.com',
       role: 'Sales Executive',
-      target: 45,
-      achieved: 42,
+      department: 'Sales',
       status: 'active',
-      location: 'Andheri Branch'
+      joinDate: '2023-03-10',
+      performance: 88,
+      targets: { monthly: 12, achieved: 8.2 },
+      lastActive: '30 min ago',
+      leads: 18, 
+      converted: 5, 
+      revenue: 8.2, 
+      target: 12,
+      lastActivity: '30 min ago',
+      capacity: 25
     },
-    {
-      id: '3',
-      name: 'Anita Patel',
+    { 
+      id: '4', 
+      name: 'Vikram Singh', 
+      email: 'vikram.singh@company.com',
+      role: 'Inbound Contact Center Agent',
+      department: 'Inbound',
+      status: 'active',
+      joinDate: '2022-11-20',
+      performance: 85,
+      targets: { monthly: 18, achieved: 15.3 },
+      lastActive: '45 min ago',
+      leads: 32, 
+      converted: 11, 
+      revenue: 15.3, 
+      target: 18,
+      lastActivity: '45 min ago',
+      capacity: 35
+    },
+    { 
+      id: '5', 
+      name: 'Neha Gupta', 
+      email: 'neha.gupta@company.com',
       role: 'Relationship Manager',
-      target: 60,
-      achieved: 35,
-      status: 'on_leave',
-      location: 'Powai Branch'
+      department: 'Branch',
+      status: 'active',
+      joinDate: '2023-05-05',
+      performance: 95,
+      targets: { monthly: 20, achieved: 18.5 },
+      lastActive: '1 hour ago',
+      leads: 30, 
+      converted: 12, 
+      revenue: 18.5, 
+      target: 20,
+      lastActivity: '1 hour ago',
+      capacity: 35
     }
   ]);
 
-  const [kpis] = useState<KPI[]>([
-    { name: 'Team Conversion Rate', value: 28, target: 25, trend: 'up' },
-    { name: 'Average Deal Size', value: 185000, target: 150000, trend: 'up' },
-    { name: 'Customer Satisfaction', value: 4.6, target: 4.5, trend: 'stable' },
-    { name: 'Lead Response Time', value: 2.3, target: 3.0, trend: 'up' }
-  ]);
+  // Unassigned leads requiring allocation (filter out already assigned leads)
+  const unassignedLeads = allLeads.filter(lead => !lead.assignedToId && !assignedLeads.includes(lead.id)).slice(0, 8);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'on_leave': return 'bg-yellow-100 text-yellow-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const handleAutoAssign = () => {
+    if (unassignedLeads.length === 0) {
+      toast({
+        title: "No Unassigned Leads",
+        description: "All leads have been assigned",
+      });
+      return;
     }
-  };
 
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'up': return '↗️';
-      case 'down': return '↘️';
-      case 'stable': return '→';
-      default: return '→';
+    const availableMembers = teamMembers
+      .filter(m => m.status === 'active' && m.leads < m.capacity)
+      .sort((a, b) => {
+        const aCapacity = a.capacity - a.leads;
+        const bCapacity = b.capacity - b.leads;
+        return bCapacity - aCapacity;
+      });
+    
+    if (availableMembers.length === 0) {
+      toast({
+        title: "No Available Capacity",
+        description: "All active team members are at capacity",
+        variant: "destructive"
+      });
+      return;
     }
-  };
 
-  const handleTeamAction = (action: string, memberId?: string) => {
+    const prioritySortedLeads = [...unassignedLeads].sort((a, b) => {
+      const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
+    });
+
+    const assignments: { leadId: string; memberId: string; leadName: string; memberName: string }[] = [];
+    const updatedMembers = [...teamMembers];
+    const newlyAssignedLeads: string[] = [];
+
+    for (const lead of prioritySortedLeads) {
+      const bestMember = availableMembers.find(member => member.leads < member.capacity);
+
+      if (bestMember) {
+        assignments.push({
+          leadId: lead.id,
+          memberId: bestMember.id,
+          leadName: lead.name,
+          memberName: bestMember.name
+        });
+
+        const memberIndex = updatedMembers.findIndex(m => m.id === bestMember.id);
+        if (memberIndex !== -1) {
+          updatedMembers[memberIndex].leads++;
+        }
+
+        const availableMemberIndex = availableMembers.findIndex(m => m.id === bestMember.id);
+        if (availableMemberIndex !== -1) {
+          availableMembers[availableMemberIndex].leads++;
+          if (availableMembers[availableMemberIndex].leads >= availableMembers[availableMemberIndex].capacity) {
+            availableMembers.splice(availableMemberIndex, 1);
+          }
+        }
+
+        newlyAssignedLeads.push(lead.id);
+
+        if (availableMembers.length === 0) break;
+      }
+    }
+
+    setTeamMembers(updatedMembers);
+    setAssignedLeads(prev => [...prev, ...newlyAssignedLeads]);
+
     toast({
-      title: "Action Initiated",
-      description: `${action} has been initiated${memberId ? ` for team member` : ''}`,
+      title: "Auto-Assignment Complete",
+      description: `${assignments.length} leads assigned successfully. ${assignments.map(a => `${a.leadName} → ${a.memberName}`).join(', ')}`,
     });
   };
 
+  const handleAssignLead = (leadId: string, memberId: string) => {
+    const member = teamMembers.find(m => m.id === memberId);
+    const lead = unassignedLeads.find(l => l.id === leadId);
+    
+    if (member && lead) {
+      if (member.leads >= member.capacity) {
+        toast({
+          title: "Capacity Exceeded",
+          description: `${member.name} is already at capacity (${member.capacity} leads)`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setTeamMembers(prev => prev.map(m => 
+        m.id === memberId 
+          ? { ...m, leads: m.leads + 1 }
+          : m
+      ));
+
+      setAssignedLeads(prev => [...prev, leadId]);
+
+      toast({
+        title: "Lead Assigned",
+        description: `${lead.name} has been assigned to ${member.name}`,
+      });
+    }
+  };
+
+  const handleViewDetails = (member: any) => {
+    setSelectedMember(member);
+    setIsViewDetailsModalOpen(true);
+  };
+
+  const handleAssignLeads = (member: any) => {
+    toast({
+      title: "Lead Assignment",
+      description: `Opening lead assignment interface for ${member.name}`,
+    });
+  };
+
+  const handleGenerateReports = () => {
+    toast({
+      title: "Generating Reports",
+      description: "Team performance analytics are being compiled...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Reports Ready",
+        description: "Team performance reports have been generated and are ready for download.",
+      });
+    }, 3000);
+  };
+
+  const handleScheduleReview = () => {
+    toast({
+      title: "Schedule Review",
+      description: "Opening review scheduling interface for team members...",
+    });
+  };
+
+  const handleSetTargets = () => {
+    toast({
+      title: "Set Targets",
+      description: "Opening target setting interface for team KPIs...",
+    });
+  };
+
+  const handleAddMember = (memberData: any) => {
+    const newMember = {
+      id: (teamMembers.length + 1).toString(),
+      name: memberData.name,
+      email: memberData.email,
+      role: memberData.role,
+      department: memberData.department,
+      status: 'active',
+      joinDate: memberData.joiningDate || new Date().toISOString().split('T')[0],
+      performance: 0,
+      targets: { monthly: 0, achieved: 0 },
+      lastActive: 'Just joined',
+      leads: 0,
+      converted: 0,
+      revenue: 0,
+      target: 0,
+      lastActivity: 'Just joined',
+      capacity: 25
+    };
+    
+    setTeamMembers(prevMembers => [...prevMembers, newMember]);
+  };
+
+  // Incentive data structure
+  const incentiveData = [
+    {
+      id: '1',
+      name: 'Rahul Sharma',
+      currentEarnings: 45000,
+      projectedEarnings: 62000,
+      nextThreshold: 75000,
+      progressToNext: 82.7,
+      krasCompleted: 7,
+      totalKras: 10,
+      potentialBonus: 15000,
+      isCloseToThreshold: true,
+      thresholdName: 'Gold Tier',
+      remainingAmount: 13000
+    },
+    {
+      id: '3',
+      name: 'Anjali Patel',
+      currentEarnings: 38000,
+      projectedEarnings: 48000,
+      nextThreshold: 50000,
+      progressToNext: 96.0,
+      krasCompleted: 8,
+      totalKras: 10,
+      potentialBonus: 8000,
+      isCloseToThreshold: true,
+      thresholdName: 'Silver Plus',
+      remainingAmount: 2000
+    },
+    {
+      id: '4',
+      name: 'Vikram Singh',
+      currentEarnings: 28000,
+      projectedEarnings: 35000,
+      nextThreshold: 50000,
+      progressToNext: 70.0,
+      krasCompleted: 5,
+      totalKras: 10,
+      potentialBonus: 12000,
+      isCloseToThreshold: false,
+      thresholdName: 'Silver Plus',
+      remainingAmount: 15000
+    },
+    {
+      id: '5',
+      name: 'Neha Gupta',
+      currentEarnings: 52000,
+      projectedEarnings: 68000,
+      nextThreshold: 75000,
+      progressToNext: 90.7,
+      krasCompleted: 9,
+      totalKras: 10,
+      potentialBonus: 18000,
+      isCloseToThreshold: true,
+      thresholdName: 'Gold Tier',
+      remainingAmount: 7000
+    }
+  ];
+
+  const simulateKRACompletion = (memberId: string) => {
+    const member = incentiveData.find(m => m.id === memberId);
+    if (member) {
+      const remainingKras = member.totalKras - member.krasCompleted;
+      const additionalEarnings = remainingKras * 5000; // ₹5k per KRA
+      const newProjected = member.projectedEarnings + additionalEarnings;
+      
+      toast({
+        title: "KRA Simulation Complete",
+        description: `If ${member.name} completes all remaining KRAs, projected earnings would be ₹${newProjected.toLocaleString()}`,
+      });
+    }
+  };
+
   return (
-    <div className="space-y-6 p-4 sm:p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Supervisor Dashboard
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Team Performance Overview - {new Date().toLocaleDateString()}
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Supervisor Dashboard</h1>
+          <p className="text-gray-600">Team management and performance oversight</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => handleTeamAction('Generate Report')} variant="outline" size="sm">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Generate Report
+        <div className="flex space-x-3">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIsAddMemberModalOpen(true)}
+          >
+            <UserPlus size={16} className="mr-2" />
+            Add Team Member
           </Button>
-          <Button onClick={() => handleTeamAction('Team Meeting')} size="sm">
-            <Users className="h-4 w-4 mr-2" />
-            Team Meeting
+          <Button 
+            size="sm" 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setIsTeamSettingsModalOpen(true)}
+          >
+            <Settings size={16} className="mr-2" />
+            Team Settings
           </Button>
         </div>
       </div>
 
-      {/* Team Overview KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Team Size</p>
-                <p className="text-2xl font-bold">{teamMembers.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* KPI Cards */}
+      <SupervisorKPICards 
+        teamMembersCount={teamMembers.length}
+        unassignedLeadsCount={unassignedLeads.length}
+      />
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <Target className="h-8 w-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Avg Achievement</p>
-                <p className="text-2xl font-bold">
-                  {Math.round(teamMembers.reduce((acc, member) => acc + (member.achieved / member.target * 100), 0) / teamMembers.length)}%
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Quick Actions */}
+      <SupervisorQuickActions 
+        onGenerateReports={handleGenerateReports}
+        onScheduleReview={handleScheduleReview}
+        onSetTargets={handleSetTargets}
+      />
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <TrendingUp className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Team Revenue</p>
-                <p className="text-2xl font-bold">₹{(teamMembers.reduce((acc, member) => acc + member.achieved, 0) * 1000 / 100000).toFixed(1)}L</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Modals */}
+      <AddTeamMemberModal 
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+        onAddMember={handleAddMember}
+      />
+      
+      <TeamSettingsModal 
+        isOpen={isTeamSettingsModalOpen}
+        onClose={() => setIsTeamSettingsModalOpen(false)}
+      />
+      
+      {selectedMember && (
+        <ViewDetailsModal 
+          isOpen={isViewDetailsModalOpen}
+          onClose={() => {
+            setIsViewDetailsModalOpen(false);
+            setSelectedMember(null);
+          }}
+          member={selectedMember}
+        />
+      )}
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center">
-              <Award className="h-8 w-8 text-orange-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Top Performer</p>
-                <p className="text-sm font-bold">{teamMembers.sort((a, b) => (b.achieved/b.target) - (a.achieved/a.target))[0]?.name}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Tabs - Removed quick-actions tab */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="team-performance">Team Performance</TabsTrigger>
+          <TabsTrigger value="incentive-management">Incentive Management</TabsTrigger>
+        </TabsList>
 
-      {/* Key Performance Indicators */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <BarChart3 className="h-5 w-5 mr-2" />
-            Key Performance Indicators
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {kpis.map((kpi, index) => (
-              <div key={index} className="p-4 border rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-600">{kpi.name}</p>
-                  <span className="text-lg">{getTrendIcon(kpi.trend)}</span>
-                </div>
-                <p className="text-xl font-bold">
-                  {kpi.name.includes('Rate') || kpi.name.includes('Satisfaction') 
-                    ? `${kpi.value}${kpi.name.includes('Satisfaction') ? '/5' : '%'}`
-                    : kpi.name.includes('Size') 
-                      ? `₹${(kpi.value / 1000).toFixed(0)}K`
-                      : `${kpi.value}h`
-                  }
-                </p>
-                <p className="text-xs text-gray-500">
-                  Target: {kpi.name.includes('Rate') || kpi.name.includes('Satisfaction') 
-                    ? `${kpi.target}${kpi.name.includes('Satisfaction') ? '/5' : '%'}`
-                    : kpi.name.includes('Size') 
-                      ? `₹${(kpi.target / 1000).toFixed(0)}K`
-                      : `${kpi.target}h`
-                  }
-                </p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="overview" className="space-y-6">
+          <SupervisorOverview 
+            unassignedLeads={unassignedLeads}
+            teamMembers={teamMembers}
+            onAutoAssign={handleAutoAssign}
+            onAssignLead={handleAssignLead}
+          />
+        </TabsContent>
 
-      {/* Team Performance */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Users className="h-5 w-5 mr-2" />
-            Team Performance
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {teamMembers.map((member) => {
-              const achievementPercentage = (member.achieved / member.target) * 100;
-              return (
-                <div key={member.id} className="p-4 border rounded-lg">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium">{member.name}</h4>
-                        <Badge className={getStatusColor(member.status)}>
-                          {member.status.replace('_', ' ')}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600">{member.role} • {member.location}</p>
-                      <div className="mt-2">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Target Achievement</span>
-                          <span>{achievementPercentage.toFixed(1)}%</span>
-                        </div>
-                        <Progress value={achievementPercentage} className="h-2" />
-                        <p className="text-xs text-gray-500 mt-1">
-                          {member.achieved} / {member.target} deals
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleTeamAction('View Details', member.id)}
-                      >
-                        View Details
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handleTeamAction('Schedule 1:1', member.id)}
-                      >
-                        Schedule 1:1
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="team-performance" className="space-y-6">
+          <SupervisorTeamPerformance 
+            teamMembers={teamMembers}
+            onViewDetails={handleViewDetails}
+            onAssignLeads={handleAssignLeads}
+          />
+        </TabsContent>
 
-      {/* Quick Actions for Supervisor */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Supervisor Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Button
-              variant="outline"
-              className="h-auto p-4 flex-col space-y-2"
-              onClick={() => handleTeamAction('Assign Leads')}
-            >
-              <Users className="h-6 w-6" />
-              <span className="text-sm">Assign Leads</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto p-4 flex-col space-y-2"
-              onClick={() => handleTeamAction('Set Targets')}
-            >
-              <Target className="h-6 w-6" />
-              <span className="text-sm">Set Targets</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto p-4 flex-col space-y-2"
-              onClick={() => handleTeamAction('Territory Review')}
-            >
-              <MapPin className="h-6 w-6" />
-              <span className="text-sm">Territory Review</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto p-4 flex-col space-y-2"
-              onClick={() => handleTeamAction('Performance Review')}
-            >
-              <Activity className="h-6 w-6" />
-              <span className="text-sm">Performance Review</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="incentive-management" className="space-y-6">
+          <SupervisorIncentiveManagement 
+            incentiveData={incentiveData}
+            onSimulateKRACompletion={simulateKRACompletion}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

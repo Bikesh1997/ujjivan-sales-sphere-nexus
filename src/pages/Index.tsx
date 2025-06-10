@@ -10,7 +10,6 @@ const Index = () => {
 
   useEffect(() => {
     console.log('Index: Auth state changed - isLoading:', isLoading, 'isAuthenticated:', isAuthenticated);
-    console.log('Index: Current location:', window.location.pathname);
     
     if (!isLoading) {
       if (isAuthenticated) {
@@ -23,20 +22,14 @@ const Index = () => {
     }
   }, [isAuthenticated, isLoading, navigate]);
 
-  // Show loading while authentication is being determined
   if (isLoading) {
     console.log('Index: Still loading, showing loading page');
     return <LoadingPage text="Loading..." />;
   }
 
-  // Fallback: Direct redirect based on auth state
-  if (!isAuthenticated) {
-    console.log('Index: Fallback redirect to login');
-    return <Navigate to="/login" replace />;
-  }
-
-  console.log('Index: Fallback redirect to dashboard');
-  return <Navigate to="/dashboard" replace />;
+  // Fallback navigation
+  console.log('Index: Fallback navigation');
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
 };
 
 export default Index;
