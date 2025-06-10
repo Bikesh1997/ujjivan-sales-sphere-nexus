@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -75,6 +75,21 @@ const RoleBasedRoute = ({ children, featureId }: { children: React.ReactNode; fe
   return <>{children}</>;
 };
 
+// Root redirect component
+const RootRedirect = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <Navigate to="/dashboard" replace />;
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -84,114 +99,185 @@ const App = () => (
           <Sonner />
           <BrowserRouter basename={basename}>
             <Routes>
+              <Route path="/" element={<RootRedirect />} />
               <Route path="/login" element={<LoginForm />} />
-              <Route path="/*" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Layout>
-                    <Routes>
-                      <Route path="/" element={<DashboardRouter />} />
-                      
-                      {/* Sales Executive Only Features */}
-                      <Route path="/funnel" element={
-                        <RoleBasedRoute featureId="sales_funnel">
-                          <SalesFunnel />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/leads" element={
-                        <RoleBasedRoute featureId="my_leads">
-                          <LeadManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/tasks" element={
-                        <RoleBasedRoute featureId="my_tasks">
-                          <Tasks />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/task-management" element={
-                        <RoleBasedRoute featureId="my_tasks">
-                          <TaskManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/customers" element={
-                        <RoleBasedRoute featureId="customer_360">
-                          <Customer360 />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/plan-my-day" element={
-                        <RoleBasedRoute featureId="plan_my_day">
-                          <PlanMyDay />
-                        </RoleBasedRoute>
-                      } />
-                      
-                      {/* Supervisor Only Features */}
-                      <Route path="/portfolio" element={
-                        <RoleBasedRoute featureId="portfolio_management">
-                          <PortfolioManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/kpa-management" element={
-                        <RoleBasedRoute featureId="kpa_management">
-                          <KPAManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/team-performance" element={
-                        <RoleBasedRoute featureId="team_performance">
-                          <TeamPerformance />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/territory-management" element={
-                        <RoleBasedRoute featureId="territory_management">
-                          <TerritoryManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/reports" element={
-                        <RoleBasedRoute featureId="reports">
-                          <Reports />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/rule-management" element={
-                        <RoleBasedRoute featureId="rule_management">
-                          <RuleManagement />
-                        </RoleBasedRoute>
-                      } />
-                      
-                      {/* Admin Only Features */}
-                      <Route path="/user-management" element={
-                        <RoleBasedRoute featureId="user_management">
-                          <UserManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/cross-selling-rules" element={
-                        <RoleBasedRoute featureId="cross_selling_rules">
-                          <CrossSellingRules />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/offer-management-rule" element={
-                        <RoleBasedRoute featureId="offer_management_rule">
-                          <OfferManagementRule />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/event-management" element={
-                        <RoleBasedRoute featureId="event_management">
-                          <EventManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/kra-management" element={
-                        <RoleBasedRoute featureId="kra_management">
-                          <KRAManagement />
-                        </RoleBasedRoute>
-                      } />
-                      <Route path="/geo-hierarchy-management" element={
-                        <RoleBasedRoute featureId="geo_hierarchy_management">
-                          <GeoHierarchyManagement />
-                        </RoleBasedRoute>
-                      } />
-                      
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    <DashboardRouter />
                   </Layout>
                 </ProtectedRoute>
               } />
+              
+              {/* Sales Executive Only Features */}
+              <Route path="/funnel" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="sales_funnel">
+                      <SalesFunnel />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/leads" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="my_leads">
+                      <LeadManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/tasks" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="my_tasks">
+                      <Tasks />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/task-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="my_tasks">
+                      <TaskManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/customers" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="customer_360">
+                      <Customer360 />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/plan-my-day" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="plan_my_day">
+                      <PlanMyDay />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Supervisor Only Features */}
+              <Route path="/portfolio" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="portfolio_management">
+                      <PortfolioManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/kpa-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="kpa_management">
+                      <KPAManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/team-performance" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="team_performance">
+                      <TeamPerformance />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/territory-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="territory_management">
+                      <TerritoryManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/reports" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="reports">
+                      <Reports />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/rule-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="rule_management">
+                      <RuleManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Admin Only Features */}
+              <Route path="/user-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="user_management">
+                      <UserManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/cross-selling-rules" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="cross_selling_rules">
+                      <CrossSellingRules />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/offer-management-rule" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="offer_management_rule">
+                      <OfferManagementRule />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/event-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="event_management">
+                      <EventManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/kra-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="kra_management">
+                      <KRAManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/geo-hierarchy-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="geo_hierarchy_management">
+                      <GeoHierarchyManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
