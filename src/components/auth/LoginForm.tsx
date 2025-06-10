@@ -1,13 +1,11 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
+import LoginFormFields from './LoginFormFields';
+import DemoCredentials from './DemoCredentials';
+import ForgotPasswordForm from './ForgotPasswordForm';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -16,8 +14,6 @@ const LoginForm = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetMessage, setResetMessage] = useState('');
   const { login, resetPassword, isAuthenticated, user } = useAuth();
 
   // Debug logging for authentication state
@@ -52,26 +48,8 @@ const LoginForm = () => {
     setIsLoading(false);
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setResetMessage('');
-    setIsLoading(true);
-
-    if (!resetEmail) {
-      setResetMessage('Please enter your email address');
-      setIsLoading(false);
-      return;
-    }
-
-    const success = await resetPassword(resetEmail);
-    
-    if (success) {
-      setResetMessage('Password reset instructions sent to your email');
-    } else {
-      setResetMessage('Email not found in our records');
-    }
-    
-    setIsLoading(false);
+  const handleResetPassword = async (resetEmail: string) => {
+    return await resetPassword(resetEmail);
   };
 
   const fillDemoCredentials = (userType: 'admin' | 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
@@ -97,81 +75,10 @@ const LoginForm = () => {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 px-4">
-        <div className="max-w-sm w-full space-y-4">
-          <div>
-            <div className="flex justify-center mb-4">
-              <img 
-                src="https://www.ujjivansfb.in/sites/default/files/styles/wide/public/2024-04/Ujjivan-Logo_0.webp" 
-                alt="Ujjivan Small Finance Bank" 
-                className="h-10 md:h-12 w-auto object-contain"
-              />
-            </div>
-            <h2 className="mt-4 text-center text-xl md:text-2xl font-extrabold text-gray-900">
-              Reset Password
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Enter your email to receive reset instructions
-            </p>
-          </div>
-          
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                <KeyRound size={18} />
-                Password Reset
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleForgotPassword} className="space-y-4">
-                <div>
-                  <Label htmlFor="resetEmail" className="text-sm">Email Address</Label>
-                  <Input
-                    id="resetEmail"
-                    type="email"
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="mt-1 h-12"
-                  />
-                </div>
-
-                {resetMessage && (
-                  <Alert>
-                    <AlertDescription className="text-sm">{resetMessage}</AlertDescription>
-                  </Alert>
-                )}
-
-                <div className="flex flex-col gap-2">
-                  <Button 
-                    type="submit" 
-                    className="h-12 bg-teal-600 hover:bg-teal-700"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      'Send Reset Link'
-                    )}
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={() => setShowForgotPassword(false)}
-                    className="h-12"
-                  >
-                    Back to Login
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <ForgotPasswordForm 
+        onBack={() => setShowForgotPassword(false)}
+        onResetPassword={handleResetPassword}
+      />
     );
   }
 
@@ -199,130 +106,23 @@ const LoginForm = () => {
             <CardTitle className="text-base md:text-lg">Login</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="email" className="text-sm">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  disabled={isLoading}
-                  className="mt-1 h-12"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="password" className="text-sm">Password</Label>
-                <div className="relative mt-1">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    disabled={isLoading}
-                    className="pr-12 h-12"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isLoading}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </Button>
-                </div>
-              </div>
+            <LoginFormFields
+              email={email}
+              password={password}
+              showPassword={showPassword}
+              error={error}
+              isLoading={isLoading}
+              onEmailChange={setEmail}
+              onPasswordChange={setPassword}
+              onTogglePassword={() => setShowPassword(!showPassword)}
+              onSubmit={handleSubmit}
+              onForgotPassword={() => setShowForgotPassword(true)}
+            />
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription className="text-sm">{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <Button 
-                type="submit" 
-                className="w-full h-12 bg-teal-600 hover:bg-teal-700"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </Button>
-
-              <Button 
-                type="button" 
-                variant="link"
-                className="w-full text-sm"
-                onClick={() => setShowForgotPassword(true)}
-              >
-                Forgot your password?
-              </Button>
-            </form>
-
-            <div className="mt-6 space-y-3">
-              <div className="text-center text-sm text-gray-600 mb-3">
-                Demo Accounts:
-              </div>
-              
-              <div className="grid grid-cols-1 gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => fillDemoCredentials('admin')}
-                  className="w-full text-xs h-10"
-                  disabled={isLoading}
-                >
-                  Admin Demo
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => fillDemoCredentials('sales2')}
-                  className="w-full text-xs h-10"
-                  disabled={isLoading}
-                >
-                  Sales Executive Demo (Anjali)
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => fillDemoCredentials('inbound')}
-                  className="w-full text-xs h-10"
-                  disabled={isLoading}
-                >
-                  Inbound Agent Demo (Vikram)
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => fillDemoCredentials('relationship')}
-                  className="w-full text-xs h-10"
-                  disabled={isLoading}
-                >
-                  Relationship Manager Demo (Neha)
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => fillDemoCredentials('supervisor')}
-                  className="w-full text-xs h-10"
-                  disabled={isLoading}
-                >
-                  Supervisor Demo
-                </Button>
-              </div>
-              
-              <div className="text-center text-xs text-gray-500 mt-2">
-                Password: password123
-              </div>
-            </div>
+            <DemoCredentials 
+              onFillCredentials={fillDemoCredentials}
+              isLoading={isLoading}
+            />
           </CardContent>
         </Card>
       </div>
