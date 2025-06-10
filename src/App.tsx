@@ -32,6 +32,7 @@ import OfferManagementRule from "./pages/admin/OfferManagementRule";
 import EventManagement from "./pages/admin/EventManagement";
 import KRAManagement from "./pages/admin/KRAManagement";
 import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
+import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 
@@ -44,8 +45,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-const basename = import.meta.env.VITE_BASE_PATH || '/';
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -75,21 +74,6 @@ const RoleBasedRoute = ({ children, featureId }: { children: React.ReactNode; fe
   return <>{children}</>;
 };
 
-// Root redirect component
-const RootRedirect = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return <Navigate to="/dashboard" replace />;
-};
-
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -97,9 +81,9 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter basename={basename}>
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<RootRedirect />} />
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
