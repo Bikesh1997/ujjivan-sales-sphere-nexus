@@ -76,6 +76,53 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
 
   if (!customer) return null;
 
+  // Generate active offers for customer 630
+  const getActiveOffers = () => {
+    if (customer.id === 'CUST001234' || customer.key === 'priya-sharma') {
+      return [
+        {
+          id: 'OFF001',
+          productType: 'Personal Loan',
+          offerAmount: '₹8,00,000',
+          interestRate: '10.5% p.a.',
+          validity: '30 days',
+          status: 'Active',
+          description: 'Pre-approved personal loan based on excellent credit history',
+          benefits: ['No processing fee', 'Flexible tenure up to 5 years', 'Quick disbursement'],
+          createdDate: '15 Jun 2025',
+          expiryDate: '15 Jul 2025'
+        },
+        {
+          id: 'OFF002',
+          productType: 'Credit Card Upgrade',
+          offerAmount: '₹5,00,000 limit',
+          interestRate: '3.5% monthly',
+          validity: '45 days',
+          status: 'Active',
+          description: 'Upgrade to Platinum Credit Card with enhanced benefits',
+          benefits: ['Airport lounge access', 'Reward points on all transactions', 'Zero annual fee for first year'],
+          createdDate: '10 Jun 2025',
+          expiryDate: '25 Jul 2025'
+        },
+        {
+          id: 'OFF003',
+          productType: 'Investment Plan',
+          offerAmount: '₹2,00,000 SIP',
+          interestRate: '12-15% expected returns',
+          validity: '60 days',
+          status: 'Pending Review',
+          description: 'Diversified mutual fund portfolio with tax benefits',
+          benefits: ['Tax saving under 80C', 'Professional fund management', 'Systematic investment approach'],
+          createdDate: '05 Jun 2025',
+          expiryDate: '05 Aug 2025'
+        }
+      ];
+    }
+    return [];
+  };
+
+  const activeOffers = getActiveOffers();
+
   // Convert customer to lead format for the call modal
   const customerAsLead = {
     id: customer.id,
@@ -96,6 +143,7 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
     switch (status.toLowerCase()) {
       case 'active': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending review': return 'bg-orange-100 text-orange-800';
       case 'closed': return 'bg-gray-100 text-gray-800';
       default: return 'bg-blue-100 text-blue-800';
     }
@@ -378,16 +426,79 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
 
                   <TabsContent value="offers" className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Offers & Campaigns</h3>
-                    <div className="text-center py-8">
-                      <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-                      <p className="text-gray-500">No active offers for this customer</p>
-                      <Button 
-                        className="mt-4 bg-teal-600 hover:bg-teal-700"
-                        onClick={() => handleCreateOffer()}
-                      >
-                        Create New Offer
-                      </Button>
-                    </div>
+                    {activeOffers.length > 0 ? (
+                      <div className="space-y-4">
+                        {activeOffers.map((offer) => (
+                          <Card key={offer.id} className="border border-gray-200">
+                            <CardContent className="p-6">
+                              <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center space-x-3">
+                                  <div className="bg-teal-100 p-2 rounded-lg">
+                                    <DollarSign size={20} className="text-teal-600" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-lg text-gray-900">{offer.productType}</h4>
+                                    <p className="text-sm text-gray-600">{offer.description}</p>
+                                  </div>
+                                </div>
+                                <Badge className={getStatusColor(offer.status)}>
+                                  {offer.status}
+                                </Badge>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                  <p className="text-xs text-gray-500">Offer Amount</p>
+                                  <p className="font-medium text-gray-900">{offer.offerAmount}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500">Interest Rate</p>
+                                  <p className="font-medium text-gray-900">{offer.interestRate}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500">Valid for</p>
+                                  <p className="font-medium text-gray-900">{offer.validity}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500">Expires on</p>
+                                  <p className="font-medium text-gray-900">{offer.expiryDate}</p>
+                                </div>
+                              </div>
+
+                              <div className="mb-4">
+                                <p className="text-sm font-medium text-gray-900 mb-2">Key Benefits:</p>
+                                <ul className="list-disc list-inside space-y-1">
+                                  {offer.benefits.map((benefit, index) => (
+                                    <li key={index} className="text-sm text-gray-600">{benefit}</li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              <div className="flex justify-between items-center pt-4 border-t">
+                                <div className="text-xs text-gray-500">
+                                  Created: {offer.createdDate}
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Button variant="outline" size="sm">
+                                    <FileText size={14} className="mr-1" />
+                                    View Details
+                                  </Button>
+                                  <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+                                    <Phone size={14} className="mr-1" />
+                                    Discuss Offer
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                        <p className="text-gray-500">No active offers for this customer</p>
+                      </div>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="client-details" className="space-y-4">
