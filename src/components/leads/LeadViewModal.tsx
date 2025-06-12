@@ -251,47 +251,47 @@ Key Benefits to Reinforce:
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+      <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Building size={20} />
             Lead Details - {lead.name}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="xl:col-span-2 order-2 xl:order-1">
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="details">Customer Details</TabsTrigger>
-                <TabsTrigger value="activity">Activity Logs</TabsTrigger>
-                <TabsTrigger value="followups">Follow-ups</TabsTrigger>
-                <TabsTrigger value="scripts">Guided Scripts</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4">
+                <TabsTrigger value="details" className="text-xs sm:text-sm">Details</TabsTrigger>
+                <TabsTrigger value="activity" className="text-xs sm:text-sm">Activity</TabsTrigger>
+                <TabsTrigger value="followups" className="text-xs sm:text-sm">Follow-ups</TabsTrigger>
+                <TabsTrigger value="scripts" className="text-xs sm:text-sm">Scripts</TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Contact Information</CardTitle>
+                    <CardTitle className="text-base sm:text-lg">Contact Information</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="text-sm font-medium text-gray-700">Company</label>
-                        <p className="text-sm text-gray-900">{lead.name}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.name}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Contact Person</label>
-                        <p className="text-sm text-gray-900">{lead.contact}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.contact}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Phone</label>
-                        <p className="text-sm text-gray-900">{lead.phone}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.phone}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Email</label>
-                        <p className="text-sm text-gray-900">{lead.email}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.email}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Status</label>
@@ -299,7 +299,7 @@ Key Benefits to Reinforce:
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Source</label>
-                        <p className="text-sm text-gray-900">{lead.source}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.source}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Value</label>
@@ -311,7 +311,7 @@ Key Benefits to Reinforce:
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Assigned To</label>
-                        <p className="text-sm text-gray-900">{lead.assignedTo}</p>
+                        <p className="text-sm text-gray-900 break-words">{lead.assignedTo}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700">Last Contact</label>
@@ -325,41 +325,41 @@ Key Benefits to Reinforce:
               <TabsContent value="activity" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      Communication History
-                      <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-base sm:text-lg">Communication History</span>
+                      <Badge variant="secondary" className="bg-orange-100 text-orange-700 text-xs">
                         Lead auto-escalated to Sales team
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {communicationHistory.map((comm) => (
-                      <div key={comm.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
+                      <div key={comm.id} className="border rounded-lg p-3 sm:p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2">
                             {comm.type === 'Call' ? (
-                              <Phone size={16} className="text-blue-600" />
+                              <Phone size={16} className="text-blue-600 flex-shrink-0" />
                             ) : comm.type === 'Meeting' ? (
-                              <Calendar size={16} className="text-green-600" />
+                              <Calendar size={16} className="text-green-600 flex-shrink-0" />
                             ) : (
-                              <Mail size={16} className="text-purple-600" />
+                              <Mail size={16} className="text-purple-600 flex-shrink-0" />
                             )}
-                            <span className="font-medium">{comm.type}</span>
+                            <span className="font-medium text-sm">{comm.type}</span>
                             <Badge 
                               variant="outline" 
-                              className={comm.status === 'positive' ? 'text-green-700 border-green-200' : 'text-gray-700'}
+                              className={`text-xs ${comm.status === 'positive' ? 'text-green-700 border-green-200' : 'text-gray-700'}`}
                             >
                               {comm.status}
                             </Badge>
                           </div>
-                          <span className="text-sm text-gray-500">{comm.date}</span>
+                          <span className="text-xs sm:text-sm text-gray-500">{comm.date}</span>
                         </div>
                         
                         {comm.conversation.length > 0 && (
                           <>
                             <Button 
                               variant="link" 
-                              className="p-0 h-auto text-blue-600 mb-2"
+                              className="p-0 h-auto text-blue-600 mb-2 text-sm"
                               onClick={() => {/* View call details */}}
                             >
                               View call details →
@@ -373,8 +373,8 @@ Key Benefits to Reinforce:
                                     <span className="text-gray-500">{msg.time}</span>
                                     <div className={`p-2 rounded mt-1 ${
                                       msg.speaker === 'Agent' 
-                                        ? 'bg-blue-50 text-blue-900 ml-4' 
-                                        : 'bg-white border mr-4'
+                                        ? 'bg-blue-50 text-blue-900 ml-2 sm:ml-4' 
+                                        : 'bg-white border mr-2 sm:mr-4'
                                     }`}>
                                       <strong>{msg.speaker}:</strong> {msg.message}
                                     </div>
@@ -396,10 +396,11 @@ Key Benefits to Reinforce:
                               variant="outline" 
                               size="sm"
                               onClick={handleAnalyzeCall}
-                              className="flex items-center gap-2"
+                              className="flex items-center gap-2 text-xs sm:text-sm"
                             >
                               <Bot size={14} />
-                              Analyze call summary with AI
+                              <span className="hidden sm:inline">Analyze call summary with AI</span>
+                              <span className="sm:hidden">AI Analysis</span>
                             </Button>
                           </div>
                         )}
@@ -412,12 +413,12 @@ Key Benefits to Reinforce:
               <TabsContent value="followups" className="mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      Follow-up Actions
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-base sm:text-lg">Follow-up Actions</span>
                       <Button 
                         size="sm" 
                         onClick={handleAddFollowUp}
-                        className="flex items-center gap-2 bg-[#056262] hover:bg-[#045050]"
+                        className="flex items-center gap-2 bg-[#056262] hover:bg-[#045050] text-xs sm:text-sm"
                       >
                         <Plus size={16} />
                         Add Follow-up
@@ -427,31 +428,31 @@ Key Benefits to Reinforce:
                   <CardContent>
                     <div className="space-y-4">
                       {followUpActions.map((action) => (
-                        <div key={action.id} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
+                        <div key={action.id} className="border rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2">
                               {action.type === 'Call' ? (
-                                <Phone size={16} className="text-blue-600" />
+                                <Phone size={16} className="text-blue-600 flex-shrink-0" />
                               ) : action.type === 'Meeting' ? (
-                                <Calendar size={16} className="text-green-600" />
+                                <Calendar size={16} className="text-green-600 flex-shrink-0" />
                               ) : (
-                                <Mail size={16} className="text-purple-600" />
+                                <Mail size={16} className="text-purple-600 flex-shrink-0" />
                               )}
-                              <span className="font-medium">{action.type}</span>
+                              <span className="font-medium text-sm">{action.type}</span>
                               <Badge 
                                 variant="outline" 
-                                className={
+                                className={`text-xs ${
                                   action.priority === 'High' ? 'text-red-700 border-red-200' :
                                   action.priority === 'Medium' ? 'text-yellow-700 border-yellow-200' :
                                   'text-green-700 border-green-200'
-                                }
+                                }`}
                               >
                                 {action.priority}
                               </Badge>
                             </div>
                             <Badge 
                               variant={action.status === 'Completed' ? 'default' : 'secondary'}
-                              className={action.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}
+                              className={`text-xs ${action.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}`}
                             >
                               {action.status}
                             </Badge>
@@ -468,23 +469,23 @@ Key Benefits to Reinforce:
               <TabsContent value="scripts" className="mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Guided Scripts</CardTitle>
+                    <CardTitle className="text-base sm:text-lg">Guided Scripts</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {guidedScripts.map((script) => (
-                        <div key={script.id} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium">{script.title}</h4>
-                            <Badge variant="outline">{script.category}</Badge>
+                        <div key={script.id} className="border rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <h4 className="font-medium text-sm sm:text-base">{script.title}</h4>
+                            <Badge variant="outline" className="text-xs w-fit">{script.category}</Badge>
                           </div>
                           <div className="bg-gray-50 rounded p-3">
-                            <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
+                            <pre className="text-xs sm:text-sm text-gray-700 whitespace-pre-wrap font-sans">
                               {script.content}
                             </pre>
                           </div>
                           <div className="mt-3 flex justify-end">
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" className="text-xs sm:text-sm">
                               <FileText size={14} className="mr-1" />
                               Copy Script
                             </Button>
@@ -499,17 +500,17 @@ Key Benefits to Reinforce:
           </div>
 
           {/* Right Sidebar */}
-          <div className="space-y-4">
+          <div className="space-y-4 order-1 xl:order-2">
             {/* Log Communication */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Log Communication</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Log Communication</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <label className="text-sm font-medium">Communication Type</label>
                   <Select value={communicationType} onValueChange={setCommunicationType}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -528,13 +529,14 @@ Key Benefits to Reinforce:
                     value={communicationNotes}
                     onChange={(e) => setCommunicationNotes(e.target.value)}
                     rows={3}
+                    className="text-sm"
                   />
                 </div>
 
                 <div>
                   <label className="text-sm font-medium">Outcome</label>
                   <Select value={outcome} onValueChange={setOutcome}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -547,7 +549,7 @@ Key Benefits to Reinforce:
 
                 <Button 
                   onClick={handleLogCommunication}
-                  className="w-full bg-[#056262] hover:bg-[#045050]"
+                  className="w-full bg-[#056262] hover:bg-[#045050] text-sm"
                 >
                   <MessageSquare size={16} className="mr-2" />
                   Log Communication
@@ -558,14 +560,14 @@ Key Benefits to Reinforce:
             {/* Communication Templates */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Communication Templates</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Communication Templates</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {templates.map((template, index) => (
                   <Button 
                     key={index}
                     variant="outline" 
-                    className="w-full justify-start text-sm"
+                    className="w-full justify-start text-xs sm:text-sm h-auto py-2 px-3"
                   >
                     {template}
                   </Button>
@@ -578,9 +580,9 @@ Key Benefits to Reinforce:
         {/* AI Analysis Modal */}
         {showAnalysis && (
           <Dialog open={showAnalysis} onOpenChange={setShowAnalysis}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md w-[90vw]">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <Bot size={20} className="text-blue-600" />
                   AI Call Analysis
                 </DialogTitle>
@@ -589,9 +591,9 @@ Key Benefits to Reinforce:
 
               <div className="space-y-4">
                 <div className="bg-gray-50 rounded p-4">
-                  <h3 className="font-medium mb-3">Call Analysis Report</h3>
+                  <h3 className="font-medium mb-3 text-sm sm:text-base">Call Analysis Report</h3>
                   
-                  <div className="space-y-3 text-sm">
+                  <div className="space-y-3 text-xs sm:text-sm">
                     <div>
                       <strong>Customer Sentiment:</strong> {analysisReport.sentiment}
                       <br />
@@ -624,7 +626,7 @@ Key Benefits to Reinforce:
 
                 <Button 
                   onClick={() => setShowAnalysis(false)}
-                  className="w-full"
+                  className="w-full text-sm"
                 >
                   Close
                 </Button>
@@ -636,16 +638,16 @@ Key Benefits to Reinforce:
         {/* Add Follow-up Modal */}
         {showAddFollowUp && (
           <Dialog open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md w-[90vw]">
               <DialogHeader>
-                <DialogTitle>Add Follow-up Action</DialogTitle>
+                <DialogTitle className="text-base sm:text-lg">Add Follow-up Action</DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium">Type</label>
                   <Select value={followUpType} onValueChange={setFollowUpType}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -662,6 +664,7 @@ Key Benefits to Reinforce:
                     type="date"
                     value={followUpDate}
                     onChange={(e) => setFollowUpDate(e.target.value)}
+                    className="text-sm"
                   />
                 </div>
 
@@ -672,13 +675,14 @@ Key Benefits to Reinforce:
                     value={followUpDescription}
                     onChange={(e) => setFollowUpDescription(e.target.value)}
                     rows={3}
+                    className="text-sm"
                   />
                 </div>
 
                 <div>
                   <label className="text-sm font-medium">Priority</label>
                   <Select value={followUpPriority} onValueChange={setFollowUpPriority}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -689,17 +693,17 @@ Key Benefits to Reinforce:
                   </Select>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <Button 
                     onClick={handleSaveFollowUp}
-                    className="flex-1 bg-[#056262] hover:bg-[#045050]"
+                    className="flex-1 bg-[#056262] hover:bg-[#045050] text-sm"
                   >
                     Save Follow-up
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => setShowAddFollowUp(false)}
-                    className="flex-1"
+                    className="flex-1 text-sm"
                   >
                     Cancel
                   </Button>
