@@ -251,9 +251,9 @@ Key Benefits to Reinforce:
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] overflow-y-auto p-4 sm:p-6">
-        <DialogHeader className="mb-4">
-          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+      <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] overflow-y-auto p-3 sm:p-4 lg:p-6">
+        <DialogHeader className="mb-4 sm:mb-6">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl lg:text-2xl">
             <Building size={20} />
             Lead Details - {lead.name}
           </DialogTitle>
@@ -263,11 +263,33 @@ Key Benefits to Reinforce:
           {/* Main Content */}
           <div className="xl:col-span-2 order-2 xl:order-1">
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4">
-                <TabsTrigger value="details" className="text-xs sm:text-sm">Details</TabsTrigger>
-                <TabsTrigger value="activity" className="text-xs sm:text-sm">Activity</TabsTrigger>
-                <TabsTrigger value="followups" className="text-xs sm:text-sm">Follow-ups</TabsTrigger>
-                <TabsTrigger value="scripts" className="text-xs sm:text-sm">Scripts</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4 mb-4 sm:mb-6 h-auto p-1">
+                <TabsTrigger 
+                  value="details" 
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                >
+                  <span className="hidden xs:inline">Details</span>
+                  <span className="xs:hidden">Info</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="activity" 
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                >
+                  Activity
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="followups" 
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                >
+                  <span className="hidden sm:inline">Follow-ups</span>
+                  <span className="sm:hidden">Follow</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="scripts" 
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                >
+                  Scripts
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-4 mt-4">
