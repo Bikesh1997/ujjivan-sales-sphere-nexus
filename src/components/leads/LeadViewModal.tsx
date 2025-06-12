@@ -263,30 +263,30 @@ Key Benefits to Reinforce:
           {/* Main Content */}
           <div className="xl:col-span-2 order-2 xl:order-1">
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-4 sm:mb-6 h-auto p-1">
+              <TabsList className="grid w-full grid-cols-4 mb-4 sm:mb-6 h-auto p-1 bg-gray-100 rounded-lg">
                 <TabsTrigger 
                   value="details" 
-                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   <span className="hidden xs:inline">Details</span>
                   <span className="xs:hidden">Info</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="activity" 
-                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   Activity
                 </TabsTrigger>
                 <TabsTrigger 
                   value="followups" 
-                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   <span className="hidden sm:inline">Follow-ups</span>
                   <span className="sm:hidden">Follow</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="scripts" 
-                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight"
+                  className="text-[10px] xs:text-xs sm:text-sm px-2 py-2 sm:py-2.5 leading-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
                 >
                   Scripts
                 </TabsTrigger>
