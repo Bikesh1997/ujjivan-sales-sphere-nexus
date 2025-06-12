@@ -11,9 +11,7 @@ const Tabs = React.forwardRef<
   <TabsPrimitive.Root
     ref={ref}
     className={className}
-    defaultValue={defaultValue || props.children && React.Children.toArray(props.children).find(child => 
-      React.isValidElement(child) && child.type === TabsList
-    ) ? "details" : undefined}
+    defaultValue={defaultValue || "details"}
     {...props}
   />
 ))
