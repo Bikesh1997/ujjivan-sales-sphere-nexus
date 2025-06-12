@@ -13,6 +13,7 @@ import { allLeads } from '@/data/leadsData';
 const LeadManagement = () => {
   const [leads, setLeads] = useState(allLeads);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState("leads"); // Explicitly set first tab as default
   const leadsPerPage = 10;
   const { user } = useAuth();
   
@@ -55,6 +56,10 @@ const LeadManagement = () => {
     setCurrentPage(page);
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -64,7 +69,7 @@ const LeadManagement = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="leads" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="leads">My Leads</TabsTrigger>
           <TabsTrigger value="performance">KRA & Performance</TabsTrigger>
