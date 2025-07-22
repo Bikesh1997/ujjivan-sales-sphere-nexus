@@ -33,6 +33,7 @@ import EventManagement from "./pages/admin/EventManagement";
 import KRAManagement from "./pages/admin/KRAManagement";
 import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
 import WorkflowManagement from "./pages/WorkflowManagement";
+import FinancialEducation from "./pages/FinancialEducation";
 import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
@@ -270,6 +271,17 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="workflow_management">
                       <WorkflowManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Financial Education Platform */}
+              <Route path="/financial-education" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="financial_education">
+                      <FinancialEducation />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>

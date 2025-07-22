@@ -173,6 +173,14 @@ export const FEATURES: Feature[] = [
     icon: 'Workflow',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
     description: 'Automate banking workflows with OmniFlow'
+  },
+  {
+    id: 'financial_education',
+    name: 'Financial Education',
+    path: '/financial-education',
+    icon: 'GraduationCap',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'Financial literacy platform with guides and calculators'
   }
 ];
 
