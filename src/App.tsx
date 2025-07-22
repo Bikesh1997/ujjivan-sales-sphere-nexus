@@ -32,6 +32,7 @@ import OfferManagementRule from "./pages/admin/OfferManagementRule";
 import EventManagement from "./pages/admin/EventManagement";
 import KRAManagement from "./pages/admin/KRAManagement";
 import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
+import WorkflowManagement from "./pages/WorkflowManagement";
 import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
@@ -258,6 +259,17 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="geo_hierarchy_management">
                       <GeoHierarchyManagement />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Workflow Management - Available to all roles */}
+              <Route path="/workflow-management" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="workflow_management">
+                      <WorkflowManagement />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>

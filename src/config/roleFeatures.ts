@@ -165,6 +165,14 @@ export const FEATURES: Feature[] = [
     icon: 'MapPin',
     roles: ['admin'],
     description: 'Manage geographical hierarchy structure'
+  },
+  {
+    id: 'workflow_management',
+    name: 'Workflow Management',
+    path: '/workflow-management',
+    icon: 'Workflow',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'Automate banking workflows with OmniFlow'
   }
 ];
 
@@ -195,7 +203,8 @@ export const getIconName = (iconName: string) => {
     'Shield': 'Shield',
     'Settings': 'Settings',
     'Tag': 'Tag',
-    'Calendar': 'Calendar'
+    'Calendar': 'Calendar',
+    'Workflow': 'Workflow'
   };
   return iconMap[iconName] || 'Home';
 };
