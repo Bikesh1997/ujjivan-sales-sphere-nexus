@@ -11,8 +11,11 @@ export interface Badge {
 
 export interface Achievement {
   id: string;
-  kraId: string;
-  kraTitle: string;
+  kraId?: string;
+  kpaId?: string;
+  kraTitle?: string;
+  kpaTitle?: string;
+  type: 'KRA' | 'KPA';
   employeeId: string;
   employeeName: string;
   targetValue: number;
@@ -43,6 +46,7 @@ export interface Challenge {
   title: string;
   description: string;
   type: 'daily' | 'weekly' | 'monthly';
+  category: 'KRA' | 'KPA' | 'BOTH';
   targetValue: number;
   currentValue: number;
   reward: {
@@ -62,6 +66,8 @@ export interface EmployeeProgress {
   nextLevelPoints: number;
   completedKRAs: number;
   totalKRAs: number;
+  completedKPAs: number;
+  totalKPAs: number;
   badges: Badge[];
   achievements: Achievement[];
   currentStreak: number;
@@ -74,7 +80,7 @@ export interface EmployeeProgress {
 export const availableBadges: Badge[] = [
   {
     id: 'first_kra',
-    name: 'First Steps',
+    name: 'First Steps (KRA)',
     description: 'Complete your first KRA',
     icon: '🌟',
     rarity: 'common',
@@ -82,12 +88,21 @@ export const availableBadges: Badge[] = [
     points: 10
   },
   {
+    id: 'first_kpa',
+    name: 'First Steps (KPA)',
+    description: 'Complete your first KPA',
+    icon: '⭐',
+    rarity: 'common',
+    criteria: 'Complete 1 KPA',
+    points: 10
+  },
+  {
     id: 'perfect_week',
     name: 'Perfect Week',
-    description: 'Achieve 100% on all KRAs in a week',
+    description: 'Achieve 100% on all KRAs and KPAs in a week',
     icon: '🏆',
     rarity: 'rare',
-    criteria: 'Weekly KRA completion rate of 100%',
+    criteria: 'Weekly completion rate of 100%',
     points: 50
   },
   {
@@ -120,20 +135,39 @@ export const availableBadges: Badge[] = [
   {
     id: 'consistent_performer',
     name: 'Consistent Performer',
-    description: 'Achieve 90%+ for 3 consecutive months',
+    description: 'Achieve 90%+ on KRAs and KPAs for 3 consecutive months',
     icon: '💎',
     rarity: 'epic',
     criteria: '90%+ achievement rate for 3 months',
     points: 150
+  },
+  {
+    id: 'kpa_master',
+    name: 'KPA Master',
+    description: 'Excel in all assigned KPAs',
+    icon: '🎯',
+    rarity: 'rare',
+    criteria: 'Achieve 95%+ on all KPAs in a month',
+    points: 75
+  },
+  {
+    id: 'balanced_achiever',
+    name: 'Balanced Achiever',
+    description: 'Excel in both KRAs and KPAs equally',
+    icon: '⚖️',
+    rarity: 'epic',
+    criteria: 'Maintain equal performance in KRAs and KPAs',
+    points: 125
   }
 ];
 
-// Sample achievements data
+// Sample achievements data - now includes both KRA and KPA
 export const sampleAchievements: Achievement[] = [
   {
     id: '1',
     kraId: '1',
     kraTitle: 'SHG Creation & Management',
+    type: 'KRA',
     employeeId: 'emp_001',
     employeeName: 'Rajesh Kumar',
     targetValue: 25,
@@ -145,8 +179,23 @@ export const sampleAchievements: Achievement[] = [
   },
   {
     id: '2',
+    kpaId: '1',
+    kpaTitle: 'Sales Performance Excellence',
+    type: 'KPA',
+    employeeId: 'emp_001',
+    employeeName: 'Rajesh Kumar',
+    targetValue: 90,
+    achievedValue: 94,
+    percentage: 104,
+    points: 20,
+    date: new Date('2024-01-15'),
+    streak: 5
+  },
+  {
+    id: '3',
     kraId: '2',
     kraTitle: 'Fixed Deposit Acquisition',
+    type: 'KRA',
     employeeId: 'emp_001',
     employeeName: 'Rajesh Kumar',
     targetValue: 15,
@@ -157,9 +206,24 @@ export const sampleAchievements: Achievement[] = [
     streak: 5
   },
   {
-    id: '3',
+    id: '4',
+    kpaId: '2',
+    kpaTitle: 'Customer Relationship Management',
+    type: 'KPA',
+    employeeId: 'emp_002',
+    employeeName: 'Priya Sharma',
+    targetValue: 85,
+    achievedValue: 89,
+    percentage: 105,
+    points: 20,
+    date: new Date('2024-01-14'),
+    streak: 3
+  },
+  {
+    id: '5',
     kraId: '3',
     kraTitle: 'Customer Visit Compliance',
+    type: 'KRA',
     employeeId: 'emp_002',
     employeeName: 'Priya Sharma',
     targetValue: 95,
@@ -180,7 +244,7 @@ export const sampleLeaderboard: LeaderboardEntry[] = [
     role: 'Field Sales Officer',
     totalPoints: 1250,
     level: 12,
-    badges: [availableBadges[0], availableBadges[1], availableBadges[4]],
+    badges: [availableBadges[0], availableBadges[2], availableBadges[5], availableBadges[7]],
     weeklyPoints: 85,
     monthlyPoints: 320,
     currentStreak: 15,
@@ -194,7 +258,7 @@ export const sampleLeaderboard: LeaderboardEntry[] = [
     role: 'Relationship Officer',
     totalPoints: 1180,
     level: 11,
-    badges: [availableBadges[0], availableBadges[2], availableBadges[5]],
+    badges: [availableBadges[0], availableBadges[1], availableBadges[4], availableBadges[6]],
     weeklyPoints: 92,
     monthlyPoints: 298,
     currentStreak: 12,
@@ -245,13 +309,14 @@ export const sampleLeaderboard: LeaderboardEntry[] = [
   }
 ];
 
-// Sample challenges data
+// Sample challenges data - now includes KPA challenges
 export const sampleChallenges: Challenge[] = [
   {
     id: 'daily_1',
     title: 'Daily Hustle',
     description: 'Complete 3 customer visits today',
     type: 'daily',
+    category: 'KRA',
     targetValue: 3,
     currentValue: 1,
     reward: {
@@ -263,10 +328,26 @@ export const sampleChallenges: Challenge[] = [
     participants: ['emp_001', 'emp_002', 'emp_003']
   },
   {
+    id: 'daily_2',
+    title: 'KPA Progress Boost',
+    description: 'Make progress on all assigned KPAs today',
+    type: 'daily',
+    category: 'KPA',
+    targetValue: 100,
+    currentValue: 65,
+    reward: {
+      points: 25
+    },
+    deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    status: 'active',
+    participants: ['emp_001', 'emp_002', 'emp_003', 'emp_004']
+  },
+  {
     id: 'weekly_1',
     title: 'SHG Champion',
-    description: 'Form 5 new SHGs this week',
+    description: 'Form 5 new SHGs this week (KRA)',
     type: 'weekly',
+    category: 'KRA',
     targetValue: 5,
     currentValue: 2,
     reward: {
@@ -278,15 +359,48 @@ export const sampleChallenges: Challenge[] = [
     participants: ['emp_001', 'emp_004']
   },
   {
+    id: 'weekly_2',
+    title: 'KPA Excellence Week',
+    description: 'Achieve 95%+ on all KPAs this week',
+    type: 'weekly',
+    category: 'KPA',
+    targetValue: 95,
+    currentValue: 87,
+    reward: {
+      points: 150,
+      badge: availableBadges[6]
+    },
+    deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    status: 'active',
+    participants: ['emp_001', 'emp_002', 'emp_003']
+  },
+  {
     id: 'monthly_1',
     title: 'Portfolio Master',
-    description: 'Achieve 110% of monthly targets',
+    description: 'Achieve 110% of monthly KRA targets',
     type: 'monthly',
+    category: 'KRA',
     targetValue: 110,
     currentValue: 78,
     reward: {
       points: 300,
       badge: availableBadges[2]
+    },
+    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    status: 'active',
+    participants: ['emp_001', 'emp_002', 'emp_003', 'emp_004', 'emp_005']
+  },
+  {
+    id: 'monthly_2',
+    title: 'Balanced Excellence',
+    description: 'Achieve 90%+ on both KRAs and KPAs this month',
+    type: 'monthly',
+    category: 'BOTH',
+    targetValue: 90,
+    currentValue: 82,
+    reward: {
+      points: 400,
+      badge: availableBadges[7]
     },
     deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     status: 'active',

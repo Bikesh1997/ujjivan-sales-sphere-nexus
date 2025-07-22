@@ -89,7 +89,19 @@ const KRAGamification = () => {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">#{currentEmployee.rank}</div>
-                <div className="text-sm text-muted-foreground">Rank</div>
+                <div className="text-sm text-muted-foreground">Team Rank</div>
+              </div>
+            </div>
+            
+            {/* KRA vs KPA Progress */}
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-lg font-bold text-blue-600">12/15</div>
+                <div className="text-sm text-blue-600">KRAs Completed</div>
+              </div>
+              <div className="text-center p-3 bg-purple-50 rounded-lg">
+                <div className="text-lg font-bold text-purple-600">5/6</div>
+                <div className="text-sm text-purple-600">KPAs Completed</div>
               </div>
             </div>
           </div>
@@ -147,7 +159,7 @@ const KRAGamification = () => {
         </Card>
       </div>
 
-      {/* Recent Achievements */}
+      {/* Recent Achievements - showing both KRA and KPA */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -157,14 +169,19 @@ const KRAGamification = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {sampleAchievements.slice(0, 3).map((achievement) => (
+            {sampleAchievements.slice(0, 4).map((achievement) => (
               <div key={achievement.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-green-100 rounded-full">
-                    <Trophy className="h-4 w-4 text-green-600" />
+                  <div className={`p-2 rounded-full ${achievement.type === 'KRA' ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                    <Trophy className={`h-4 w-4 ${achievement.type === 'KRA' ? 'text-blue-600' : 'text-purple-600'}`} />
                   </div>
                   <div>
-                    <div className="font-medium">{achievement.kraTitle}</div>
+                    <div className="font-medium">
+                      {achievement.kraTitle || achievement.kpaTitle}
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {achievement.type}
+                      </Badge>
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       {achievement.achievedValue}/{achievement.targetValue} ({achievement.percentage}%)
                     </div>
@@ -331,14 +348,30 @@ const KRAGamification = () => {
   // Challenges & Streaks
   const ChallengesView = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sampleChallenges.map((challenge) => (
-          <Card key={challenge.id} className={challenge.type === 'daily' ? 'border-green-200' : challenge.type === 'weekly' ? 'border-blue-200' : 'border-purple-200'}>
+          <Card key={challenge.id} className={`${
+            challenge.category === 'KRA' ? 'border-blue-200' : 
+            challenge.category === 'KPA' ? 'border-purple-200' : 
+            challenge.category === 'BOTH' ? 'border-gradient-to-r from-blue-200 to-purple-200' :
+            challenge.type === 'daily' ? 'border-green-200' : 
+            challenge.type === 'weekly' ? 'border-blue-200' : 
+            'border-purple-200'
+          }`}>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <Badge variant={challenge.type === 'daily' ? 'default' : challenge.type === 'weekly' ? 'secondary' : 'outline'}>
-                  {challenge.type}
-                </Badge>
+                <div className="flex items-center space-x-2">
+                  <Badge variant={challenge.type === 'daily' ? 'default' : challenge.type === 'weekly' ? 'secondary' : 'outline'}>
+                    {challenge.type}
+                  </Badge>
+                  <Badge variant="outline" className={`text-xs ${
+                    challenge.category === 'KRA' ? 'text-blue-600 bg-blue-50' :
+                    challenge.category === 'KPA' ? 'text-purple-600 bg-purple-50' :
+                    'text-gray-600 bg-gray-50'
+                  }`}>
+                    {challenge.category}
+                  </Badge>
+                </div>
                 <div className="text-sm text-muted-foreground">
                   {Math.ceil((challenge.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days left
                 </div>
@@ -411,7 +444,7 @@ const KRAGamification = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Performance & Achievements</h1>
-          <p className="text-muted-foreground">Track your KRA progress and compete with your team</p>
+          <p className="text-muted-foreground">Track your KRA and KPA progress and compete with your team</p>
         </div>
         <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
           <SelectTrigger className="w-48">
