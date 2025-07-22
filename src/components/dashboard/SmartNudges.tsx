@@ -56,6 +56,25 @@ const SmartNudges = () => {
         deadline: '15 days left'
       },
       {
+        id: '2a',
+        title: 'KPA Achievement Alert',
+        description: (() => {
+          const kpaProgress = 5; // Simulated current KPA count
+          const kpaTarget = 6;
+          const remaining = Math.max(0, kpaTarget - kpaProgress);
+          return remaining > 0 
+            ? `${remaining} more KPA targets needed for ₹25K incentive` 
+            : `KPA target achieved! ₹25K incentive unlocked`;
+        })(),
+        type: 'kra',
+        priority: 'High',
+        actionLabel: 'View KPA Progress',
+        navigationPath: '/kpa-management',
+        count: Math.max(0, 6 - 5),
+        value: '₹25K',
+        deadline: '12 days left'
+      },
+      {
         id: '4',
         title: 'Follow-up Required',
         description: `3 leads haven't been contacted in 3+ days. Total potential value: ₹${Math.round(overdueLeads.slice(0, 3).reduce((sum, lead) => sum + parseFloat(lead.value.replace('₹', '').replace('L', '')), 0))}L`,
