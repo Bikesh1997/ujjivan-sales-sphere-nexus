@@ -40,12 +40,18 @@ const SmartNudges = () => {
       {
         id: '2',
         title: 'KRA Achievement Alert',
-        description: `Complete ${3 - userLeads.filter(lead => lead.status === 'converted').length} more loan disbursals to achieve 100% KRA and unlock ₹45K incentive`,
+        description: (() => {
+          const convertedCount = userLeads.filter(lead => lead.status === 'converted').length;
+          const remaining = Math.max(0, 3 - convertedCount);
+          return remaining > 0 
+            ? `${remaining} more disbursals needed for ₹45K incentive` 
+            : `Target achieved! ₹45K incentive unlocked`;
+        })(),
         type: 'kra',
         priority: 'High',
         actionLabel: 'View Pipeline',
         navigationPath: '/funnel',
-        count: 3 - userLeads.filter(lead => lead.status === 'converted').length,
+        count: Math.max(0, 3 - userLeads.filter(lead => lead.status === 'converted').length),
         value: '₹45K',
         deadline: '15 days left'
       },
