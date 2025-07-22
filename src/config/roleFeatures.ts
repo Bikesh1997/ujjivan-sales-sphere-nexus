@@ -58,6 +58,14 @@ export const FEATURES: Feature[] = [
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager'],
     description: 'Personal sales pipeline'
   },
+  {
+    id: 'kra_gamification',
+    name: 'Performance & Achievements',
+    path: '/gamification',
+    icon: 'Trophy',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor'],
+    description: 'Track your performance, achievements, and leaderboard standings'
+  },
 
   // Supervisor Features
   {
@@ -212,7 +220,7 @@ export const getIconName = (iconName: string) => {
     'Settings': 'Settings',
     'Tag': 'Tag',
     'Calendar': 'Calendar',
-    'Workflow': 'Workflow'
+    'Trophy': 'Trophy'
   };
   return iconMap[iconName] || 'Home';
 };

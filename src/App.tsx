@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -37,6 +36,7 @@ import FinancialEducation from "./pages/FinancialEducation";
 import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
+import KRAGamification from "./components/gamification/KRAGamification";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -148,6 +148,15 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="plan_my_day">
                       <PlanMyDay />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/gamification" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="kra_gamification">
+                      <KRAGamification />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>

@@ -22,7 +22,8 @@ import {
   HelpCircle,
   MessageSquare,
   Tag,
-  Calendar
+  Calendar,
+  Trophy
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -70,7 +71,8 @@ const Layout = ({ children }: LayoutProps) => {
     Shield: Shield,
     Settings: Settings,
     Tag: Tag,
-    Calendar: Calendar
+    Calendar: Calendar,
+    Trophy: Trophy
   };
 
   const navigationItems = getNavigationItems().map(item => ({
