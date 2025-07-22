@@ -181,6 +181,14 @@ export const FEATURES: Feature[] = [
     icon: 'GraduationCap',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
     description: 'Financial literacy platform with guides and calculators'
+  },
+  {
+    id: 'gamification',
+    name: 'Performance & Achievements',
+    path: '/gamification',
+    icon: 'Trophy',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'KRA gamification with points, badges, and leaderboards'
   }
 ];
 
@@ -212,7 +220,9 @@ export const getIconName = (iconName: string) => {
     'Settings': 'Settings',
     'Tag': 'Tag',
     'Calendar': 'Calendar',
-    'Workflow': 'Workflow'
+    'Workflow': 'Workflow',
+    'Trophy': 'Trophy',
+    'GraduationCap': 'GraduationCap'
   };
   return iconMap[iconName] || 'Home';
 };

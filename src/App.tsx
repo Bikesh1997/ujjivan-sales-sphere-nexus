@@ -34,6 +34,7 @@ import KRAManagement from "./pages/admin/KRAManagement";
 import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
 import WorkflowManagement from "./pages/WorkflowManagement";
 import FinancialEducation from "./pages/FinancialEducation";
+import KRAGamification from "./components/gamification/KRAGamification";
 import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
@@ -282,6 +283,17 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="financial_education">
                       <FinancialEducation />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* KRA Gamification */}
+              <Route path="/gamification" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="gamification">
+                      <KRAGamification />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>
