@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +36,11 @@ const KRAGamification = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('weekly');
   const [selectedEmployee, setSelectedEmployee] = useState('emp_001');
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Reset to first tab when selectedEmployee changes
+  useEffect(() => {
+    setActiveTab('overview');
+  }, [selectedEmployee]);
 
   // Get current employee data
   const currentEmployee = sampleLeaderboard.find(emp => emp.employeeId === selectedEmployee) || sampleLeaderboard[0];
