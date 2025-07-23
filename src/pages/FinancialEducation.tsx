@@ -14,11 +14,15 @@ import {
   Target,
   Award,
   Clock,
-  Star
+  Star,
+  Newspaper,
+  UserCheck
 } from 'lucide-react';
 import FinancialGlossary from '@/components/education/FinancialGlossary';
 import HowToGuides from '@/components/education/HowToGuides';
 import FinancialCalculators from '@/components/education/FinancialCalculators';
+import MarketSentiments from '@/components/education/MarketSentiments';
+import CustomerEngagementHub from '@/components/education/CustomerEngagementHub';
 import { searchContent, financialTerms, howToGuides, calculators } from '@/data/financialEducationData';
 
 const FinancialEducationPlatform: React.FC = () => {
@@ -125,10 +129,18 @@ const FinancialEducationPlatform: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp size={16} />
             Overview
+          </TabsTrigger>
+          <TabsTrigger value="market" className="flex items-center gap-2">
+            <Newspaper size={16} />
+            Market News
+          </TabsTrigger>
+          <TabsTrigger value="engagement" className="flex items-center gap-2">
+            <UserCheck size={16} />
+            Engagement
           </TabsTrigger>
           <TabsTrigger value="glossary" className="flex items-center gap-2">
             <BookOpen size={16} />
@@ -316,6 +328,14 @@ const FinancialEducationPlatform: React.FC = () => {
 
         <TabsContent value="guides">
           <HowToGuides />
+        </TabsContent>
+
+        <TabsContent value="market">
+          <MarketSentiments />
+        </TabsContent>
+
+        <TabsContent value="engagement">
+          <CustomerEngagementHub />
         </TabsContent>
 
         <TabsContent value="calculators">
