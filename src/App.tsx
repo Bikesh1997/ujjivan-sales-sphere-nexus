@@ -8,9 +8,11 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "./components/Layout";
+import GameLayout from "./components/layout/GameLayout";
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
+import GameDashboard from "./pages/GameDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
 import Customer360 from "./pages/Customer360";
 import LeadManagement from "./pages/leads/LeadManagement";
@@ -60,7 +62,8 @@ const DashboardRouter = () => {
     return <SupervisorDashboard />;
   }
   
-  return <Dashboard />;
+  // For field executives, show gamified dashboard
+  return <GameDashboard />;
 };
 
 // Role-based route wrapper
@@ -95,9 +98,18 @@ const App = () => (
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <Layout>
+                  <GameLayout>
                     <DashboardRouter />
-                  </Layout>
+                  </GameLayout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Game Routes */}
+              <Route path="/game-dashboard" element={
+                <ProtectedRoute>
+                  <GameLayout>
+                    <GameDashboard />
+                  </GameLayout>
                 </ProtectedRoute>
               } />
               
