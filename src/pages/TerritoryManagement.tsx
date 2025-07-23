@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,13 +18,20 @@ import {
   Edit,
   BarChart3
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const TerritoryManagement = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
   const { toast } = useToast();
+
+  // Reset to first tab when user changes
+  useEffect(() => {
+    setActiveTab('overview');
+  }, [user?.id]);
 
   const territories = [
     {

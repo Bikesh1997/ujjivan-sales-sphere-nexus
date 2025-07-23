@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +36,11 @@ const Reports = () => {
   const [selectedTeam, setSelectedTeam] = useState('all');
   const [selectedFSO, setSelectedFSO] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
+
+  // Reset to first tab when user changes
+  useEffect(() => {
+    setActiveTab('performance-reports');
+  }, [user?.id]);
   const [selectedProduct, setSelectedProduct] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState('all');
   const [scheduledReports, setScheduledReports] = useState([

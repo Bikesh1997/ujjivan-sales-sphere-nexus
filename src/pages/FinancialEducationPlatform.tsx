@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -24,11 +24,18 @@ import FinancialCalculators from '@/components/education/FinancialCalculators';
 import MarketSentiments from '@/components/education/MarketSentiments';
 import CustomerEngagementHub from '@/components/education/CustomerEngagementHub';
 import { searchContent, financialTerms, howToGuides, calculators } from '@/data/FinancialEducationData';
+import { useAuth } from '@/contexts/AuthContext';
 
 const FinancialEducationPlatform: React.FC = () => {
+  const { user } = useAuth();
   const [globalSearch, setGlobalSearch] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Reset to first tab when user changes
+  useEffect(() => {
+    setActiveTab('overview');
+  }, [user?.id]);
 
   const handleGlobalSearch = (query: string) => {
     setGlobalSearch(query);

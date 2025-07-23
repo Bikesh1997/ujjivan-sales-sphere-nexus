@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,10 +31,17 @@ import TeamSettingsModal from '@/components/team/TeamSettingsModal';
 import ViewDetailsModal from '@/components/team/ViewDetailsModal';
 import SetTargetsModal from '@/components/team/SetTargetsModal';
 import ScheduleReviewModal from '@/components/team/ScheduleReviewModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 const TeamManagement = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Reset to first tab when user changes
+  useEffect(() => {
+    setActiveTab('overview');
+  }, [user?.id]);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
