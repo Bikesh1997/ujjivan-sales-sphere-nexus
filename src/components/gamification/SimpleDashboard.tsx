@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import OnboardingDriver, { tours } from '@/components/onboarding/OnboardingDriver';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -60,7 +59,6 @@ const quickActions: QuickAction[] = [
 ];
 
 const SimpleDashboard = () => {
-  const [showDriver, setShowDriver] = useState(true);
   // Mock user data
   const userData = {
     name: 'राजेश कुमार',
@@ -162,8 +160,8 @@ const SimpleDashboard = () => {
         </CardContent>
       </Card>
 
-        {/* Quick Actions */}
-        <div className="quick-actions">
+      {/* Quick Actions */}
+      <div>
         <h2 className="text-xl font-bold mb-4 flex items-center">
           <Target className="mr-2 h-6 w-6 text-blue-600" />
           तुरंत करने वाले काम
@@ -242,13 +240,6 @@ const SimpleDashboard = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Onboarding Driver */}
-      <OnboardingDriver
-        pageId="dashboard"
-        steps={tours.dashboard}
-        onComplete={() => setShowDriver(false)}
-      />
     </div>
   );
 };
