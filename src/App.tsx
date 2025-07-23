@@ -37,6 +37,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import FinancialEducation from "./pages/FinancialEducationPlatform";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 import KRAGamification from "./components/gamification/KRAGamification";
+import GamifiedKRADashboard from "./components/gamification/GamifiedKRADashboard";
 import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
@@ -285,6 +286,17 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="gamification">
                       <KRAGamification />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+               {/* Gamified KRA Dashboard */}
+               <Route path="/gamified-kra" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="gamification">
+                      <GamifiedKRADashboard />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>
