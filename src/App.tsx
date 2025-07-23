@@ -65,7 +65,12 @@ const DashboardRouter = () => {
     return <SupervisorDashboard />;
   }
   
-  return <Dashboard />;
+  // Use gamified dashboard for field executives
+  return (
+    <GamifiedLayout>
+      <SimpleDashboard />
+    </GamifiedLayout>
+  );
 };
 
 // Role-based route wrapper
@@ -100,9 +105,7 @@ const App = () => (
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <Layout>
-                    <DashboardRouter />
-                  </Layout>
+                  <DashboardRouter />
                 </ProtectedRoute>
               } />
               
