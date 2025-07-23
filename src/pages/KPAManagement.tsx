@@ -15,8 +15,7 @@ import {
   Calendar,
   Plus,
   Edit,
-  Eye,
-  Trophy
+  Eye
 } from 'lucide-react';
 
 const KPAManagement = () => {
@@ -64,9 +63,9 @@ const KPAManagement = () => {
   ];
 
   const employeePerformance = [
-    { name: 'Rajesh Kumar', role: 'Sales Executive', kpasAssigned: 5, krasCompleted: 12, achievement: 94.5, status: 'Exceeding' },
+    { name: 'Rajesh Kumar', role: 'Field Executive', kpasAssigned: 5, krasCompleted: 12, achievement: 94.5, status: 'Exceeding' },
     { name: 'Priya Sharma', role: 'Relationship Manager', kpasAssigned: 4, krasCompleted: 10, achievement: 88.2, status: 'Meeting' },
-    { name: 'Amit Singh', role: 'Sales Executive', kpasAssigned: 6, krasCompleted: 8, achievement: 76.8, status: 'Below Target' },
+    { name: 'Amit Singh', role: 'Field Executive', kpasAssigned: 6, krasCompleted: 8, achievement: 76.8, status: 'Below Target' },
     { name: 'Sneha Patel', role: 'Team Lead', kpasAssigned: 3, krasCompleted: 15, achievement: 96.3, status: 'Exceeding' },
     { name: 'Vikram Joshi', role: 'Relationship Manager', kpasAssigned: 4, krasCompleted: 11, achievement: 82.1, status: 'Meeting' },
   ];
@@ -171,14 +170,13 @@ const KPAManagement = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="employees">Employee Performance</TabsTrigger>
-          <TabsTrigger value="trends">Trends</TabsTrigger>
-          <TabsTrigger value="gamification">🏆 Gamification</TabsTrigger>
-        </TabsList>
-
+      
+<TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1 mb-10">
+  <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+  <TabsTrigger value="categories" className="text-xs sm:text-sm">Categories</TabsTrigger>
+  <TabsTrigger value="employees" className="text-xs sm:text-sm">Employee Performance</TabsTrigger>
+  <TabsTrigger value="trends" className="text-xs sm:text-sm">Trends</TabsTrigger>
+</TabsList>
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
@@ -344,149 +342,7 @@ const KPAManagement = () => {
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
-            </Card>
-          </TabsContent>
-        
-        <TabsContent value="gamification" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* KPA Performance Leaderboard */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="h-5 w-5 text-yellow-600" />
-                  <span>KPA Champions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {employeePerformance
-                    .sort((a, b) => b.achievement - a.achievement)
-                    .slice(0, 5)
-                    .map((employee, index) => (
-                    <div key={employee.name} className="flex items-center justify-between p-3 rounded-lg bg-muted">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-lg font-bold w-8 text-center">
-                          {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
-                        </div>
-                        <div>
-                          <div className="font-medium">{employee.name}</div>
-                          <div className="text-sm text-muted-foreground">{employee.role}</div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-primary">{employee.achievement}%</div>
-                        <div className="text-sm text-muted-foreground">{employee.kpasAssigned} KPAs</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Achievement Badges */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5 text-purple-600" />
-                  <span>Achievement Badges</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 border rounded-lg text-center">
-                    <div className="text-2xl mb-2">🎯</div>
-                    <div className="font-medium text-sm">KPA Master</div>
-                    <div className="text-xs text-muted-foreground">95%+ on all KPAs</div>
-                  </div>
-                  <div className="p-3 border rounded-lg text-center">
-                    <div className="text-2xl mb-2">⚖️</div>
-                    <div className="font-medium text-sm">Balanced Achiever</div>
-                    <div className="text-xs text-muted-foreground">Equal KRA & KPA performance</div>
-                  </div>
-                  <div className="p-3 border rounded-lg text-center">
-                    <div className="text-2xl mb-2">🔥</div>
-                    <div className="font-medium text-sm">Consistent Performer</div>
-                    <div className="text-xs text-muted-foreground">3 months 90%+</div>
-                  </div>
-                  <div className="p-3 border rounded-lg text-center">
-                    <div className="text-2xl mb-2">👑</div>
-                    <div className="font-medium text-sm">Top Performer</div>
-                    <div className="text-xs text-muted-foreground">Monthly rank #1</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Progress Challenges */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Target className="h-5 w-5 text-blue-600" />
-                  <span>Active KPA Challenges</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 border border-green-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="default" className="bg-green-100 text-green-800">Daily</Badge>
-                      <span className="text-sm text-muted-foreground">Today</span>
-                    </div>
-                    <h3 className="font-medium mb-2">KPA Progress Boost</h3>
-                    <p className="text-sm text-muted-foreground mb-3">Make progress on all assigned KPAs today</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>65/100%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-500 h-2 rounded-full" style={{ width: '65%' }}></div>
-                      </div>
-                      <div className="text-sm font-medium text-green-600">+25 points</div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-blue-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">Weekly</Badge>
-                      <span className="text-sm text-muted-foreground">6 days left</span>
-                    </div>
-                    <h3 className="font-medium mb-2">KPA Excellence Week</h3>
-                    <p className="text-sm text-muted-foreground mb-3">Achieve 95%+ on all KPAs this week</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>87/95%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: '87%' }}></div>
-                      </div>
-                      <div className="text-sm font-medium text-blue-600">+150 points + 🎯 Badge</div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-purple-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline" className="bg-purple-100 text-purple-800">Monthly</Badge>
-                      <span className="text-sm text-muted-foreground">28 days left</span>
-                    </div>
-                    <h3 className="font-medium mb-2">Balanced Excellence</h3>
-                    <p className="text-sm text-muted-foreground mb-3">Achieve 90%+ on both KRAs and KPAs</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>82/90%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-purple-500 h-2 rounded-full" style={{ width: '82%' }}></div>
-                      </div>
-                      <div className="text-sm font-medium text-purple-600">+400 points + ⚖️ Badge</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

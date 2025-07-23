@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, BookOpen, Filter, Clock, TrendingUp } from 'lucide-react';
-import { financialTerms, contentCategories, searchContent, FinancialTerm } from '@/data/financialEducationData';
+import { financialTerms, contentCategories, searchContent, FinancialTerm } from '@/data/FinancialEducationData';
 
 const FinancialGlossary: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');

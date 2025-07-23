@@ -160,7 +160,7 @@ const Tasks = () => {
       id: '1',
       type: 'insight',
       title: 'High Conversion Area Identified',
-      message: 'Women customers in Ward 4 show 75% higher conversion rate - plan 3 visits this week',
+      message: '80% of your recent FD closures came from customers aged 45–60. Prioritize this age group today for higher conversion',
       priority: 'High',
       icon: TrendingUp
     },
@@ -168,7 +168,7 @@ const Tasks = () => {
       id: '2',
       type: 'timing',
       title: 'Optimal Visit Time',
-      message: 'Best time to visit SHG groups is 10 AM - 12 PM (85% attendance rate)',
+      message: 'You have 5 inactive SHG customers within 2 km of your current location. Plan a quick visit to revive engagement.',
       priority: 'Medium',
       icon: Clock
     },
@@ -176,7 +176,7 @@ const Tasks = () => {
       id: '3',
       type: 'product',
       title: 'Cross-sell Opportunity',
-      message: 'Existing SHG customers have 60% interest in insurance products',
+      message: 'Morning visits to Bandra yield 30% more conversions—consider rescheduling your visits before noon',
       priority: 'Medium',
       icon: Target
     }

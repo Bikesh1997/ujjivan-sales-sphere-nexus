@@ -283,10 +283,10 @@ const TerritoryManagement = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Territory Overview</TabsTrigger>
-          <TabsTrigger value="performance">Performance Analysis</TabsTrigger>
-          <TabsTrigger value="optimization">Territory Optimization</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5  gap-1 h-auto">
+      <TabsTrigger value="overview "  className="text-xs sm:text-sm px-2 py-2">Territory Overview</TabsTrigger>
+          <TabsTrigger value="performance "  className="text-xs sm:text-sm px-2 py-2">Performance Analysis</TabsTrigger>
+          <TabsTrigger value="optimization "  className="text-xs sm:text-sm px-2 py-2">Territory Optimization</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

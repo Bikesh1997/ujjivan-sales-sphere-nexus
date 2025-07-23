@@ -144,76 +144,112 @@ const CrossSellingRules = () => {
 
       {/* Rules Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Cross-Sell Rules ({rules.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Rule Name</TableHead>
-                <TableHead>Condition</TableHead>
-                <TableHead>Offer</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Matched Customers</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rules.map((rule) => (
-                <TableRow key={rule.id}>
-                  <TableCell className="font-medium">{rule.name}</TableCell>
-                  <TableCell className="max-w-xs truncate">{rule.condition}</TableCell>
-                  <TableCell className="max-w-xs truncate">{rule.offer}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">P{rule.priority}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={rule.status === 'active'}
-                        onCheckedChange={() => handleToggleStatus(rule.id)}
-                      />
-                      <Badge variant={rule.status === 'active' ? 'default' : 'secondary'}>
-                        {rule.status}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>{rule.matchedCustomers}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedRule(rule);
-                          setPreviewModalOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteRule(rule.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Play className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <CardHeader>
+    <CardTitle>Cross-Sell Rules ({rules.length})</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {/* Table for md and up */}
+    <div className="hidden md:block">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Rule Name</TableHead>
+            <TableHead>Condition</TableHead>
+            <TableHead>Offer</TableHead>
+            <TableHead>Priority</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Matched Customers</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rules.map((rule) => (
+            <TableRow key={rule.id}>
+              <TableCell className="font-medium">{rule.name}</TableCell>
+              <TableCell className="max-w-xs truncate">{rule.condition}</TableCell>
+              <TableCell className="max-w-xs truncate">{rule.offer}</TableCell>
+              <TableCell>
+                <Badge variant="outline">P{rule.priority}</Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={rule.status === 'active'}
+                    onCheckedChange={() => handleToggleStatus(rule.id)}
+                  />
+                  <Badge variant={rule.status === 'active' ? 'default' : 'secondary'}>
+                    {rule.status}
+                  </Badge>
+                </div>
+              </TableCell>
+              <TableCell>{rule.matchedCustomers}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => {
+                    setSelectedRule(rule);
+                    setPreviewModalOpen(true);
+                  }}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <Play className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Card View for small screens */}
+    <div className="md:hidden space-y-4">
+      {rules.map((rule) => (
+        <div key={rule.id} className="border rounded-lg p-4 shadow-sm space-y-2">
+          <div className="font-semibold text-lg">{rule.name}</div>
+          <div><strong>Condition:</strong> <span className="text-sm text-gray-700">{rule.condition}</span></div>
+          <div><strong>Offer:</strong> <span className="text-sm text-gray-700">{rule.offer}</span></div>
+          <div><strong>Priority:</strong> <Badge variant="outline">P{rule.priority}</Badge></div>
+          <div className="flex items-center gap-2">
+            <strong>Status:</strong>
+            <Switch
+              checked={rule.status === 'active'}
+              onCheckedChange={() => handleToggleStatus(rule.id)}
+            />
+            <Badge variant={rule.status === 'active' ? 'default' : 'secondary'}>
+              {rule.status}
+            </Badge>
+          </div>
+          <div><strong>Matched Customers:</strong> {rule.matchedCustomers}</div>
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button variant="ghost" size="sm" onClick={() => {
+              setSelectedRule(rule);
+              setPreviewModalOpen(true);
+            }}>
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Play className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
+
 
       {/* Modals */}
       <AddRuleModal 

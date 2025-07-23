@@ -248,68 +248,124 @@ const KRAManagement = () => {
 
       {/* KRAs Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>KRA Definitions ({filteredKRAs.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>KRA Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Target</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Weight</TableHead>
-                <TableHead>Assigned Users</TableHead>
-                <TableHead>Avg Achievement</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredKRAs.map((kra) => (
-                <TableRow key={kra.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{kra.name}</div>
-                      <div className="text-sm text-gray-500">{kra.metric}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{getRoleDisplay(kra.role)}</Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">{kra.target}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{kra.frequency}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{kra.weight}%</Badge>
-                  </TableCell>
-                  <TableCell>{kra.assignedUsers}</TableCell>
-                  <TableCell>
-                    <div className={`font-medium ${getAchievementColor(kra.avgAchievement)}`}>
-                      {kra.avgAchievement}%
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteKRA(kra.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <CardHeader>
+    <CardTitle>KRA Definitions ({filteredKRAs.length})</CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    {/* Desktop Table View */}
+    <div className="hidden md:block">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>KRA Name</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Target</TableHead>
+            <TableHead>Frequency</TableHead>
+            <TableHead>Weight</TableHead>
+            <TableHead>Assigned Users</TableHead>
+            <TableHead>Avg Achievement</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredKRAs.map((kra) => (
+            <TableRow key={kra.id}>
+              <TableCell>
+                <div>
+                  <div className="font-medium">{kra.name}</div>
+                  <div className="text-sm text-gray-500">{kra.metric}</div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">{getRoleDisplay(kra.role)}</Badge>
+              </TableCell>
+              <TableCell className="font-medium">{kra.target}</TableCell>
+              <TableCell>
+                <Badge variant="secondary">{kra.frequency}</Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">{kra.weight}%</Badge>
+              </TableCell>
+              <TableCell>{kra.assignedUsers}</TableCell>
+              <TableCell>
+                <div className={`font-medium ${getAchievementColor(kra.avgAchievement)}`}>
+                  {kra.avgAchievement}%
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteKRA(kra.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Mobile Card View */}
+    <div className="md:hidden space-y-4">
+      {filteredKRAs.map((kra) => (
+        <div
+          key={kra.id}
+          className="border rounded-lg p-4 shadow-sm space-y-2"
+        >
+          <div>
+            <div className="font-medium">{kra.name}</div>
+            <div className="text-sm text-gray-500">{kra.metric}</div>
+          </div>
+          <div>
+            <strong>Role:</strong>{' '}
+            <Badge variant="outline">{getRoleDisplay(kra.role)}</Badge>
+          </div>
+          <div>
+            <strong>Target:</strong> {kra.target}
+          </div>
+          <div>
+            <strong>Frequency:</strong>{' '}
+            <Badge variant="secondary">{kra.frequency}</Badge>
+          </div>
+          <div>
+            <strong>Weight:</strong>{' '}
+            <Badge variant="outline">{kra.weight}%</Badge>
+          </div>
+          <div>
+            <strong>Assigned Users:</strong> {kra.assignedUsers}
+          </div>
+          <div>
+            <strong>Avg Achievement:</strong>{' '}
+            <span className={`font-medium ${getAchievementColor(kra.avgAchievement)}`}>
+              {kra.avgAchievement}%
+            </span>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="ghost" size="sm">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDeleteKRA(kra.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
+
 
       {/* KRA Performance Summary */}
       <Card>

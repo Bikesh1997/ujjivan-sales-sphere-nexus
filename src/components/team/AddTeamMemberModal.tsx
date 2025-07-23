@@ -96,8 +96,8 @@ const AddTeamMemberModal = ({ isOpen, onClose, onAddMember }: AddTeamMemberModal
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Sales Executive">Sales Executive</SelectItem>
-                <SelectItem value="Senior Sales Executive">Senior Sales Executive</SelectItem>
+                <SelectItem value="Field Executive">Field Executive</SelectItem>
+                <SelectItem value="Senior Field Executive">Senior Field Executive</SelectItem>
                 <SelectItem value="Team Lead">Team Lead</SelectItem>
               </SelectContent>
             </Select>

@@ -99,56 +99,60 @@ const SupervisorTeamPerformance = ({
           <CardTitle>Top Team Members</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {topTeamMembers.map((member, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-700 rounded-full font-bold text-sm">
-                    #{index + 1}
-                  </div>
-                  <Avatar>
-                    <AvatarFallback className="bg-teal-100 text-teal-700">
-                      {member.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.role}</p>
-                    <Badge className={getStatusColor(member.status)}>
-                      {member.status}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">
-                    ₹{member.revenue}L / ₹{member.target}L
-                  </p>
-                  <p className={`text-lg font-bold ${getPerformanceColor(member.revenue, member.target)}`}>
-                    {Math.round((member.revenue / member.target) * 100)}%
-                  </p>
-                  <div className="flex space-x-2 mt-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onViewDetails(member)}
-                    >
-                      <Eye size={14} className="mr-1" />
-                      View
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onAssignLeads(member)}
-                    >
-                      <Target size={14} className="mr-1" />
-                      Assign
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+  <div className="grid grid-cols-1 gap-4">
+    {topTeamMembers.map((member, index) => (
+      <div
+        key={index}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-4"
+      >
+        {/* Left side (Member Info) */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-700 rounded-full font-bold text-sm">
+            #{index + 1}
           </div>
-        </CardContent>
+          <Avatar>
+            <AvatarFallback className="bg-teal-100 text-teal-700">
+              {member.name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-medium">{member.name}</p>
+            <p className="text-sm text-gray-500">{member.role}</p>
+            <Badge className={getStatusColor(member.status)}>{member.status}</Badge>
+          </div>
+        </div>
+
+        {/* Right side (Metrics + Buttons) */}
+        <div className="text-left sm:text-right">
+          <p className="text-sm text-gray-600">
+            ₹{member.revenue}L / ₹{member.target}L
+          </p>
+          <p
+            className={`text-lg font-bold ${getPerformanceColor(
+              member.revenue,
+              member.target
+            )}`}
+          >
+            {Math.round((member.revenue / member.target) * 100)}%
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-2">
+            <Button size="sm" variant="outline" onClick={() => onViewDetails(member)}>
+              <Eye size={14} className="mr-1" />
+              View
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => onAssignLeads(member)}>
+              <Target size={14} className="mr-1" />
+              Assign
+            </Button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</CardContent>
+
       </Card>
     </div>
   );

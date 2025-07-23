@@ -107,7 +107,7 @@ const TodaysPlan = () => {
     }
   };
 
-  // Check if user should see Smart Beat Plan Route - hide for Inbound Contact Center Agents
+  // Check if user should see Smart Beat Plan Route - hide for Inbound saless
   const shouldShowBeatPlan = user?.role !== 'inbound_agent';
 
   if (isAnjaliAccount) {
@@ -331,7 +331,7 @@ const TodaysPlan = () => {
                     <Users size={16} className="text-teal-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-teal-900">High Conversion Area</h4>
-                      <p className="text-sm text-teal-700">Women customers in Ward 4 show 85% higher conversion rates. Plan 3 visits this week.</p>
+                      <p className="text-sm text-teal-700">80% of your recent FD closures came from customers aged 45–60. Prioritize this age group today for higher conversion</p>
                     </div>
                   </div>
                 </div>
@@ -340,7 +340,7 @@ const TodaysPlan = () => {
                     <Calendar size={16} className="text-orange-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-orange-900">Optimal Visit Time</h4>
-                      <p className="text-sm text-orange-700">SHG meetings are most effective between 10 AM - 12 PM. Schedule accordingly.</p>
+                      <p className="text-sm text-orange-700">You have 5 inactive SHG customers within 2 km of your current location. Plan a quick visit to revive engagement.</p>
                     </div>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ const TodaysPlan = () => {
                     <IndianRupee size={16} className="text-purple-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-purple-900">Loan Size Opportunity</h4>
-                      <p className="text-sm text-purple-700">Groups formed this month request 20% higher loan amounts. Adjust proposals.</p>
+                      <p className="text-sm text-purple-700">Morning visits to Bandra yield 30% more conversions—consider rescheduling your visits before noon</p>
                     </div>
                   </div>
                 </div>
@@ -529,7 +529,7 @@ const TodaysPlan = () => {
           </CardContent>
         </Card>
 
-        {/* Smart Beat Plan Route - Only show for non-Inbound Contact Center Agents */}
+        {/* Smart Beat Plan Route - Only show for non-Inbound saless */}
         {shouldShowBeatPlan && (
           <Card>
             <CardHeader>

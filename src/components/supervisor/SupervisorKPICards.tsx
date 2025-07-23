@@ -11,28 +11,28 @@ const SupervisorKPICards = ({ teamMembersCount, unassignedLeadsCount }: Supervis
   const kpis = [
     { 
       title: 'Team Size', 
-      value: teamMembersCount.toString(), 
+      value: "478", 
       subtitle: 'Active team members', 
       trend: { value: '1 new this month', isPositive: true }, 
       icon: <Users size={20} /> 
     },
     { 
       title: 'Team Target', 
-      value: '₹65L', 
+      value: '₹85L', 
       subtitle: 'Monthly collective target', 
       trend: { value: '12% above last month', isPositive: true }, 
       icon: <Target size={20} /> 
     },
     { 
       title: 'Team Achievement', 
-      value: '₹54.5L', 
+      value: '₹68.4L', 
       subtitle: 'Current month revenue', 
       trend: { value: '84% of target', isPositive: true }, 
       icon: <TrendingUp size={20} /> 
     },
     { 
       title: 'Unassigned Leads', 
-      value: unassignedLeadsCount.toString(), 
+      value: 7, 
       subtitle: 'Require allocation', 
       trend: { value: '5 new today', isPositive: false }, 
       icon: <AlertTriangle size={20} /> 

@@ -51,13 +51,23 @@ const AddKRAModal: React.FC<AddKRAModalProps> = ({ isOpen, onClose, onAdd }) => 
   ];
 
   const metrics = [
-    'Count',
-    'Percentage',
-    'Amount (₹)',
-    'Ratio',
-    'Score',
-    'Duration (hours)',
-    'Distance (km)'
+    'Team Productivity Score',
+    'Target Fulfillment (%)',
+    'Compliance Score (%)',
+    'Attendance Adherence (%)',
+    'Accuracy Rate (%)',
+    'Lead Ageing (%)',
+    'Training Completion Rate (%)',
+    'Escalation Rate',
+    'Resolution TAT',
+    'App Usage Frequency',
+    'Nudge Compliance (%)',
+    'First Contact Resolution (%)',
+    'Documentation Completion (%)',
+    'Conversion Rate (%)',
+    'Product-Specific KPI',
+    'Distance Travelled (km)',
+    'Coverage Index (%)'
   ];
 
   const frequencies = [

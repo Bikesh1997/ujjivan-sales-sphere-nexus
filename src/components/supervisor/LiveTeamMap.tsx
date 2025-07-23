@@ -37,7 +37,7 @@ const LiveTeamMap = () => {
     {
       id: '1',
       name: 'Rahul Sharma',
-      role: 'Sales Executive',
+      role: 'Field Executive',
       currentLocation: {
         latitude: 19.0760,
         longitude: 72.8777,
@@ -53,7 +53,7 @@ const LiveTeamMap = () => {
     {
       id: '2',
       name: 'Anjali Patel',
-      role: 'Sales Executive',
+      role: 'Field Executive',
       currentLocation: {
         latitude: 19.0896,
         longitude: 72.8656,

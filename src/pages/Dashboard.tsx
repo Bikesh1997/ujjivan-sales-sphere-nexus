@@ -46,10 +46,11 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {user?.name.split(' ')[0]}!
-          </h1>
-          <p className="text-gray-600">Here's your sales performance overview</p>
+          <h3 className="text-2xl font-bold text-gray-900">
+            {/* Welcome back,  */}
+            Hey,  {user?.name.split(' ')[0]}!
+          </h3>
+          {/* <p className="text-gray-600">Here's your sales performance overview</p> */}
         </div>
         <div className="flex space-x-3">
           <Button variant="outline" size="sm" onClick={handlePlanRoute}>
@@ -72,7 +73,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Leads</p>
-                <p className="text-2xl font-bold text-gray-900">{totalLeads}</p>
+                <p className="text-2xl font-bold text-gray-900">134</p>
                 <p className="text-xs text-gray-500 mt-1">
                   <ArrowUpRight size={14} className="inline-block mr-1" />
                   +12% from last month
@@ -88,7 +89,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Converted Leads</p>
-                <p className="text-2xl font-bold text-gray-900">{convertedLeads}</p>
+                <p className="text-2xl font-bold text-gray-900">28</p>
                 <p className="text-xs text-gray-500 mt-1">
                   <ArrowUpRight size={14} className="inline-block mr-1" />
                   +8% from last month
@@ -104,7 +105,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Monthly Target</p>
-                <p className="text-2xl font-bold text-gray-900">{monthlyTarget}</p>
+                <p className="text-2xl font-bold text-gray-900">40</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {convertedLeads >= monthlyTarget ? (
                     <>
@@ -129,7 +130,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Open Leads</p>
-                <p className="text-2xl font-bold text-gray-900">{openLeads}</p>
+                <p className="text-2xl font-bold text-gray-900">106</p>
                 <p className="text-xs text-gray-500 mt-1">
                   <ArrowDownRight size={14} className="inline-block mr-1" />
                   -3% from last month
@@ -145,7 +146,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">₹{Math.round(totalRevenue)}L</p>
+                <p className="text-2xl font-bold text-gray-900">₹1.28 Cr</p>
                 <p className="text-xs text-gray-500 mt-1">
                   <ArrowUpRight size={14} className="inline-block mr-1" />
                   +15% from last month
@@ -158,7 +159,6 @@ const Dashboard = () => {
       </div>
 
       {/* Smart Nudges - moved before projections */}
-      <SmartNudges />
 
       {/* Projection Section */}
       <ProjectionSection 
@@ -168,6 +168,8 @@ const Dashboard = () => {
           monthlyTarget
         }}
       />
+      <SmartNudges />
+
     </div>
   );
 };

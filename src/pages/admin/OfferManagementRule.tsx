@@ -233,95 +233,146 @@ const OfferManagementRule = () => {
 
       {/* Offers Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Offers ({filteredOffers.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Offer Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Usage</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOffers.map((offer) => (
-                <TableRow key={offer.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{offer.name}</div>
-                      {offer.campaign && (
-                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                          <Tag className="h-3 w-3" />
-                          {offer.campaign}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{getTypeDisplay(offer.type)}</Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">{offer.value}</TableCell>
-                  <TableCell>{offer.product}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {offer.startDate}
-                      </div>
-                      <div className="text-gray-500">to {offer.endDate}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="font-medium">{offer.usage}/{offer.maxUsage}</div>
-                      <div className="w-16 h-2 bg-gray-200 rounded-full">
-                        <div 
-                          className="h-full bg-teal-500 rounded-full"
-                          style={{ width: `${(offer.usage / offer.maxUsage) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {offer.status !== 'expired' && (
-                        <Switch
-                          checked={offer.status === 'active'}
-                          onCheckedChange={() => handleToggleStatus(offer.id)}
-                        />
-                      )}
-                      <Badge className={getStatusColor(offer.status)}>
-                        {offer.status}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteOffer(offer.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <CardHeader>
+    <CardTitle>Offers ({filteredOffers.length})</CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    {/* Table view for desktop */}
+    <div className="hidden md:block">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Offer Name</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Value</TableHead>
+            <TableHead>Product</TableHead>
+            <TableHead>Duration</TableHead>
+            <TableHead>Usage</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredOffers.map((offer) => (
+            <TableRow key={offer.id}>
+              <TableCell>
+                <div className="font-medium">{offer.name}</div>
+                {offer.campaign && (
+                  <div className="text-sm text-gray-500 flex items-center gap-1">
+                    <Tag className="h-3 w-3" />
+                    {offer.campaign}
+                  </div>
+                )}
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">{getTypeDisplay(offer.type)}</Badge>
+              </TableCell>
+              <TableCell className="font-medium">{offer.value}</TableCell>
+              <TableCell>{offer.product}</TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {offer.startDate}
+                  </div>
+                  <div className="text-gray-500">to {offer.endDate}</div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <div className="font-medium">{offer.usage}/{offer.maxUsage}</div>
+                  <div className="w-16 h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className="h-full bg-teal-500 rounded-full"
+                      style={{ width: `${(offer.usage / offer.maxUsage) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {offer.status !== 'expired' && (
+                    <Switch
+                      checked={offer.status === 'active'}
+                      onCheckedChange={() => handleToggleStatus(offer.id)}
+                    />
+                  )}
+                  <Badge className={getStatusColor(offer.status)}>{offer.status}</Badge>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => handleDeleteOffer(offer.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Card layout for mobile */}
+    <div className="md:hidden space-y-4">
+      {filteredOffers.map((offer) => (
+        <div key={offer.id} className="border rounded-lg p-4 shadow-sm space-y-2">
+          <div className="font-semibold text-base">{offer.name}</div>
+          {offer.campaign && (
+            <div className="text-sm text-gray-500 flex items-center gap-1">
+              <Tag className="h-3 w-3" />
+              {offer.campaign}
+            </div>
+          )}
+          <div><strong>Type:</strong> <Badge variant="outline">{getTypeDisplay(offer.type)}</Badge></div>
+          <div><strong>Value:</strong> {offer.value}</div>
+          <div><strong>Product:</strong> {offer.product}</div>
+          <div>
+            <strong>Duration:</strong>
+            <div className="text-sm text-gray-700">
+              <Calendar className="inline h-3 w-3 mr-1" />
+              {offer.startDate} to {offer.endDate}
+            </div>
+          </div>
+          <div>
+            <strong>Usage:</strong>
+            <div className="text-sm">
+              {offer.usage}/{offer.maxUsage}
+              <div className="w-full h-2 bg-gray-200 rounded-full mt-1">
+                <div
+                  className="h-full bg-teal-500 rounded-full"
+                  style={{ width: `${(offer.usage / offer.maxUsage) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <strong>Status:</strong>
+            {offer.status !== 'expired' && (
+              <Switch
+                checked={offer.status === 'active'}
+                onCheckedChange={() => handleToggleStatus(offer.id)}
+              />
+            )}
+            <Badge className={getStatusColor(offer.status)}>{offer.status}</Badge>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="ghost" size="sm">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleDeleteOffer(offer.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
 
       {/* Add Offer Modal */}
       <AddOfferModal 

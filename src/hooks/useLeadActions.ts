@@ -30,7 +30,7 @@ export const useLeadActions = (lead: Lead) => {
     window.open(`mailto:${lead.email}?subject=Follow-up for ${lead.name}`);
   };
 
-  // Updated permission logic: Allow supervisors and sales executives to edit leads
+  // Updated permission logic: Allow supervisors and Field Executives to edit leads
   const canEdit = user?.role === 'supervisor' || 
                   user?.role === 'sales_executive' || 
                   user?.role === 'inbound_agent' || 

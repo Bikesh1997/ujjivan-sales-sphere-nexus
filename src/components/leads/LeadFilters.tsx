@@ -25,20 +25,31 @@ const LeadFilters = ({
 }: LeadFiltersProps) => {
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex space-x-2">
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              placeholder="Search leads, contacts, emails..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 w-80"
-            />
-          </div>
-          <Select value={filters.status} onValueChange={(value) => onFiltersChange({ ...filters, status: value })}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* Left: Search and Filter */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:space-x-4">
+        <div className="relative w-full sm:w-80">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          />
+          <Input
+            placeholder="Search leads, contacts, emails..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-10 w-full"
+          />
+        </div>
+  
+        <div className="w-full sm:w-32">
+          <Select
+            value={filters.status}
+            onValueChange={(value) =>
+              onFiltersChange({ ...filters, status: value })
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
@@ -54,12 +65,18 @@ const LeadFilters = ({
             </SelectContent>
           </Select>
         </div>
-        <Button className="flex items-center gap-2">
+      </div>
+  
+      {/* Right: Add Lead Button */}
+      <div className="w-full sm:w-auto">
+        <Button className="w-full sm:w-auto flex items-center justify-center gap-2">
           <Plus size={16} />
           Add Lead
         </Button>
       </div>
     </div>
+  </div>
+  
   );
 };
 

@@ -182,7 +182,7 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
         <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto p-3 sm:p-6">
           <DialogHeader>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <DialogTitle className="text-xl sm:text-2xl font-bold">Customer Details</DialogTitle>
+              <DialogTitle className="text-xl sm:text-2xl font-bold">customer 360 view</DialogTitle>
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                 <Button 
                   variant="outline" 

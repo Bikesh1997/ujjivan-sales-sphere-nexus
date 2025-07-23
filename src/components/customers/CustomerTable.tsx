@@ -1,19 +1,15 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Search, Phone, Mail, MapPin, TrendingUp, Eye, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Search, Phone, Mail, TrendingUp, Eye, Star } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
@@ -56,20 +52,18 @@ interface CustomerTableProps {
 }
 
 const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: CustomerTableProps) => {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [modalCustomer, setModalCustomer] = useState<Customer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const customersPerPage = 5;
 
-  const filteredCustomers = customers.filter(customer =>
+  const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination calculations
   const indexOfLastCustomer = currentPage * customersPerPage;
   const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
   const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
@@ -108,118 +102,94 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
       <div className="space-y-4">
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-col sm:flex-row gap-2">
               <CardTitle>Customer Directory</CardTitle>
-              <div className="relative w-80">
+              <div className="relative w-full sm:w-80">
                 <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   placeholder="Search customers..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
-                    setCurrentPage(1); // Reset to first page on search
+                    setCurrentPage(1);
                   }}
                   className="pl-10"
                 />
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Segment</TableHead>
-                  <TableHead>Relationship Value</TableHead>
-                  <TableHead>Risk Score</TableHead>
-                  <TableHead>Last Interaction</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentCustomers.map((customer, index) => {
-                  // Calculate the global index to determine if this is in the first 3 customers overall
-                  const globalIndex = (currentPage - 1) * customersPerPage + index;
-                  const isFirst3 = globalIndex < 3;
+          <div className="w-full px-4 sm:px-6 md:px-8 overflow-x-hidden">
+  <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {currentCustomers.map((customer, index) => {
+      const globalIndex = (currentPage - 1) * customersPerPage + index;
+      const isFirst3 = globalIndex < 3;
 
-                  return (
-                    <TableRow 
-                      key={customer.key}
-                      className={`cursor-pointer hover:bg-gray-50 ${
-                        selectedCustomer === customer.key ? 'bg-teal-50 border-l-4 border-teal-500' : ''
-                      }`}
-                      onClick={() => onCustomerSelect(customer.key)}
-                    >
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-teal-100 text-teal-700">
-                              {customer.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium flex items-center gap-2">
-                              {customer.name}
-                              {isFirst3 && (
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>New opportunity identified</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-500">{customer.id}</div>
-                            <div className="text-xs text-gray-400">{customer.email}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getSegmentColor(customer.segment)}>
-                          {customer.segment}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center">
-                          <TrendingUp size={14} className="mr-1 text-teal-600" />
-                          <span className="font-medium">{customer.totalRelationship}</span>
-                        </div>
-                        <div className="text-xs text-gray-500">{customer.relationshipValue} Value</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getRiskColor(customer.riskScore)}>
-                          {customer.riskScore}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {customer.lastInteraction}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={(e) => handleViewCustomer(customer, e)}
-                          >
-                            <Eye size={14} className="mr-1" />
-                            View
-                          </Button>
-                          <Button size="sm" variant="ghost">
-                            <Phone size={14} />
-                          </Button>
-                          <Button size="sm" variant="ghost">
-                            <Mail size={14} />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+      return (
+        <Card
+          key={customer.key}
+          className={`w-full cursor-pointer hover:shadow-md ${
+            selectedCustomer === customer.key ? 'border-teal-500 border-2' : ''
+          }`}
+          onClick={() => onCustomerSelect(customer.key)}
+        >
+          <CardHeader className="flex flex-row items-center gap-4">
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-teal-100 text-teal-700">
+                {customer.name.split(' ').map((n) => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col truncate">
+              <div className="font-medium flex items-center gap-2 truncate">
+                {customer.name}
+                {isFirst3 && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>New opportunity identified</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+              <div className="text-sm text-gray-500 truncate">{customer.id}</div>
+              <div className="text-xs text-gray-400 truncate">{customer.email}</div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div>
+              <span className="text-sm font-medium">Segment:</span>{' '}
+              <Badge className={getSegmentColor(customer.segment)}>{customer.segment}</Badge>
+            </div>
+            <div>
+              <span className="text-sm font-medium">Relationship:</span>{' '}
+              <span className="text-gray-700">{customer.totalRelationship}</span>
+            </div>
+            <div>
+              <span className="text-sm font-medium">Risk Score:</span>{' '}
+              <Badge className={getRiskColor(customer.riskScore)}>{customer.riskScore}</Badge>
+            </div>
+            <div className="text-sm text-gray-600">
+              Last Interaction: {customer.lastInteraction}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              <Button size="sm" variant="outline" onClick={(e) => handleViewCustomer(customer, e)}>
+                <Eye size={14} className="mr-1" /> View
+              </Button>
+              <Button size="sm" variant="ghost">
+                <Phone size={14} />
+              </Button>
+              <Button size="sm" variant="ghost">
+                <Mail size={14} />
+              </Button>
+            </div>
           </CardContent>
+        </Card>
+      );
+    })}
+  </CardContent>
+</div>
+
         </Card>
 
         {/* Pagination */}
@@ -228,16 +198,16 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
             <div className="text-sm text-gray-700">
               Showing {indexOfFirstCustomer + 1} to {Math.min(indexOfLastCustomer, filteredCustomers.length)} of {filteredCustomers.length} customers
             </div>
-            
+
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious 
+                  <PaginationPrevious
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                     className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                   />
                 </PaginationItem>
-                
+
                 {[...Array(totalPages)].map((_, index) => {
                   const pageNumber = index + 1;
                   if (
@@ -259,9 +229,9 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
                   }
                   return null;
                 })}
-                
+
                 <PaginationItem>
-                  <PaginationNext 
+                  <PaginationNext
                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                     className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                   />

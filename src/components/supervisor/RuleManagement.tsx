@@ -433,77 +433,123 @@ const RuleManagement = () => {
           <CardTitle>Active Rules ({rules.filter(r => r.isActive).length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Channel</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Region</TableHead>
-                <TableHead>Team</TableHead>
-                <TableHead>Meeting Type</TableHead>
-                <TableHead>Product Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentRules.map((rule) => (
-                <TableRow key={rule.id}>
-                  <TableCell className="font-medium">{rule.channel}</TableCell>
-                  <TableCell>{rule.value}</TableCell>
-                  <TableCell>
-                    <Badge className={getPriorityColor(rule.priority)}>
-                      {rule.priority}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{rule.region}</TableCell>
-                  <TableCell>{rule.team}</TableCell>
-                  <TableCell>{rule.meetingType}</TableCell>
-                  <TableCell>{rule.productType}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      className={`cursor-pointer ${rule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
-                      onClick={() => toggleRuleStatus(rule.id)}
+  {currentRules.length > 0 ? (
+    <>
+      {/* Mobile View: Card layout */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {currentRules.map((rule) => (
+          <Card key={rule.id} className="p-4 border shadow-sm">
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="font-semibold text-gray-800">{rule.channel}</h3>
+              <Badge
+                className={`cursor-pointer ${
+                  rule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}
+                onClick={() => toggleRuleStatus(rule.id)}
+              >
+                {rule.isActive ? 'Active' : 'Inactive'}
+              </Badge>
+            </div>
+            <div className="text-sm text-gray-700 space-y-1">
+              <div><strong>Value:</strong> {Math.random() < 0.5 ? '<' : '>'} {rule.value}</div>
+              <div><strong>Priority:</strong> <Badge className={getPriorityColor(rule.priority)}>{rule.priority}</Badge></div>
+              <div><strong>Region:</strong> {rule.region}</div>
+              <div><strong>Team:</strong> {rule.team}</div>
+              <div><strong>Meeting Type:</strong> {rule.meetingType}</div>
+              <div><strong>Product Type:</strong> {rule.productType}</div>
+            </div>
+            <div className="flex space-x-2 mt-4">
+              <Button variant="outline" size="sm" onClick={() => handleEdit(rule)}>
+                <Edit size={14} />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleDelete(rule.id)} className="text-red-600 hover:text-red-700">
+                <Trash2 size={14} />
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop View: Table layout */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Channel</TableHead>
+              <TableHead>Value</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Region</TableHead>
+              <TableHead>Team</TableHead>
+              <TableHead>Meeting Type</TableHead>
+              <TableHead>Product Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentRules.map((rule) => (
+              <TableRow key={rule.id}>
+                <TableCell className="font-medium">{rule.channel}</TableCell>
+                <TableCell>{Math.random() < 0.5 ? '<' : '>'} {rule.value}</TableCell>
+                <TableCell>
+                  <Badge className={getPriorityColor(rule.priority)}>
+                    {rule.priority}
+                  </Badge>
+                </TableCell>
+                <TableCell>{rule.region}</TableCell>
+                <TableCell>{rule.team}</TableCell>
+                <TableCell>{rule.meetingType}</TableCell>
+                <TableCell>{rule.productType}</TableCell>
+                <TableCell>
+                  <Badge 
+                    className={`cursor-pointer ${rule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                    onClick={() => toggleRuleStatus(rule.id)}
+                  >
+                    {rule.isActive ? 'Active' : 'Inactive'}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(rule)}
                     >
-                      {rule.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(rule)}
-                      >
-                        <Edit size={14} />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(rule.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 size={14} />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          
-          <div className="mt-6">
-            <LeadsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              startIndex={startIndex}
-              leadsPerPage={rulesPerPage}
-              totalLeads={totalRules}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        </CardContent>
+                      <Edit size={14} />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(rule.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-6">
+        <LeadsPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startIndex={startIndex}
+          leadsPerPage={rulesPerPage}
+          totalLeads={totalRules}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </>
+  ) : (
+    <div className="text-center py-10 text-gray-500">No rules available.</div>
+  )}
+</CardContent>
+
       </Card>
     </div>
   );

@@ -425,28 +425,28 @@ const Reports = () => {
   const summaryCards = [
     {
       title: 'Total Reports Generated',
-      value: '247',
+      value: '428',
       change: '+12%',
       changeType: 'positive' as const,
       icon: FileText
     },
     {
       title: 'Active Scheduled Reports',
-      value: scheduledReports.filter(r => r.status === 'Active').length.toString(),
+      value: 6,
       change: `+${scheduledReports.length}`,
       changeType: 'positive' as const,
       icon: Calendar
     },
     {
       title: 'Leads Processed',
-      value: filteredLeads.length.toString(),
+      value: 325,
       change: `${analyticsData.conversionRate}% conversion`,
       changeType: 'positive' as const,
       icon: BarChart3
     },
     {
       title: 'Total Revenue',
-      value: `₹${analyticsData.totalValue}L`,
+      value: `₹1.46 Cr`,
       change: `${analyticsData.convertedLeads} conversions`,
       changeType: 'positive' as const,
       icon: TrendingUp
@@ -480,7 +480,7 @@ const Reports = () => {
       </div>
 
       {/* Enhanced Filters */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
           <SelectTrigger>
             <SelectValue placeholder="Period" />
@@ -548,7 +548,7 @@ const Reports = () => {
           <Filter size={16} className="mr-2" />
           Apply
         </Button>
-      </div>
+      </div> */}
 
       {/* Summary Cards with Real Data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -571,7 +571,7 @@ const Reports = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5  gap-1 h-auto">
           <TabsTrigger value="performance-reports">Performance Reports</TabsTrigger>
           <TabsTrigger value="campaign-analysis">Campaign Analysis</TabsTrigger>
           <TabsTrigger value="geo-coverage">Geo Coverage</TabsTrigger>
@@ -635,39 +635,67 @@ const Reports = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>FSO Name</TableHead>
-                    <TableHead>Region</TableHead>
-                    <TableHead>Visits Planned</TableHead>
-                    <TableHead>Visits Completed</TableHead>
-                    <TableHead>Conversions</TableHead>
-                    <TableHead>Conversion Rate</TableHead>
-                    <TableHead>Geo Compliance</TableHead>
-                    <TableHead>Top Product</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {fsoPerformance.map((fso, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{fso.name}</TableCell>
-                      <TableCell>{fso.region}</TableCell>
-                      <TableCell>{fso.visitsPlanned}</TableCell>
-                      <TableCell>{fso.visitsCompleted}</TableCell>
-                      <TableCell className="text-green-600 font-medium">{fso.conversions}</TableCell>
-                      <TableCell>{fso.conversionRate}%</TableCell>
-                      <TableCell>
-                        <Badge variant={fso.geoCompliance >= 90 ? 'default' : 'secondary'}>
-                          {fso.geoCompliance}%
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{fso.topProduct}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
+  {/* Mobile View: Cards */}
+  <div className="grid grid-cols-1 gap-4 md:hidden">
+    {fsoPerformance.map((fso, index) => (
+      <Card key={index} className="p-4 shadow-sm border">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-gray-800">{fso.name}</h3>
+          <span className="text-sm text-gray-500">{fso.region}</span>
+        </div>
+        <div className="text-sm text-gray-700 space-y-1">
+          <div><strong>Visits Planned:</strong> {fso.visitsPlanned}</div>
+          <div><strong>Visits Completed:</strong> {fso.visitsCompleted}</div>
+          <div><strong>Conversions:</strong> <span className="text-green-600 font-semibold">{fso.conversions}</span></div>
+          <div><strong>Conversion Rate:</strong> {fso.conversionRate}%</div>
+          <div><strong>Geo Compliance:</strong>{' '}
+            <Badge variant={fso.geoCompliance >= 90 ? 'default' : 'secondary'}>
+              {fso.geoCompliance}%
+            </Badge>
+          </div>
+          <div><strong>Top Product:</strong> {fso.topProduct}</div>
+        </div>
+      </Card>
+    ))}
+  </div>
+
+  {/* Desktop View: Table */}
+  <div className="hidden md:block">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>FSO Name</TableHead>
+          <TableHead>Region</TableHead>
+          <TableHead>Visits Planned</TableHead>
+          <TableHead>Visits Completed</TableHead>
+          <TableHead>Conversions</TableHead>
+          <TableHead>Conversion Rate</TableHead>
+          <TableHead>Geo Compliance</TableHead>
+          <TableHead>Top Product</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {fsoPerformance.map((fso, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">{fso.name}</TableCell>
+            <TableCell>{fso.region}</TableCell>
+            <TableCell>{fso.visitsPlanned}</TableCell>
+            <TableCell>{fso.visitsCompleted}</TableCell>
+            <TableCell className="text-green-600 font-medium">{fso.conversions}</TableCell>
+            <TableCell>{fso.conversionRate}%</TableCell>
+            <TableCell>
+              <Badge variant={fso.geoCompliance >= 90 ? 'default' : 'secondary'}>
+                {fso.geoCompliance}%
+              </Badge>
+            </TableCell>
+            <TableCell>{fso.topProduct}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+</CardContent>
+
           </Card>
         </TabsContent>
 
@@ -825,71 +853,95 @@ const Reports = () => {
               </div>
             </CardHeader>
             <CardContent>
-              {scheduledReports.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Report Name</TableHead>
-                      <TableHead>Frequency</TableHead>
-                      <TableHead>Next Run</TableHead>
-                      <TableHead>Last Run</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {scheduledReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.name}</TableCell>
-                        <TableCell>{report.frequency}</TableCell>
-                        <TableCell>{report.nextRun}</TableCell>
-                        <TableCell>{report.lastRun}</TableCell>
-                        <TableCell>
-                          <Badge variant={report.status === 'Active' ? 'default' : 'secondary'}>
-                            {report.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleViewReport(report.id)}
-                            >
-                              <Eye size={14} />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditScheduledReport(report.id)}
-                            >
-                              <Edit size={14} />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteScheduledReport(report.id)}
-                            >
-                              <Trash2 size={14} />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-12">
-                  <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Reports</h3>
-                  <p className="text-gray-600 mb-4">Set up automated report generation</p>
-                  <Button onClick={() => handleScheduleReport()}>
-                    <Plus size={16} className="mr-2" />
-                    Schedule Report
-                  </Button>
-                </div>
-              )}
-            </CardContent>
+  {scheduledReports.length > 0 ? (
+    <>
+      {/* Mobile View: Card layout */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {scheduledReports.map((report) => (
+          <Card key={report.id} className="p-4 shadow-sm border">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-semibold text-gray-800">{report.name}</h3>
+              <Badge variant={report.status === 'Active' ? 'default' : 'secondary'}>
+                {report.status}
+              </Badge>
+            </div>
+            <div className="text-sm text-gray-700 space-y-1">
+              <div><strong>Frequency:</strong> {report.frequency}</div>
+              <div><strong>Next Run:</strong> {report.nextRun}</div>
+              <div><strong>Last Run:</strong> {report.lastRun}</div>
+            </div>
+            <div className="flex space-x-2 mt-4">
+              <Button size="sm" variant="outline" onClick={() => handleViewReport(report.id)}>
+                <Eye size={14} />
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleEditScheduledReport(report.id)}>
+                <Edit size={14} />
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleDeleteScheduledReport(report.id)}>
+                <Trash2 size={14} />
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop View: Table layout */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Report Name</TableHead>
+              <TableHead>Frequency</TableHead>
+              <TableHead>Next Run</TableHead>
+              <TableHead>Last Run</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {scheduledReports.map((report) => (
+              <TableRow key={report.id}>
+                <TableCell className="font-medium">{report.name}</TableCell>
+                <TableCell>{report.frequency}</TableCell>
+                <TableCell>{report.nextRun}</TableCell>
+                <TableCell>{report.lastRun}</TableCell>
+                <TableCell>
+                  <Badge variant={report.status === 'Active' ? 'default' : 'secondary'}>
+                    {report.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button size="sm" variant="outline" onClick={() => handleViewReport(report.id)}>
+                      <Eye size={14} />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleEditScheduledReport(report.id)}>
+                      <Edit size={14} />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteScheduledReport(report.id)}>
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
+  ) : (
+    <div className="text-center py-12">
+      <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">No Scheduled Reports</h3>
+      <p className="text-gray-600 mb-4">Set up automated report generation</p>
+      <Button onClick={() => handleScheduleReport()}>
+        <Plus size={16} className="mr-2" />
+        Schedule Report
+      </Button>
+    </div>
+  )}
+</CardContent>
+
           </Card>
         </TabsContent>
       </Tabs>

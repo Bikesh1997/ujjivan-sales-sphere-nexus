@@ -181,12 +181,13 @@ const GeoHierarchyManagement = () => {
   const renderGeoTree = (locations: GeoLocation[], level: number = 0) => {
     return locations.map((location) => (
       <div key={location.id} className="border rounded-lg mb-2">
-        <div 
-          className={`p-4 cursor-pointer hover:bg-gray-50 ${level > 0 ? 'ml-' + (level * 4) : ''}`}
+        <div
+          className={`p-4 cursor-pointer hover:bg-gray-50 ${level > 0 ? `ml-${level * 4}` : ''}`}
           onClick={() => setSelectedLevel(location)}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            {/* Left Side: Name and Location */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               {location.children && location.children.length > 0 && (
                 <Button
                   variant="ghost"
@@ -196,25 +197,24 @@ const GeoHierarchyManagement = () => {
                     toggleExpanded(location.id);
                   }}
                 >
-                  <ChevronRight 
+                  <ChevronRight
                     className={`h-4 w-4 transition-transform ${
                       expandedNodes.has(location.id) ? 'rotate-90' : ''
-                    }`} 
+                    }`}
                   />
                 </Button>
               )}
               <MapPin className="h-4 w-4 text-gray-400" />
               <div>
-                <div className="font-medium">{location.name}</div>
-                <div className="text-sm text-gray-500">Code: {location.code}</div>
+                <div className="font-medium text-sm sm:text-base">{location.name}</div>
+                <div className="text-xs text-gray-500">Code: {location.code}</div>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2">
-              <Badge className={getTypeColor(location.type)}>
-                {location.type}
-              </Badge>
-              <div className="flex items-center gap-1 text-sm text-gray-600">
+  
+            {/* Right Side: Meta Info and Actions */}
+            <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+              <Badge className={getTypeColor(location.type)}>{location.type}</Badge>
+              <div className="flex items-center gap-1 text-xs text-gray-600">
                 <Users className="h-3 w-3" />
                 {location.assignedUsers}
               </div>
@@ -239,18 +239,18 @@ const GeoHierarchyManagement = () => {
             </div>
           </div>
         </div>
-        
-        {location.children && 
-         location.children.length > 0 && 
-         expandedNodes.has(location.id) && (
-          <div className="pl-6 pb-2">
-            {renderGeoTree(location.children, level + 1)}
-          </div>
-        )}
+  
+        {location.children &&
+          location.children.length > 0 &&
+          expandedNodes.has(location.id) && (
+            <div className="pl-4 sm:pl-6 pb-2">
+              {renderGeoTree(location.children, level + 1)}
+            </div>
+          )}
       </div>
     ));
   };
-
+  
   const flattenGeoData = (locations: GeoLocation[]): GeoLocation[] => {
     let flattened: GeoLocation[] = [];
     locations.forEach(location => {
@@ -411,7 +411,7 @@ const GeoHierarchyManagement = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="mt-4">
+          {/* <Card className="mt-4">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
@@ -435,7 +435,7 @@ const GeoHierarchyManagement = () => {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
 

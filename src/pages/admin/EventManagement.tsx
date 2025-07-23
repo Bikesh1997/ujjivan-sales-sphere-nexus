@@ -205,83 +205,138 @@ const EventManagement = () => {
 
       {/* Events Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>System Events ({filteredEvents.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Event Name</TableHead>
-                <TableHead>Trigger</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Performance</TableHead>
-                <TableHead>Next Execution</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredEvents.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell className="font-medium">{event.name}</TableCell>
-                  <TableCell>{event.trigger}</TableCell>
-                  <TableCell>{event.action}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{event.frequency}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={event.status === 'active'}
-                        onCheckedChange={() => handleToggleStatus(event.id)}
-                      />
-                      <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
-                        {event.status}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="font-medium">{event.executionCount} executions</div>
-                      <div className="text-gray-500">{event.successRate}% success</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {event.nextExecution}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        {event.status === 'active' ? 
-                          <Pause className="h-4 w-4" /> : 
-                          <Play className="h-4 w-4" />
-                        }
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteEvent(event.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <CardHeader>
+    <CardTitle>System Events ({filteredEvents.length})</CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    {/* Desktop Table View */}
+    <div className="hidden md:block">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Event Name</TableHead>
+            <TableHead>Trigger</TableHead>
+            <TableHead>Action</TableHead>
+            <TableHead>Frequency</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Performance</TableHead>
+            <TableHead>Next Execution</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredEvents.map((event) => (
+            <TableRow key={event.id}>
+              <TableCell className="font-medium">{event.name}</TableCell>
+              <TableCell>{event.trigger}</TableCell>
+              <TableCell>{event.action}</TableCell>
+              <TableCell>
+                <Badge variant="outline">{event.frequency}</Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={event.status === 'active'}
+                    onCheckedChange={() => handleToggleStatus(event.id)}
+                  />
+                  <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+                    {event.status}
+                  </Badge>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <div className="font-medium">{event.executionCount} executions</div>
+                  <div className="text-gray-500">{event.successRate}% success</div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {event.nextExecution}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    {event.status === 'active' ? (
+                      <Pause className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteEvent(event.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Mobile Card View */}
+    <div className="md:hidden space-y-4">
+      {filteredEvents.map((event) => (
+        <div key={event.id} className="border rounded-lg p-4 shadow-sm space-y-2">
+          <div className="font-semibold text-base">{event.name}</div>
+          <div><strong>Trigger:</strong> {event.trigger}</div>
+          <div><strong>Action:</strong> {event.action}</div>
+          <div><strong>Frequency:</strong> <Badge variant="outline">{event.frequency}</Badge></div>
+          <div className="flex items-center gap-2">
+            <strong>Status:</strong>
+            <Switch
+              checked={event.status === 'active'}
+              onCheckedChange={() => handleToggleStatus(event.id)}
+            />
+            <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+              {event.status}
+            </Badge>
+          </div>
+          <div>
+            <strong>Performance:</strong>
+            <div className="text-sm">
+              <div className="font-medium">{event.executionCount} executions</div>
+              <div className="text-gray-500">{event.successRate}% success</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-sm">
+            <Calendar className="h-3 w-3" />
+            <span><strong>Next:</strong> {event.nextExecution}</span>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="ghost" size="sm">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              {event.status === 'active' ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDeleteEvent(event.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
 
       {/* Recent Executions */}
       <Card>

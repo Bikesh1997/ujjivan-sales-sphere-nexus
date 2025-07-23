@@ -48,7 +48,7 @@ export const PERMISSIONS = {
 export const ROLES: Role[] = [
   {
     id: 'sales_executive',
-    name: 'Sales Executive',
+    name: 'Field Executive',
     description: 'Field sales representative',
     level: 1,
     permissions: [
@@ -63,8 +63,8 @@ export const ROLES: Role[] = [
   },
   {
     id: 'inbound_agent',
-    name: 'Inbound Contact Center Agent',
-    description: 'Inbound contact center agent',
+    name: 'Inbound sales',
+    description: 'Inbound sales',
     level: 1,
     permissions: [
       PERMISSIONS.LEAD_READ,

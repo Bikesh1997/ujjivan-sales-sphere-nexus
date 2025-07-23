@@ -9,7 +9,7 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
-  // Sales Executive Features
+  // Field Executive Features
   {
     id: 'dashboard',
     name: 'My Dashboard',
@@ -44,7 +44,7 @@ export const FEATURES: Feature[] = [
   },
   {
     id: 'plan_my_day',
-    name: 'Plan My Day',
+    name: 'My Day',
     path: '/plan-my-day',
     icon: 'MapPin',
     roles: ['sales_executive', 'relationship_manager'],
@@ -143,6 +143,14 @@ export const FEATURES: Feature[] = [
     description: 'Manage product offers and pricing rules'
   },
   {
+    id: 'financial_education',
+    name: 'Financial Education',
+    path: '/financial-education',
+    icon: 'GraduationCap',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'Financial literacy platform with guides and calculators'
+  },
+  {
     id: 'event_management',
     name: 'Event Management',
     path: '/event-management',
@@ -160,27 +168,11 @@ export const FEATURES: Feature[] = [
   },
   {
     id: 'geo_hierarchy_management',
-    name: 'Geo Hierarchy Management',
+    name: 'Geo Hierarchy',
     path: '/geo-hierarchy-management',
     icon: 'MapPin',
     roles: ['admin'],
     description: 'Manage geographical hierarchy structure'
-  },
-  {
-    id: 'workflow_management',
-    name: 'Workflow Management',
-    path: '/workflow-management',
-    icon: 'Workflow',
-    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
-    description: 'Automate banking workflows with OmniFlow'
-  },
-  {
-    id: 'financial_education',
-    name: 'Financial Education',
-    path: '/financial-education',
-    icon: 'GraduationCap',
-    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
-    description: 'Financial literacy platform with guides and calculators'
   },
   {
     id: 'gamification',

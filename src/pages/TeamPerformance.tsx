@@ -275,12 +275,12 @@ const TeamPerformance = () => {
       </div>
 
       <Tabs defaultValue="summary" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="summary">Team Summary</TabsTrigger>
-          <TabsTrigger value="heatmap">Performance Heatmap</TabsTrigger>
-          <TabsTrigger value="kra-overview">KRA Overview</TabsTrigger>
-          <TabsTrigger value="nudges">Smart Nudges</TabsTrigger>
-          <TabsTrigger value="trends">Monthly Trends</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5  gap-1 h-auto">
+          <TabsTrigger value="summary" className="text-xs sm:text-sm px-2 py-2" >Team Summary</TabsTrigger>
+          <TabsTrigger value="heatmap" className="text-xs sm:text-sm px-2 py-2" >Performance Heatmap</TabsTrigger>
+          <TabsTrigger value="kra-overview" className="text-xs sm:text-sm px-2 py-2" >KRA Overview</TabsTrigger>
+          <TabsTrigger value="nudges" className="text-xs sm:text-sm px-2 py-2" >Smart Nudges</TabsTrigger>
+          <TabsTrigger value="trends" className="text-xs sm:text-sm px-2 py-2" >Monthly Trends</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary" className="space-y-6">
@@ -349,58 +349,70 @@ const TeamPerformance = () => {
               <CardTitle>Performance Heatmap / Leaderboard</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {directReports
-                  .sort((a, b) => b.performance - a.performance)
-                  .map((member, index) => (
-                    <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                          index === 1 ? 'bg-gray-100 text-gray-800' :
-                          index === 2 ? 'bg-orange-100 text-orange-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          #{index + 1}
-                        </div>
-                        <Avatar className="h-12 w-12">
-                          <AvatarFallback className="bg-teal-100 text-teal-700">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h4 className="font-medium">{member.name}</h4>
-                          <p className="text-sm text-gray-500">{member.role}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-6">
-                        <div className="text-center">
-                          <p className="text-sm text-gray-600">Performance</p>
-                          <div className={`px-3 py-1 rounded-full font-bold ${getPerformanceColor(member.performance)}`}>
-                            {member.performance}%
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-gray-600">Visits Today</p>
-                          <p className="font-bold text-blue-600">{member.customersVisitedToday}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-gray-600">Conversions</p>
-                          <p className="font-bold text-green-600">{member.leadsConverted}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-gray-600">Follow-ups</p>
-                          <p className={`font-bold ${member.pendingTasks > 5 ? 'text-red-600' : 'text-gray-900'}`}>
-                            {member.pendingTasks}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+  <div className="space-y-4">
+    {directReports
+      .sort((a, b) => b.performance - a.performance)
+      .map((member, index) => (
+        <div
+          key={member.id}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+        >
+          {/* Left Section: Rank + Avatar + Name */}
+          <div className="flex items-center space-x-4 flex-1">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
+                index === 0
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : index === 1
+                  ? 'bg-gray-100 text-gray-800'
+                  : index === 2
+                  ? 'bg-orange-100 text-orange-800'
+                  : 'bg-blue-100 text-blue-800'
+              }`}
+            >
+              #{index + 1}
+            </div>
+
+            <Avatar className="h-12 w-12 shrink-0">
+              <AvatarFallback className="bg-teal-100 text-teal-700">
+                {member.name.split(' ').map((n) => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+
+            <div>
+              <h4 className="font-medium">{member.name}</h4>
+              <p className="text-sm text-gray-500">{member.role}</p>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center w-full sm:w-auto">
+            <div>
+              <p className="text-sm text-gray-600">Performance</p>
+              <div className={`px-3 py-1 rounded-full font-bold ${getPerformanceColor(member.performance)}`}>
+                {member.performance}%
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Visits Today</p>
+              <p className="font-bold text-blue-600">{member.customersVisitedToday}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Conversions</p>
+              <p className="font-bold text-green-600">{member.leadsConverted}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Follow-ups</p>
+              <p className={`font-bold ${member.pendingTasks > 5 ? 'text-red-600' : 'text-gray-900'}`}>
+                {member.pendingTasks}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+  </div>
+</CardContent>
+</Card>
         </TabsContent>
 
         <TabsContent value="kra-overview" className="space-y-6">

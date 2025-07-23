@@ -20,8 +20,8 @@ const IndiaRegionMap = () => {
           {/* India Map Image */}
           <div className="relative w-full max-w-sm h-96 flex justify-center">
             <img 
-              src="/lovable-uploads/989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png" 
-              alt="India Regional Map" 
+src={`${import.meta.env.VITE_BASE_PATH || ''}lovable-uploads/989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png`}
+alt="India Regional Map" 
               className="w-full h-full object-contain"
             />
           </div>

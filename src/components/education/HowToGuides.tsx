@@ -15,7 +15,7 @@ import {
   Star,
   Filter
 } from 'lucide-react';
-import { howToGuides, contentCategories, HowToGuide, GuideStep } from '@/data/financialEducationData';
+import { howToGuides, contentCategories, HowToGuide, GuideStep } from '@/data/FinancialEducationData';
 
 const HowToGuides: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');

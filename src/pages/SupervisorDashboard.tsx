@@ -31,7 +31,7 @@ const SupervisorDashboard = () => {
       id: '1', 
       name: 'Rahul Sharma', 
       email: 'rahul.sharma@company.com',
-      role: 'Sales Executive',
+      role: 'Field Executive',
       department: 'Sales',
       status: 'active',
       joinDate: '2023-01-15',
@@ -49,7 +49,7 @@ const SupervisorDashboard = () => {
       id: '3', 
       name: 'Anjali Patel', 
       email: 'anjali.patel@company.com',
-      role: 'Sales Executive',
+      role: 'Field Executive',
       department: 'Sales',
       status: 'active',
       joinDate: '2023-03-10',
@@ -67,7 +67,7 @@ const SupervisorDashboard = () => {
       id: '4', 
       name: 'Vikram Singh', 
       email: 'vikram.singh@company.com',
-      role: 'Inbound Contact Center Agent',
+      role: 'Inbound sales',
       department: 'Inbound',
       status: 'active',
       joinDate: '2022-11-20',
@@ -347,30 +347,34 @@ const SupervisorDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Supervisor Dashboard</h1>
-          <p className="text-gray-600">Team management and performance oversight</p>
-        </div>
-        <div className="flex space-x-3">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setIsAddMemberModalOpen(true)}
-          >
-            <UserPlus size={16} className="mr-2" />
-            Add Team Member
-          </Button>
-          <Button 
-            size="sm" 
-            className="bg-teal-600 hover:bg-teal-700"
-            onClick={() => setIsTeamSettingsModalOpen(true)}
-          >
-            <Settings size={16} className="mr-2" />
-            Team Settings
-          </Button>
-        </div>
-      </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+  <div>
+    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Supervisor Dashboard</h1>
+    <p className="text-sm text-gray-600">Team management and performance oversight</p>
+  </div>
+
+  <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3 w-full sm:w-auto">
+    <Button 
+      variant="outline" 
+      size="sm"
+      className="w-full sm:w-auto"
+      onClick={() => setIsAddMemberModalOpen(true)}
+    >
+      <UserPlus size={16} className="mr-2" />
+      Add Team Member
+    </Button>
+
+    <Button 
+      size="sm" 
+      className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto"
+      onClick={() => setIsTeamSettingsModalOpen(true)}
+    >
+      <Settings size={16} className="mr-2" />
+      Team Settings
+    </Button>
+  </div>
+</div>
+
 
       {/* KPI Cards */}
       <SupervisorKPICards 
@@ -409,12 +413,14 @@ const SupervisorDashboard = () => {
       )}
 
       {/* Tabs - Removed quick-actions tab */}
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs defaultValue="overview" className="grid w-full  gap-1 h-auto">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="team-performance">Team Performance</TabsTrigger>
-          <TabsTrigger value="incentive-management">Incentive Management</TabsTrigger>
-        </TabsList>
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">Overview</TabsTrigger>
+          <TabsTrigger value="team-performance" className="text-xs sm:text-sm px-2 py-2">Team Performance</TabsTrigger>
+          <TabsTrigger value="incentive-management" className="text-xs sm:text-sm px-2 py-2">Incentive Management</TabsTrigger>
+        </TabsList> 
+    
+
 
         <TabsContent value="overview" className="space-y-6">
           <SupervisorOverview 

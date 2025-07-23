@@ -45,7 +45,7 @@ const GeoLocationTracker = ({
     enableGeoFencing: true,
   });
 
-  // Auto-start tracking for sales executives
+  // Auto-start tracking for Field Executives
   useEffect(() => {
     if (user?.role === 'sales_executive' && !isTracking) {
       startTracking();

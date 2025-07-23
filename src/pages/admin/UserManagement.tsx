@@ -234,81 +234,95 @@ const UserManagement = () => {
 
       {/* Users Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Users ({filteredUsers.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Branch</TableHead>
-                <TableHead>Zone/Region</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{getRoleDisplay(user.role)}</TableCell>
-                  <TableCell>{user.branch}</TableCell>
-                  <TableCell>{user.zone} / {user.region}</TableCell>
-                  <TableCell>
-                    <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{user.lastLogin}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setActivityModalOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setEditModalOpen(true);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleToggleStatus(user.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleResetPassword(user.id)}
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <CardHeader>
+    <CardTitle>Users ({filteredUsers.length})</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {/* Table for md and up */}
+    <div className="hidden md:block">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Branch</TableHead>
+            <TableHead>Zone/Region</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Last Login</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredUsers.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium">{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{getRoleDisplay(user.role)}</TableCell>
+              <TableCell>{user.branch}</TableCell>
+              <TableCell>{user.zone} / {user.region}</TableCell>
+              <TableCell>
+                <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
+                  {user.status}
+                </Badge>
+              </TableCell>
+              <TableCell>{user.lastLogin}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedUser(user); setActivityModalOpen(true); }}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedUser(user); setEditModalOpen(true); }}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(user.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => handleResetPassword(user.id)}>
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Card version for small screens */}
+    <div className="md:hidden space-y-4">
+      {filteredUsers.map((user) => (
+        <div key={user.id} className="border rounded-lg p-4 space-y-2 shadow-sm">
+          <div className="font-semibold text-lg">{user.name}</div>
+          <div className="text-sm text-gray-600">{user.email}</div>
+          <div className="text-sm"><strong>Role:</strong> {getRoleDisplay(user.role)}</div>
+          <div className="text-sm"><strong>Branch:</strong> {user.branch}</div>
+          <div className="text-sm"><strong>Zone/Region:</strong> {user.zone} / {user.region}</div>
+          <div className="text-sm"><strong>Status:</strong> 
+            <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="ml-1">
+              {user.status}
+            </Badge>
+          </div>
+          <div className="text-sm"><strong>Last Login:</strong> {user.lastLogin}</div>
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button variant="ghost" size="sm" onClick={() => { setSelectedUser(user); setActivityModalOpen(true); }}>
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { setSelectedUser(user); setEditModalOpen(true); }}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(user.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleResetPassword(user.id)}>
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
 
       {/* Modals */}
       <AddUserModal 

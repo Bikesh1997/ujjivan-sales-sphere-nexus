@@ -24,8 +24,7 @@ import {
   Tag,
   Calendar,
   Trophy,
-  GraduationCap,
-  Workflow
+  GraduationCap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -74,9 +73,8 @@ const Layout = ({ children }: LayoutProps) => {
     Settings: Settings,
     Tag: Tag,
     Calendar: Calendar,
-    Trophy: Trophy,
-    GraduationCap: GraduationCap,
-    Workflow: Workflow
+    Trophy :Trophy,
+    GraduationCap:GraduationCap,
   };
 
   const navigationItems = getNavigationItems().map(item => ({
@@ -134,9 +132,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
-      case 'sales_executive': return 'Sales Executive';
+      case 'sales_executive': return 'Field Executive';
       case 'supervisor': return 'Supervisor';
-      case 'inbound_agent': return 'Inbound Contact Center Agent';
+      case 'inbound_agent': return 'Inbound sales';
       case 'relationship_manager': return 'Relationship Manager';
       case 'admin': return 'System Administrator';
       default: return role;
@@ -187,8 +185,9 @@ const Layout = ({ children }: LayoutProps) => {
               </Button>
               <div className="flex items-start">
                 <img 
-                  src="/lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
-                  alt="Ujjivan Small Finance Bank" 
+src={`${import.meta.env.VITE_BASE_PATH || ''}lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
+
+alt="Ujjivan Small Finance Bank" 
                   className="h-8 sm:h-10 w-auto object-contain"
                 />
               </div>
@@ -202,7 +201,7 @@ const Layout = ({ children }: LayoutProps) => {
               {/* Role Badge */}
               <Badge variant="secondary" className="bg-teal-100 text-teal-800 text-xs hidden sm:inline-flex">
                 {getRoleDisplay(user?.role || '')}
-                {user?.department && ` - ${getDepartmentDisplay(user.department)}`}
+                {/* {user?.department && ` - ${getDepartmentDisplay(user.department)}`} */}
               </Badge>
 
               <DropdownMenu>
@@ -242,7 +241,7 @@ const Layout = ({ children }: LayoutProps) => {
                       <DropdownMenuItem 
                         onClick={() => switchRole(user?.role === 'sales_executive' ? 'supervisor' : 'sales_executive')}
                       >
-                        Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Sales Executive'}
+                        Switch to {user?.role === 'sales_executive' ? 'Supervisor' : 'Field Executive'}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
@@ -260,87 +259,90 @@ const Layout = ({ children }: LayoutProps) => {
 
       {/* Supervisor Portal Reports & Analytics Filters Bar */}
       {user?.role === 'supervisor' && (
-        <div className="bg-white border-b border-gray-200 px-2 sm:px-4 lg:px-8 overflow-x-auto">
-          <div className="flex items-center justify-between py-2 sm:py-3 min-w-fit">
-            <div className="text-xs sm:text-sm font-medium text-gray-700 mr-2">
-              Reports & Analytics
-            </div>
-            <div className="flex gap-1 sm:gap-3 items-center min-w-fit">
-              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
-                  <SelectValue placeholder="Period" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {periods.map((period) => (
-                    <SelectItem key={period.value} value={period.value}>
-                      {period.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={selectedFSO} onValueChange={setSelectedFSO}>
-                <SelectTrigger className="w-[80px] sm:w-[100px] h-8 sm:h-10 text-xs sm:text-sm">
-                  <SelectValue placeholder="FSO" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {fsos.map((fso) => (
-                    <SelectItem key={fso.value} value={fso.value}>
-                      {fso.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
-                  <SelectValue placeholder="Region" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {regions.map((region) => (
-                    <SelectItem key={region.value} value={region.value}>
-                      {region.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
-                  <SelectValue placeholder="Product" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {products.map((product) => (
-                    <SelectItem key={product.value} value={product.value}>
-                      {product.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-                <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
-                  <SelectValue placeholder="Campaign" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {campaigns.map((campaign) => (
-                    <SelectItem key={campaign.value} value={campaign.value}>
-                      {campaign.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Button 
-                onClick={handleApplyFilters}
-                className="bg-teal-600 hover:bg-teal-700 h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
-                size="sm"
-              >
-                Apply
-              </Button>
-            </div>
-          </div>
-        </div>
+       <div className="bg-white border-b border-gray-200 px-2 sm:px-4 lg:px-8 overflow-x-auto">
+       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 sm:py-3 gap-2 sm:gap-3 min-w-fit">
+         
+         <div className="text-xs sm:text-sm font-medium text-gray-700">
+           {/* Optional Label or Title */}
+         </div>
+     
+         <div className="flex flex-wrap gap-2 sm:gap-3 items-center min-w-fit">
+           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+             <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
+               <SelectValue placeholder="Period" />
+             </SelectTrigger>
+             <SelectContent className="bg-white z-50">
+               {periods.map((period) => (
+                 <SelectItem key={period.value} value={period.value}>
+                   {period.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
+     
+           <Select value={selectedFSO} onValueChange={setSelectedFSO}>
+             <SelectTrigger className="w-[80px] sm:w-[100px] h-8 sm:h-10 text-xs sm:text-sm">
+               <SelectValue placeholder="FSO" />
+             </SelectTrigger>
+             <SelectContent className="bg-white z-50">
+               {fsos.map((fso) => (
+                 <SelectItem key={fso.value} value={fso.value}>
+                   {fso.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
+     
+           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+             <SelectTrigger className="w-[90px] sm:w-[120px] h-8 sm:h-10 text-xs sm:text-sm">
+               <SelectValue placeholder="Region" />
+             </SelectTrigger>
+             <SelectContent className="bg-white z-50">
+               {regions.map((region) => (
+                 <SelectItem key={region.value} value={region.value}>
+                   {region.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
+     
+           <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+             <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
+               <SelectValue placeholder="Product" />
+             </SelectTrigger>
+             <SelectContent className="bg-white z-50">
+               {products.map((product) => (
+                 <SelectItem key={product.value} value={product.value}>
+                   {product.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
+     
+           <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+             <SelectTrigger className="w-[100px] sm:w-[130px] h-8 sm:h-10 text-xs sm:text-sm">
+               <SelectValue placeholder="Campaign" />
+             </SelectTrigger>
+             <SelectContent className="bg-white z-50">
+               {campaigns.map((campaign) => (
+                 <SelectItem key={campaign.value} value={campaign.value}>
+                   {campaign.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+           </Select>
+     
+           <Button
+             onClick={handleApplyFilters}
+             className="bg-teal-600 hover:bg-teal-700 h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm"
+             size="sm"
+           >
+             Apply
+           </Button>
+         </div>
+       </div>
+     </div>
+     
       )}
 
       <div className="flex">

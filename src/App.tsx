@@ -32,12 +32,11 @@ import OfferManagementRule from "./pages/admin/OfferManagementRule";
 import EventManagement from "./pages/admin/EventManagement";
 import KRAManagement from "./pages/admin/KRAManagement";
 import GeoHierarchyManagement from "./pages/admin/GeoHierarchyManagement";
-import WorkflowManagement from "./pages/WorkflowManagement";
-import FinancialEducation from "./pages/FinancialEducation";
-import KRAGamification from "./components/gamification/KRAGamification";
 import Index from "./pages/Index";
 import { useAuth } from "@/contexts/AuthContext";
+import FinancialEducation from "./pages/FinancialEducationPlatform";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
+import KRAGamification from "./components/gamification/KRAGamification";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +49,7 @@ const queryClient = new QueryClient({
 });
 
 const basename = import.meta.env.VITE_BASE_PATH || '/';
+
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -98,7 +98,7 @@ const App = () => (
                 </ProtectedRoute>
               } />
               
-              {/* Sales Executive Only Features */}
+              {/* Field Executive Only Features */}
               <Route path="/funnel" element={
                 <ProtectedRoute>
                   <Layout>
@@ -265,20 +265,9 @@ const App = () => (
                   </Layout>
                 </ProtectedRoute>
               } />
-              
-              {/* Workflow Management - Available to all roles */}
-              <Route path="/workflow-management" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <RoleBasedRoute featureId="workflow_management">
-                      <WorkflowManagement />
-                    </RoleBasedRoute>
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              
-              {/* Financial Education Platform */}
-              <Route path="/financial-education" element={
+
+                {/* Financial Education Platform */}
+                <Route path="/financial-education" element={
                 <ProtectedRoute>
                   <Layout>
                     <RoleBasedRoute featureId="financial_education">
@@ -288,8 +277,8 @@ const App = () => (
                 </ProtectedRoute>
               } />
               
-              {/* KRA Gamification */}
-              <Route path="/gamification" element={
+               {/* KRA Gamification */}
+               <Route path="/gamification" element={
                 <ProtectedRoute>
                   <Layout>
                     <RoleBasedRoute featureId="gamification">

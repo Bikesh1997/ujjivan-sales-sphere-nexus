@@ -15,51 +15,51 @@ const DemoCredentials = ({ onFillCredentials, isLoading }: DemoCredentialsProps)
       </div>
       
       <div className="grid grid-cols-1 gap-2">
-        <Button 
-          variant="outline" 
-          onClick={() => onFillCredentials('admin')}
-          className="w-full text-xs h-10"
-          disabled={isLoading}
-        >
-          Admin Demo
-        </Button>
+   
         <Button 
           variant="outline" 
           onClick={() => onFillCredentials('sales2')}
-          className="w-full text-xs h-10"
+          className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
           disabled={isLoading}
         >
-          Sales Executive Demo (Anjali)
+          Field Executive  (Anjali)
         </Button>
         <Button 
           variant="outline" 
           onClick={() => onFillCredentials('inbound')}
-          className="w-full text-xs h-10"
+          className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
           disabled={isLoading}
         >
-          Inbound Agent Demo (Vikram)
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => onFillCredentials('relationship')}
-          className="w-full text-xs h-10"
-          disabled={isLoading}
-        >
-          Relationship Manager Demo (Neha)
+          Inbound Sales   (Vikram)
         </Button>
         <Button 
           variant="outline" 
           onClick={() => onFillCredentials('supervisor')}
-          className="w-full text-xs h-10"
+          className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
           disabled={isLoading}
         >
-          Supervisor Demo
+          Supervisor 
         </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => onFillCredentials('admin')}
+          className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
+          disabled={isLoading}
+        >
+          Admin 
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => onFillCredentials('relationship')}
+          className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
+          disabled={isLoading}
+        >
+          Relationship Manager  (Neha)
+        </Button>
+      
       </div>
       
-      <div className="text-center text-xs text-gray-500 mt-2">
-        Password: password123
-      </div>
+    
     </div>
   );
 };

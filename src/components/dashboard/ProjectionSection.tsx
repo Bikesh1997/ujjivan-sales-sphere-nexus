@@ -157,77 +157,86 @@ const ProjectionSection = ({ currentPerformance }: ProjectionSectionProps) => {
           <CardHeader>
             <CardTitle>Conversion Trend Projection</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={projectionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="target" 
-                    stroke="var(--color-target)" 
-                    strokeDasharray="5 5" 
-                    strokeWidth={2}
-                    name="Target"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="actual" 
-                    stroke="var(--color-actual)" 
-                    strokeWidth={3}
-                    name="Actual"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="projected" 
-                    stroke="var(--color-projected)" 
-                    strokeWidth={2}
-                    strokeDasharray="3 3"
-                    name="Projected"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
+          <CardContent className="max-h-[350px] overflow-y-auto p-2 sm:p-4">
+  <div className="w-full max-w-full overflow-hidden">
+    <ChartContainer config={chartConfig} className="w-full h-[300px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={projectionData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Line 
+            type="monotone" 
+            dataKey="target" 
+            stroke="var(--color-target)" 
+            strokeDasharray="5 5" 
+            strokeWidth={2}
+            name="Target"
+          />
+          <Line 
+            type="monotone" 
+            dataKey="actual" 
+            stroke="var(--color-actual)" 
+            strokeWidth={3}
+            name="Actual"
+          />
+          <Line 
+            type="monotone" 
+            dataKey="projected" 
+            stroke="var(--color-projected)" 
+            strokeWidth={2}
+            strokeDasharray="3 3"
+            name="Projected"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  </div>
+</CardContent>
+
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Revenue Projection</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueProjectionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="projected" 
-                    stroke="var(--color-revenue)" 
-                    fill="var(--color-revenue)"
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                    name="Projected Revenue (₹L)"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="var(--color-actual)" 
-                    fill="var(--color-actual)"
-                    fillOpacity={0.6}
-                    strokeWidth={2}
-                    name="Current Revenue (₹L)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
+          <CardContent className="max-h-[350px] overflow-y-auto px-0 pb-2">
+  <div className="w-full overflow-hidden">
+    <ChartContainer config={chartConfig} className="w-full h-[300px] m-0 p-0">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={revenueProjectionData}
+          margin={{ top: 10, right: 10, left: 0, bottom: 0 }} // removes left spacing
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Area 
+            type="monotone" 
+            dataKey="projected" 
+            stroke="var(--color-revenue)" 
+            fill="var(--color-revenue)"
+            fillOpacity={0.3}
+            strokeWidth={2}
+            name="Projected Revenue (₹L)"
+          />
+          <Area 
+            type="monotone" 
+            dataKey="revenue" 
+            stroke="var(--color-actual)" 
+            fill="var(--color-actual)"
+            fillOpacity={0.6}
+            strokeWidth={2}
+            name="Current Revenue (₹L)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  </div>
+</CardContent>
+
         </Card>
       </div>
 

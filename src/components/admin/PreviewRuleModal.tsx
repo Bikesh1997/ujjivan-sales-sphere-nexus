@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,11 +33,11 @@ const mockMatchedCustomers = [
 const PreviewRuleModal: React.FC<PreviewRuleModalProps> = ({ isOpen, onClose, rule }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-white">
+      <DialogContent className="max-w-full md:max-w-6xl max-h-[90vh] overflow-y-auto bg-white p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Rule Preview - {rule.name}</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Rule Details */}
           <Card>
@@ -49,11 +48,15 @@ const PreviewRuleModal: React.FC<PreviewRuleModalProps> = ({ isOpen, onClose, ru
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <div className="text-sm text-gray-600">Condition</div>
-                  <div className="font-medium p-2 bg-gray-50 rounded">{rule.condition}</div>
+                  <div className="font-medium p-2 bg-gray-50 rounded break-words">
+                    {rule.condition}
+                  </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600">Offer</div>
-                  <div className="font-medium p-2 bg-gray-50 rounded">{rule.offer}</div>
+                  <div className="font-medium p-2 bg-gray-50 rounded break-words">
+                    {rule.offer}
+                  </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600">Priority</div>
@@ -70,7 +73,7 @@ const PreviewRuleModal: React.FC<PreviewRuleModalProps> = ({ isOpen, onClose, ru
           </Card>
 
           {/* Performance Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-2">
@@ -106,53 +109,58 @@ const PreviewRuleModal: React.FC<PreviewRuleModalProps> = ({ isOpen, onClose, ru
             </Card>
           </div>
 
-          {/* Matched Customers */}
+          {/* Matched Customers Table */}
           <Card>
             <CardHeader>
               <CardTitle>Customers Matching This Rule</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer Name</TableHead>
-                    <TableHead>Account Number</TableHead>
-                    <TableHead>Balance</TableHead>
-                    <TableHead>Tenure</TableHead>
-                    <TableHead>Propensity Score</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockMatchedCustomers.map((customer) => (
-                    <TableRow key={customer.id}>
-                      <TableCell className="font-medium">{customer.name}</TableCell>
-                      <TableCell>{customer.account}</TableCell>
-                      <TableCell>{customer.balance}</TableCell>
-                      <TableCell>{customer.tenure}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="text-sm font-medium">{customer.score}%</div>
-                          <div className={`w-16 h-2 rounded-full ${
-                            customer.score >= 90 ? 'bg-green-500' :
-                            customer.score >= 80 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}>
-                            <div 
-                              className="h-full bg-gray-200 rounded-full"
-                              style={{ width: `${100 - customer.score}%` }}
-                            />
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-green-600 border-green-600">
-                          Eligible
-                        </Badge>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="min-w-[600px] text-sm">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Customer Name</TableHead>
+                      <TableHead>Account Number</TableHead>
+                      <TableHead>Balance</TableHead>
+                      <TableHead>Tenure</TableHead>
+                      <TableHead>Propensity Score</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {mockMatchedCustomers.map((customer) => (
+                      <TableRow key={customer.id}>
+                        <TableCell className="font-medium">{customer.name}</TableCell>
+                        <TableCell>{customer.account}</TableCell>
+                        <TableCell>{customer.balance}</TableCell>
+                        <TableCell>{customer.tenure}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-medium">{customer.score}%</div>
+                            <div className="relative w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className={`absolute h-full ${
+                                  customer.score >= 90
+                                    ? 'bg-green-500'
+                                    : customer.score >= 80
+                                    ? 'bg-yellow-500'
+                                    : 'bg-red-500'
+                                }`}
+                                style={{ width: `${customer.score}%` }}
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-green-600 border-green-600">
+                            Eligible
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
 
@@ -163,36 +171,37 @@ const PreviewRuleModal: React.FC<PreviewRuleModalProps> = ({ isOpen, onClose, ru
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 border rounded">
-                  <div>
-                    <div className="font-medium">Week 1</div>
-                    <div className="text-sm text-gray-600">45 customers matched, 28 offers sent</div>
+                {[
+                  {
+                    week: 'Week 1',
+                    details: '45 customers matched, 28 offers sent',
+                    conversions: '18 conversions',
+                    rate: '64% conversion rate',
+                  },
+                  {
+                    week: 'Week 2',
+                    details: '52 customers matched, 35 offers sent',
+                    conversions: '24 conversions',
+                    rate: '69% conversion rate',
+                  },
+                  {
+                    week: 'Week 3',
+                    details: '38 customers matched, 25 offers sent',
+                    conversions: '16 conversions',
+                    rate: '64% conversion rate',
+                  },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-3 border rounded">
+                    <div>
+                      <div className="font-medium">{item.week}</div>
+                      <div className="text-sm text-gray-600">{item.details}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium text-green-600">{item.conversions}</div>
+                      <div className="text-sm text-gray-600">{item.rate}</div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-medium text-green-600">18 conversions</div>
-                    <div className="text-sm text-gray-600">64% conversion rate</div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center p-3 border rounded">
-                  <div>
-                    <div className="font-medium">Week 2</div>
-                    <div className="text-sm text-gray-600">52 customers matched, 35 offers sent</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-green-600">24 conversions</div>
-                    <div className="text-sm text-gray-600">69% conversion rate</div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center p-3 border rounded">
-                  <div>
-                    <div className="font-medium">Week 3</div>
-                    <div className="text-sm text-gray-600">38 customers matched, 25 offers sent</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-green-600">16 conversions</div>
-                    <div className="text-sm text-gray-600">64% conversion rate</div>
-                  </div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>

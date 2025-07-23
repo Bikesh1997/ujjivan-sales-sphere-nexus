@@ -1,16 +1,25 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building } from 'lucide-react';
-import AIAnalysisModal from './modals/AIAnalysisModal';
-import AddFollowUpModal from './modals/AddFollowUpModal';
-import CommunicationHistory from './sections/CommunicationHistory';
-import FollowUpActions from './sections/FollowUpActions';
-import GuidedScripts from './sections/GuidedScripts';
-import CommunicationLogger from './sections/CommunicationLogger';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { 
+  Phone, 
+  Mail, 
+  Calendar, 
+  MessageSquare, 
+  Bot, 
+  Clock,
+  User,
+  Building,
+  FileText,
+  TrendingUp,
+  Plus
+} from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -336,61 +345,402 @@ Key Benefits to Reinforce:
               </TabsContent>
 
               <TabsContent value="activity" className="space-y-4 mt-4">
-                <CommunicationHistory 
-                  communicationHistory={communicationHistory}
-                  onAnalyzeCall={handleAnalyzeCall}
-                />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-base sm:text-lg">Communication History</span>
+                      <Badge variant="secondary" className="bg-orange-100 text-orange-700 text-xs">
+                        Lead auto-escalated to Sales team
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {communicationHistory.map((comm) => (
+                      <div key={comm.id} className="border rounded-lg p-3 sm:p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            {comm.type === 'Call' ? (
+                              <Phone size={16} className="text-blue-600 flex-shrink-0" />
+                            ) : comm.type === 'Meeting' ? (
+                              <Calendar size={16} className="text-green-600 flex-shrink-0" />
+                            ) : (
+                              <Mail size={16} className="text-purple-600 flex-shrink-0" />
+                            )}
+                            <span className="font-medium text-sm">{comm.type}</span>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${comm.status === 'positive' ? 'text-green-700 border-green-200' : 'text-gray-700'}`}
+                            >
+                              {comm.status}
+                            </Badge>
+                          </div>
+                          <span className="text-xs sm:text-sm text-gray-500">
+
+                          Scheduled: {new Date(comm.date).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  })}
+                          </span>
+                        </div>
+                        
+                        {comm.conversation.length > 0 && (
+                          <>
+                            <Button 
+                              variant="link" 
+                              className="p-0 h-auto text-blue-600 mb-2 text-sm"
+                              onClick={() => {/* View call details */}}
+                            >
+                              View call details →
+                            </Button>
+
+                            <div className="bg-gray-50 rounded p-3 mb-3">
+                              <h4 className="font-medium text-sm mb-2">Conversation</h4>
+                              <div className="space-y-2 max-h-32 overflow-y-auto">
+                                {comm.conversation.map((msg, idx) => (
+                                  <div key={idx} className="text-xs">
+                                    <span className="text-gray-500">{msg.time}</span>
+                                    <div className={`p-2 rounded mt-1 ${
+                                      msg.speaker === 'Agent' 
+                                        ? 'bg-blue-50 text-blue-900 ml-2 sm:ml-4' 
+                                        : 'bg-white border mr-2 sm:mr-4'
+                                    }`}>
+                                      <strong>{msg.speaker}:</strong> {msg.message}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        <div className="bg-blue-50 rounded p-3">
+                          <h4 className="font-medium text-sm mb-1">Summary</h4>
+                          <p className="text-sm text-gray-700">{comm.summary}</p>
+                        </div>
+
+                        {comm.type === 'Call' && (
+                          <div className="mt-3 flex justify-end">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={handleAnalyzeCall}
+                              className="flex items-center gap-2 text-xs sm:text-sm"
+                            >
+                              <Bot size={14} />
+                              <span className="hidden sm:inline">Analyze call summary with AI</span>
+                              <span className="sm:hidden">AI Analysis</span>
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="followups" className="mt-4">
-                <FollowUpActions 
-                  followUpActions={followUpActions}
-                  onAddFollowUp={handleAddFollowUp}
-                />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-base sm:text-lg">Follow-up Actions</span>
+                      <Button 
+                        size="sm" 
+                        onClick={handleAddFollowUp}
+                        className="flex items-center gap-2 bg-[#056262] hover:bg-[#045050] text-xs sm:text-sm"
+                      >
+                        <Plus size={16} />
+                        Add Follow-up
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {followUpActions.map((action) => (
+                        <div key={action.id} className="border rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              {action.type === 'Call' ? (
+                                <Phone size={16} className="text-blue-600 flex-shrink-0" />
+                              ) : action.type === 'Meeting' ? (
+                                <Calendar size={16} className="text-green-600 flex-shrink-0" />
+                              ) : (
+                                <Mail size={16} className="text-purple-600 flex-shrink-0" />
+                              )}
+                              <span className="font-medium text-sm">{action.type}</span>
+                              <Badge 
+                                variant="outline" 
+                                className={`text-xs ${
+                                  action.priority === 'High' ? 'text-red-700 border-red-200' :
+                                  action.priority === 'Medium' ? 'text-yellow-700 border-yellow-200' :
+                                  'text-green-700 border-green-200'
+                                }`}
+                              >
+                                {action.priority}
+                              </Badge>
+                            </div>
+                            <Badge 
+                              variant={action.status === 'Completed' ? 'default' : 'secondary'}
+                              className={`text-xs ${action.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}`}
+                            >
+                              {action.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-1">{action.description}</p>
+                          <p className="text-xs text-gray-500">Scheduled: {action.scheduledDate}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="scripts" className="mt-4">
-                <GuidedScripts guidedScripts={guidedScripts} />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base sm:text-lg">Guided Scripts</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {guidedScripts.map((script) => (
+                        <div key={script.id} className="border rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <h4 className="font-medium text-sm sm:text-base">{script.title}</h4>
+                            <Badge variant="outline" className="text-xs w-fit">{script.category}</Badge>
+                          </div>
+                          <div className="bg-gray-50 rounded p-3">
+                            <pre className="text-xs sm:text-sm text-gray-700 whitespace-pre-wrap font-sans">
+                              {script.content}
+                            </pre>
+                          </div>
+                          <div className="mt-3 flex justify-end">
+                            <Button size="sm" variant="outline" className="text-xs sm:text-sm">
+                              <FileText size={14} className="mr-1" />
+                              Copy Script
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </div>
 
           {/* Right Sidebar */}
-          <div className="order-1 xl:order-2">
-            <CommunicationLogger 
-              communicationType={communicationType}
-              setCommunicationType={setCommunicationType}
-              communicationNotes={communicationNotes}
-              setCommunicationNotes={setCommunicationNotes}
-              outcome={outcome}
-              setOutcome={setOutcome}
-              onLogCommunication={handleLogCommunication}
-              templates={templates}
-            />
+          <div className="space-y-4 order-1 xl:order-2">
+            {/* Log Communication */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Log Communication</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Communication Type</label>
+                  <Select value={communicationType} onValueChange={setCommunicationType}>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Call">Call</SelectItem>
+                      <SelectItem value="Email">Email</SelectItem>
+                      <SelectItem value="Meeting">Meeting</SelectItem>
+                      <SelectItem value="SMS">SMS</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Notes</label>
+                  <Textarea
+                    placeholder="Enter communication details..."
+                    value={communicationNotes}
+                    onChange={(e) => setCommunicationNotes(e.target.value)}
+                    rows={3}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Outcome</label>
+                  <Select value={outcome} onValueChange={setOutcome}>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Positive">Positive</SelectItem>
+                      <SelectItem value="Neutral">Neutral</SelectItem>
+                      <SelectItem value="Negative">Negative</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button 
+                  onClick={handleLogCommunication}
+                  className="w-full bg-[#056262] hover:bg-[#045050] text-sm"
+                >
+                  <MessageSquare size={16} className="mr-2" />
+                  Log Communication
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Communication Templates */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Communication Templates</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {templates.map((template, index) => (
+                  <Button 
+                    key={index}
+                    variant="outline" 
+                    className="w-full justify-start text-xs sm:text-sm h-auto py-2 px-3"
+                  >
+                    {template}
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         {/* AI Analysis Modal */}
-        <AIAnalysisModal 
-          isOpen={showAnalysis}
-          onOpenChange={setShowAnalysis}
-          analysisReport={analysisReport}
-        />
+        {showAnalysis && (
+          <Dialog open={showAnalysis} onOpenChange={setShowAnalysis}>
+            <DialogContent className="max-w-md w-[90vw]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <Bot size={20} className="text-blue-600" />
+                  AI Call Analysis
+                </DialogTitle>
+                <p className="text-sm text-gray-600">Analysis complete</p>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded p-4">
+                  <h3 className="font-medium mb-3 text-sm sm:text-base">Call Analysis Report</h3>
+                  
+                  <div className="space-y-3 text-xs sm:text-sm">
+                    <div>
+                      <strong>Customer Sentiment:</strong> {analysisReport.sentiment}
+                      <br />
+                      {analysisReport.customerConcerns}
+                    </div>
+
+                    <div>
+                      <strong>Decision Drivers:</strong> {analysisReport.decisionDrivers}
+                    </div>
+
+                    <div>
+                      <strong>Conversion Likelihood:</strong> {analysisReport.conversionLikelihood}
+                      <br />
+                      {analysisReport.conversionDetails}
+                    </div>
+
+                    <div>
+                      <strong>Risk Tolerance:</strong> {analysisReport.riskTolerance}
+                      <br />
+                      {analysisReport.riskToleranceDetails}
+                    </div>
+
+                    <div>
+                      <strong>Investment Readiness:</strong> {analysisReport.investmentReadiness}
+                      <br />
+                      {analysisReport.investmentReadinessDetails}
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={() => setShowAnalysis(false)}
+                  className="w-full text-sm"
+                >
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
 
         {/* Add Follow-up Modal */}
-        <AddFollowUpModal 
-          isOpen={showAddFollowUp}
-          onOpenChange={setShowAddFollowUp}
-          followUpType={followUpType}
-          setFollowUpType={setFollowUpType}
-          followUpDate={followUpDate}
-          setFollowUpDate={setFollowUpDate}
-          followUpDescription={followUpDescription}
-          setFollowUpDescription={setFollowUpDescription}
-          followUpPriority={followUpPriority}
-          setFollowUpPriority={setFollowUpPriority}
-          onSave={handleSaveFollowUp}
-        />
+        {showAddFollowUp && (
+          <Dialog open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
+            <DialogContent className="max-w-md w-[90vw]">
+              <DialogHeader>
+                <DialogTitle className="text-base sm:text-lg">Add Follow-up Action</DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <Select value={followUpType} onValueChange={setFollowUpType}>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Call">Call</SelectItem>
+                      <SelectItem value="Email">Email</SelectItem>
+                      <SelectItem value="Meeting">Meeting</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Scheduled Date</label>
+                  <Input
+                    type="date"
+                    value={followUpDate}
+                    onChange={(e) => setFollowUpDate(e.target.value)}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea
+                    placeholder="Enter follow-up description..."
+                    value={followUpDescription}
+                    onChange={(e) => setFollowUpDescription(e.target.value)}
+                    rows={3}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Priority</label>
+                  <Select value={followUpPriority} onValueChange={setFollowUpPriority}>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                  <Button 
+                    onClick={handleSaveFollowUp}
+                    className="flex-1 bg-[#056262] hover:bg-[#045050] text-sm"
+                  >
+                    Save Follow-up
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowAddFollowUp(false)}
+                    className="flex-1 text-sm"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </DialogContent>
     </Dialog>
   );

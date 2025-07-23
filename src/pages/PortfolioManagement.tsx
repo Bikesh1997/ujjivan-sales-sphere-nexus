@@ -217,10 +217,11 @@ const PortfolioManagement = () => {
       {/* Main Tabs */}
       <Tabs defaultValue="portfolio" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="portfolio">Portfolio Management</TabsTrigger>
-          <TabsTrigger value="executive">Executive Dashboard</TabsTrigger>
-          <TabsTrigger value="customer-analytics">Customer Analytics</TabsTrigger>
+          <TabsTrigger value="portfolio" className="text-xs sm:text-sm px-2 py-2">Portfolio Management</TabsTrigger>
+          <TabsTrigger value="executive" className="text-xs sm:text-sm px-2 py-2">Executive Dashboard</TabsTrigger>
+          <TabsTrigger value="customer-analytics" className="text-xs sm:text-sm px-2 py-2">Customer Analytics</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="portfolio" className="space-y-6">
           {/* Portfolio KPIs */}

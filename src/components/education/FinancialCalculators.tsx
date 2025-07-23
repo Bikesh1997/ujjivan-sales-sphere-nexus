@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Calculator as CalculatorIcon, Download, Share2, RefreshCw } from 'lucide-react';
-import { calculators, Calculator } from '@/data/financialEducationData';
+import { calculators, Calculator } from '@/data/FinancialEducationData';
 
 const FinancialCalculators: React.FC = () => {
   const [selectedCalculator, setSelectedCalculator] = useState<Calculator | null>(null);

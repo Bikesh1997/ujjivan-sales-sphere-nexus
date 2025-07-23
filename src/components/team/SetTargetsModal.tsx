@@ -27,10 +27,10 @@ const SetTargetsModal = ({ isOpen, onClose, preSelectedMember }: SetTargetsModal
   });
 
   const teamMembers = [
-    { id: '1', name: 'Rahul Sharma', role: 'Senior Sales Executive' },
-    { id: '2', name: 'Anjali Patel', role: 'Sales Executive' },
-    { id: '3', name: 'Vikash Kumar', role: 'Sales Executive' },
-    { id: '4', name: 'Priya Singh', role: 'Senior Sales Executive' }
+    { id: '1', name: 'Rahul Sharma', role: 'Senior Field Executive' },
+    { id: '2', name: 'Anjali Patel', role: 'Field Executive' },
+    { id: '3', name: 'Vikash Kumar', role: 'Field Executive' },
+    { id: '4', name: 'Priya Singh', role: 'Senior Field Executive' }
   ];
 
   useEffect(() => {

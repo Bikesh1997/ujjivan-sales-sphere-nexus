@@ -55,10 +55,10 @@ const LoginForm = () => {
   const fillDemoCredentials = (userType: 'admin' | 'sales2' | 'supervisor' | 'inbound' | 'relationship') => {
     console.log('LoginForm: Filling demo credentials for:', userType);
     const credentials = {
-      admin: { email: 'admin@bank.com', password: 'password123' },
       sales2: { email: 'sales2@bank.com', password: 'password123' },
-      supervisor: { email: 'supervisor@bank.com', password: 'password123' },
       inbound: { email: 'inbound@bank.com', password: 'password123' },
+      supervisor: { email: 'supervisor@bank.com', password: 'password123' },
+      admin: { email: 'admin@bank.com', password: 'password123' },
       relationship: { email: 'relationship@bank.com', password: 'password123' }
     };
     
@@ -88,17 +88,17 @@ const LoginForm = () => {
         <div>
           <div className="flex justify-center mb-4">
             <img 
-              src="/lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
+            src={`${import.meta.env.VITE_BASE_PATH || ''}lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
               alt="Ujjivan Small Finance Bank" 
               className="h-10 md:h-12 w-auto object-contain"
             />
           </div>
-          <h2 className="mt-4 text-center text-xl md:text-2xl font-extrabold text-gray-900">
+          {/* <h2 className="mt-4 text-center text-xl md:text-2xl font-extrabold text-gray-900">
             Sign in to Banking CRM
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Sales Force Automation Platform
-          </p>
+          </p> */}
         </div>
         
         <Card>
