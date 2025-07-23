@@ -38,6 +38,9 @@ import FinancialEducation from "./pages/FinancialEducationPlatform";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 import KRAGamification from "./components/gamification/KRAGamification";
 import GamifiedKRADashboard from "./components/gamification/GamifiedKRADashboard";
+import FieldExecutiveGameDashboard from "./components/gamification/FieldExecutiveGameDashboard";
+import GameifiedKRAProgress from "./components/gamification/GameifiedKRAProgress";
+import GameifiedTaskList from "./components/gamification/GameifiedTaskList";
 import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
@@ -298,6 +301,29 @@ const App = () => (
                     <RoleBasedRoute featureId="gamification">
                       <GamifiedKRADashboard />
                     </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* Gamified Field Executive Routes */}
+              <Route path="/field-game-dashboard" element={
+                <ProtectedRoute requiredRole="sales_executive">
+                  <Layout>
+                    <FieldExecutiveGameDashboard />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/field-kra-game" element={
+                <ProtectedRoute requiredRole="sales_executive">
+                  <Layout>
+                    <GameifiedKRAProgress />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/field-task-game" element={
+                <ProtectedRoute requiredRole="sales_executive">
+                  <Layout>
+                    <GameifiedTaskList />
                   </Layout>
                 </ProtectedRoute>
               } />
