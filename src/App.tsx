@@ -38,6 +38,11 @@ import FinancialEducation from "./pages/FinancialEducationPlatform";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 import KRAGamification from "./components/gamification/KRAGamification";
 import GamifiedKRADashboard from "./components/gamification/GamifiedKRADashboard";
+import GamifiedLayout from "./components/layout/GamifiedLayout";
+import SimpleDashboard from "./components/gamification/SimpleDashboard";
+import GamifiedTasks from "./components/gamification/GamifiedTasks";
+import GamifiedCustomers from "./components/gamification/GamifiedCustomers";
+import SimpleRewardsCenter from "./components/gamification/SimpleRewardsCenter";
 import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
@@ -294,11 +299,44 @@ const App = () => (
                {/* Gamified KRA Dashboard */}
                <Route path="/gamified-kra" element={
                 <ProtectedRoute>
-                  <Layout>
+                  <GamifiedLayout>
                     <RoleBasedRoute featureId="gamification">
-                      <GamifiedKRADashboard />
+                      <SimpleDashboard />
                     </RoleBasedRoute>
-                  </Layout>
+                  </GamifiedLayout>
+                </ProtectedRoute>
+              } />
+              
+               {/* Gamified Tasks */}
+               <Route path="/gamified-tasks" element={
+                <ProtectedRoute>
+                  <GamifiedLayout>
+                    <RoleBasedRoute featureId="my_tasks">
+                      <GamifiedTasks />
+                    </RoleBasedRoute>
+                  </GamifiedLayout>
+                </ProtectedRoute>
+              } />
+              
+               {/* Gamified Customers */}
+               <Route path="/gamified-customers" element={
+                <ProtectedRoute>
+                  <GamifiedLayout>
+                    <RoleBasedRoute featureId="customer_360">
+                      <GamifiedCustomers />
+                    </RoleBasedRoute>
+                  </GamifiedLayout>
+                </ProtectedRoute>
+              } />
+              
+               {/* Simple Rewards Center */}
+               <Route path="/rewards" element={
+                <ProtectedRoute>
+                  <GamifiedLayout>
+                    <RoleBasedRoute featureId="gamification">
+                      <SimpleRewardsCenter />
+                    </RoleBasedRoute>
+                  </GamifiedLayout>
                 </ProtectedRoute>
               } />
               
