@@ -37,6 +37,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import FinancialEducation from "./pages/FinancialEducationPlatform";
 import { useRoleFeatures } from "@/hooks/useRoleFeatures";
 import KRAGamification from "./components/gamification/KRAGamification";
+import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,12 +45,12 @@ const queryClient = new QueryClient({
       retry: 3,
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
       staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
     },
   },
 });
 
 const basename = import.meta.env.VITE_BASE_PATH || '/';
-
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -86,6 +87,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <VersionCheck />
           <BrowserRouter basename={basename}>
             <Routes>
               <Route path="/" element={<Index />} />
