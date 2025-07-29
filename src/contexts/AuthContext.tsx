@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState, LoginCredentials } from '@/types/auth';
+import { supabase } from '@/integrations/supabase/client';
+import { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
@@ -8,51 +10,11 @@ interface AuthContextType extends AuthState {
   updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => void;
   updateProfile: (updates: Partial<User>) => void;
   resetPassword: (email: string) => Promise<boolean>;
+  signup: (credentials: LoginCredentials & { name: string }) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Enhanced user data with more details including new roles - Added admin account
-const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'admin@bank.com',
-    name: 'System Administrator',
-    role: 'admin',
-    branch: 'Head Office'
-  },
-  {
-    id: '2',
-    email: 'supervisor@bank.com',
-    name: 'Priya Manager',
-    role: 'supervisor',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '3',
-    email: 'sales2@bank.com',
-    name: 'Anjali Patel',
-    role: 'sales_executive',
-    department: 'inbound',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '4',
-    email: 'inbound@bank.com',
-    name: 'Vikram Singh',
-    role: 'inbound_agent',
-    department: 'inbound',
-    branch: 'Mumbai Central'
-  },
-  {
-    id: '5',
-    email: 'relationship@bank.com',
-    name: 'Neha Gupta',
-    role: 'relationship_manager',
-    department: 'branch',
-    branch: 'Mumbai Central'
-  }
-];
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -60,51 +22,92 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = React.useState<User | null>(null);
+  const [session, setSession] = React.useState<Session | null>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  // Helper function to get user profile and role
+  const getUserProfile = async (supabaseUser: SupabaseUser): Promise<User | null> => {
+    try {
+      // Get user profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', supabaseUser.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return null;
+      }
+
+      // Get user role
+      const { data: userRole, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', supabaseUser.id)
+        .eq('is_active', true)
+        .single();
+
+      if (roleError) {
+        console.error('Error fetching user role:', roleError);
+        // Default to sales_executive if no role is found
+      }
+
+      return {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: profile.full_name || '',
+        role: userRole?.role || 'sales_executive',
+        branch: 'Mumbai Central', // Default branch
+        department: 'field',
+        avatar_url: profile.avatar_url,
+        phone: profile.phone,
+        designation: profile.designation,
+        employee_id: profile.employee_id
+      };
+    } catch (error) {
+      console.error('Error getting user profile:', error);
+      return null;
+    }
+  };
+
   React.useEffect(() => {
-    console.log('AuthProvider: Initializing authentication');
+    console.log('AuthProvider: Initializing Supabase authentication');
     
-    // Check for existing session with timeout
-    const initAuth = async () => {
-      try {
-        console.log('AuthProvider: Checking localStorage for existing session');
-        const savedUser = localStorage.getItem('user');
-        const sessionExpiry = localStorage.getItem('sessionExpiry');
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('AuthProvider: Auth state changed:', event, session?.user?.email);
         
-        console.log('AuthProvider: savedUser exists:', !!savedUser);
-        console.log('AuthProvider: sessionExpiry exists:', !!sessionExpiry);
+        setSession(session);
         
-        if (savedUser && sessionExpiry) {
-          const now = new Date().getTime();
-          const expiryTime = parseInt(sessionExpiry);
-          console.log('AuthProvider: Current time:', now, 'Expiry time:', expiryTime);
-          
-          if (now < expiryTime) {
-            const parsedUser = JSON.parse(savedUser);
-            console.log('AuthProvider: Restoring user session:', parsedUser);
-            setUser(parsedUser);
+        if (session?.user) {
+          const userProfile = await getUserProfile(session.user);
+          if (userProfile) {
+            setUser(userProfile);
             setIsAuthenticated(true);
-          } else {
-            console.log('AuthProvider: Session expired, clearing storage');
-            localStorage.removeItem('user');
-            localStorage.removeItem('sessionExpiry');
           }
         } else {
-          console.log('AuthProvider: No existing session found');
+          setUser(null);
+          setIsAuthenticated(false);
         }
-      } catch (error) {
-        console.error('AuthProvider: Auth initialization error:', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('sessionExpiry');
+        
+        setIsLoading(false);
       }
-      
-      console.log('AuthProvider: Initialization complete, setting loading to false');
-      setIsLoading(false);
-    };
+    );
 
-    initAuth();
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        console.log('AuthProvider: Existing session found');
+      } else {
+        console.log('AuthProvider: No existing session');
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = React.useCallback(async (credentials: LoginCredentials): Promise<boolean> => {
@@ -112,36 +115,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API delay
-      console.log('AuthProvider: Simulating API call delay');
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const foundUser = MOCK_USERS.find(u => u.email === credentials.email);
-      console.log('AuthProvider: User found:', !!foundUser);
-      
-      if (foundUser && credentials.password === 'password123') {
-        console.log('AuthProvider: Password correct, logging in user:', foundUser);
-        setUser(foundUser);
-        setIsAuthenticated(true);
-        
-        // Set session expiry (24 hours)
-        const expiry = new Date().getTime() + (24 * 60 * 60 * 1000);
-        console.log('AuthProvider: Setting localStorage with expiry:', expiry);
-        
-        try {
-          localStorage.setItem('user', JSON.stringify(foundUser));
-          localStorage.setItem('sessionExpiry', expiry.toString());
-          console.log('AuthProvider: localStorage set successfully');
-        } catch (storageError) {
-          console.error('AuthProvider: localStorage error:', storageError);
-        }
-        
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      if (error) {
+        console.error('Login error:', error);
         setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
         console.log('AuthProvider: Login successful');
+        // The auth state change listener will handle setting the user
         return true;
       }
-      
-      console.log('AuthProvider: Login failed - invalid credentials');
+
       setIsLoading(false);
       return false;
     } catch (error) {
@@ -151,50 +141,125 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const logout = React.useCallback(() => {
+  const logout = React.useCallback(async () => {
     console.log('AuthProvider: Logging out user');
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    localStorage.removeItem('sessionExpiry');
-    console.log('AuthProvider: Logout complete');
+    
+    try {
+      await supabase.auth.signOut();
+      // The auth state change listener will handle clearing the user
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   }, []);
 
-  const switchRole = React.useCallback((role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
-    if (user) {
-      const updatedUser = { ...user, role };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
-  }, [user]);
+  const switchRole = React.useCallback(async (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
+    if (user && session) {
+      try {
+        // Update user role in database
+        const { error } = await supabase
+          .from('user_roles')
+          .update({ role, is_active: true })
+          .eq('user_id', user.id);
 
-  const updateUserRole = React.useCallback((userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
-    if (user?.role === 'supervisor') {
-      const targetUser = MOCK_USERS.find(u => u.id === userId);
-      if (targetUser) {
-        targetUser.role = newRole;
-        if (user.id === userId) {
-          const updatedUser = { ...user, role: newRole };
+        if (!error) {
+          const updatedUser = { ...user, role };
           setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
         }
+      } catch (error) {
+        console.error('Error switching role:', error);
+      }
+    }
+  }, [user, session]);
+
+  const updateUserRole = React.useCallback(async (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager' | 'admin') => {
+    if (user?.role === 'admin' || user?.role === 'supervisor') {
+      try {
+        const { error } = await supabase
+          .from('user_roles')
+          .update({ role: newRole })
+          .eq('user_id', userId);
+
+        if (error) {
+          console.error('Error updating user role:', error);
+        }
+      } catch (error) {
+        console.error('Error updating user role:', error);
       }
     }
   }, [user]);
 
-  const updateProfile = React.useCallback((updates: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...updates };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+  const updateProfile = React.useCallback(async (updates: Partial<User>) => {
+    if (user && session) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            full_name: updates.name,
+            phone: updates.phone,
+            designation: updates.designation,
+            employee_id: updates.employee_id,
+            avatar_url: updates.avatar_url
+          })
+          .eq('user_id', user.id);
+
+        if (!error) {
+          const updatedUser = { ...user, ...updates };
+          setUser(updatedUser);
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
     }
-  }, [user]);
+  }, [user, session]);
 
   const resetPassword = React.useCallback(async (email: string): Promise<boolean> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const userExists = MOCK_USERS.some(u => u.email === email);
-    return userExists;
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      return !error;
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      return false;
+    }
+  }, []);
+
+  const signup = React.useCallback(async (credentials: LoginCredentials & { name: string }): Promise<boolean> => {
+    console.log('AuthProvider: Signup attempt for email:', credentials.email);
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: credentials.name,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Signup error:', error);
+        setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
+        console.log('AuthProvider: Signup successful');
+        // The auth state change listener will handle setting the user
+        return true;
+      }
+
+      setIsLoading(false);
+      return false;
+    } catch (error) {
+      console.error('AuthProvider: Signup error:', error);
+      setIsLoading(false);
+      return false;
+    }
   }, []);
 
   const contextValue = React.useMemo(() => {
@@ -205,40 +270,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isLoading,
       login,
       logout,
-      switchRole: (role: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
-        if (user) {
-          const updatedUser = { ...user, role };
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-        }
-      },
-      updateUserRole: (userId: string, newRole: 'sales_executive' | 'supervisor' | 'inbound_agent' | 'relationship_manager') => {
-        if (user?.role === 'supervisor') {
-          const targetUser = MOCK_USERS.find(u => u.id === userId);
-          if (targetUser) {
-            targetUser.role = newRole;
-            if (user.id === userId) {
-              const updatedUser = { ...user, role: newRole };
-              setUser(updatedUser);
-              localStorage.setItem('user', JSON.stringify(updatedUser));
-            }
-          }
-        }
-      },
-      updateProfile: (updates: Partial<User>) => {
-        if (user) {
-          const updatedUser = { ...user, ...updates };
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-        }
-      },
-      resetPassword: async (email: string): Promise<boolean> => {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const userExists = MOCK_USERS.some(u => u.email === email);
-        return userExists;
-      }
+      switchRole,
+      updateUserRole,
+      updateProfile,
+      resetPassword,
+      signup
     };
-  }, [user, isAuthenticated, isLoading, login, logout]);
+  }, [user, isAuthenticated, isLoading, login, logout, switchRole, updateUserRole, updateProfile, resetPassword, signup]);
 
   return (
     <AuthContext.Provider value={contextValue}>

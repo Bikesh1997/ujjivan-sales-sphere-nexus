@@ -7,6 +7,10 @@ export interface User {
   department?: 'inbound' | 'field' | 'branch';
   branch: string;
   avatar?: string;
+  avatar_url?: string;
+  phone?: string;
+  designation?: string;
+  employee_id?: string;
 }
 
 export interface AuthState {

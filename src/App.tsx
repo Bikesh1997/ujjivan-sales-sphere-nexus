@@ -8,7 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "./components/Layout";
-import LoginForm from "./components/auth/LoginForm";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
@@ -95,7 +95,8 @@ const App = () => (
           <BrowserRouter basename={basename}>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/login" element={<LoginForm />} />
+              <Route path="/login" element={<Auth />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Layout>
