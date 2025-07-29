@@ -41,6 +41,7 @@ import GamifiedKRADashboard from "./components/gamification/GamifiedKRADashboard
 import FieldExecutiveGameDashboard from "./components/gamification/FieldExecutiveGameDashboard";
 import GameifiedKRAProgress from "./components/gamification/GameifiedKRAProgress";
 import GameifiedTaskList from "./components/gamification/GameifiedTaskList";
+import InsightDash from "./pages/InsightDash";
 import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
@@ -321,10 +322,19 @@ const App = () => (
                   </Layout>
                 </ProtectedRoute>
               } />
-              <Route path="/field-task-game" element={
+               <Route path="/field-task-game" element={
                 <ProtectedRoute requiredRole="sales_executive">
                   <Layout>
                     <GameifiedTaskList />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              
+              {/* InsightDash */}
+              <Route path="/insight-dash" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <InsightDash />
                   </Layout>
                 </ProtectedRoute>
               } />

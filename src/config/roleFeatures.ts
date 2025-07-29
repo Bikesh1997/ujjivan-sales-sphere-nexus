@@ -181,6 +181,14 @@ export const FEATURES: Feature[] = [
     icon: 'Trophy',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
     description: 'KRA gamification with points, badges, and leaderboards'
+  },
+  {
+    id: 'insight_dash',
+    name: 'InsightDash',
+    path: '/insight-dash',
+    icon: 'BarChart3',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'Real-time metrics dashboard with performance indicators'
   }
 ];
 

@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Get user role
       const { data: userRole, error: roleError } = await supabase
         .from('user_roles')
-        .select('role')
+        .select('admin')
         .eq('user_id', supabaseUser.id)
         .eq('is_active', true)
         .single();
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
         name: profile.full_name || '',
-        role: userRole?.role || 'sales_executive',
+        role: userRole?.admin || 'sales_executive',
         branch: 'Mumbai Central', // Default branch
         department: 'field',
         avatar_url: profile.avatar_url,
@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Update user role in database
         const { error } = await supabase
           .from('user_roles')
-          .update({ role, is_active: true })
+          .update({ admin: role, is_active: true })
           .eq('user_id', user.id);
 
         if (!error) {
@@ -176,7 +176,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const { error } = await supabase
           .from('user_roles')
-          .update({ role: newRole })
+          .update({ admin: newRole })
           .eq('user_id', userId);
 
         if (error) {

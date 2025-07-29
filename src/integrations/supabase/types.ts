@@ -255,6 +255,39 @@ export type Database = {
           },
         ]
       }
+      metrics: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          metric_name: string
+          status: string
+          updated_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          metric_name: string
+          status: string
+          updated_at?: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          metric_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -521,27 +554,27 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          admin: Database["public"]["Enums"]["app_role"]
           assigned_at: string | null
           assigned_by: string | null
           id: string
           is_active: boolean | null
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          admin: Database["public"]["Enums"]["app_role"]
           assigned_at?: string | null
           assigned_by?: string | null
           id?: string
           is_active?: boolean | null
-          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          admin?: Database["public"]["Enums"]["app_role"]
           assigned_at?: string | null
           assigned_by?: string | null
           id?: string
           is_active?: boolean | null
-          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: [
