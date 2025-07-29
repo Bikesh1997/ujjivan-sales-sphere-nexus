@@ -16,8 +16,8 @@ const Index = () => {
         console.log('Index: User authenticated, navigating to dashboard');
         navigate('/dashboard', { replace: true });
       } else {
-        console.log('Index: User not authenticated, navigating to login');
-        navigate('/login', { replace: true });
+        console.log('Index: User not authenticated, navigating to auth');
+        navigate('/auth', { replace: true });
       }
     }
   }, [isAuthenticated, isLoading, navigate]);
@@ -29,7 +29,7 @@ const Index = () => {
 
   // Fallback navigation
   console.log('Index: Fallback navigation');
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth" replace />;
 };
 
 export default Index;
