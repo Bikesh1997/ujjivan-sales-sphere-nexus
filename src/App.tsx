@@ -3,12 +3,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "./components/Layout";
-import Auth from "./pages/Auth";
+import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SalesFunnel from "./pages/SalesFunnel";
@@ -41,7 +47,7 @@ import GamifiedKRADashboard from "./components/gamification/GamifiedKRADashboard
 import FieldExecutiveGameDashboard from "./components/gamification/FieldExecutiveGameDashboard";
 import GameifiedKRAProgress from "./components/gamification/GameifiedKRAProgress";
 import GameifiedTaskList from "./components/gamification/GameifiedTaskList";
-import InsightDash from "./pages/InsightDash";
+import Tools from "./components/tools";
 import { VersionCheck } from "@/components/ui/version-check";
 
 const queryClient = new QueryClient({
@@ -66,6 +72,9 @@ const DashboardRouter = () => {
   
   return <Dashboard />;
 };
+
+const isCordova = typeof window !== 'undefined' && window.location.href.startsWith('file://');
+const Router = isCordova ? HashRouter : BrowserRouter;
 
 // Role-based route wrapper
 const RoleBasedRoute = ({ children, featureId }: { children: React.ReactNode; featureId: string }) => {
@@ -92,12 +101,11 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <VersionCheck />
-          <BrowserRouter basename={basename}>
+          {/* <VersionCheck /> */}
+          <HashRouter >
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Auth />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/" element={<LoginForm />} />
+              <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Layout>
@@ -322,26 +330,25 @@ const App = () => (
                   </Layout>
                 </ProtectedRoute>
               } />
-               <Route path="/field-task-game" element={
+              <Route path="/field-task-game" element={
                 <ProtectedRoute requiredRole="sales_executive">
                   <Layout>
                     <GameifiedTaskList />
                   </Layout>
                 </ProtectedRoute>
               } />
-              
-              {/* InsightDash */}
-              <Route path="/insight-dash" element={
-                <ProtectedRoute>
+
+<Route path="/tools" element={
+                <ProtectedRoute requiredRole="sales_executive">
                   <Layout>
-                    <InsightDash />
+                    <Tools />
                   </Layout>
                 </ProtectedRoute>
               } />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
+          </HashRouter>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

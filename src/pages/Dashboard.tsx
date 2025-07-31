@@ -3,22 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  TrendingUp, 
-  Users, 
-  Target, 
-  IndianRupee,
-  Calendar,
-  Phone,
-  Clock,
-  CheckCircle,
-  Award,
-  ArrowUpRight,
-  ArrowDownRight
-} from 'lucide-react';
 import SmartNudges from '@/components/dashboard/SmartNudges';
 import ProjectionSection from '@/components/dashboard/ProjectionSection';
 import { allLeads } from '@/data/leadsData';
+import FieldExecutiveGameDashboard from '@/components/gamification/FieldExecutiveGameDashboard';
+import GameifiedKRAProgress from '@/components/gamification/GameifiedKRAProgress';
+import { Calendar, Phone } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -43,8 +33,8 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    
+    <div className="flex justify-between items-center">
         <div>
           <h3 className="text-2xl font-bold text-gray-900">
             {/* Welcome back,  */}
@@ -66,109 +56,19 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Leads</p>
-                <p className="text-2xl font-bold text-gray-900">134</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  <ArrowUpRight size={14} className="inline-block mr-1" />
-                  +12% from last month
-                </p>
-              </div>
-              <Users size={48} className="text-blue-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
+      <FieldExecutiveGameDashboard />
+      <GameifiedKRAProgress />
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Converted Leads</p>
-                <p className="text-2xl font-bold text-gray-900">28</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  <ArrowUpRight size={14} className="inline-block mr-1" />
-                  +8% from last month
-                </p>
-              </div>
-              <CheckCircle size={48} className="text-green-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Monthly Target</p>
-                <p className="text-2xl font-bold text-gray-900">40</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {convertedLeads >= monthlyTarget ? (
-                    <>
-                      <ArrowUpRight size={14} className="inline-block mr-1" />
-                      Target achieved!
-                    </>
-                  ) : (
-                    <>
-                      <Clock size={14} className="inline-block mr-1" />
-                      {monthlyTarget - convertedLeads} more needed
-                    </>
-                  )}
-                </p>
-              </div>
-              <Target size={48} className="text-purple-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Open Leads</p>
-                <p className="text-2xl font-bold text-gray-900">106</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  <ArrowDownRight size={14} className="inline-block mr-1" />
-                  -3% from last month
-                </p>
-              </div>
-              <Clock size={48} className="text-orange-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">₹1.28 Cr</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  <ArrowUpRight size={14} className="inline-block mr-1" />
-                  +15% from last month
-                </p>
-              </div>
-              <IndianRupee size={48} className="text-teal-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Smart Nudges - moved before projections */}
-
-      {/* Projection Section */}
-      <ProjectionSection 
+      <ProjectionSection
         currentPerformance={{
           convertedLeads,
           totalRevenue,
           monthlyTarget
         }}
       />
-      <SmartNudges />
+      {/* <SmartNudges />  */}
+
+
 
     </div>
   );

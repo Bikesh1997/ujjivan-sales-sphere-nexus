@@ -4,11 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BookOpen, 
-  Calculator, 
-  GraduationCap, 
-  Search, 
+import {
+  BookOpen,
+  Calculator,
+  GraduationCap,
+  Search,
   TrendingUp,
   Users,
   Target,
@@ -92,7 +92,7 @@ const FinancialEducationPlatform: React.FC = () => {
           <h1 className="text-3xl font-bold">Ujjivan Financial Education</h1>
         </div>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Your trusted guide to financial literacy. Learn banking basics, understand loan terms, 
+          Your trusted guide to financial literacy. Learn banking basics, understand loan terms,
           and make informed financial decisions with our comprehensive educational resources.
         </p>
 
@@ -107,7 +107,7 @@ const FinancialEducationPlatform: React.FC = () => {
               className="pl-12 h-12"
             />
           </div>
-          
+
           {searchResults.length > 0 && (
             <Card className="mt-2 max-h-60 overflow-y-auto">
               <CardContent className="p-2">
@@ -136,32 +136,34 @@ const FinancialEducationPlatform: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6  gap-1 h-auto">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">
             <TrendingUp size={16} />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="market" className="flex items-center gap-2">
+          <TabsTrigger value="market" className="text-xs sm:text-sm px-2 py-2">
             <Newspaper size={16} />
             Market News
           </TabsTrigger>
-          <TabsTrigger value="engagement" className="flex items-center gap-2">
+          <TabsTrigger value="engagement" className="text-xs sm:text-sm px-2 py-2">
             <UserCheck size={16} />
             Engagement
           </TabsTrigger>
-          <TabsTrigger value="glossary" className="flex items-center gap-2">
+          <TabsTrigger value="glossary" className="text-xs sm:text-sm px-2 py-2">
             <BookOpen size={16} />
             Dictionary
           </TabsTrigger>
-          <TabsTrigger value="guides" className="flex items-center gap-2">
+          <TabsTrigger value="guides" className="text-xs sm:text-sm px-2 py-2">
             <GraduationCap size={16} />
             How-To Guides
           </TabsTrigger>
-          <TabsTrigger value="calculators" className="flex items-center gap-2">
+          {/* <TabsTrigger value="calculators" className="text-xs sm:text-sm px-2 py-2">
             <Calculator size={16} />
             Calculators
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
+
+
 
         <TabsContent value="overview">
           <div className="space-y-6">
@@ -206,36 +208,39 @@ const FinancialEducationPlatform: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {featuredContent.map((content, index) => (
-                    <Card key={index} className="border border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          {content.type === 'guide' && <GraduationCap size={20} className="text-green-600" />}
-                          {content.type === 'term' && <BookOpen size={20} className="text-blue-600" />}
-                          {content.type === 'calculator' && <Calculator size={20} className="text-purple-600" />}
-                          <div className="flex-1">
-                            <h3 className="font-medium mb-1">{content.title}</h3>
-                            <p className="text-sm text-gray-600 mb-2">{content.description}</p>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">
-                                {content.category}
-                              </Badge>
-                              <Badge variant="outline" className="text-xs">
-                                {content.difficulty}
-                              </Badge>
-                              {content.readTime && (
-                                <span className="text-xs text-gray-500">
-                                  {content.readTime}m read
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+  {featuredContent.map((content, index) => (
+    <Card key={index} className="border border-gray-200">
+      <CardContent className="p-4">
+        <div className="flex flex-col sm:flex-row items-start gap-3">
+          {content.type === 'guide' && <GraduationCap size={20} className="text-green-600" />}
+          {content.type === 'term' && <BookOpen size={20} className="text-blue-600" />}
+          {content.type === 'calculator' && <Calculator size={20} className="text-purple-600" />}
+          
+          <div className="flex-1">
+            <h3 className="font-medium text-base mb-1">{content.title}</h3>
+            <p className="text-sm text-gray-600 mb-2">{content.description}</p>
+            
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
+              <Badge variant="outline">
+                {content.category}
+              </Badge>
+              <Badge variant="outline">
+                {content.difficulty}
+              </Badge>
+              {content.readTime && (
+                <span className="text-gray-500">
+                  {content.readTime}m read
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
               </CardContent>
             </Card>
 
@@ -345,9 +350,9 @@ const FinancialEducationPlatform: React.FC = () => {
           <CustomerEngagementHub />
         </TabsContent>
 
-        <TabsContent value="calculators">
+        {/* <TabsContent value="calculators">
           <FinancialCalculators />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

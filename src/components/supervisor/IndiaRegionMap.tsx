@@ -19,19 +19,19 @@ const IndiaRegionMap = () => {
         <div className="flex flex-col items-center space-y-4">
           {/* India Map Image */}
           <div className="relative w-full max-w-sm h-96 flex justify-center">
-            <img 
-src={`${import.meta.env.VITE_BASE_PATH || ''}lovable-uploads/989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png`}
-alt="India Regional Map" 
+            <img
+              src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}assets/989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png`}
+              alt="India Regional Map"
               className="w-full h-full object-contain"
             />
           </div>
-          
+
           {/* Sales Figures */}
           <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
             {regionData.map((region) => (
               <div key={region.region} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                 <div className="flex items-center space-x-2">
-                  <div 
+                  <div
                     className="w-3 h-3 rounded-full border border-gray-300"
                     style={{ backgroundColor: region.color }}
                   />
@@ -41,7 +41,7 @@ alt="India Regional Map"
               </div>
             ))}
           </div>
-          
+
           {/* Total */}
           <div className="w-full max-w-sm p-3 bg-teal-50 rounded-lg border border-teal-200">
             <div className="flex justify-between items-center">

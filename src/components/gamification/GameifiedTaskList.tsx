@@ -167,9 +167,9 @@ const GameifiedTaskList = () => {
   };
 
   // Only show for Field Executives
-  if (user?.role !== 'sales_executive') {
-    return null;
-  }
+  // if (user?.role !== 'sales_executive') {
+  //   return null;
+  // }
 
   const completedTasks = tasks.filter(t => t.status === 'completed').length;
   const totalXP = tasks.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.xpReward, 0);
@@ -177,7 +177,7 @@ const GameifiedTaskList = () => {
   return (
     <div className="space-y-6">
       {/* Task Overview Header */}
-      <Card className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+      {/* <Card className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -205,7 +205,7 @@ const GameifiedTaskList = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Task List */}
       <Card>

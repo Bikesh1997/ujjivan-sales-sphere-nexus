@@ -26,6 +26,7 @@ import {
   Trophy,
   GraduationCap,
   Star,
+  Calculator,
   Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,7 @@ const Layout = ({ children }: LayoutProps) => {
     Calendar: Calendar,
     Trophy :Trophy,
     GraduationCap:GraduationCap,
+    Calculator:Calculator,
   };
 
   const navigationItems = getNavigationItems().map(item => ({
@@ -187,7 +189,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Button>
               <div className="flex items-start">
                 <img 
-src={`${import.meta.env.VITE_BASE_PATH || ''}lovable-uploads/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
+src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}assets/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
 
 alt="Ujjivan Small Finance Bank" 
                   className="h-8 sm:h-10 w-auto object-contain"
@@ -382,52 +384,7 @@ alt="Ujjivan Small Finance Bank"
                 );
               })}
               
-              {/* Gamified Field Executive Menu Items */}
-              {user?.role === 'sales_executive' && (
-                <>
-                  <div className="px-3 pt-4 pb-2">
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      🎮 Game Mode
-                    </div>
-                  </div>
-                  <Link
-                    to="/field-game-dashboard"
-                    onClick={() => setSidebarOpen(false)}
-                    className={`${
-                      isActive('/field-game-dashboard')
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
-                  >
-                    <Star size={18} className="mr-3 flex-shrink-0 text-yellow-500" />
-                    <span className="truncate">🎮 Game Dashboard</span>
-                  </Link>
-                  <Link
-                    to="/field-kra-game"
-                    onClick={() => setSidebarOpen(false)}
-                    className={`${
-                      isActive('/field-kra-game')
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
-                  >
-                    <Target size={18} className="mr-3 flex-shrink-0 text-blue-500" />
-                    <span className="truncate">🎯 KRA Missions</span>
-                  </Link>
-                  <Link
-                    to="/field-task-game"
-                    onClick={() => setSidebarOpen(false)}
-                    className={`${
-                      isActive('/field-task-game')
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-3 py-2 text-sm font-medium rounded-l-md transition-colors`}
-                  >
-                    <Zap size={18} className="mr-3 flex-shrink-0 text-purple-500" />
-                    <span className="truncate">⚡ Task Missions</span>
-                  </Link>
-                </>
-              )}
+             
             </nav>
           </div>
         </div>

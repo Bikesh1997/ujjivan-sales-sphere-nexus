@@ -176,19 +176,19 @@ export const FEATURES: Feature[] = [
   },
   {
     id: 'gamification',
-    name: 'Performance & Achievements',
+    name: 'Achievements',
     path: '/gamification',
     icon: 'Trophy',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
     description: 'KRA gamification with points, badges, and leaderboards'
   },
   {
-    id: 'insight_dash',
-    name: 'InsightDash',
-    path: '/insight-dash',
-    icon: 'BarChart3',
+    id: 'tools',
+    name: 'Tools',
+    path: '/tools',
+    icon: 'Calculator',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
-    description: 'Real-time metrics dashboard with performance indicators'
+    description: 'calculators'
   }
 ];
 

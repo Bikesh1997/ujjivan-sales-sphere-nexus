@@ -26,6 +26,7 @@ import {
 import DragDropKanbanBoard from '@/components/tasks/DragDropKanbanBoard';
 import CallInProgressModal from '@/components/leads/CallInProgressModal';
 import { useToast } from '@/hooks/use-toast';
+import GameifiedTaskList from '@/components/gamification/GameifiedTaskList';
 
 const Tasks = () => {
   const { toast } = useToast();
@@ -256,7 +257,9 @@ const Tasks = () => {
       {/* Top Row - Today's Tasks only */}
       <div className="grid grid-cols-1 gap-6">
         {/* Today's Tasks */}
-        <Card>
+              <GameifiedTaskList/>
+
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Calendar className="mr-2 h-5 w-5" />
@@ -302,7 +305,7 @@ const Tasks = () => {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Middle Row - Pending Follow-ups and Incentive Progress */}
