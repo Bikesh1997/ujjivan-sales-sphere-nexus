@@ -239,10 +239,7 @@ const FieldExecutiveGameDashboard = () => {
       </div>
       <Progress
         value={progressPercentage}
-        className="h-2 sm:h-3 bg-[#d2f1e7]"
-        style={{
-          '--progress-bar-color': '#23a07c',
-        }}
+        className="h-2 sm:h-3 bg-[#d2f1e7] [&>div]:bg-[#23a07c]"
       />
     </div>
   </CardContent>
