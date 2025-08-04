@@ -123,7 +123,7 @@ const LeadAllocation = () => {
     {
       id: '4',
       name: 'Urban Developers',
-      contact: 'Priya Sharma',
+      contact: 'Heena Thakkar',
       phone: '+91 98765 43213',
       email: 'priya@urban.com',
       priority: 'Low',

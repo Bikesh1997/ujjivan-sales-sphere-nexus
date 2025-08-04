@@ -42,7 +42,7 @@ const PlanMyDay = () => {
   const [visits, setVisits] = useState<CustomerVisit[]>([
     {
       id: '1',
-      name: 'Priya Sharma',
+      name: 'Heena Thakkar',
       address: 'Bandra West, Mumbai 400050',
       phone: '+91 98765 43210',
       priority: 'High',
@@ -413,7 +413,7 @@ const PlanMyDay = () => {
                 <g>
                   {/* Location 1 - Priya Sharma */}
                   <circle cx="80" cy="70" r="8" fill="#ef4444" stroke="#fff" strokeWidth="2" />
-                  <text x="95" y="75" fontSize="10" fill="#374151" fontWeight="500">Priya S.</text>
+                  <text x="95" y="75" fontSize="10" fill="#374151" fontWeight="500">Heena T.</text>
                   <text x="95" y="85" fontSize="8" fill="#6b7280">9:30 AM</text>
                   
                   {/* Location 2 - Rajesh Kumar */}

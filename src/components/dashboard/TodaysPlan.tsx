@@ -36,7 +36,7 @@ const TodaysPlan = () => {
   // Mock data for today's activities
   const pendingFollowUps = [
     { id: 1, name: 'Rajesh Kumar', business: 'Tech Solutions Pvt Ltd', phone: '+91 98765 43210', time: '10:30 AM', priority: 'High' },
-    { id: 2, name: 'Priya Sharma', business: 'Digital Marketing Co', phone: '+91 87654 32109', time: '2:15 PM', priority: 'Medium' },
+    { id: 2, name: 'Heena Thakkar', business: 'Digital Marketing Co', phone: '+91 87654 32109', time: '2:15 PM', priority: 'Medium' },
     { id: 3, name: 'Amit Patel', business: 'Construction Corp', phone: '+91 76543 21098', time: '4:00 PM', priority: 'High' }
   ];
 

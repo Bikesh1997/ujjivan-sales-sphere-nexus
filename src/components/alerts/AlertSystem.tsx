@@ -43,7 +43,7 @@ const AlertSystem = () => {
     {
       id: '3',
       title: 'Customer Birthday',
-      message: 'Mrs. Priya Sharma (₹2.5Cr portfolio) has birthday today. Send wishes for relationship building.',
+      message: 'Mrs. Heena Thakkar (₹2.5Cr portfolio) has birthday today. Send wishes for relationship building.',
       type: 'info',
       timestamp: '1 hour ago',
       isRead: true,

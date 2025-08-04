@@ -43,7 +43,7 @@ const mockUsers: User[] = [
   },
   {
     id: '2',
-    name: 'Priya Sharma',
+    name: 'Heena Thakkar',
     email: 'priya.sharma@bank.com',
     role: 'relationship_manager',
     department: 'branch',

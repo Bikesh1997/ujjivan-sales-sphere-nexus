@@ -38,7 +38,7 @@ const Tasks = () => {
   const [todaysTasks, setTodaysTasks] = useState([
     {
       id: '1',
-      title: 'Visit Mrs. Priya Sharma - SHG Formation',
+      title: 'Visit Mrs. Heena Thakkar - SHG Formation',
       type: 'visit',
       priority: 'High',
       time: '10:00 AM',

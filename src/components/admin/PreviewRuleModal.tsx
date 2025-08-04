@@ -24,7 +24,7 @@ interface PreviewRuleModalProps {
 
 const mockMatchedCustomers = [
   { id: 1, name: 'Rajesh Kumar', account: 'SAV001234', balance: '₹75,000', tenure: '8 months', score: 85 },
-  { id: 2, name: 'Priya Sharma', account: 'SAV001235', balance: '₹1,20,000', tenure: '12 months', score: 92 },
+  { id: 2, name: 'Heena Thakkar', account: 'SAV001235', balance: '₹1,20,000', tenure: '12 months', score: 92 },
   { id: 3, name: 'Amit Patel', account: 'SAV001236', balance: '₹65,000', tenure: '6 months', score: 78 },
   { id: 4, name: 'Neha Gupta', account: 'SAV001237', balance: '₹95,000', tenure: '10 months', score: 88 },
   { id: 5, name: 'Vikram Singh', account: 'SAV001238', balance: '₹85,000', tenure: '7 months', score: 82 }

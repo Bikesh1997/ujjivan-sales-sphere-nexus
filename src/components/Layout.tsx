@@ -357,11 +357,11 @@ alt="Ujjivan Small Finance Bank"
           <div className="h-full overflow-y-auto pt-4 sm:pt-6">
             <div className="px-3 mb-4">
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                {user?.role === 'admin' ? 'Admin Portal' :
+                 {user?.role === 'admin' ? 'Admin Portal' :
                  user?.role === 'supervisor' ? 'Supervisor Portal' : 
                  user?.role === 'inbound_agent' ? 'Inbound Agent Portal' :
                  user?.role === 'relationship_manager' ? 'Relationship Manager Portal' :
-                 'Sales Portal'}
+                 'Field Portal'}
               </div>
             </div>
             <nav className="px-3 space-y-1">

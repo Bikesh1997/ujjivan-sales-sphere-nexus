@@ -172,7 +172,20 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="font-mono text-sm">{customer.id}</TableCell>
+                        <TableCell className="font-mono text-sm">
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className={`${isFirst3 ? 'text-red-500' : ''}`}>
+                                {customer.id}
+                              </span>
+                            </TooltipTrigger>
+                            {isFirst3 && (
+                              <TooltipContent>
+                                <p>Pending KYC</p>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TableCell>
                         <TableCell>
                           <Badge className={getSegmentColor(customer.segment)}>{customer.segment}</Badge>
                         </TableCell>
@@ -235,7 +248,18 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
                             </Tooltip>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 truncate">{customer.id}</div>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <div className={`text-sm text-gray-500 truncate ${isFirst3 ? 'text-red-500' : ''}`}>
+                              {customer.id}
+                            </div>
+                          </TooltipTrigger>
+                          {isFirst3 && (
+                            <TooltipContent>
+                              <p>Pending KYC</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
                         <div className="text-xs text-gray-400 truncate">{customer.email}</div>
                       </div>
                     </CardHeader>

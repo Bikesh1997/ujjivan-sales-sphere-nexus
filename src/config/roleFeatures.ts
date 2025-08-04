@@ -187,7 +187,7 @@ export const FEATURES: Feature[] = [
     name: 'Tools',
     path: '/tools',
     icon: 'Calculator',
-    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor'],
     description: 'calculators'
   }
 ];

@@ -50,7 +50,7 @@ const GameifiedTaskList = () => {
       status: 'pending',
       deadline: '10:00 AM',
       location: 'Ward 3, Sector 12',
-      customer: 'Priya Sharma'
+      customer: 'Heena Thakkar'
     },
     {
       id: '2',

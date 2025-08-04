@@ -116,7 +116,7 @@ const Customer360 = () => {
   // Enhanced customer data with additional family members for Neha's account + leads
   const staticCustomerData = {
     'priya-sharma': {
-      name: 'Priya Sharma',
+      name: 'Heena Thakkar',
       id: 'CUST001234',
       segment: 'Premium',
       relationshipValue: 'High',

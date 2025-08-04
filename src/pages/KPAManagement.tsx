@@ -64,7 +64,7 @@ const KPAManagement = () => {
 
   const employeePerformance = [
     { name: 'Rajesh Kumar', role: 'Field Executive', kpasAssigned: 5, krasCompleted: 12, achievement: 94.5, status: 'Exceeding' },
-    { name: 'Priya Sharma', role: 'Relationship Manager', kpasAssigned: 4, krasCompleted: 10, achievement: 88.2, status: 'Meeting' },
+    { name: 'Heena Thakkar', role: 'Relationship Manager', kpasAssigned: 4, krasCompleted: 10, achievement: 88.2, status: 'Meeting' },
     { name: 'Amit Singh', role: 'Field Executive', kpasAssigned: 6, krasCompleted: 8, achievement: 76.8, status: 'Below Target' },
     { name: 'Sneha Patel', role: 'Team Lead', kpasAssigned: 3, krasCompleted: 15, achievement: 96.3, status: 'Exceeding' },
     { name: 'Vikram Joshi', role: 'Relationship Manager', kpasAssigned: 4, krasCompleted: 11, achievement: 82.1, status: 'Meeting' },
