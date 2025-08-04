@@ -248,12 +248,12 @@ const TaskManagement = () => {
         </div>
       </div>
 
-      {/* Smart Nudges & Insights */}
+      {/* Insights */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <TrendingUp size={18} className="mr-2" />
-            Smart Nudges & Insights
+            Insights
           </CardTitle>
         </CardHeader>
         <CardContent>

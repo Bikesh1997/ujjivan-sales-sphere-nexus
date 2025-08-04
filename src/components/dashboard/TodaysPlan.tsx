@@ -318,9 +318,9 @@ const TodaysPlan = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <TrendingUp size={18} className="mr-2" />
-                Smart Nudges
+                Insights
                 <Badge className="ml-2 bg-teal-100 text-teal-800">
-                  AI Insights
+                  AI Powered
                 </Badge>
               </CardTitle>
             </CardHeader>

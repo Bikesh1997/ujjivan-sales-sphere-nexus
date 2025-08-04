@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Phone, Mail, TrendingUp, Eye, Star } from 'lucide-react';
 import {
   Pagination,
@@ -118,77 +119,159 @@ const CustomerTable = ({ customers, selectedCustomer, onCustomerSelect }: Custom
               </div>
             </div>
           </CardHeader>
-          <div className="w-full px-4 sm:px-6 md:px-8 overflow-x-hidden">
-  <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {currentCustomers.map((customer, index) => {
-      const globalIndex = (currentPage - 1) * customersPerPage + index;
-      const isFirst3 = globalIndex < 3;
+          <CardContent>
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Customer ID</TableHead>
+                    <TableHead>Segment</TableHead>
+                    <TableHead>Relationship Value</TableHead>
+                    <TableHead>Risk Score</TableHead>
+                    <TableHead>Last Interaction</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentCustomers.map((customer, index) => {
+                    const globalIndex = (currentPage - 1) * customersPerPage + index;
+                    const isFirst3 = globalIndex < 3;
 
-      return (
-        <Card
-          key={customer.key}
-          className={`w-full cursor-pointer hover:shadow-md ${
-            selectedCustomer === customer.key ? 'border-teal-500 border-2' : ''
-          }`}
-          onClick={() => onCustomerSelect(customer.key)}
-        >
-          <CardHeader className="flex flex-row items-center gap-4">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-teal-100 text-teal-700">
-                {customer.name.split(' ').map((n) => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col truncate">
-              <div className="font-medium flex items-center gap-2 truncate">
-                {customer.name}
-                {isFirst3 && (
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>New opportunity identified</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-              <div className="text-sm text-gray-500 truncate">{customer.id}</div>
-              <div className="text-xs text-gray-400 truncate">{customer.email}</div>
+                    return (
+                      <TableRow
+                        key={customer.key}
+                        className={`cursor-pointer hover:bg-gray-50 ${
+                          selectedCustomer === customer.key ? 'bg-teal-50 border-l-4 border-l-teal-500' : ''
+                        }`}
+                        onClick={() => onCustomerSelect(customer.key)}
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback className="bg-teal-100 text-teal-700 text-sm">
+                                {customer.name.split(' ').map((n) => n[0]).join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium flex items-center gap-2">
+                                {customer.name}
+                                {isFirst3 && (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Star size={14} className="text-yellow-500 fill-yellow-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>New opportunity identified</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
+                              <div className="text-sm text-gray-500">{customer.email}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">{customer.id}</TableCell>
+                        <TableCell>
+                          <Badge className={getSegmentColor(customer.segment)}>{customer.segment}</Badge>
+                        </TableCell>
+                        <TableCell className="font-medium">{customer.totalRelationship}</TableCell>
+                        <TableCell>
+                          <Badge className={getRiskColor(customer.riskScore)}>{customer.riskScore}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">{customer.lastInteraction}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button size="sm" variant="outline" onClick={(e) => handleViewCustomer(customer, e)}>
+                              <Eye size={14} className="mr-1" /> View
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Phone size={14} />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Mail size={14} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div>
-              <span className="text-sm font-medium">Segment:</span>{' '}
-              <Badge className={getSegmentColor(customer.segment)}>{customer.segment}</Badge>
-            </div>
-            <div>
-              <span className="text-sm font-medium">Relationship:</span>{' '}
-              <span className="text-gray-700">{customer.totalRelationship}</span>
-            </div>
-            <div>
-              <span className="text-sm font-medium">Risk Score:</span>{' '}
-              <Badge className={getRiskColor(customer.riskScore)}>{customer.riskScore}</Badge>
-            </div>
-            <div className="text-sm text-gray-600">
-              Last Interaction: {customer.lastInteraction}
-            </div>
-            <div className="flex flex-wrap items-center gap-2 pt-2">
-              <Button size="sm" variant="outline" onClick={(e) => handleViewCustomer(customer, e)}>
-                <Eye size={14} className="mr-1" /> View
-              </Button>
-              <Button size="sm" variant="ghost">
-                <Phone size={14} />
-              </Button>
-              <Button size="sm" variant="ghost">
-                <Mail size={14} />
-              </Button>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+              {currentCustomers.map((customer, index) => {
+                const globalIndex = (currentPage - 1) * customersPerPage + index;
+                const isFirst3 = globalIndex < 3;
+
+                return (
+                  <Card
+                    key={customer.key}
+                    className={`w-full cursor-pointer hover:shadow-md ${
+                      selectedCustomer === customer.key ? 'border-teal-500 border-2' : ''
+                    }`}
+                    onClick={() => onCustomerSelect(customer.key)}
+                  >
+                    <CardHeader className="flex flex-row items-center gap-4 pb-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-teal-100 text-teal-700">
+                          {customer.name.split(' ').map((n) => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col truncate">
+                        <div className="font-medium flex items-center gap-2 truncate">
+                          {customer.name}
+                          {isFirst3 && (
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>New opportunity identified</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-500 truncate">{customer.id}</div>
+                        <div className="text-xs text-gray-400 truncate">{customer.email}</div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2 pt-0">
+                      <div>
+                        <span className="text-sm font-medium">Segment:</span>{' '}
+                        <Badge className={getSegmentColor(customer.segment)}>{customer.segment}</Badge>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Relationship:</span>{' '}
+                        <span className="text-gray-700">{customer.totalRelationship}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Risk Score:</span>{' '}
+                        <Badge className={getRiskColor(customer.riskScore)}>{customer.riskScore}</Badge>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Last Interaction: {customer.lastInteraction}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2 pt-2">
+                        <Button size="sm" variant="outline" onClick={(e) => handleViewCustomer(customer, e)}>
+                          <Eye size={14} className="mr-1" /> View
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          <Phone size={14} />
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          <Mail size={14} />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </CardContent>
-        </Card>
-      );
-    })}
-  </CardContent>
-</div>
 
         </Card>
 

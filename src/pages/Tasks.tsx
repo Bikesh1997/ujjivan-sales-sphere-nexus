@@ -419,7 +419,7 @@ const Tasks = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Bell className="mr-2 h-5 w-5" />
-              Smart Nudges & Insights
+              Insights
             </CardTitle>
           </CardHeader>
           <CardContent>
