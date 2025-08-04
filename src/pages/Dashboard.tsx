@@ -5,14 +5,17 @@ import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate } from 'react-router-dom';
 import SmartNudges from '@/components/dashboard/SmartNudges';
 import ProjectionSection from '@/components/dashboard/ProjectionSection';
+import ThemeColorControls from '@/components/ThemeColorControls';
 import { allLeads } from '@/data/leadsData';
 import FieldExecutiveGameDashboard from '@/components/gamification/FieldExecutiveGameDashboard';
 import GameifiedKRAProgress from '@/components/gamification/GameifiedKRAProgress';
-import { Calendar, Phone } from 'lucide-react';
+import { Calendar, Phone, Palette } from 'lucide-react';
+import { useState } from 'react';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showThemeControls, setShowThemeControls] = useState(false);
 
   // Calculate metrics based on user role
   const userLeads = user?.role === 'supervisor' ? allLeads : allLeads.filter(lead => lead.assignedToId === user?.id);
@@ -43,6 +46,14 @@ const Dashboard = () => {
           {/* <p className="text-gray-600">Here's your sales performance overview</p> */}
         </div>
         <div className="flex space-x-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowThemeControls(!showThemeControls)}
+          >
+            <Palette size={16} className="mr-2" />
+            Theme
+          </Button>
           <Button variant="outline" size="sm" onClick={handlePlanRoute}>
             <Calendar size={16} className="mr-2" />
             Plan Route
@@ -70,6 +81,12 @@ const Dashboard = () => {
 
 
 
+      {/* Theme Color Controls */}
+      {showThemeControls && (
+        <div className="fixed top-20 right-4 z-50 w-80">
+          <ThemeColorControls />
+        </div>
+      )}
     </div>
   );
 };
