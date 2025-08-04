@@ -35,6 +35,7 @@ import FamilyGroupTab from './FamilyGroupTab';
 import ClientInteractionDetails from './ClientInteractionDetails';
 import CrossSellSuggestions from './CrossSellSuggestions';
 import GoalBasedNudges from './GoalBasedNudges';
+import KYCTab from './KYCTab';
 import SetAlertModal from '../alerts/SetAlertModal';
 import LeadCallModal from '../leads/LeadCallModal';
 import CreateOfferModal from './CreateOfferModal';
@@ -343,8 +344,9 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
             {/* Detailed Information Tabs */}
             <Card>
               <CardContent className="p-3 sm:p-6">
-                <Tabs defaultValue="products" className="w-full">
-                  <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-3 sm:grid-cols-7' : 'grid-cols-2 sm:grid-cols-5'} gap-1 h-auto`}>
+                <Tabs defaultValue="kyc" className="w-full">
+                  <TabsList className={`grid w-full ${isNehaAccount ? 'grid-cols-4 sm:grid-cols-8' : 'grid-cols-3 sm:grid-cols-6'} gap-1 h-auto`}>
+                    <TabsTrigger value="kyc" className="text-xs sm:text-sm px-2 py-2">KYC</TabsTrigger>
                     <TabsTrigger value="products" className="text-xs sm:text-sm px-2 py-2">Products</TabsTrigger>
                     <TabsTrigger value="family" className="text-xs sm:text-sm px-2 py-2">Family Group</TabsTrigger>
                     <TabsTrigger value="opportunities" className="text-xs sm:text-sm px-2 py-2">Opportunities</TabsTrigger>
@@ -353,6 +355,10 @@ const CustomerDetailsModal = ({ customer, isOpen, onOpenChange }: CustomerDetail
                     {isNehaAccount && <TabsTrigger value="cross-sell" className="text-xs sm:text-sm px-2 py-2">AI Cross-Sell</TabsTrigger>}
                     {isNehaAccount && <TabsTrigger value="goals" className="text-xs sm:text-sm px-2 py-2">Goal Planning</TabsTrigger>}
                   </TabsList>
+
+                  <TabsContent value="kyc" className="space-y-4 mt-4">
+                    <KYCTab customerName={customer.name} />
+                  </TabsContent>
 
                   <TabsContent value="products" className="space-y-4 mt-4">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Product Holdings</h3>
