@@ -31,7 +31,7 @@ const BulkLeadActions = ({ selectedLeads, onBulkAction, onClearSelection }: Bulk
 
   const teamMembers = [
     { id: '1', name: 'Rahul Sharma' },
-    { id: '2', name: 'Anjali Patel' },
+    { id: '2', name: 'Bikesh Patel' },
     { id: '3', name: 'Vikash Kumar' },
     { id: '4', name: 'Priya Singh' }
   ];

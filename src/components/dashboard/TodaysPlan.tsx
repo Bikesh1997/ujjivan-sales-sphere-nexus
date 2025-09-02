@@ -30,8 +30,8 @@ const TodaysPlan = () => {
   const [callPopupOpen, setCallPopupOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
 
-  // Check if current user is Anjali Patel
-  const isAnjaliAccount = user?.name === 'Anjali Patel';
+  // Check if current user is Bikesh Patel
+  const isBikeshAccount = user?.name === 'Bikesh Patel';
 
   // Mock data for today's activities
   const pendingFollowUps = [
@@ -57,22 +57,22 @@ const TodaysPlan = () => {
     { id: 3, area: 'Powai', prospects: 7, distance: '6.8 km', priority: 'High' }
   ];
 
-  // Additional data for Anjali's Daily Snapshot
-  const anjaliTodaysTasks = [
+  // Additional data for Bikesh's Daily Snapshot
+  const bikeshTodaysTasks = [
     { id: 1, task: 'Visit SHG meeting in Ward 3', deadline: '10:00 AM', status: 'pending', type: 'visit' },
     { id: 2, task: 'Document collection from Meera Devi', deadline: '2:00 PM', status: 'pending', type: 'document' },
     { id: 3, task: 'Follow up with Sunita Group leader', deadline: '4:00 PM', status: 'completed', type: 'call' },
     { id: 4, task: 'Submit SHG formation paperwork', deadline: '6:00 PM', status: 'pending', type: 'admin' }
   ];
 
-  const anjaliRouteCustomers = [
+  const bikeshRouteCustomers = [
     { id: 1, name: 'Kamala Devi', address: 'Ward 3, Slum Area A', eta: '10:15 AM', priority: 'High', purpose: 'SHG Formation' },
     { id: 2, name: 'Rekha Group', address: 'Ward 4, Community Center', eta: '11:30 AM', priority: 'Medium', purpose: 'Loan Discussion' },
     { id: 3, name: 'Sunita SHG', address: 'Ward 5, School Building', eta: '2:15 PM', priority: 'High', purpose: 'Document Collection' },
     { id: 4, name: 'Geeta Collective', address: 'Ward 3, Health Center', eta: '3:45 PM', priority: 'Medium', purpose: 'Follow-up Meeting' }
   ];
 
-  const anjaliOverdueLeads = [
+  const bikeshOverdueLeads = [
     { id: 1, name: 'Priya Group', lastContact: '5 days ago', reason: 'Call to prevent drop-off', priority: 'High' },
     { id: 2, name: 'Anita SHG', lastContact: '3 days ago', reason: 'Document pending collection', priority: 'Medium' },
     { id: 3, name: 'Radha Collective', lastContact: '7 days ago', reason: 'Interest confirmation needed', priority: 'High' }
@@ -110,7 +110,7 @@ const TodaysPlan = () => {
   // Check if user should see Smart Beat Plan Route - hide for Inbound saless
   const shouldShowBeatPlan = user?.role !== 'inbound_agent';
 
-  if (isAnjaliAccount) {
+  if (isBikeshAccount) {
     return (
       <div className="space-y-6">
         <div className="mb-6">
@@ -119,20 +119,20 @@ const TodaysPlan = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Today's Tasks - Enhanced for Anjali */}
+          {/* Today's Tasks - Enhanced for Bikesh */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <CheckCircle size={18} className="mr-2" />
                 Today's Tasks
                 <Badge className="ml-2 bg-orange-100 text-orange-800">
-                  {anjaliTodaysTasks.filter(task => task.status === 'pending').length} Pending
+                  {bikeshTodaysTasks.filter(task => task.status === 'pending').length} Pending
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {anjaliTodaysTasks.map((task) => (
+                {bikeshTodaysTasks.map((task) => (
                   <div key={task.id} className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
@@ -179,7 +179,7 @@ const TodaysPlan = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {anjaliRouteCustomers.map((customer) => (
+                {bikeshRouteCustomers.map((customer) => (
                   <div key={customer.id} className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -211,13 +211,13 @@ const TodaysPlan = () => {
                 <AlertCircle size={18} className="mr-2" />
                 Pending Follow-ups
                 <Badge className="ml-2 bg-red-100 text-red-800">
-                  {anjaliOverdueLeads.length} Overdue
+                  {bikeshOverdueLeads.length} Overdue
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {anjaliOverdueLeads.map((lead) => (
+                {bikeshOverdueLeads.map((lead) => (
                   <div key={lead.id} className="border rounded-lg p-3 bg-red-50 border-red-200">
                     <div className="flex justify-between items-start mb-2">
                       <div>

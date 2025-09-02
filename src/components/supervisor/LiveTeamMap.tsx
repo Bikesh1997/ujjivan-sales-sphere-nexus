@@ -52,7 +52,7 @@ const LiveTeamMap = () => {
     },
     {
       id: '2',
-      name: 'Anjali Patel',
+      name: 'Bikesh Patel',
       role: 'Field Executive',
       currentLocation: {
         latitude: 19.0896,

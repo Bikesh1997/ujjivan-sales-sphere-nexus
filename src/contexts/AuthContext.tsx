@@ -31,7 +31,7 @@ const MOCK_USERS: User[] = [
   {
     id: '3',
     email: 'sales2@bank.com',
-    name: 'Anjali Patel',
+    name: 'Bikesh Patel',
     role: 'sales_executive',
     department: 'inbound',
     branch: 'Mumbai Central'

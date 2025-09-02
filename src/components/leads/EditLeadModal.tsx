@@ -76,7 +76,7 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
   const handleAssigneeChange = (value: string) => {
     const assigneeMap: { [key: string]: { name: string; id: string } } = {
       'Rahul Sharma': { name: 'Rahul Sharma', id: '1' },
-      'Anjali Patel': { name: 'Anjali Patel', id: '2' },
+      'Bikesh Patel': { name: 'Bikesh Patel', id: '2' },
       'Vikash Kumar': { name: 'Vikash Kumar', id: '3' },
       'Priya Singh': { name: 'Priya Singh', id: '4' }
     };
@@ -206,7 +206,7 @@ const EditLeadModal = ({ lead, isOpen, onOpenChange, onEditLead }: EditLeadModal
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Rahul Sharma">Rahul Sharma</SelectItem>
-                <SelectItem value="Anjali Patel">Anjali Patel</SelectItem>
+                <SelectItem value="Bikesh Patel">Bikesh Patel</SelectItem>
                 <SelectItem value="Vikash Kumar">Vikash Kumar</SelectItem>
                 <SelectItem value="Priya Singh">Priya Singh</SelectItem>
               </SelectContent>

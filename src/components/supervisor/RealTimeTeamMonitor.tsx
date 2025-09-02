@@ -50,7 +50,7 @@ const RealTimeTeamMonitor = () => {
     },
     {
       id: '2',
-      name: 'Anjali Patel',
+      name: 'Bikesh Patel',
       status: 'active',
       currentActivity: 'Preparing loan documentation',
       location: 'Branch Office',

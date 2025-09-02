@@ -66,7 +66,7 @@ const TeamTasks = () => {
       id: '2',
       title: 'Customer Satisfaction Survey',
       description: 'Conduct monthly customer satisfaction survey',
-      assignedTo: 'Anjali Patel',
+      assignedTo: 'Bikesh Patel',
       assigneeId: '2',
       priority: 'Medium',
       status: 'Pending',
@@ -114,7 +114,7 @@ const TeamTasks = () => {
 
   const teamMembers = [
     { id: '1', name: 'Rahul Sharma', activeTasks: 2, completedTasks: 8 },
-    { id: '2', name: 'Anjali Patel', activeTasks: 1, completedTasks: 6 },
+    { id: '2', name: 'Bikesh Patel', activeTasks: 1, completedTasks: 6 },
     { id: '3', name: 'Vikash Kumar', activeTasks: 1, completedTasks: 4 },
     { id: '4', name: 'Priya Singh', activeTasks: 1, completedTasks: 7 }
   ];
