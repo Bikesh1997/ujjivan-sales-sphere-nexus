@@ -158,31 +158,31 @@ const ChatBot = () => {
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={() => setIsOpen(true)}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+          className="w-16 h-16 rounded-full bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-bounce-in"
           size="lg"
         >
-          <MessageCircle size={28} className="text-white" />
+          <MessageCircle size={28} className="text-primary-foreground" />
         </Button>
-        <div className="absolute -top-12 -left-20 bg-gray-900 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap">
+        <div className="absolute -top-12 -left-20 bg-primary text-primary-foreground px-3 py-1 rounded-lg text-sm whitespace-nowrap animate-fade-in">
           Need help? Chat with Uma!
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-primary"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 h-[600px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)]">
-      <Card className="w-full h-full flex flex-col shadow-2xl border-0 overflow-hidden">
+    <div className="fixed bottom-6 right-6 z-50 w-96 h-[600px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] animate-slide-up">
+      <Card className="w-full h-full flex flex-col shadow-2xl border-0 overflow-hidden rounded-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
+        <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between animate-fade-in">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center">
               <Bot size={20} />
             </div>
             <div>
               <h3 className="font-semibold">Uma - Banking Assistant</h3>
-              <p className="text-xs text-blue-100">Ujjivan Small Finance Bank</p>
+              <p className="text-xs text-primary-foreground/80">Ujjivan Small Finance Bank</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -190,7 +190,7 @@ const ChatBot = () => {
               variant="ghost"
               size="sm"
               onClick={toggleLanguage}
-              className="text-white hover:bg-white/20 p-2"
+              className="text-primary-foreground hover:bg-primary-foreground/20 p-2"
             >
               <Globe size={16} />
               <span className="ml-1 text-xs">{language.toUpperCase()}</span>
@@ -199,7 +199,7 @@ const ChatBot = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(false)}
-              className="text-white hover:bg-white/20 p-2"
+              className="text-primary-foreground hover:bg-primary-foreground/20 p-2"
             >
               <X size={16} />
             </Button>
@@ -207,27 +207,30 @@ const ChatBot = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-          {messages.map((message) => (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/30">
+          {messages.map((message, index) => (
             <div
               key={message.id}
-              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} ${
+                message.sender === 'user' ? 'animate-slide-in-right' : 'animate-slide-in-left'
+              }`}
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               <div
-                className={`max-w-[80%] rounded-2xl p-3 ${
+                className={`max-w-[80%] rounded-2xl p-3 shadow-sm ${
                   message.sender === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border shadow-sm'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card border border-border/50'
                 }`}
               >
                 <div className="flex items-start space-x-2">
                   {message.sender === 'bot' && (
-                    <Bot size={16} className="text-blue-600 mt-1 flex-shrink-0" />
+                    <Bot size={16} className="text-primary mt-1 flex-shrink-0" />
                   )}
                   <div className="flex-1">
                     <p className="text-sm whitespace-pre-line">{message.text}</p>
                     <p className={`text-xs mt-1 ${
-                      message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                      message.sender === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
                     }`}>
                       {formatTime(message.timestamp)}
                     </p>
@@ -238,14 +241,14 @@ const ChatBot = () => {
           ))}
           
           {isProcessing && (
-            <div className="flex justify-start">
-              <div className="bg-white border shadow-sm rounded-2xl p-3 max-w-[80%]">
+            <div className="flex justify-start animate-slide-in-left">
+              <div className="bg-card border border-border/50 shadow-sm rounded-2xl p-3 max-w-[80%]">
                 <div className="flex items-center space-x-2">
-                  <Bot size={16} className="text-blue-600" />
+                  <Bot size={16} className="text-primary" />
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-typing-dots"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-typing-dots" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-typing-dots" style={{animationDelay: '0.4s'}}></div>
                   </div>
                 </div>
               </div>
@@ -255,7 +258,7 @@ const ChatBot = () => {
         </div>
 
         {/* Quick Replies */}
-        <div className="p-3 bg-white border-t">
+        <div className="p-3 bg-card border-t border-border">
           <div className="grid grid-cols-2 gap-2 mb-3">
             {quickReplies.map((reply) => (
               <Button
@@ -263,7 +266,7 @@ const ChatBot = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => handleQuickReply(reply.action, language === 'en' ? reply.text : reply.textHi)}
-                className="text-xs h-8 text-left justify-start border-blue-200 hover:bg-blue-50 hover:border-blue-300"
+                className="text-xs h-8 text-left justify-start border-border hover:bg-accent hover:text-accent-foreground hover:border-accent hover:scale-105 transition-all duration-200 shadow-sm"
               >
                 {language === 'en' ? reply.text : reply.textHi}
               </Button>
@@ -272,18 +275,18 @@ const ChatBot = () => {
         </div>
 
         {/* Input */}
-        <div className="p-4 bg-white border-t">
+        <div className="p-4 bg-card border-t border-border">
           <div className="flex space-x-2">
             <Input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder={language === 'en' ? "Type your message..." : "अपना संदेश टाइप करें..."}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1 border-gray-200 focus:border-blue-500"
+              className="flex-1 border-border focus:border-primary focus:ring-primary/20"
             />
             <Button
               onClick={handleSendMessage}
-              className="bg-blue-600 hover:bg-blue-700 px-3"
+              className="bg-primary hover:bg-primary/90 px-3 shadow-sm"
               disabled={!inputText.trim() || isProcessing}
             >
               <Send size={16} />
