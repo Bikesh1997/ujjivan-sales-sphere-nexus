@@ -49,6 +49,7 @@ import GameifiedKRAProgress from "./components/gamification/GameifiedKRAProgress
 import GameifiedTaskList from "./components/gamification/GameifiedTaskList";
 import Tools from "./components/tools";
 import { VersionCheck } from "@/components/ui/version-check";
+import ChatBot from "./components/chatbot/ChatBot";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -101,6 +102,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ChatBot />
           {/* <VersionCheck /> */}
           <HashRouter >
             <Routes>
