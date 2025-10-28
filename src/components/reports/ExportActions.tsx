@@ -10,7 +10,7 @@ export const ExportActions = ({ onExport }: ExportActionsProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="gap-2">
+        <Button className="gap-2 bg-primary hover:bg-primary/90">
           <Download className="w-4 h-4" />
           Export Report
         </Button>

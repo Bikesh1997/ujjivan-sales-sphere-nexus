@@ -143,12 +143,14 @@ const InsightCard = ({ title, description, type }: {
   description: string; 
   type: 'positive' | 'negative' | 'neutral' 
 }) => (
-  <div className={`p-4 rounded-lg border ${
-    type === 'positive' ? 'bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900' :
-    type === 'negative' ? 'bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900' :
-    'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900'
+  <div className={`p-4 rounded-lg border transition-colors ${
+    type === 'positive' 
+      ? 'bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900' 
+      : type === 'negative' 
+      ? 'bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900' 
+      : 'bg-primary/5 border-primary/20 dark:bg-primary/10 dark:border-primary/30'
   }`}>
-    <h4 className="font-semibold text-sm mb-1">{title}</h4>
+    <h4 className="font-semibold text-sm mb-1 text-foreground">{title}</h4>
     <p className="text-sm text-muted-foreground">{description}</p>
   </div>
 );

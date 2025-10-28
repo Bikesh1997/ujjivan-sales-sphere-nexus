@@ -74,7 +74,11 @@ export const ReportFilters = ({ filters, onFilterChange, userRole }: ReportFilte
         </Select>
       </div>
 
-      <Button variant="outline" onClick={() => onFilterChange({ dateRange: 'month', department: 'all', category: 'all' })}>
+      <Button 
+        variant="outline" 
+        onClick={() => onFilterChange({ dateRange: 'month', department: 'all', category: 'all' })}
+        className="border-primary/20 hover:bg-primary/5 hover:text-primary"
+      >
         Reset Filters
       </Button>
     </div>

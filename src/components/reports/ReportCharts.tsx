@@ -8,7 +8,22 @@ interface ReportChartsProps {
   type: 'overview' | 'performance' | 'team' | 'system';
 }
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#F59E0B', '#10B981', '#EF4444'];
+// Use theme colors for charts
+const getThemeColor = (cssVar: string) => {
+  if (typeof window === 'undefined') return '#000';
+  const root = document.documentElement;
+  const hsl = getComputedStyle(root).getPropertyValue(cssVar).trim();
+  return `hsl(${hsl})`;
+};
+
+const COLORS = [
+  getThemeColor('--primary'),
+  getThemeColor('--sidebar-primary'),
+  '#0072BC', // Ujjivan Light Blue
+  '#F58220', // Ujjivan Orange
+  '#10B981', // Success green
+  '#EF4444'  // Error red
+];
 
 export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => {
   // Sample data - in real app, this would come from API based on filters
@@ -48,13 +63,19 @@ export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => 
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={teamData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))', 
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }} 
+                    />
                     <Legend />
-                    <Bar dataKey="performance" fill="hsl(var(--primary))" name="Performance %" />
-                    <Bar dataKey="conversions" fill="hsl(var(--secondary))" name="Conversions" />
+                    <Bar dataKey="performance" fill={getThemeColor('--primary')} name="Performance %" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="conversions" fill={getThemeColor('--sidebar-primary')} name="Conversions" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -104,13 +125,19 @@ export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => 
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={performanceData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))', 
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }} 
+                    />
                     <Legend />
-                    <Line type="monotone" dataKey="conversions" stroke="hsl(var(--primary))" strokeWidth={2} name="Conversions" />
-                    <Line type="monotone" dataKey="leads" stroke="hsl(var(--secondary))" strokeWidth={2} name="Leads" />
+                    <Line type="monotone" dataKey="conversions" stroke={getThemeColor('--primary')} strokeWidth={3} name="Conversions" dot={{ fill: getThemeColor('--primary'), r: 4 }} />
+                    <Line type="monotone" dataKey="leads" stroke={getThemeColor('--sidebar-primary')} strokeWidth={3} name="Leads" dot={{ fill: getThemeColor('--sidebar-primary'), r: 4 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -123,12 +150,19 @@ export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => 
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={performanceData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip formatter={(value: number) => `₹${(value / 1000).toFixed(0)}K`} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip 
+                      formatter={(value: number) => `₹${(value / 1000).toFixed(0)}K`}
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))', 
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }} 
+                    />
                     <Legend />
-                    <Bar dataKey="revenue" fill="hsl(var(--primary))" name="Revenue (₹)" />
+                    <Bar dataKey="revenue" fill={getThemeColor('--primary')} name="Revenue (₹)" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
