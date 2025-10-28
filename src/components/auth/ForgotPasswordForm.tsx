@@ -45,7 +45,7 @@ const ForgotPasswordForm = ({ onBack, onResetPassword }: ForgotPasswordFormProps
         <div>
           <div className="flex justify-center mb-4">
             <img 
-              src="assets/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
+              src="5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png" 
               alt="Ujjivan Small Finance Bank" 
               className="h-10 md:h-12 w-auto object-contain"
             />

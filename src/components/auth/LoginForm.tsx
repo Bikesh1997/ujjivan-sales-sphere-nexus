@@ -88,7 +88,7 @@ const LoginForm = () => {
         <div>
           <div className="flex justify-center mb-4">
             <img 
-            src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}assets/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
+            src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
               alt="Ujjivan Small Finance Bank" 
               className="h-10 md:h-12 w-auto object-contain"
             />

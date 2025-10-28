@@ -20,7 +20,7 @@ const IndiaRegionMap = () => {
           {/* India Map Image */}
           <div className="relative w-full max-w-sm h-96 flex justify-center">
             <img
-              src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}assets/989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png`}
+              src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}989df0bb-e890-47fb-9f2d-7a1f2a1bdb09.png`}
               alt="India Regional Map"
               className="w-full h-full object-contain"
             />

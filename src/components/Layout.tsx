@@ -189,7 +189,7 @@ const Layout = ({ children }: LayoutProps) => {
               </Button>
               <div className="flex items-start">
                 <img 
-src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}assets/5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
+src={`${process.env.NODE_ENV === 'production' ? '/ujjivan-finance/' : ''}5ccc9724-2ba0-44fc-a4a4-d4a85dc072aa.png`}
 
 alt="Ujjivan Small Finance Bank" 
                   className="h-8 sm:h-10 w-auto object-contain"
