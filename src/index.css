@@ -5,33 +5,25 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 20%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Ujjivan Brand Colors */
-    --primary: 213 100% 18%; /* Primary Blue #002C5C */
-    --primary-foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 23 91% 54%; /* Secondary Orange #F58220 */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 0 0% 96%; /* Neutral Background #F5F5F5 */
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 202 100% 37%; /* Accent Light Blue #0072BC */
-    --accent-foreground: 0 0% 100%;
-
-    /* Chatbot Specific Colors */
-    --ujjivan-primary: 213 100% 18%;
-    --ujjivan-secondary: 23 91% 54%;
-    --ujjivan-accent: 202 100% 37%;
-    --ujjivan-neutral: 0 0% 96%;
-    --ujjivan-text: 0 0% 20%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
