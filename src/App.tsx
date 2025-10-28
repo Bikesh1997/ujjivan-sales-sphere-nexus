@@ -30,6 +30,7 @@ import KPAManagement from "./pages/KPAManagement";
 import TeamPerformance from "./pages/TeamPerformance";
 import TerritoryManagement from "./pages/TerritoryManagement";
 import Reports from "./pages/Reports";
+import SmartReports from "./pages/SmartReports";
 import RuleManagement from "./pages/RuleManagement";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/admin/UserManagement";
@@ -212,6 +213,15 @@ const App = () => (
                   <Layout>
                     <RoleBasedRoute featureId="reports">
                       <Reports />
+                    </RoleBasedRoute>
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/smart-reports" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <RoleBasedRoute featureId="smart_reports">
+                      <SmartReports />
                     </RoleBasedRoute>
                   </Layout>
                 </ProtectedRoute>

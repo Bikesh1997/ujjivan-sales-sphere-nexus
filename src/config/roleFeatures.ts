@@ -189,6 +189,14 @@ export const FEATURES: Feature[] = [
     icon: 'Calculator',
     roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor'],
     description: 'calculators'
+  },
+  {
+    id: 'smart_reports',
+    name: 'Smart Reports',
+    path: '/smart-reports',
+    icon: 'FileBarChart',
+    roles: ['sales_executive', 'inbound_agent', 'relationship_manager', 'supervisor', 'admin'],
+    description: 'AI-powered analytics and role-based reporting'
   }
 ];
 
@@ -222,7 +230,9 @@ export const getIconName = (iconName: string) => {
     'Calendar': 'Calendar',
     'Workflow': 'Workflow',
     'Trophy': 'Trophy',
-    'GraduationCap': 'GraduationCap'
+    'GraduationCap': 'GraduationCap',
+    'FileBarChart': 'FileBarChart',
+    'Calculator': 'Calculator'
   };
   return iconMap[iconName] || 'Home';
 };
