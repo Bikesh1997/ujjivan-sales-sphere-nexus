@@ -40,7 +40,7 @@ export const allLeads: Lead[] = [
     status: 'qualified',
     source: 'WhatsApp Business',
     value: '₹15,00,000',
-    assignedTo: 'Anjali Patel',
+    assignedTo: 'Bikesh Patel',
     assignedToId: '2',
     lastContact: '4 hours ago',
     priority: 'Medium',
@@ -113,7 +113,7 @@ export const allLeads: Lead[] = [
     const priorities = ['High', 'Medium', 'Low'];
     const assignees = [
       { name: 'Rahul Sharma', id: '1' },
-      { name: 'Anjali Patel', id: '2' },
+      { name: 'Bikesh Patel', id: '2' },
       { name: 'Vikash Kumar', id: '3' },
       { name: 'Priya Singh', id: '4' }
     ];

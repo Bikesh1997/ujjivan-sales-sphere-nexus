@@ -22,7 +22,7 @@ const DemoCredentials = ({ onFillCredentials, isLoading }: DemoCredentialsProps)
           className={`w-full text-xs h-10 bg-gray-100 text-gray-400`}
           disabled={isLoading}
         >
-          Field Executive  (Anjali)
+          Field Executive  (Bikesh)
         </Button>
         <Button 
           variant="outline" 

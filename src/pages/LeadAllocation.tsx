@@ -65,7 +65,7 @@ const LeadAllocation = () => {
     },
     { 
       id: '2', 
-      name: 'Anjali Patel', 
+      name: 'Bikesh Patel', 
       currentLeads: 18,
       capacity: 25,
       specialization: 'Personal Loans'

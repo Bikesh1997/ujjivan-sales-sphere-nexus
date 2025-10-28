@@ -63,7 +63,7 @@ const TerritoryManagement = () => {
     {
       id: '3',
       name: 'Andheri West',
-      assignedTo: 'Anjali Patel',
+      assignedTo: 'Bikesh Patel',
       area: 'Andheri West, Juhu, Versova',
       population: 180000,
       businesses: 650,

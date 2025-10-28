@@ -46,7 +46,7 @@ const GeoAlerts = () => {
       id: '2',
       type: 'not_updated',
       severity: 'medium',
-      staffName: 'Anjali Patel',
+      staffName: 'Bikesh Patel',
       customerName: 'Lakshmi SHG',
       message: 'Visit to Lakshmi SHG completed but lead status not updated in system.',
       timestamp: new Date(Date.now() - 60 * 60 * 1000),

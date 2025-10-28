@@ -110,7 +110,7 @@ const Reports = () => {
       topProduct: 'Personal Loans'
     },
     {
-      name: 'Anjali Patel',
+      name: 'Bikesh Patel',
       region: 'Pune',
       visitsPlanned: 10,
       visitsCompleted: 9,
@@ -506,7 +506,7 @@ const Reports = () => {
           <SelectContent>
             <SelectItem value="all">All FSOs</SelectItem>
             <SelectItem value="rahul">Rahul Sharma</SelectItem>
-            <SelectItem value="anjali">Anjali Patel</SelectItem>
+            <SelectItem value="bikesh">Bikesh Patel</SelectItem>
             <SelectItem value="vikram">Vikram Singh</SelectItem>
           </SelectContent>
         </Select>

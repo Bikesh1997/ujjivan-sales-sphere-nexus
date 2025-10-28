@@ -65,8 +65,8 @@ const TeamManagement = () => {
     },
     { 
       id: '2', 
-      name: 'Anjali Patel', 
-      email: 'anjali.patel@bank.com',
+      name: 'Bikesh Patel', 
+      email: 'bikesh.patel@bank.com',
       role: 'Field Executive',
       department: 'Inbound Sales',
       status: 'active',

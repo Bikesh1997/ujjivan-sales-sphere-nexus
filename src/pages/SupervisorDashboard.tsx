@@ -47,8 +47,8 @@ const SupervisorDashboard = () => {
     },
     { 
       id: '3', 
-      name: 'Anjali Patel', 
-      email: 'anjali.patel@company.com',
+      name: 'Bikesh Patel', 
+      email: 'bikesh.patel@company.com',
       role: 'Field Executive',
       department: 'Sales',
       status: 'active',
@@ -288,7 +288,7 @@ const SupervisorDashboard = () => {
     },
     {
       id: '3',
-      name: 'Anjali Patel',
+      name: 'Bikesh Patel',
       currentEarnings: 38000,
       projectedEarnings: 48000,
       nextThreshold: 50000,

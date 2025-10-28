@@ -48,7 +48,7 @@ const ComprehensiveAnalytics = () => {
 
   const performanceData = [
     { name: 'Rahul Sharma', calls: 85, meetings: 24, leads: 42, revenue: 185000, target: 200000 },
-    { name: 'Anjali Patel', calls: 78, meetings: 28, leads: 38, revenue: 165000, target: 180000 },
+    { name: 'Bikesh Patel', calls: 78, meetings: 28, leads: 38, revenue: 165000, target: 180000 },
     { name: 'Vikash Kumar', calls: 62, meetings: 18, leads: 29, revenue: 125000, target: 150000 },
     { name: 'Priya Singh', calls: 71, meetings: 22, leads: 35, revenue: 145000, target: 160000 }
   ];

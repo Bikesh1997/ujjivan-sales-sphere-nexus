@@ -78,7 +78,7 @@ const DragDropKanbanBoard = () => {
       const taskId = (index + 5).toString();
       const priorities = ['low', 'medium', 'high'] as const;
       const statuses = ['todo', 'in_progress', 'review', 'completed'] as const;
-      const assignees = ['Rahul Sharma', 'Anjali Patel', 'Vikash Kumar', 'Priya Singh'];
+      const assignees = ['Rahul Sharma', 'Bikesh Patel', 'Vikash Kumar', 'Priya Singh'];
       
       const companies = [
         'Tech Innovations', 'Digital Solutions', 'Smart Systems', 'Future Corp', 'Alpha Industries',

@@ -44,7 +44,7 @@ const SalesFunnel = () => {
   // Extended real names and business names for 40+ prospects
   const realNames = [
     'Amit Sharma', 'Priya Patel', 'Rahul Kumar', 'Sneha Singh', 'Arjun Mehta', 'Kavya Reddy',
-    'Vikash Gupta', 'Anjali Joshi', 'Rohit Agarwal', 'Deepika Verma', 'Sanjay Yadav', 'Meera Nair',
+    'Vikash Gupta', 'Bikesh Joshi', 'Rohit Agarwal', 'Deepika Verma', 'Sanjay Yadav', 'Meera Nair',
     'Arun Krishnan', 'Pooja Tiwari', 'Karan Malhotra', 'Ritu Saxena', 'Suresh Chandra', 'Nisha Kapoor',
     'Varun Sinha', 'Swati Bhatt', 'Manoj Pandey', 'Shweta Agrawal', 'Rajesh Jain', 'Anita Desai',
     'Harish Bhatia', 'Sunita Rai', 'Ashish Dubey', 'Preeti Goyal', 'Naveen Choudhary', 'Richa Mittal',
