@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Role } from '@/types/rbac';
+import { generateChartData } from '@/utils/reportDataGenerator';
 
 interface ReportChartsProps {
   filters: any;
@@ -26,30 +27,7 @@ const COLORS = [
 ];
 
 export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => {
-  // Sample data - in real app, this would come from API based on filters
-  const performanceData = [
-    { month: 'Jan', conversions: 45, leads: 120, revenue: 380000 },
-    { month: 'Feb', conversions: 52, leads: 135, revenue: 420000 },
-    { month: 'Mar', conversions: 48, leads: 128, revenue: 395000 },
-    { month: 'Apr', conversions: 61, leads: 145, revenue: 485000 },
-    { month: 'May', conversions: 55, leads: 138, revenue: 445000 },
-    { month: 'Jun', conversions: 67, leads: 152, revenue: 520000 },
-  ];
-
-  const categoryData = [
-    { name: 'Leads', value: 342 },
-    { name: 'Tasks', value: 289 },
-    { name: 'Conversions', value: 156 },
-    { name: 'Follow-ups', value: 421 },
-  ];
-
-  const teamData = [
-    { name: 'Rahul S.', performance: 92, conversions: 28 },
-    { name: 'Priya M.', performance: 88, conversions: 24 },
-    { name: 'Amit K.', performance: 85, conversions: 22 },
-    { name: 'Sneha P.', performance: 90, conversions: 26 },
-    { name: 'Vikram R.', performance: 82, conversions: 20 },
-  ];
+  const { performanceData, categoryData, teamData } = generateChartData(filters);
 
   const getChartsForType = () => {
     switch (type) {

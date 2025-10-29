@@ -30,12 +30,6 @@ const SmartReports = () => {
 
   const handleFilterChange = (newFilters: any) => {
     setFilters({ ...filters, ...newFilters });
-    setMessageDialog({
-      open: true,
-      title: 'Filters Applied',
-      message: 'Reports updated based on your selection',
-      type: 'success'
-    });
   };
 
   const getReportData = () => {
