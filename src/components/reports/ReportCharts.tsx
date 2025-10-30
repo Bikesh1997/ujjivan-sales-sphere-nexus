@@ -6,7 +6,7 @@ import { generateChartData } from '@/utils/reportDataGenerator';
 interface ReportChartsProps {
   filters: any;
   userRole: Role | null;
-  type: 'overview' | 'performance' | 'team' | 'system';
+  type: 'overview' | 'performance' | 'team' | 'system' | 'sales' | 'leads' | 'campaigns';
 }
 
 // Use theme colors for charts
@@ -27,7 +27,7 @@ const COLORS = [
 ];
 
 export const ReportCharts = ({ filters, userRole, type }: ReportChartsProps) => {
-  const { performanceData, categoryData, teamData } = generateChartData(filters);
+  const { performanceData, categoryData, teamData } = generateChartData(filters, type);
 
   const getChartsForType = () => {
     switch (type) {
